@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/back"
+    tools:context=".directoryBook.Directory">
+
+    <LinearLayout
+        android:id="@+id/topLay_directory"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:background="@drawable/design"
+        android:orientation="vertical"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:fontFamily="@font/russo_one"
+            android:gravity="center"
+            android:text="Directory"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+
+<!--    <com.google.android.material.textfield.TextInputLayout-->
+<!--        android:id="@+id/search_directory_div_lay"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:hint="Search by Division"-->
+<!--        app:boxCornerRadiusTopEnd="10dp"-->
+<!--        app:boxCornerRadiusTopStart="10dp"-->
+<!--        app:boxStrokeColor="#0984e3"-->
+<!--        app:boxStrokeWidth="2dp"-->
+<!--        app:helperText=""-->
+<!--        app:hintTextColor="#b2bec3"-->
+<!--        app:helperTextEnabled="true"-->
+<!--        android:layout_marginStart="20dp"-->
+<!--        android:layout_marginTop="30dp"-->
+<!--        android:layout_marginEnd="20dp"-->
+<!--        app:boxBackgroundColor="@color/white"-->
+<!--        app:layout_constraintBottom_toTopOf="@+id/search_directory_dep_lay"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/topLay_directory">-->
+
+<!--        <com.google.android.material.textfield.TextInputEditText-->
+<!--            android:id="@+id/search_directory_div"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:ems="10"-->
+<!--            android:inputType="text"-->
+<!--            android:textColor="#636e72"-->
+<!--            android:textStyle="bold"-->
+<!--            android:imeOptions="actionSearch"/>-->
+
+<!--    </com.google.android.material.textfield.TextInputLayout>-->
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_directory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="@color/white"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="15dp"
+        app:layout_constraintBottom_toTopOf="@+id/directory_list_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/topLay_directory">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/search_directory_dep_lay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:hint="Search by Department"
+                app:boxBackgroundColor="#f1f2f6"
+                app:boxCornerRadiusTopEnd="10dp"
+                app:endIconDrawable="@drawable/arrow_drop_down_24"
+                app:endIconMode="custom"
+                app:boxCornerRadiusTopStart="10dp"
+                app:boxStrokeColor="#0984e3"
+                app:boxStrokeWidth="2dp"
+                android:clickable="true"
+                android:focusable="false"
+                app:helperText=""
+                app:helperTextEnabled="true"
+                app:hintTextColor="#b2bec3">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/search_directory_dep"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:clickable="true"
+                    android:focusable="false"
+                    android:imeOptions="actionSearch"
+                    android:inputType="text"
+                    android:textColor="#636e72"
+                    android:textStyle="bold" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+            <ListView
+                android:id="@+id/dept_list_view"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"/>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/search_directory_desig_lay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Search by Designation"
+                app:boxCornerRadiusTopEnd="10dp"
+                app:boxCornerRadiusTopStart="10dp"
+                app:boxStrokeColor="#0984e3"
+                app:boxStrokeWidth="2dp"
+                app:helperText=""
+                app:hintTextColor="#b2bec3"
+                app:helperTextEnabled="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                app:boxBackgroundColor="#f1f2f6"
+                app:endIconDrawable="@drawable/arrow_drop_down_24"
+                app:endIconMode="custom"
+                android:clickable="true"
+                android:focusable="false"
+                app:layout_constraintBottom_toTopOf="@+id/search_directory_dep_lay"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/topLay_directory">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/search_designation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:clickable="true"
+                    android:focusable="false"
+                    android:inputType="text"
+                    android:textColor="#636e72"
+                    android:textStyle="bold"
+                    android:imeOptions="actionSearch"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <ListView
+                android:id="@+id/desig_list_view"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_width="match_parent"
+                android:visibility="gone"
+                android:layout_height="200dp"/>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/search_directory_lay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:hint="Search by Name"
+                app:boxBackgroundColor="#f1f2f6"
+                app:boxCornerRadiusTopEnd="10dp"
+                app:boxCornerRadiusTopStart="10dp"
+                app:boxStrokeColor="#0984e3"
+                app:boxStrokeWidth="2dp"
+                app:helperText=""
+                app:helperTextEnabled="true"
+                app:hintTextColor="#b2bec3">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/search_directory"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:imeOptions="actionSearch"
+                    android:inputType="text"
+                    android:textColor="#636e72"
+                    android:textStyle="bold" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+
+
+    </androidx.cardview.widget.CardView>
+
+
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/directory_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:scrollbars="vertical"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout_directory"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/card_directory"/>
+
+    <LinearLayout
+        android:id="@+id/linearLayout_directory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="20dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/directory_list_view">
+
+        <Button
+            android:id="@+id/directory_finish"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="40dp"
+            android:layout_marginEnd="40dp"
+            android:background="@drawable/custom_button"
+            android:text="close"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:backgroundTint="@null" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

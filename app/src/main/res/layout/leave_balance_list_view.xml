@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:weightSum="1.2">
+
+
+    <TextView
+        android:id="@+id/leave_category"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:padding="2dp"
+        android:textSize="11sp"
+        android:gravity="center"
+        android:textColor="@color/black"
+        android:layout_weight=".25"
+        android:text="01-JUN-21"/>
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="@android:color/black" />
+    <TextView
+        android:id="@+id/short_code"
+        android:layout_width="0dp"
+        android:textSize="11sp"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:padding="2dp"
+        android:textColor="@color/black"
+        android:layout_weight=".1"
+        android:text="Present"/>
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="@android:color/black" />
+    <TextView
+        android:id="@+id/opening_qty"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="11sp"
+        android:gravity="center"
+        android:padding="2dp"
+        android:textColor="@color/black"
+        android:layout_weight=".15"
+        android:text="General"/>
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="@android:color/black" />
+    <TextView
+        android:id="@+id/earn"
+        android:layout_width="0dp"
+        android:textSize="11sp"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:padding="2dp"
+        android:textColor="@color/black"
+        android:layout_weight=".1"
+        android:text="Factory"/>
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="@android:color/black" />
+    <TextView
+        android:id="@+id/consumed"
+        android:layout_width="0dp"
+        android:textSize="11sp"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:padding="2dp"
+        android:textColor="@color/black"
+        android:layout_weight=".13"
+        android:text="09:05:00 AM"/>
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="@android:color/black" />
+    <TextView
+        android:id="@+id/transfered"
+        android:layout_width="0dp"
+        android:textSize="11sp"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:padding="2dp"
+        android:textColor="@color/black"
+        android:layout_weight=".14"
+        android:text="Late"/>
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="@android:color/black" />
+    <TextView
+        android:id="@+id/cash_taken"
+        android:layout_width="0dp"
+        android:textSize="11sp"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:padding="2dp"
+        android:textColor="@color/black"
+        android:layout_weight=".13"
+        android:text="05:30:00 pm"/>
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="@android:color/black" />
+    <TextView
+        android:id="@+id/balance_qty"
+        android:layout_width="0dp"
+        android:textSize="11sp"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:padding="2dp"
+        android:textColor="@color/black"
+        android:layout_weight=".2"
+        android:text="Early"/>
+
+
+
+
+
+</LinearLayout>

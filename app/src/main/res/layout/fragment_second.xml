@@ -1,0 +1,1744 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".EmployeeInfo.transcript.SecondFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
+
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:weightSum="1">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:textColor="@color/black"
+                android:layout_weight=".7"
+                android:text="Expected Joining: "/>
+            <EditText
+                android:id="@+id/expected_join"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:layout_weight=".3"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor"
+                android:clickable="false"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Actual Joining: "/>
+            <EditText
+                android:id="@+id/actual_join"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Calculation Joining: "/>
+            <EditText
+                android:id="@+id/calculation_join"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Appointment Type: "/>
+            <EditText
+                android:id="@+id/appointment_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Revision Type: "/>
+            <EditText
+                android:id="@+id/revision_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:editable="false"
+                android:focusable="false"
+                android:gravity="end"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Service Status: "/>
+            <EditText
+                android:id="@+id/service_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Description: "/>
+            <EditText
+                android:id="@+id/description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Probation/Contract Period: "/>
+            <EditText
+                android:id="@+id/probation_period"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Probation/Contract Completion: "/>
+            <EditText
+                android:id="@+id/probation_comp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Work Permit Effected Date: "/>
+            <EditText
+                android:id="@+id/work_pe_eff_dat"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Work Permit Period: "/>
+            <EditText
+                android:id="@+id/work_per_period"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Work Permit Completion: "/>
+            <EditText
+                android:id="@+id/work_pe_completion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Quit Date: "/>
+            <EditText
+                android:id="@+id/quit_dat"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Shift Allocation: "/>
+            <EditText
+                android:id="@+id/shift_allocation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Salary Package: "/>
+            <EditText
+                android:id="@+id/salary_package"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Increment Amount: "/>
+            <EditText
+                android:id="@+id/increment_amnt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Decrement Amount: "/>
+            <EditText
+                android:id="@+id/decrement_amnt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Gross Salary: "/>
+            <EditText
+                android:id="@+id/gross_salary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Cash Salary: "/>
+            <EditText
+                android:id="@+id/cash_salary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Basic Salary: "/>
+            <EditText
+                android:id="@+id/basic_salary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="House Rent: "/>
+            <EditText
+                android:id="@+id/house_rent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Medical Allowance: "/>
+            <EditText
+                android:id="@+id/medical_allow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Conveyance Allowance: "/>
+            <EditText
+                android:id="@+id/conveyance_allow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Habitation: "/>
+            <EditText
+                android:id="@+id/habitation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Utilities: "/>
+            <EditText
+                android:id="@+id/utilities"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="House Allowance: "/>
+            <EditText
+                android:id="@+id/house_allow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Entertainment: "/>
+            <EditText
+                android:id="@+id/entertainment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Factory Allowance: "/>
+            <EditText
+                android:id="@+id/factory_allow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Committed/Special Salary/Benefit: "/>
+            <EditText
+                android:id="@+id/committed_salary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_weight=".7"
+                android:layout_gravity="center"
+                android:textColor="@color/black"
+                android:text="Festival Bonus Type: "/>
+            <Spinner
+                android:layout_gravity="center"
+                android:id="@+id/spinner_fes_bon_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin = "5dp"
+                android:layout_weight=".3"
+                android:clickable="false"
+                android:background="@drawable/blue_outline"
+                android:popupBackground="@drawable/blue_outline_white_background"
+                android:spinnerMode="dropdown"/>
+
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Mobile Bill Coverage: "/>
+            <EditText
+                android:id="@+id/mobile_bill_coverage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Additional Allowance: "/>
+            <EditText
+                android:id="@+id/additional_allow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Fixed OT: "/>
+            <EditText
+                android:id="@+id/fixed_ot"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:editable="false"
+                android:focusable="false"
+                android:gravity="end"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Food Subsidy Type: "/>
+            <Spinner
+                android:layout_gravity="center"
+                android:id="@+id/spinner_food_sub_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight=".3"
+                android:layout_margin = "5dp"
+                android:clickable="false"
+                android:background="@drawable/blue_outline"
+                android:popupBackground="@drawable/blue_outline_white_background"
+                android:spinnerMode="dropdown"/>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Food Subsidy: "/>
+            <EditText
+                android:id="@+id/food_subsidy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Others Allowance Details: "/>
+            <EditText
+                android:id="@+id/others_allow_detl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Overtime Allowance Applicable: "/>
+            <EditText
+                android:id="@+id/overtime_allow_applic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Overtime Rate: "/>
+            <EditText
+                android:id="@+id/overtime_rate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Provident Fund Type: "/>
+            <EditText
+                android:id="@+id/provident_fund_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Provident Fund Amount: "/>
+            <EditText
+                android:id="@+id/provident_fund"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="OT Cal Period: "/>
+            <EditText
+                android:id="@+id/ot_cal_period"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="TAX Bearer: "/>
+            <Spinner
+                android:layout_gravity="center"
+                android:id="@+id/spinner_tax_bearer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight=".3"
+                android:layout_margin = "5dp"
+                android:clickable="false"
+                android:background="@drawable/blue_outline"
+                android:popupBackground="@drawable/blue_outline_white_background"
+                android:spinnerMode="dropdown"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="TAX Deduction %: "/>
+            <EditText
+                android:id="@+id/tax_deduction"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Sitting: "/>
+            <EditText
+                android:id="@+id/sitting"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Lunch Status: "/>
+            <EditText
+                android:id="@+id/lunch_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:editable="false"
+                android:focusable="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Transport: "/>
+            <EditText
+                android:id="@+id/transport"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="PABX Corporate Office: "/>
+            <EditText
+                android:id="@+id/pabx_corporate_offc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="PABX Factory: "/>
+            <EditText
+                android:id="@+id/pabx_factory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:editable="false"
+                android:focusable="false"
+                android:gravity="end"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+</FrameLayout>

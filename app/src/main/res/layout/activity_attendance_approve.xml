@@ -1,0 +1,1292 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/back"
+    tools:context=".attendance.approve.AttendanceApprove">
+
+    <LinearLayout
+        android:id="@+id/upLay_approve_att"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:background="@drawable/design"
+        android:orientation="vertical"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:fontFamily="@font/russo_one"
+            android:gravity="center"
+            android:text="Approve Request"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/requset_card_approve_att"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:background="@color/white"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="15dp"
+        android:layout_marginTop="100dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="center"
+                android:layout_marginBottom="5dp"
+                android:weightSum="1">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".3"
+                    android:text="Request Code"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:textSize="16sp"/>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/request_code_layout_att_approve"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:hint=""
+                    android:layout_weight=".7"
+                    app:boxStrokeWidth="2dp"
+                    android:layout_margin="5dp"
+                    app:boxStrokeColor="#0984e3"
+                    app:hintTextColor="#dfe6e9"
+                    app:boxCornerRadiusBottomStart="10dp"
+                    app:boxCornerRadiusBottomEnd="10dp"
+                    app:boxCornerRadiusTopEnd="10dp"
+                    app:boxCornerRadiusTopStart="10dp"
+                    android:textColorHint = "@color/black"
+                    app:helperTextEnabled="true"
+                    app:helperText=""
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    >
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/request_code_att_approve"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:clickable="true"
+                        android:editable="false"
+                        android:focusable="false"
+                        android:text="Select"
+                        android:gravity="end"
+                        android:textStyle="bold"
+                        android:textColor="#636e72"
+                        android:inputType="textMultiLine"
+                        />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+
+    </androidx.cardview.widget.CardView>
+
+    <ScrollView
+        android:id="@+id/scrollView24_att_approve"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout50_att_approve"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/requset_card_approve_att" >
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@color/white"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="15dp">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/after_request_selecting_att_approve"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        android:layout_marginBottom="10dp"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:weightSum="1.2">
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:hint="Name:"
+                                android:layout_weight=".6"
+                                android:layout_marginStart="5dp"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                app:boxStrokeColor="#f0932b"
+                                app:boxStrokeWidth="0dp"
+                                app:boxStrokeWidthFocused="1dp"
+                                app:boxCornerRadiusTopStart="5dp"
+                                app:boxCornerRadiusTopEnd="5dp"
+                                app:boxCornerRadiusBottomEnd="5dp"
+                                app:boxCornerRadiusBottomStart="5dp"
+                                app:boxBackgroundMode="filled"
+                                android:clickable="false"
+                                android:enabled="false"
+                                app:boxBackgroundColor="@color/white"
+                                app:hintTextColor="@color/black"
+                                >
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/name_att_att_approve"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:ems="10"
+                                    android:clickable="false"
+                                    android:enabled="false"
+                                    android:textSize="12sp"
+                                    android:text=""
+                                    android:textStyle="bold"
+                                    android:textColor="@color/black"
+                                    android:inputType="textMultiLine"
+                                    />
+
+                            </com.google.android.material.textfield.TextInputLayout>
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:hint="ID:"
+                                android:layout_weight=".3"
+                                android:layout_marginStart="5dp"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                app:boxStrokeColor="#f0932b"
+                                app:boxStrokeWidth="0dp"
+                                app:boxStrokeWidthFocused="1dp"
+                                app:boxCornerRadiusTopStart="5dp"
+                                app:boxCornerRadiusTopEnd="5dp"
+                                app:boxCornerRadiusBottomEnd="5dp"
+                                app:boxCornerRadiusBottomStart="5dp"
+                                app:boxBackgroundMode="filled"
+                                android:clickable="false"
+                                android:enabled="false"
+                                app:boxBackgroundColor="@color/white"
+                                app:hintTextColor="@color/black"
+                                >
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/id_att_att_approve"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:ems="10"
+                                    android:clickable="false"
+                                    android:enabled="false"
+                                    android:textSize="12sp"
+                                    android:text=""
+                                    android:textStyle="bold"
+                                    android:textColor="@color/black"
+                                    android:inputType="textMultiLine"
+                                    />
+
+                            </com.google.android.material.textfield.TextInputLayout>
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:hint="Date:"
+                                android:layout_weight=".3"
+                                android:layout_margin="5dp"
+                                app:boxStrokeColor="#f0932b"
+                                app:boxStrokeWidth="0dp"
+                                app:boxStrokeWidthFocused="1dp"
+                                app:boxCornerRadiusTopStart="5dp"
+                                app:boxCornerRadiusTopEnd="5dp"
+                                app:boxCornerRadiusBottomEnd="5dp"
+                                app:boxCornerRadiusBottomStart="5dp"
+                                app:boxBackgroundMode="filled"
+                                android:clickable="false"
+                                android:enabled="false"
+                                app:boxBackgroundColor="@color/white"
+                                app:hintTextColor="@color/black"
+                                >
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/now_date_att_att_approve"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:ems="10"
+                                    android:clickable="false"
+                                    android:enabled="false"
+                                    android:textSize="12sp"
+                                    android:text=""
+                                    android:textStyle="bold"
+                                    android:textColor="@color/black"
+                                    android:inputType="textMultiLine"
+                                    />
+
+                            </com.google.android.material.textfield.TextInputLayout>
+
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:hint="Calling Title:"
+                                android:layout_weight=".6"
+                                android:layout_marginStart="5dp"
+                                android:layout_marginBottom="5dp"
+                                app:boxStrokeColor="#f0932b"
+                                app:boxStrokeWidth="0dp"
+                                app:boxStrokeWidthFocused="1dp"
+                                app:boxCornerRadiusTopStart="5dp"
+                                app:boxCornerRadiusTopEnd="5dp"
+                                app:boxCornerRadiusBottomEnd="5dp"
+                                app:boxCornerRadiusBottomStart="5dp"
+                                app:boxBackgroundMode="filled"
+                                android:clickable="false"
+                                android:enabled="false"
+                                app:boxBackgroundColor="@color/white"
+                                app:hintTextColor="@color/black"
+                                >
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/calling_title_att_approve"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:ems="10"
+                                    android:clickable="false"
+                                    android:enabled="false"
+                                    android:textSize="12sp"
+                                    android:text=""
+                                    android:textStyle="bold"
+                                    android:textColor="@color/black"
+                                    android:inputType="textMultiLine"
+                                    />
+
+                            </com.google.android.material.textfield.TextInputLayout>
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="2dp"
+                            android:background="@android:color/darker_gray" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:layout_gravity="center"
+                            android:text="- - - - - - - - - - - -"/>
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="2dp"
+                            android:background="@android:color/darker_gray" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:weightSum="1"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textStyle="bold"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginStart="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:layout_weight=".7"
+                                android:layout_gravity="center"
+                                android:textColor="@color/black"
+                                android:text="Request Type: "/>
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint=""
+                                android:layout_weight=".3"
+                                app:boxStrokeWidth="0dp"
+                                android:layout_margin="5dp"
+                                app:boxStrokeColor="#0984e3"
+                                app:hintTextColor="#dfe6e9"
+                                app:boxCornerRadiusTopStart="5dp"
+                                app:boxCornerRadiusTopEnd="5dp"
+                                app:boxCornerRadiusBottomEnd="5dp"
+                                app:boxCornerRadiusBottomStart="5dp"
+                                app:boxBackgroundMode="filled"
+                                android:textColorHint = "@color/black"
+                                android:clickable="false"
+                                android:editable="false"
+                                android:focusable="false"
+                                android:enabled="false"
+                                app:helperTextEnabled="true"
+                                app:helperText=""
+                                app:boxBackgroundColor="#F5F5F5"
+                                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                                >
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/req_type_att_approve"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:ems="10"
+                                    android:clickable="false"
+                                    android:editable="false"
+                                    android:focusable="false"
+                                    android:enabled="false"
+                                    android:text=""
+                                    android:gravity="end"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/black"
+                                    android:inputType="textMultiLine"
+                                    />
+
+                            </com.google.android.material.textfield.TextInputLayout>
+
+
+
+
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:weightSum="1"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textStyle="bold"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginStart="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:layout_weight=".7"
+                                android:layout_gravity="center"
+                                android:textColor="@color/black"
+                                android:text="Shift to be Updated:"/>
+
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint=""
+                                android:layout_weight=".3"
+                                app:boxStrokeWidth="0dp"
+                                android:layout_margin="5dp"
+                                app:boxStrokeColor="#0984e3"
+                                app:hintTextColor="#dfe6e9"
+                                app:boxCornerRadiusTopStart="5dp"
+                                app:boxCornerRadiusTopEnd="5dp"
+                                app:boxCornerRadiusBottomEnd="5dp"
+                                app:boxCornerRadiusBottomStart="5dp"
+                                app:boxBackgroundMode="filled"
+                                android:textColorHint = "@color/black"
+                                android:clickable="false"
+                                android:editable="false"
+                                android:focusable="false"
+                                android:enabled="false"
+                                app:helperTextEnabled="true"
+                                app:helperText=""
+                                app:boxBackgroundColor="#F5F5F5"
+                                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                                >
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/shift_update_att_approve"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:ems="10"
+                                    android:clickable="false"
+                                    android:editable="false"
+                                    android:focusable="false"
+                                    android:enabled="false"
+                                    android:text=""
+                                    android:gravity="end"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/black"
+                                    android:inputType="textMultiLine"
+                                    />
+
+                            </com.google.android.material.textfield.TextInputLayout>
+
+
+
+
+                        </LinearLayout>
+
+                        <LinearLayout
+
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:visibility="visible"
+                            android:layout_marginBottom="10dp"
+                            android:orientation="vertical">
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="2dp"
+                                android:background="@android:color/darker_gray" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:layout_gravity="center"
+                                android:text="- - - - - - - - - - - -"/>
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="2dp"
+                                android:background="@android:color/darker_gray" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:weightSum="1.2">
+
+                                <com.google.android.material.textfield.TextInputLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:hint="Date to be Updated:"
+                                    android:layout_weight="1.2"
+                                    app:startIconDrawable="@drawable/calendar_icon"
+                                    app:startIconTintMode="screen"
+                                    app:startIconTint="@android:color/transparent"
+                                    android:layout_margin="5dp"
+                                    app:boxStrokeColor="#f0932b"
+                                    app:boxStrokeWidth="0dp"
+                                    app:boxStrokeWidthFocused="1dp"
+                                    app:boxCornerRadiusTopStart="5dp"
+                                    app:boxCornerRadiusTopEnd="5dp"
+                                    app:boxCornerRadiusBottomEnd="5dp"
+                                    app:boxCornerRadiusBottomStart="5dp"
+                                    app:boxBackgroundMode="filled"
+                                    android:clickable="false"
+                                    android:focusable="false"
+                                    android:enabled="false"
+                                    app:boxBackgroundColor="@color/white"
+                                    app:hintTextColor="@color/black"
+                                    >
+
+                                    <com.google.android.material.textfield.TextInputEditText
+                                        android:id="@+id/date_to_be_updated_att_approve"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:ems="10"
+                                        android:clickable="false"
+                                        android:enabled="false"
+                                        android:focusable="false"
+                                        android:text=""
+                                        android:textStyle="bold"
+                                        android:textColor="@color/black"
+                                        android:inputType="textMultiLine"
+                                        />
+
+                                </com.google.android.material.textfield.TextInputLayout>
+
+
+
+                            </LinearLayout>
+
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Time to be Updated:"
+                                android:layout_margin="5dp"
+                                android:gravity="center"
+                                android:textColor="@color/black"
+                                android:textStyle="bold"/>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:weightSum="1.2">
+
+                                <LinearLayout
+                                    android:id="@+id/in_time_lay_att_approve"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:visibility="gone"
+                                    android:layout_weight=".6">
+
+                                    <com.google.android.material.textfield.TextInputLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:hint="In Time:"
+                                        app:startIconDrawable="@drawable/time_icon"
+                                        app:startIconTintMode="screen"
+                                        app:startIconTint="@android:color/transparent"
+                                        android:layout_margin="5dp"
+                                        app:boxStrokeColor="#f0932b"
+                                        app:boxStrokeWidth="0dp"
+                                        app:boxStrokeWidthFocused="1dp"
+                                        app:boxCornerRadiusTopStart="5dp"
+                                        app:boxCornerRadiusTopEnd="5dp"
+                                        app:boxCornerRadiusBottomEnd="5dp"
+                                        app:boxCornerRadiusBottomStart="5dp"
+                                        app:boxBackgroundMode="filled"
+                                        android:clickable="false"
+                                        android:focusable="false"
+                                        android:enabled="false"
+                                        app:boxBackgroundColor="@color/white"
+                                        app:hintTextColor="@color/black"
+                                        >
+
+                                        <com.google.android.material.textfield.TextInputEditText
+                                            android:id="@+id/arrival_time_to_be_updated_att_approve"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:ems="10"
+                                            android:clickable="false"
+                                            android:enabled="false"
+                                            android:focusable="false"
+                                            android:text=""
+                                            android:textStyle="bold"
+                                            android:textColor="@color/black"
+                                            android:inputType="textMultiLine"
+                                            />
+
+                                    </com.google.android.material.textfield.TextInputLayout>
+
+
+
+                                </LinearLayout>
+                                <LinearLayout
+                                    android:id="@+id/out_time_lay_att_approve"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:visibility="visible"
+                                    android:layout_weight=".6">
+
+                                    <com.google.android.material.textfield.TextInputLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:hint="Out Time:"
+                                        app:startIconDrawable="@drawable/time_icon"
+                                        app:startIconTintMode="screen"
+                                        app:startIconTint="@android:color/transparent"
+                                        android:layout_margin="5dp"
+                                        app:boxStrokeColor="#f0932b"
+                                        app:boxStrokeWidth="0dp"
+                                        app:boxStrokeWidthFocused="1dp"
+                                        app:boxCornerRadiusTopStart="5dp"
+                                        app:boxCornerRadiusTopEnd="5dp"
+                                        app:boxCornerRadiusBottomEnd="5dp"
+                                        app:boxCornerRadiusBottomStart="5dp"
+                                        app:boxBackgroundMode="filled"
+                                        android:clickable="false"
+                                        android:focusable="false"
+                                        android:enabled="false"
+                                        app:boxBackgroundColor="@color/white"
+                                        app:hintTextColor="@color/black"
+                                        >
+
+                                        <com.google.android.material.textfield.TextInputEditText
+                                            android:id="@+id/departure_time_to_be_updated_att_approve"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:ems="10"
+                                            android:clickable="false"
+                                            android:enabled="false"
+                                            android:focusable="false"
+                                            android:text=""
+                                            android:textStyle="bold"
+                                            android:textColor="@color/black"
+                                            android:inputType="textMultiLine"
+                                            />
+
+                                    </com.google.android.material.textfield.TextInputLayout>
+
+
+
+                                </LinearLayout>
+
+
+
+                            </LinearLayout>
+
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="2dp"
+                                android:background="@android:color/darker_gray" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:layout_gravity="center"
+                                android:text="- - - - - - - - - - - -"/>
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="2dp"
+                                android:background="@android:color/darker_gray" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:weightSum="1"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:textStyle="bold"
+                                    android:layout_marginTop="5dp"
+                                    android:layout_marginStart="5dp"
+                                    android:layout_marginBottom="5dp"
+                                    android:layout_weight=".7"
+                                    android:layout_gravity="center"
+                                    android:textColor="@color/black"
+                                    android:text="Machine In Time: "/>
+
+                                <com.google.android.material.textfield.TextInputLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:hint=""
+                                    android:layout_weight=".3"
+                                    app:boxStrokeWidth="0dp"
+                                    android:layout_margin="5dp"
+                                    app:boxStrokeColor="#0984e3"
+                                    app:hintTextColor="#dfe6e9"
+                                    app:boxCornerRadiusTopStart="5dp"
+                                    app:boxCornerRadiusTopEnd="5dp"
+                                    app:boxCornerRadiusBottomEnd="5dp"
+                                    app:boxCornerRadiusBottomStart="5dp"
+                                    app:boxBackgroundMode="filled"
+                                    android:textColorHint = "@color/black"
+                                    android:clickable="false"
+                                    android:editable="false"
+                                    android:focusable="false"
+                                    android:enabled="false"
+                                    app:helperTextEnabled="true"
+                                    app:helperText=""
+                                    app:boxBackgroundColor="#F5F5F5"
+                                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                                    >
+
+                                    <com.google.android.material.textfield.TextInputEditText
+                                        android:id="@+id/machine_in_time_att_approve"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:ems="10"
+                                        android:clickable="false"
+                                        android:editable="false"
+                                        android:focusable="false"
+                                        android:enabled="false"
+                                        android:text=""
+                                        android:gravity="end"
+                                        android:textStyle="bold"
+                                        android:textColor="@color/black"
+                                        android:inputType="textMultiLine"
+                                        />
+
+                                </com.google.android.material.textfield.TextInputLayout>
+
+
+
+                            </LinearLayout>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:weightSum="1"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:textStyle="bold"
+                                    android:layout_marginTop="5dp"
+                                    android:layout_marginStart="5dp"
+                                    android:layout_marginBottom="5dp"
+                                    android:layout_weight=".7"
+                                    android:layout_gravity="center"
+                                    android:textColor="@color/black"
+                                    android:text="Machine Out Time:"/>
+
+                                <com.google.android.material.textfield.TextInputLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:hint=""
+                                    android:layout_weight=".3"
+                                    app:boxStrokeWidth="0dp"
+                                    android:layout_margin="5dp"
+                                    app:boxStrokeColor="#0984e3"
+                                    app:hintTextColor="#dfe6e9"
+                                    app:boxCornerRadiusTopStart="5dp"
+                                    app:boxCornerRadiusTopEnd="5dp"
+                                    app:boxCornerRadiusBottomEnd="5dp"
+                                    app:boxCornerRadiusBottomStart="5dp"
+                                    app:boxBackgroundMode="filled"
+                                    android:textColorHint = "@color/black"
+                                    android:clickable="false"
+                                    android:editable="false"
+                                    android:focusable="false"
+                                    android:enabled="false"
+                                    app:helperTextEnabled="true"
+                                    app:helperText=""
+                                    app:boxBackgroundColor="#F5F5F5"
+                                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                                    >
+
+                                    <com.google.android.material.textfield.TextInputEditText
+                                        android:id="@+id/machine_out_time_att_approve"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:ems="10"
+                                        android:clickable="false"
+                                        android:editable="false"
+                                        android:focusable="false"
+                                        android:enabled="false"
+                                        android:text=""
+                                        android:gravity="end"
+                                        android:textStyle="bold"
+                                        android:textColor="@color/black"
+                                        android:inputType="textMultiLine"
+                                        />
+
+                                </com.google.android.material.textfield.TextInputLayout>
+
+
+
+                            </LinearLayout>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:weightSum="1"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:textStyle="bold"
+                                    android:layout_marginTop="5dp"
+                                    android:layout_marginStart="5dp"
+                                    android:layout_marginBottom="5dp"
+                                    android:layout_weight=".7"
+                                    android:layout_gravity="center"
+                                    android:textColor="@color/black"
+                                    android:text="Current Shift:"/>
+
+                                <com.google.android.material.textfield.TextInputLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:hint=""
+                                    android:layout_weight=".3"
+                                    app:boxStrokeWidth="0dp"
+                                    android:layout_margin="5dp"
+                                    app:boxStrokeColor="#0984e3"
+                                    app:hintTextColor="#dfe6e9"
+                                    app:boxCornerRadiusTopStart="5dp"
+                                    app:boxCornerRadiusTopEnd="5dp"
+                                    app:boxCornerRadiusBottomEnd="5dp"
+                                    app:boxCornerRadiusBottomStart="5dp"
+                                    app:boxBackgroundMode="filled"
+                                    android:textColorHint = "@color/black"
+                                    android:clickable="false"
+                                    android:editable="false"
+                                    android:focusable="false"
+                                    android:enabled="false"
+                                    app:helperTextEnabled="true"
+                                    app:helperText=""
+                                    app:boxBackgroundColor="#F5F5F5"
+                                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                                    >
+
+                                    <com.google.android.material.textfield.TextInputEditText
+                                        android:id="@+id/current_shift_att_approve"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:ems="10"
+                                        android:clickable="false"
+                                        android:editable="false"
+                                        android:focusable="false"
+                                        android:enabled="false"
+                                        android:text=""
+                                        android:gravity="end"
+                                        android:textStyle="bold"
+                                        android:textColor="@color/black"
+                                        android:inputType="textMultiLine"
+                                        />
+
+                                </com.google.android.material.textfield.TextInputLayout>
+
+
+
+                            </LinearLayout>
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="2dp"
+                                android:background="@android:color/darker_gray" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:layout_gravity="center"
+                                android:text="- - - - - - - - - - - -"/>
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="2dp"
+                                android:background="@android:color/darker_gray" />
+
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:weightSum="1"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:textStyle="bold"
+                                    android:layout_marginTop="5dp"
+                                    android:layout_marginStart="5dp"
+                                    android:layout_marginBottom="5dp"
+                                    android:layout_weight=".7"
+                                    android:layout_gravity="center"
+                                    android:textColor="@color/black"
+                                    android:text="Reason Type:"/>
+
+                                <com.google.android.material.textfield.TextInputLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:hint=""
+                                    android:layout_weight=".3"
+                                    app:boxStrokeWidth="0dp"
+                                    android:layout_margin="5dp"
+                                    app:boxStrokeColor="#0984e3"
+                                    app:hintTextColor="#dfe6e9"
+                                    app:boxCornerRadiusTopStart="5dp"
+                                    app:boxCornerRadiusTopEnd="5dp"
+                                    app:boxCornerRadiusBottomEnd="5dp"
+                                    app:boxCornerRadiusBottomStart="5dp"
+                                    app:boxBackgroundMode="filled"
+                                    android:textColorHint = "@color/black"
+                                    android:clickable="false"
+                                    android:editable="false"
+                                    android:focusable="false"
+                                    android:enabled="false"
+                                    app:helperTextEnabled="true"
+                                    app:helperText=""
+                                    app:boxBackgroundColor="#F5F5F5"
+                                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                                    >
+
+                                    <com.google.android.material.textfield.TextInputEditText
+                                        android:id="@+id/reason_type_att_approve"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:ems="10"
+                                        android:clickable="false"
+                                        android:editable="false"
+                                        android:focusable="false"
+                                        android:enabled="false"
+                                        android:text=""
+                                        android:gravity="end"
+                                        android:textStyle="bold"
+                                        android:textColor="@color/black"
+                                        android:inputType="textMultiLine"
+                                        />
+
+                                </com.google.android.material.textfield.TextInputLayout>
+
+
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:weightSum="1.2">
+                                <com.google.android.material.textfield.TextInputLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:hint="Reason Description:"
+                                    android:layout_weight="1.2"
+                                    android:layout_margin="5dp"
+                                    app:boxStrokeColor="#f0932b"
+                                    app:boxStrokeWidth="0dp"
+                                    app:boxStrokeWidthFocused="1dp"
+                                    app:boxCornerRadiusTopStart="5dp"
+                                    app:boxCornerRadiusTopEnd="5dp"
+                                    app:boxCornerRadiusBottomEnd="5dp"
+                                    app:boxCornerRadiusBottomStart="5dp"
+                                    app:boxBackgroundMode="filled"
+                                    android:clickable="false"
+                                    android:focusable="false"
+                                    android:enabled="false"
+                                    app:boxBackgroundColor="@color/white"
+                                    app:hintTextColor="@color/black"
+                                    >
+
+                                    <com.google.android.material.textfield.TextInputEditText
+                                        android:id="@+id/reason_description_att_approve"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:ems="10"
+                                        android:clickable="false"
+                                        android:enabled="false"
+                                        android:focusable="false"
+                                        android:text=""
+                                        android:textStyle="bold"
+                                        android:textColor="@color/black"
+                                        android:inputType="textMultiLine"
+                                        />
+
+                                </com.google.android.material.textfield.TextInputLayout>
+
+
+
+                            </LinearLayout>
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="2dp"
+                                android:background="@android:color/darker_gray" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:layout_gravity="center"
+                                android:text="- - - - - - - - - - - -"/>
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="2dp"
+                                android:background="@android:color/darker_gray" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:weightSum="1.2">
+                                <com.google.android.material.textfield.TextInputLayout
+                                    android:id="@+id/comments_given_layout_att_approve"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:hint="Write Approve/Reject Comments:"
+                                    android:layout_weight="1.2"
+                                    android:layout_margin="5dp"
+                                    app:boxStrokeWidth="2dp"
+                                    app:boxStrokeWidthFocused="1dp"
+                                    android:clickable="true"
+                                    android:editable="false"
+                                    android:focusable="false"
+                                    app:helperTextTextColor="#d63031"
+                                    app:boxBackgroundColor="@color/white"
+                                    app:boxStrokeColor="#0984e3"
+                                    app:boxCornerRadiusBottomStart="10dp"
+                                    app:boxCornerRadiusBottomEnd="10dp"
+                                    app:boxCornerRadiusTopEnd="10dp"
+                                    app:boxCornerRadiusTopStart="10dp"
+                                    app:helperTextEnabled="true"
+                                    app:helperText=""
+                                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                                    >
+
+                                    <com.google.android.material.textfield.TextInputEditText
+                                        android:id="@+id/comments_given_att_approve"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:ems="10"
+                                        android:text=""
+                                        android:clickable="true"
+                                        android:editable="false"
+                                        android:focusable="false"
+                                        android:textStyle="bold"
+                                        android:textColor="@color/black"
+                                        android:inputType="textMultiLine"
+                                        />
+
+                                </com.google.android.material.textfield.TextInputLayout>
+
+
+                            </LinearLayout>
+
+
+
+
+
+
+
+                            <LinearLayout
+                                android:id="@+id/forward_layout"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="2dp"
+                                    android:background="@android:color/darker_gray" />
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:layout_gravity="center"
+                                    android:text="- - - - - - - - - - - -"/>
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="2dp"
+                                    android:background="@android:color/darker_gray" />
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal"
+                                    android:weightSum="1.2">
+                                    <com.google.android.material.textfield.TextInputLayout
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:hint="Forwarded By:"
+                                        android:layout_weight="1.2"
+                                        android:layout_margin="5dp"
+                                        app:boxStrokeColor="#f0932b"
+                                        app:boxStrokeWidth="0dp"
+                                        app:boxStrokeWidthFocused="1dp"
+                                        app:boxCornerRadiusTopStart="5dp"
+                                        app:boxCornerRadiusTopEnd="5dp"
+                                        app:boxCornerRadiusBottomEnd="5dp"
+                                        app:boxCornerRadiusBottomStart="5dp"
+                                        app:boxBackgroundMode="filled"
+                                        android:clickable="false"
+                                        android:focusable="false"
+                                        android:enabled="false"
+                                        app:boxBackgroundColor="@color/white"
+                                        app:hintTextColor="@color/black"
+                                        >
+
+                                        <com.google.android.material.textfield.TextInputEditText
+                                            android:id="@+id/forwarded_by_att_approve"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:ems="10"
+                                            android:clickable="false"
+                                            android:enabled="false"
+                                            android:focusable="false"
+                                            android:text=""
+                                            android:textStyle="bold"
+                                            android:textColor="@color/black"
+                                            android:inputType="textMultiLine"
+                                            />
+
+                                    </com.google.android.material.textfield.TextInputLayout>
+
+
+
+                                </LinearLayout>
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal"
+                                    android:weightSum="1.2">
+                                    <com.google.android.material.textfield.TextInputLayout
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:hint="Forward Comment:"
+                                        android:layout_weight="1.2"
+                                        android:layout_margin="5dp"
+                                        app:boxStrokeColor="#f0932b"
+                                        app:boxStrokeWidth="0dp"
+                                        app:boxStrokeWidthFocused="1dp"
+                                        app:boxCornerRadiusTopStart="5dp"
+                                        app:boxCornerRadiusTopEnd="5dp"
+                                        app:boxCornerRadiusBottomEnd="5dp"
+                                        app:boxCornerRadiusBottomStart="5dp"
+                                        app:boxBackgroundMode="filled"
+                                        android:clickable="false"
+                                        android:focusable="false"
+                                        android:enabled="false"
+                                        app:boxBackgroundColor="@color/white"
+                                        app:hintTextColor="@color/black"
+                                        >
+
+                                        <com.google.android.material.textfield.TextInputEditText
+                                            android:id="@+id/forward_comment_att_approve"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:ems="10"
+                                            android:clickable="false"
+                                            android:enabled="false"
+                                            android:focusable="false"
+                                            android:text=""
+                                            android:textStyle="bold"
+                                            android:textColor="@color/black"
+                                            android:inputType="textMultiLine"
+                                            />
+
+                                    </com.google.android.material.textfield.TextInputLayout>
+
+
+
+                                </LinearLayout>
+
+                            </LinearLayout>
+
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+
+            </androidx.cardview.widget.CardView>
+
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/linearLayout50_att_approve"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+        <LinearLayout
+            android:id="@+id/button_visiblity_lay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="1.5"
+            android:visibility="gone"
+            android:layout_marginBottom="10dp">
+
+            <Button
+                android:id="@+id/approve_button_att"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight=".5"
+                android:layout_marginStart="10dp"
+                android:visibility="visible"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/custom_button"
+                android:text="Approve"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:backgroundTint="@null" />
+            <Button
+                android:id="@+id/forward_button_att"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight=".5"
+                android:layout_marginStart="10dp"
+                android:visibility="visible"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/custom_button"
+                android:text="Forward"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:backgroundTint="@null" />
+
+            <Button
+                android:id="@+id/reject_button_att"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight=".5"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/custom_button"
+                android:text="Reject"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:backgroundTint="@null" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/close_button_att_approve"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+
+                android:background="@drawable/custom_button"
+                android:text="close"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:backgroundTint="@null" />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

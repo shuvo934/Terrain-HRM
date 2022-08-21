@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/first_fragment"
+        android:title="PAGE 1"
+        android:icon="@drawable/star"
+
+        />
+
+    <item
+        android:id="@+id/second_fragment"
+        android:title="PAGE 2"
+        android:icon="@drawable/star_border"/>
+
+
+</menu>

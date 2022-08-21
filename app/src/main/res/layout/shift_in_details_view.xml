@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:weightSum="1.8">
+
+    <TextView
+        android:id="@+id/shift_name_from_list"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:background="@color/white"
+        android:textSize="11sp"
+        android:textColor="@color/black"
+        android:layout_weight=".3"/>
+
+    <TextView
+        android:id="@+id/in_time_from_list"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="11sp"
+        android:layout_gravity="center"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:background="@color/white"
+        android:textColor="@color/black"
+        android:layout_weight=".3"/>
+
+    <TextView
+        android:id="@+id/late_arr_time_from_list"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:textSize="11sp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:background="@color/white"
+        android:textColor="@color/black"
+        android:layout_weight=".3"/>
+
+    <TextView
+        android:id="@+id/early_bef_time_from_list"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="11sp"
+        android:layout_gravity="center"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+
+        android:background="@color/white"
+        android:textColor="@color/black"
+        android:layout_weight=".3"/>
+    <TextView
+        android:id="@+id/out_time_from_list"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="11sp"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:background="@color/white"
+        android:textColor="@color/black"
+        android:layout_weight=".3"/>
+    <TextView
+        android:id="@+id/extended_out_time_from_list"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:layout_marginTop="5dp"
+        android:textSize="11sp"
+        android:layout_marginBottom="5dp"
+        android:background="@color/white"
+        android:textColor="@color/black"
+        android:layout_weight=".3"/>
+
+</LinearLayout>

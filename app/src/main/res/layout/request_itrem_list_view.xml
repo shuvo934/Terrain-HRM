@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:weightSum="1.6">
+
+
+    <TextView
+        android:id="@+id/req_first_item"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:layout_marginTop="5dp"
+        android:textSize="11sp"
+        android:layout_marginBottom="5dp"
+        android:background="@color/white"
+        android:textColor="@color/black"
+        android:layout_weight=".4"/>
+
+    <TextView
+        android:id="@+id/req_second_item"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:textSize="11sp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:background="@color/white"
+        android:textColor="@color/black"
+        android:layout_weight=".3"/>
+
+    <TextView
+        android:id="@+id/req_third_item"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:layout_marginTop="5dp"
+        android:textSize="11sp"
+        android:layout_marginBottom="5dp"
+        android:background="@color/white"
+        android:textColor="@color/black"
+        android:layout_weight=".3"/>
+
+    <TextView
+        android:id="@+id/req_fourth_item"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:layout_marginTop="5dp"
+        android:textSize="11sp"
+        android:layout_marginBottom="5dp"
+        android:background="@color/white"
+        android:textColor="@color/black"
+        android:layout_weight=".3"/>
+
+    <TextView
+        android:id="@+id/req_fifth_item"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:textSize="11sp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:background="@color/white"
+        android:textColor="@color/black"
+        android:layout_weight=".3"/>
+
+
+
+
+</LinearLayout>

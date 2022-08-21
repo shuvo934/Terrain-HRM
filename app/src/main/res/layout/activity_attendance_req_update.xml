@@ -1,0 +1,1135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/back"
+    tools:context=".attendance.reqUpdate.AttendanceReqUpdate">
+
+    <LinearLayout
+        android:id="@+id/upLayNew"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:background="@drawable/design"
+        android:orientation="vertical"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:fontFamily="@font/russo_one"
+            android:gravity="center"
+
+            android:text="Update Request"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/scrollView24"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        android:layout_marginTop="100dp"
+        android:layout_marginBottom="90dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@color/white"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="15dp">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="1">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".3"
+                            android:text="Request Code"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginBottom="5dp"
+                            android:textColor="@color/black"
+                            android:textStyle="bold"
+                            android:textSize="16sp"/>
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/request_code_layout"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:hint=""
+                            android:layout_weight=".7"
+                            app:boxStrokeWidth="2dp"
+                            android:layout_margin="5dp"
+                            app:boxStrokeColor="#0984e3"
+                            app:hintTextColor="#dfe6e9"
+                            app:boxCornerRadiusBottomStart="10dp"
+                            app:boxCornerRadiusBottomEnd="10dp"
+                            app:boxCornerRadiusTopEnd="10dp"
+                            app:boxCornerRadiusTopStart="10dp"
+                            android:textColorHint = "@color/black"
+                            app:helperTextEnabled="true"
+                            app:helperText=""
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            >
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/request_code"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:ems="10"
+                                android:clickable="true"
+                                android:editable="false"
+                                android:focusable="false"
+                                android:text="Select"
+                                android:gravity="end"
+                                android:textStyle="bold"
+                                android:textColor="#636e72"
+                                android:inputType="textMultiLine"
+                                />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:background="@android:color/darker_gray" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:layout_gravity="center"
+                        android:text="- - - - - - - - - - - -"/>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:background="@android:color/darker_gray" />
+
+                <LinearLayout
+
+                    android:id="@+id/after_request_selecting"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:layout_marginBottom="10dp"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="1.2">
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:hint="Name:"
+                            android:layout_weight=".6"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginBottom="5dp"
+                            app:boxStrokeColor="#f0932b"
+                            app:boxStrokeWidth="0dp"
+                            app:boxStrokeWidthFocused="1dp"
+                            app:boxCornerRadiusTopStart="5dp"
+                            app:boxCornerRadiusTopEnd="5dp"
+                            app:boxCornerRadiusBottomEnd="5dp"
+                            app:boxCornerRadiusBottomStart="5dp"
+                            app:boxBackgroundMode="filled"
+                            android:clickable="false"
+                            android:enabled="false"
+                            app:boxBackgroundColor="@color/white"
+                            app:hintTextColor="@color/black"
+                            >
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/name_att_update_update"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:ems="10"
+                                android:clickable="false"
+                                android:enabled="false"
+                                android:textSize="12sp"
+                                android:text="MD. BAITUL AMIN"
+                                android:textStyle="bold"
+                                android:textColor="@color/black"
+                                android:inputType="textMultiLine"
+                                />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:hint="ID:"
+                            android:layout_weight=".3"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginBottom="5dp"
+                            app:boxStrokeColor="#f0932b"
+                            app:boxStrokeWidth="0dp"
+                            app:boxStrokeWidthFocused="1dp"
+                            app:boxCornerRadiusTopStart="5dp"
+                            app:boxCornerRadiusTopEnd="5dp"
+                            app:boxCornerRadiusBottomEnd="5dp"
+                            app:boxCornerRadiusBottomStart="5dp"
+                            app:boxBackgroundMode="filled"
+                            android:clickable="false"
+                            android:enabled="false"
+                            app:boxBackgroundColor="@color/white"
+                            app:hintTextColor="@color/black"
+                            >
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/id_att_update_update"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:ems="10"
+                                android:clickable="false"
+                                android:enabled="false"
+                                android:textSize="12sp"
+                                android:text="00200821"
+                                android:textStyle="bold"
+                                android:textColor="@color/black"
+                                android:inputType="textMultiLine"
+                                />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:hint="Date:"
+                            android:layout_weight=".3"
+                            android:layout_margin="5dp"
+                            app:boxStrokeColor="#f0932b"
+                            app:boxStrokeWidth="0dp"
+                            app:boxStrokeWidthFocused="1dp"
+                            app:boxCornerRadiusTopStart="5dp"
+                            app:boxCornerRadiusTopEnd="5dp"
+                            app:boxCornerRadiusBottomEnd="5dp"
+                            app:boxCornerRadiusBottomStart="5dp"
+                            app:boxBackgroundMode="filled"
+                            android:clickable="false"
+                            android:enabled="false"
+                            app:boxBackgroundColor="@color/white"
+                            app:hintTextColor="@color/black"
+                            >
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/now_date_att_update_update"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:ems="10"
+                                android:clickable="false"
+                                android:enabled="false"
+                                android:textSize="12sp"
+                                android:text="31-JUL-21"
+                                android:textStyle="bold"
+                                android:textColor="@color/black"
+                                android:inputType="textMultiLine"
+                                />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                    </LinearLayout>
+
+
+
+
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:background="@android:color/darker_gray" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:layout_gravity="center"
+                        android:text="- - - - - - - - - - - -"/>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:background="@android:color/darker_gray" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:weightSum="1"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginBottom="5dp"
+                            android:layout_weight=".7"
+                            android:layout_gravity="center"
+                            android:textColor="@color/black"
+                            android:text="Request Type: "/>
+                        <Spinner
+                            android:layout_gravity="center"
+                            android:id="@+id/spinner_req_type_update"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin = "5dp"
+                            android:layout_weight=".3"
+                            android:clickable="false"
+                            android:background="@drawable/blue_outline"
+                            android:popupBackground="@drawable/blue_outline_white_background"
+                            android:spinnerMode="dropdown"/>
+
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:weightSum="1"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginBottom="5dp"
+                            android:layout_weight=".7"
+                            android:layout_gravity="center"
+                            android:textColor="@color/black"
+                            android:text="Attendance Type: "/>
+                        <Spinner
+                            android:layout_gravity="center"
+                            android:id="@+id/spinner_attendance_type_update"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin = "5dp"
+                            android:layout_weight=".3"
+                            android:clickable="false"
+                            android:background="@drawable/blue_outline"
+                            android:popupBackground="@drawable/blue_outline_white_background"
+                            android:spinnerMode="dropdown"/>
+
+
+                    </LinearLayout>
+
+                    <LinearLayout
+
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="visible"
+                        android:layout_marginBottom="10dp"
+                        android:orientation="vertical">
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="2dp"
+                            android:background="@android:color/darker_gray" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:layout_gravity="center"
+                            android:text="- - - - - - - - - - - -"/>
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="2dp"
+                            android:background="@android:color/darker_gray" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:weightSum="1.2">
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/date_updated_layout_update"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:hint="Select Update Date"
+                                android:layout_weight="1.2"
+                                android:layout_margin="5dp"
+                                app:boxStrokeColor="#f0932b"
+                                app:boxStrokeWidth="2dp"
+                                app:boxStrokeWidthFocused="1dp"
+                                app:boxCornerRadiusTopStart="5dp"
+                                app:boxCornerRadiusTopEnd="5dp"
+                                app:boxCornerRadiusBottomEnd="5dp"
+                                app:boxCornerRadiusBottomStart="5dp"
+                                app:startIconDrawable="@drawable/calendar_icon"
+                                app:startIconTintMode="screen"
+                                app:startIconTint="@android:color/transparent"
+                                app:boxBackgroundMode="filled"
+                                android:clickable="true"
+                                android:editable="false"
+                                android:focusable="false"
+                                app:helperTextTextColor="#d63031"
+                                app:boxBackgroundColor="#f1f2f6"
+                                app:hintTextColor="#8395a7"
+                                android:textColorHint="#8395a7"
+                                >
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/date_to_be_updated_update"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:ems="10"
+                                    android:clickable="true"
+                                    android:editable="false"
+                                    android:focusable="false"
+                                    android:text=""
+                                    android:textStyle="bold"
+                                    android:textColor="@color/black"
+                                    android:inputType="textMultiLine"
+                                    />
+
+                            </com.google.android.material.textfield.TextInputLayout>
+
+
+                        </LinearLayout>
+                        <Button
+                            android:id="@+id/existing_att_time_update"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="show existing Attendance time"
+                            android:layout_margin="5dp"
+                            android:textStyle="bold"
+                            android:visibility="visible"
+                            android:background="@drawable/custom_button1"
+                            app:backgroundTint="@null"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Time to be Updated:"
+                            android:layout_margin="5dp"
+                            android:gravity="center"
+                            android:textColor="@color/black"
+                            android:textStyle="bold"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:weightSum="1.2">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:layout_weight=".6">
+
+                                <com.google.android.material.textfield.TextInputLayout
+                                    android:id="@+id/select_in_time_from_update"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:hint="Select In Time"
+                                    android:layout_marginTop="5dp"
+                                    android:layout_marginStart="5dp"
+                                    android:layout_marginBottom="5dp"
+                                    app:boxStrokeColor="#f0932b"
+                                    app:boxStrokeWidth="2dp"
+                                    app:boxStrokeWidthFocused="1dp"
+                                    app:boxCornerRadiusTopStart="5dp"
+                                    app:boxCornerRadiusTopEnd="5dp"
+                                    app:boxCornerRadiusBottomEnd="5dp"
+                                    app:boxCornerRadiusBottomStart="5dp"
+                                    app:startIconDrawable="@drawable/time_icon"
+                                    app:startIconTintMode="screen"
+                                    app:startIconTint="@android:color/transparent"
+                                    app:boxBackgroundMode="filled"
+                                    android:clickable="true"
+                                    android:editable="false"
+                                    android:focusable="false"
+                                    app:boxBackgroundColor="#f1f2f6"
+                                    app:hintTextColor="#8395a7"
+                                    android:textColorHint="#8395a7"
+                                    >
+
+                                    <com.google.android.material.textfield.TextInputEditText
+                                        android:id="@+id/arrival_time_to_be_updated_update"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:ems="10"
+                                        android:clickable="true"
+                                        android:editable="false"
+                                        android:focusable="false"
+                                        android:text=""
+                                        android:textSize="12sp"
+                                        android:textStyle="bold"
+                                        android:textColor="@color/black"
+                                        android:inputType="textMultiLine"
+                                        />
+
+                                </com.google.android.material.textfield.TextInputLayout>
+                                <Button
+                                    android:id="@+id/arrival_clear_update"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="Clear"
+                                    android:layout_margin="5dp"
+                                    android:textStyle="bold"
+                                    android:visibility="gone"
+                                    android:background="@drawable/custom_button1"
+                                    app:backgroundTint="@null"/>
+
+
+                            </LinearLayout>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:layout_weight=".6">
+
+                                <com.google.android.material.textfield.TextInputLayout
+                                    android:id="@+id/select_out_time_from_update"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:hint="Select Out Time"
+                                    android:layout_margin="5dp"
+                                    app:boxStrokeColor="#f0932b"
+                                    app:boxStrokeWidth="2dp"
+                                    app:boxStrokeWidthFocused="1dp"
+                                    app:boxCornerRadiusTopStart="5dp"
+                                    app:boxCornerRadiusTopEnd="5dp"
+                                    app:boxCornerRadiusBottomEnd="5dp"
+                                    app:boxCornerRadiusBottomStart="5dp"
+                                    app:startIconDrawable="@drawable/time_icon"
+                                    app:startIconTintMode="screen"
+                                    app:startIconTint="@android:color/transparent"
+                                    app:boxBackgroundMode="filled"
+                                    android:clickable="true"
+                                    android:editable="false"
+                                    android:focusable="false"
+                                    app:boxBackgroundColor="#f1f2f6"
+                                    app:hintTextColor="#8395a7"
+                                    android:textColorHint="#8395a7"
+                                    >
+
+                                    <com.google.android.material.textfield.TextInputEditText
+                                        android:id="@+id/departure_time_to_be_updated_update"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:ems="10"
+                                        android:clickable="true"
+                                        android:editable="false"
+                                        android:focusable="false"
+                                        android:text=""
+                                        android:textSize="12sp"
+                                        android:textStyle="bold"
+                                        android:textColor="@color/black"
+                                        android:inputType="textMultiLine"
+                                        />
+
+                                </com.google.android.material.textfield.TextInputLayout>
+                                <Button
+                                    android:id="@+id/departure_clear_update"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="Clear"
+                                    android:layout_margin="5dp"
+                                    android:textStyle="bold"
+                                    android:visibility="gone"
+                                    android:background="@drawable/custom_button1"
+                                    app:backgroundTint="@null"/>
+
+
+                            </LinearLayout>
+
+
+
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/error_input_time_update"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:textColor="#d63031"
+                            android:visibility="gone"
+                            android:gravity="center"
+                            android:text="Please Provide At least Arrival or Departure Time to be Updated"
+                            android:textStyle="bold"/>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="2dp"
+                            android:background="@android:color/darker_gray" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:layout_gravity="center"
+                            android:text="- - - - - - - - - - - -"/>
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="2dp"
+                            android:background="@android:color/darker_gray" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:weightSum="1"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textStyle="bold"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginStart="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:layout_weight=".7"
+                                android:layout_gravity="center"
+                                android:textColor="@color/black"
+                                android:text="Location to be Updated: "/>
+                            <Spinner
+                                android:layout_gravity="center"
+                                android:id="@+id/spinner_loc_updated_update"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin = "5dp"
+                                android:layout_weight=".3"
+                                android:clickable="false"
+                                android:background="@drawable/blue_outline"
+                                android:popupBackground="@drawable/blue_outline_white_background"
+                                android:spinnerMode="dropdown"/>
+
+
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/error_input_location_update"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:textColor="#d63031"
+                            android:visibility="gone"
+                            android:gravity="center"
+                            android:text="Please Provide Location to be Updated"
+                            android:textStyle="bold"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:weightSum="1.2">
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:hint="Updated Machine Code:"
+                                android:layout_weight=".6"
+                                android:layout_marginStart="5dp"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                app:boxStrokeColor="#f0932b"
+                                app:boxStrokeWidth="0dp"
+                                app:boxStrokeWidthFocused="1dp"
+                                app:boxCornerRadiusTopStart="5dp"
+                                app:boxCornerRadiusTopEnd="5dp"
+                                app:boxCornerRadiusBottomEnd="5dp"
+                                app:boxCornerRadiusBottomStart="5dp"
+                                app:boxBackgroundMode="filled"
+                                android:clickable="false"
+                                android:enabled="false"
+                                app:boxBackgroundColor="@color/white"
+                                app:hintTextColor="@color/black"
+                                >
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/updated_machine_code_update"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:ems="10"
+                                    android:clickable="false"
+                                    android:enabled="false"
+                                    android:textSize="12sp"
+                                    android:text=""
+                                    android:textStyle="bold"
+                                    android:textColor="@color/black"
+                                    android:inputType="textMultiLine"
+                                    />
+
+                            </com.google.android.material.textfield.TextInputLayout>
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:hint="Machine Type:"
+                                android:layout_weight=".6"
+                                android:layout_margin="5dp"
+                                app:boxStrokeColor="#f0932b"
+                                app:boxStrokeWidth="0dp"
+                                app:boxStrokeWidthFocused="1dp"
+                                app:boxCornerRadiusTopStart="5dp"
+                                app:boxCornerRadiusTopEnd="5dp"
+                                app:boxCornerRadiusBottomEnd="5dp"
+                                app:boxCornerRadiusBottomStart="5dp"
+                                app:boxBackgroundMode="filled"
+                                android:clickable="false"
+                                android:enabled="false"
+                                app:boxBackgroundColor="@color/white"
+                                app:hintTextColor="@color/black"
+                                >
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/updated_machine_type_update"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:ems="10"
+                                    android:clickable="false"
+                                    android:enabled="false"
+                                    android:textSize="12sp"
+                                    android:text=""
+                                    android:textStyle="bold"
+                                    android:textColor="@color/black"
+                                    android:inputType="textMultiLine"
+                                    />
+
+                            </com.google.android.material.textfield.TextInputLayout>
+
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="2dp"
+                            android:background="@android:color/darker_gray" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:layout_gravity="center"
+                            android:text="- - - - - - - - - - - -"/>
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="2dp"
+                            android:background="@android:color/darker_gray" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:weightSum="1"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textStyle="bold"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginStart="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:layout_weight=".7"
+                                android:layout_gravity="center"
+                                android:textColor="@color/black"
+                                android:text="Shift to be Updated: "/>
+                            <!--                        <Spinner-->
+                            <!--                            android:layout_gravity="center"-->
+                            <!--                            android:id="@+id/spinner_shift_updated"-->
+                            <!--                            android:layout_width="match_parent"-->
+                            <!--                            android:layout_height="wrap_content"-->
+                            <!--                            android:layout_margin = "5dp"-->
+                            <!--                            android:visibility="gone"-->
+                            <!--                            android:layout_weight=".3"-->
+                            <!--                            android:clickable="false"-->
+                            <!--                            android:background="@drawable/blue_outline"-->
+                            <!--                            android:popupBackground="@drawable/blue_outline_white_background"-->
+                            <!--                            android:spinnerMode="dropdown"/>-->
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/shift_description_Layout_update"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint=""
+                                android:layout_weight=".3"
+                                app:boxStrokeWidth="2dp"
+                                android:layout_margin="5dp"
+                                app:boxStrokeColor="#0984e3"
+                                app:hintTextColor="#dfe6e9"
+                                app:boxCornerRadiusBottomStart="10dp"
+                                app:boxCornerRadiusBottomEnd="10dp"
+                                app:boxCornerRadiusTopEnd="10dp"
+                                app:boxCornerRadiusTopStart="10dp"
+                                android:textColorHint = "@color/black"
+                                app:helperTextEnabled="true"
+                                app:helperText=""
+                                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                                >
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/shift_description_update"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:ems="10"
+                                    android:clickable="true"
+                                    android:editable="false"
+                                    android:focusable="false"
+                                    android:text="Select"
+                                    android:gravity="end"
+                                    android:textStyle="bold"
+                                    android:textColor="#636e72"
+                                    android:inputType="textMultiLine"
+                                    />
+
+                            </com.google.android.material.textfield.TextInputLayout>
+
+
+
+                        </LinearLayout>
+                        <TextView
+                            android:id="@+id/error_input_shift_update"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:textColor="#d63031"
+                            android:visibility="gone"
+                            android:gravity="center"
+                            android:text="Please Provide Shift to be Updated"
+                            android:textStyle="bold"/>
+                        <Button
+                            android:id="@+id/show_shift_item_button_update"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Show Shift Time"
+                            android:visibility="visible"
+                            android:layout_margin="5dp"
+                            android:textStyle="bold"
+                            android:background="@drawable/custom_button1"
+                            app:backgroundTint="@null"/>
+
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="2dp"
+                            android:background="@android:color/darker_gray" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:layout_gravity="center"
+                            android:text="- - - - - - - - - - - -"/>
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="2dp"
+                            android:background="@android:color/darker_gray" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:weightSum="1"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textStyle="bold"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginStart="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:layout_weight=".7"
+                                android:layout_gravity="center"
+                                android:textColor="@color/black"
+                                android:text="Reason Type: "/>
+                            <Spinner
+                                android:layout_gravity="center"
+                                android:id="@+id/spinner_reason_type_updated_update"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin = "5dp"
+                                android:layout_weight=".3"
+                                android:clickable="false"
+                                android:background="@drawable/blue_outline"
+                                android:popupBackground="@drawable/blue_outline_white_background"
+                                android:spinnerMode="dropdown"/>
+
+
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/error_input_reason_update"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:textColor="#d63031"
+                            android:visibility="gone"
+                            android:gravity="center"
+                            android:text="Please Provide Appropriate Reason"
+                            android:textStyle="bold"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:weightSum="1.2">
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/reason_description_Layout_update"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:hint="Reason Description:"
+                                android:layout_weight="1.2"
+                                android:layout_margin="5dp"
+                                app:boxStrokeColor="#f0932b"
+                                app:boxStrokeWidth="2dp"
+                                android:clickable="true"
+                                android:editable="false"
+                                android:focusable="false"
+                                app:boxStrokeWidthFocused="1dp"
+                                app:boxCornerRadiusTopStart="5dp"
+                                app:boxCornerRadiusTopEnd="5dp"
+                                app:boxCornerRadiusBottomEnd="5dp"
+                                app:boxCornerRadiusBottomStart="5dp"
+                                app:boxBackgroundMode="filled"
+                                app:boxBackgroundColor="#f1f2f6"
+                                app:hintTextColor="@color/black"
+                                >
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/reason_description_update"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:ems="10"
+                                    android:clickable="true"
+                                    android:editable="false"
+                                    android:focusable="false"
+                                    android:text=""
+                                    android:textStyle="bold"
+                                    android:textColor="@color/black"
+                                    android:inputType="textMultiLine"
+                                    />
+
+                            </com.google.android.material.textfield.TextInputLayout>
+
+
+                        </LinearLayout>
+                        <TextView
+                            android:id="@+id/error_input_reason_desc_update"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:textColor="#d63031"
+                            android:visibility="gone"
+                            android:gravity="center"
+                            android:text="Please Provide Reason Description"
+                            android:textStyle="bold"/>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:weightSum="1.2">
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/address_station_layout_update"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:hint="Address During Outside of Station:"
+                                android:layout_weight="1.2"
+                                android:layout_margin="5dp"
+                                app:boxStrokeColor="#f0932b"
+                                app:boxStrokeWidth="2dp"
+                                app:boxStrokeWidthFocused="1dp"
+                                android:clickable="true"
+                                android:editable="false"
+                                android:focusable="false"
+                                app:boxCornerRadiusTopStart="5dp"
+                                app:boxCornerRadiusTopEnd="5dp"
+                                app:boxCornerRadiusBottomEnd="5dp"
+                                app:boxCornerRadiusBottomStart="5dp"
+                                app:boxBackgroundMode="filled"
+                                app:boxBackgroundColor="#f1f2f6"
+                                app:hintTextColor="@color/black"
+                                >
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/address_outside_sta_update"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:ems="10"
+                                    android:text=""
+                                    android:clickable="true"
+                                    android:editable="false"
+                                    android:focusable="false"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/black"
+                                    android:inputType="textMultiLine"
+                                    />
+
+                            </com.google.android.material.textfield.TextInputLayout>
+
+
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:weightSum="1"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textStyle="bold"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginStart="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:layout_weight=".7"
+                                android:layout_gravity="center"
+                                android:textColor="@color/black"
+                                android:text="Forward To/ Approver: "/>
+                            <!--                        <Spinner-->
+                            <!--                            android:layout_gravity="center"-->
+                            <!--                            android:id="@+id/spinner_approver_updated"-->
+                            <!--                            android:layout_width="match_parent"-->
+                            <!--                            android:layout_height="wrap_content"-->
+                            <!--                            android:layout_margin = "5dp"-->
+                            <!--                            android:layout_weight=".3"-->
+                            <!--                            android:visibility="gone"-->
+                            <!--                            android:clickable="false"-->
+                            <!--                            android:background="@drawable/blue_outline"-->
+                            <!--                            android:popupBackground="@drawable/blue_outline_white_background"-->
+                            <!--                            android:spinnerMode="dropdown"/>-->
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/approver_description_Layout_update"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint=""
+                                android:layout_weight=".3"
+                                app:boxStrokeWidth="2dp"
+                                android:layout_margin="5dp"
+                                app:boxStrokeColor="#0984e3"
+                                app:hintTextColor="#dfe6e9"
+                                app:boxCornerRadiusBottomStart="10dp"
+                                app:boxCornerRadiusBottomEnd="10dp"
+                                app:boxCornerRadiusTopEnd="10dp"
+                                app:boxCornerRadiusTopStart="10dp"
+                                android:textColorHint = "@color/black"
+                                app:helperTextEnabled="true"
+                                app:helperText=""
+                                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                                >
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/approver_description_update"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:ems="10"
+                                    android:clickable="true"
+                                    android:editable="false"
+                                    android:focusable="false"
+                                    android:text="Select"
+                                    android:gravity="end"
+                                    android:textStyle="bold"
+                                    android:textColor="#636e72"
+                                    android:inputType="textMultiLine"
+                                    />
+
+                            </com.google.android.material.textfield.TextInputLayout>
+
+
+
+                        </LinearLayout>
+                        <TextView
+                            android:id="@+id/error_input_approver_update"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:textColor="#d63031"
+                            android:gravity="center"
+                            android:visibility="gone"
+                            android:text="Please Select Approver to sent Request"
+                            android:textStyle="bold"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+
+                </LinearLayout>
+
+
+            </androidx.cardview.widget.CardView>
+
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/linearLayout50_update"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:weightSum="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            android:id="@+id/update_req_button_update"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight=".5"
+            android:layout_marginStart="40dp"
+            android:visibility="gone"
+            android:layout_marginEnd="40dp"
+            android:background="@drawable/custom_button2"
+            android:text="Update"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:backgroundTint="@null" />
+
+        <Button
+            android:id="@+id/update_finish_update"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight=".5"
+            android:layout_marginStart="40dp"
+            android:layout_marginEnd="40dp"
+            android:background="@drawable/custom_button"
+            android:text="Close"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:backgroundTint="@null" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

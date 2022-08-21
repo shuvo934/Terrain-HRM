@@ -1,0 +1,1166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".EmployeeInfo.transcript.FirstFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
+
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:weightSum="1">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:textColor="@color/black"
+                android:layout_weight=".7"
+                android:text="Revision No: "/>
+            <EditText
+                android:id="@+id/revision_no_TR"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:layout_weight=".3"
+                android:gravity="end"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:editable="false"
+                android:focusable="false"
+                android:inputType="textMultiLine"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor"
+                android:clickable="false"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Revision Date: "/>
+            <EditText
+                android:id="@+id/revision_dateee"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:editable="false"
+                android:focusable="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Effected Date: "/>
+            <EditText
+                android:id="@+id/effectedd_dateee"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:editable="false"
+                android:focusable="false"
+                android:gravity="end"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Publish: "/>
+            <EditText
+                android:id="@+id/publish"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Appointment Receive Date: "/>
+            <EditText
+                android:id="@+id/appointment_receive"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Band: "/>
+            <EditText
+                android:id="@+id/band"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Job No: "/>
+            <EditText
+                android:id="@+id/job_nong"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Structure Designation: "/>
+            <EditText
+                android:id="@+id/structure_designation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Functional Designation: "/>
+            <EditText
+                android:id="@+id/functional_designation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Functional Designation Bangla: "/>
+            <EditText
+                android:id="@+id/functional_designation_bn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Job Objective: "/>
+            <EditText
+                android:id="@+id/job_objective"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Division: "/>
+            <EditText
+                android:id="@+id/division"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Department: "/>
+            <EditText
+                android:id="@+id/department"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Section: "/>
+            <EditText
+                android:id="@+id/section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Additional Charge: "/>
+            <EditText
+                android:id="@+id/additional_charge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Primary Station: "/>
+            <EditText
+                android:id="@+id/primary_station"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Secondary Station: "/>
+            <EditText
+                android:id="@+id/secondary_station"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Project: "/>
+            <EditText
+                android:id="@+id/project"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Work Time: "/>
+            <EditText
+                android:id="@+id/work_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Early Arrival: "/>
+            <EditText
+                android:id="@+id/early_arrival"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Extended Departure: "/>
+            <EditText
+                android:id="@+id/extended_dep"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Temporary Charge: "/>
+            <EditText
+                android:id="@+id/temp_charge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="E-Mail: "/>
+            <EditText
+                android:id="@+id/emall_E_MM"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Software Access: "/>
+            <EditText
+                android:id="@+id/software_access"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Remote Access: "/>
+            <EditText
+                android:id="@+id/remote_access"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Computer: "/>
+            <EditText
+                android:id="@+id/computer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:editable="false"
+                android:focusable="false"
+                android:gravity="end"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Dormitory: "/>
+            <EditText
+                android:id="@+id/dormitory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_weight=".7"
+                android:layout_gravity="center"
+                android:textColor="@color/black"
+                android:text="Structural Position: "/>
+            <Spinner
+                android:layout_gravity="center"
+                android:id="@+id/spinner_struc_pos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin = "5dp"
+                android:layout_weight=".3"
+                android:clickable="false"
+                android:background="@drawable/blue_outline"
+                android:popupBackground="@drawable/blue_outline_white_background"
+                android:spinnerMode="dropdown"/>
+
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Uniform: "/>
+            <EditText
+                android:id="@+id/uniform"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Apartment: "/>
+            <EditText
+                android:id="@+id/apartment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/black"
+                android:enabled="false"
+                android:inputType="textMultiLine"
+                android:clickable="false"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Late Acceptable? "/>
+            <Spinner
+                android:layout_gravity="center"
+                android:id="@+id/spinner_late_acceptable"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight=".3"
+                android:layout_margin = "5dp"
+                android:clickable="false"
+                android:background="@drawable/blue_outline"
+                android:popupBackground="@drawable/blue_outline_white_background"
+                android:spinnerMode="dropdown"/>
+
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:weightSum="1"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_weight=".7"
+                android:textColor="@color/black"
+                android:text="Attendance Bonus: "/>
+            <Spinner
+                android:layout_gravity="center"
+                android:id="@+id/spinner_att_bonus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight=".3"
+                android:layout_margin = "5dp"
+                android:clickable="false"
+                android:background="@drawable/blue_outline"
+                android:popupBackground="@drawable/blue_outline_white_background"
+                android:spinnerMode="dropdown"/>
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+
+</FrameLayout>

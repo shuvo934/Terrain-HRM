@@ -1,0 +1,764 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/back"
+    tools:context=".EmployeeInfo.personal.PersonalData">
+
+    <LinearLayout
+        android:id="@+id/topLay_personal_data"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:background="@drawable/design"
+        android:orientation="vertical"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:fontFamily="@font/russo_one"
+            android:gravity="center"
+            android:text="Personal Information"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/scrollView2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="10dp"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="15dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:background="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout50_personal_data"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/topLay_personal_data">
+
+
+
+
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="15dp"
+            android:background="@color/white"
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_gravity="center"
+                        android:weightSum="1">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_gravity="center"
+                            android:textColor="@color/black"
+                            android:layout_weight=".7"
+                            android:text="Name: "/>
+                        <EditText
+                            android:id="@+id/emp_name_p"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:layout_gravity="center"
+                            android:textStyle="bold"
+                            android:layout_weight=".3"
+                            android:gravity="end"
+                            android:textColor="@color/black"
+                            android:enabled="false"
+                            android:editable="false"
+                            android:focusable="false"
+                            android:inputType="textMultiLine"
+                            android:importantForAutofill="no"
+                            tools:ignore="LabelFor"
+                            android:clickable="false"/>
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_gravity="center"
+                        android:weightSum="1">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_gravity="center"
+                            android:textColor="@color/black"
+                            android:layout_weight=".7"
+                            android:text="Name (Bangla): "/>
+                        <EditText
+                            android:id="@+id/bangla_name_p"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:layout_gravity="center"
+                            android:textStyle="bold"
+                            android:layout_weight=".3"
+                            android:gravity="end"
+                            android:textColor="@color/black"
+                            android:enabled="false"
+                            android:editable="false"
+                            android:focusable="false"
+                            android:inputType="textMultiLine"
+                            android:importantForAutofill="no"
+                            tools:ignore="LabelFor"
+                            android:clickable="false"/>
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_gravity="center"
+                        android:weightSum="1">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_gravity="center"
+                            android:textColor="@color/black"
+                            android:layout_weight=".7"
+                            android:text="Revision No: "/>
+                        <EditText
+                            android:id="@+id/revision_no"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:layout_gravity="center"
+                            android:textStyle="bold"
+                            android:layout_weight=".3"
+                            android:gravity="end"
+                            android:textColor="@color/black"
+                            android:enabled="false"
+                            android:editable="false"
+                            android:focusable="false"
+                            android:inputType="textMultiLine"
+                            android:importantForAutofill="no"
+                            tools:ignore="LabelFor"
+                            android:clickable="false"/>
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:weightSum="1"
+                        android:layout_gravity="center"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_gravity="center"
+                            android:layout_weight=".7"
+                            android:textColor="@color/black"
+                            android:text="Effected Date: "/>
+                        <EditText
+                            android:id="@+id/effected_da"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:layout_weight=".3"
+                            android:layout_gravity="center"
+                            android:textStyle="bold"
+                            android:gravity="end"
+                            android:textColor="@color/black"
+                            android:enabled="false"
+                            android:editable="false"
+                            android:focusable="false"
+                            android:inputType="textMultiLine"
+                            android:clickable="false"
+                            android:importantForAutofill="no"
+                            tools:ignore="LabelFor" />
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:weightSum="1"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_weight=".7"
+                            android:layout_gravity="center"
+                            android:textColor="@color/black"
+                            android:text="Blood Group: "/>
+                        <Spinner
+                            android:layout_gravity="center"
+                            android:id="@+id/spinner_blood"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin = "5dp"
+                            android:layout_weight=".3"
+                            android:clickable="false"
+                            android:background="@drawable/blue_outline"
+                            android:popupBackground="@drawable/blue_outline_white_background"
+                            android:spinnerMode="dropdown"/>
+
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:weightSum="1"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_gravity="center"
+                            android:layout_weight=".7"
+                            android:textColor="@color/black"
+                            android:text="Group Display: "/>
+                        <Spinner
+                            android:layout_gravity="center"
+                            android:id="@+id/spinner_gr_display"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".3"
+                            android:layout_margin = "5dp"
+                            android:clickable="false"
+                            android:background="@drawable/blue_outline"
+                            android:popupBackground="@drawable/blue_outline_white_background"
+                            android:spinnerMode="dropdown"/>
+
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:weightSum="1"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_weight=".7"
+                            android:layout_gravity="center"
+                            android:textColor="@color/black"
+                            android:text="Date of Birth: "/>
+                        <EditText
+                            android:id="@+id/birth"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:layout_weight=".3"
+                            android:layout_gravity="center"
+                            android:textStyle="bold"
+                            android:gravity="end"
+                            android:textColor="@color/black"
+                            android:enabled="false"
+                            android:editable="false"
+                            android:focusable="false"
+                            android:inputType="textMultiLine"
+                            android:clickable="false"
+                            android:importantForAutofill="no"
+                            tools:ignore="LabelFor" />
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:weightSum="1"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_weight=".7"
+                            android:layout_gravity="center"
+                            android:textColor="@color/black"
+                            android:text="Religion: "/>
+                        <Spinner
+                            android:layout_gravity="center"
+                            android:id="@+id/spineer_religion"
+                            android:layout_weight=".3"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin = "5dp"
+                            android:clickable="false"
+                            android:background="@drawable/blue_outline"
+                            android:popupBackground="@drawable/blue_outline_white_background"
+                            android:spinnerMode="dropdown"/>
+
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:weightSum="1"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_weight=".7"
+                            android:layout_gravity="center"
+                            android:textColor="@color/black"
+                            android:text="Nationality: "/>
+                        <EditText
+                            android:id="@+id/nationality"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:layout_weight=".3"
+                            android:layout_gravity="center"
+                            android:textStyle="bold"
+                            android:gravity="end"
+                            android:textColor="@color/black"
+                            android:enabled="false"
+                            android:editable="false"
+                            android:focusable="false"
+                            android:inputType="textMultiLine"
+                            android:clickable="false"
+                            android:importantForAutofill="no"
+                            tools:ignore="LabelFor" />
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:weightSum="1"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_weight=".7"
+                            android:layout_gravity="center"
+                            android:textColor="@color/black"
+                            android:text="Sex: "/>
+                        <Spinner
+                            android:layout_gravity="center"
+                            android:id="@+id/spinner_sex"
+                            android:layout_weight=".3"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin = "5dp"
+                            android:clickable="false"
+                            android:background="@drawable/blue_outline"
+                            android:popupBackground="@drawable/blue_outline_white_background"
+                            android:spinnerMode="dropdown"/>
+
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:weightSum="1"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_weight=".7"
+                            android:layout_gravity="center"
+                            android:textColor="@color/black"
+                            android:text="Family Name: "/>
+                        <EditText
+                            android:id="@+id/family_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:layout_weight=".3"
+                            android:layout_gravity="center"
+                            android:textStyle="bold"
+                            android:gravity="end"
+                            android:textColor="@color/black"
+                            android:enabled="false"
+                            android:editable="false"
+                            android:focusable="false"
+                            android:inputType="textMultiLine"
+                            android:clickable="false"
+                            android:importantForAutofill="no"
+                            tools:ignore="LabelFor" />
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:weightSum="1"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_weight=".7"
+                            android:layout_gravity="center"
+                            android:textColor="@color/black"
+                            android:text="Calling Name: "/>
+                        <EditText
+                            android:id="@+id/calling_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:layout_weight=".3"
+                            android:layout_gravity="center"
+                            android:textStyle="bold"
+                            android:gravity="end"
+                            android:textColor="@color/black"
+                            android:enabled="false"
+                            android:editable="false"
+                            android:focusable="false"
+                            android:inputType="textMultiLine"
+                            android:clickable="false"
+                            android:importantForAutofill="no"
+                            tools:ignore="LabelFor" />
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:weightSum="1"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_weight=".7"
+                            android:layout_gravity="center"
+                            android:textColor="@color/black"
+                            android:text="Personal Email: "/>
+                        <EditText
+                            android:id="@+id/personal_email"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:layout_weight=".3"
+                            android:layout_gravity="center"
+                            android:textStyle="bold"
+                            android:gravity="end"
+                            android:editable="false"
+                            android:focusable="false"
+                            android:textColor="@color/black"
+                            android:enabled="false"
+                            android:inputType="textMultiLine"
+                            android:clickable="false"
+                            android:importantForAutofill="no"
+                            tools:ignore="LabelFor" />
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:weightSum="1"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_weight=".7"
+                            android:layout_gravity="center"
+                            android:textColor="@color/black"
+                            android:text="Present Address: "/>
+                        <EditText
+                            android:id="@+id/present_address"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:layout_weight=".3"
+                            android:layout_gravity="center"
+                            android:textStyle="bold"
+                            android:gravity="end"
+                            android:editable="false"
+                            android:focusable="false"
+                            android:textColor="@color/black"
+                            android:enabled="false"
+                            android:inputType="textMultiLine"
+                            android:clickable="false"
+                            android:importantForAutofill="no"
+                            tools:ignore="LabelFor" />
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:weightSum="1"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_weight=".7"
+                            android:layout_gravity="center"
+                            android:textColor="@color/black"
+                            android:text="Permanent Address: "/>
+                        <EditText
+                            android:id="@+id/permanent_address"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:layout_weight=".3"
+                            android:layout_gravity="center"
+                            android:textStyle="bold"
+                            android:gravity="end"
+                            android:editable="false"
+                            android:focusable="false"
+                            android:textColor="@color/black"
+                            android:enabled="false"
+                            android:inputType="textMultiLine"
+                            android:clickable="false"
+                            android:importantForAutofill="no"
+                            tools:ignore="LabelFor" />
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:weightSum="1"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_weight=".7"
+                            android:layout_gravity="center"
+                            android:textColor="@color/black"
+                            android:text="Marital Status: "/>
+                        <Spinner
+                            android:layout_gravity="center"
+                            android:id="@+id/spinner_marital_status"
+                            android:layout_weight=".3"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin = "5dp"
+                            android:clickable="false"
+                            android:background="@drawable/blue_outline"
+                            android:popupBackground="@drawable/blue_outline_white_background"
+                            android:spinnerMode="dropdown"/>
+
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:weightSum="1"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_weight=".7"
+                            android:layout_gravity="center"
+                            android:textColor="@color/black"
+                            android:text="Present Address Bangla: "/>
+                        <EditText
+                            android:id="@+id/present_address_bangla"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:layout_weight=".3"
+                            android:layout_gravity="center"
+                            android:textStyle="bold"
+                            android:gravity="end"
+                            android:editable="false"
+                            android:focusable="false"
+                            android:textColor="@color/black"
+                            android:enabled="false"
+                            android:inputType="textMultiLine"
+                            android:clickable="false"
+                            android:importantForAutofill="no"
+                            tools:ignore="LabelFor" />
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:weightSum="1"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_weight=".7"
+                            android:layout_gravity="center"
+                            android:textColor="@color/black"
+                            android:text="Permanent Address Bangla: "/>
+                        <EditText
+                            android:id="@+id/permanent_address_bangla"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:layout_weight=".3"
+                            android:layout_gravity="center"
+                            android:textStyle="bold"
+                            android:gravity="end"
+                            android:textColor="@color/black"
+                            android:enabled="false"
+                            android:editable="false"
+                            android:focusable="false"
+                            android:inputType="textMultiLine"
+                            android:clickable="false"
+                            android:importantForAutofill="no"
+                            tools:ignore="LabelFor" />
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:weightSum="1"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_weight=".7"
+                            android:layout_gravity="center"
+                            android:textColor="@color/black"
+                            android:text="Mailing Address: "/>
+                        <Spinner
+                            android:layout_gravity="center"
+                            android:id="@+id/spinner_mailing_address"
+                            android:layout_weight=".3"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin = "5dp"
+                            android:clickable="false"
+                            android:background="@drawable/blue_outline"
+                            android:popupBackground="@drawable/blue_outline_white_background"
+                            android:spinnerMode="dropdown"/>
+
+
+                    </LinearLayout>
+
+
+
+
+
+                    <!--                <com.google.android.material.textfield.TextInputLayout-->
+
+                    <!--                    android:layout_width="match_parent"-->
+                    <!--                    android:layout_height="wrap_content"-->
+                    <!--                    android:hint="Revision No"-->
+                    <!--                    android:layout_weight=".1"-->
+                    <!--                    android:layout_margin="10dp"-->
+                    <!--                    app:helperTextEnabled="true"-->
+                    <!--                    >-->
+                    <!--                    <com.google.android.material.textfield.TextInputEditText-->
+                    <!--                        android:id="@+id/revision_no"-->
+                    <!--                        android:layout_width="match_parent"-->
+                    <!--                        android:layout_height="wrap_content"-->
+                    <!--                        android:ems="10"-->
+                    <!--                        android:clickable="false"-->
+                    <!--                        android:enabled="false"-->
+                    <!--                        android:text=""-->
+                    <!--                        android:textColor="@color/black"-->
+                    <!--                        android:background="@android:color/transparent"-->
+                    <!--                        android:inputType="text"-->
+                    <!--                        />-->
+
+                    <!--                </com.google.android.material.textfield.TextInputLayout>-->
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </ScrollView>
+
+
+
+    </androidx.cardview.widget.CardView>
+
+
+
+    <LinearLayout
+        android:id="@+id/linearLayout50_personal_data"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+
+        <Button
+            android:id="@+id/finish_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="40dp"
+            android:layout_marginEnd="40dp"
+            android:background="@drawable/custom_button"
+            android:text="Close"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:backgroundTint="@null" />
+    </LinearLayout>
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
