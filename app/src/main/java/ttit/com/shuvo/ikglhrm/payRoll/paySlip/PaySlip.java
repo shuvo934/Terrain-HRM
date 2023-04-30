@@ -44,6 +44,7 @@ import ttit.com.shuvo.ikglhrm.leaveAll.leaveStatus.LeaveStatus;
 
 import static ttit.com.shuvo.ikglhrm.Login.userDesignations;
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.OracleConnection.DEFAULT_USERNAME;
 import static ttit.com.shuvo.ikglhrm.OracleConnection.createConnection;
 
 public class PaySlip extends AppCompatActivity {
@@ -910,7 +911,12 @@ public class PaySlip extends AppCompatActivity {
                 total_word = resultSet.getString(28);
             }
 
-            URL = "http://103.56.208.123:7778/reports/rwservlet?hrsikgl+report=D:\\ibrahim_knit\\Reports\\PAY_SLIP.rep+EMPID="+emp_id+"+MMONTH='"+select_month_id+"'";
+            if (DEFAULT_USERNAME.equals("IKGL")) {
+                URL = "http://103.56.208.123:7778/reports/rwservlet?hrsikgl+report=D:\\ibrahim_knit\\Reports\\PAY_SLIP.rep+EMPID="+emp_id+"+MMONTH='"+select_month_id+"'";
+            }
+            else if (DEFAULT_USERNAME.equals("TTRAMS")) {
+                URL = "http://103.56.208.123:7778/reports/rwservlet?hrsikgl+report=D:\\ttit_rams\\Reports\\PAY_SLIP.rep+EMPID="+emp_id+"+MMONTH='"+select_month_id+"'";
+            }
 
             connected = true;
 

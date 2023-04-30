@@ -1,5 +1,6 @@
 package ttit.com.shuvo.ikglhrm.dashboard;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -14,12 +15,19 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
@@ -28,6 +36,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -44,11 +53,14 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.sql.Blob;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -84,6 +96,7 @@ import static ttit.com.shuvo.ikglhrm.Login.isApproved;
 import static ttit.com.shuvo.ikglhrm.Login.isLeaveApproved;
 import static ttit.com.shuvo.ikglhrm.Login.userDesignations;
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.OracleConnection.DEFAULT_USERNAME;
 import static ttit.com.shuvo.ikglhrm.OracleConnection.createConnection;
 import static ttit.com.shuvo.ikglhrm.scheduler.Uploader.channelId;
 
@@ -93,6 +106,7 @@ public class Dashboard extends AppCompatActivity {
     TextView designation;
     TextView department;
     TextView comp;
+    ImageView userImage;
 
     TextView appName;
     ImageView home;
@@ -180,6 +194,7 @@ public class Dashboard extends AppCompatActivity {
     public static final String COMPANY = "COMPANY";
     public static final String SOFTWARE = "SOFTWARE";
     public static final String LIVE_FLAG = "LIVE_FLAG";
+    public static final String DATABASE_NAME = "DATABASE_NAME";
 
     public static final String SCHEDULING_FILE = "SCHEDULING FILE";
     public static final String SCHEDULING_EMP_ID = "SCHEDULING EMP ID";
@@ -200,7 +215,9 @@ public class Dashboard extends AppCompatActivity {
     String hostUserName = "";
     String sessionId = "";
     String osName = "";
-
+    public static int RESULT_LOAD_IMG = 1901;
+    public static Bitmap selectedImage;
+    boolean imageFound = false;
 
     @SuppressLint("HardwareIds")
     @Override
@@ -215,6 +232,7 @@ public class Dashboard extends AppCompatActivity {
         designation = findViewById(R.id.user_desg_dashboard);
         comp = findViewById(R.id.company_name_dashboard);
         userCard = findViewById(R.id.userinfo_card);
+        userImage = findViewById(R.id.user_pic_dashboard);
 
         Intent in = getIntent();
         loginLog_check = in.getBooleanExtra("FROMMAINMENU", true);
@@ -258,6 +276,7 @@ public class Dashboard extends AppCompatActivity {
 
                 isApproved = sharedPreferences.getInt(IS_ATT_APPROVED,0);
                 isLeaveApproved = sharedPreferences.getInt(IS_LEAVE_APPROVED,0);
+                DEFAULT_USERNAME = sharedPreferences.getString(DATABASE_NAME,DEFAULT_USERNAME);
             }
 
 
@@ -440,6 +459,7 @@ public class Dashboard extends AppCompatActivity {
                                     editor1.remove(COMPANY);
                                     editor1.remove(SOFTWARE);
                                     editor1.remove(LIVE_FLAG);
+                                    editor1.remove(DATABASE_NAME);
                                     editor1.apply();
                                     editor1.commit();
 
@@ -451,7 +471,10 @@ public class Dashboard extends AppCompatActivity {
                                         editor.commit();
 
                                         Intent intent1 = new Intent(Dashboard.this, Uploader.class);
-                                        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent1,PendingIntent.FLAG_UPDATE_CURRENT);
+                                        PendingIntent pendingIntent = null;
+                                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                                            pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent1,PendingIntent.FLAG_IMMUTABLE);
+                                        }
                                         alarmManager.cancel(pendingIntent);
                                     }
 
@@ -539,10 +562,106 @@ public class Dashboard extends AppCompatActivity {
             }
         });
 
+//        userImage.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+//                photoPickerIntent.setType("image/*");
+////                imagePickerActivityResult.launch(photoPickerIntent);
+//                startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);
+//            }
+//        });
+
         deleteSharedPreferences(getApplicationContext());
 
     }
 
+//    public static String getPath( Context context, Uri uri ) {
+//        String result = null;
+//        String[] proj = { MediaStore.Images.Media.DATA };
+//        Cursor cursor = context.getContentResolver( ).query( uri, proj, null, null, null );
+//        if(cursor != null){
+//            if ( cursor.moveToFirst( ) ) {
+//                int column_index = cursor.getColumnIndexOrThrow( proj[0] );
+//                result = cursor.getString( column_index );
+//            }
+//            cursor.close( );
+//        }
+//        if(result == null) {
+//            result = "Not found";
+//        }
+//        return result;
+//    }
+//
+//    public static Bitmap modifyOrientation(Bitmap bitmap, String image_absolute_path) throws IOException {
+//        ExifInterface ei = new ExifInterface(image_absolute_path);
+//        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+//
+//        switch (orientation) {
+//            case ExifInterface.ORIENTATION_ROTATE_90:
+//                return rotate(bitmap, 90);
+//
+//            case ExifInterface.ORIENTATION_ROTATE_180:
+//                return rotate(bitmap, 180);
+//
+//            case ExifInterface.ORIENTATION_ROTATE_270:
+//                return rotate(bitmap, 270);
+//
+//            case ExifInterface.ORIENTATION_FLIP_HORIZONTAL:
+//                return flip(bitmap, true, false);
+//
+//            case ExifInterface.ORIENTATION_FLIP_VERTICAL:
+//                return flip(bitmap, false, true);
+//
+//            default:
+//                return bitmap;
+//        }
+//    }
+//
+//    public static Bitmap rotate(Bitmap bitmap, float degrees) {
+//        Matrix matrix = new Matrix();
+//        matrix.postRotate(degrees);
+//        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+//    }
+//
+//    public static Bitmap flip(Bitmap bitmap, boolean horizontal, boolean vertical) {
+//        Matrix matrix = new Matrix();
+//        matrix.preScale(horizontal ? -1 : 1, vertical ? -1 : 1);
+//        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+//    }
+//
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (resultCode == RESULT_OK) {
+//            try {
+//                final Uri imageUri = data.getData();
+//                final InputStream imageStream = getContentResolver().openInputStream(imageUri);
+//                selectedImage = BitmapFactory.decodeStream(imageStream);
+//                String picturePath = getPath(getApplicationContext(), imageUri);
+//                System.out.println(picturePath);
+//                selectedImage = modifyOrientation(selectedImage,picturePath);
+//                Intent intent = new Intent(Dashboard.this,UpdatePic.class);
+//                intent.putExtra("EMP_ID",emp_id);
+//                startActivity(intent);
+//
+////                ImageDialogue imageDialogue = new ImageDialogue();
+////                imageDialogue.show(getSupportFragmentManager(),"IMAGE");
+////                Glide.with(UserProfile.this)
+////                        .load(selectedImage)
+////                        .into(userImage);
+//            } catch (FileNotFoundException e) {
+//                e.printStackTrace();
+//                Toast.makeText(Dashboard.this, "Something went wrong", Toast.LENGTH_LONG).show();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//
+//        }else {
+//            Toast.makeText(Dashboard.this, "You haven't picked Image",Toast.LENGTH_LONG).show();
+//        }
+//    }
+//
     private boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
@@ -879,7 +998,7 @@ public class Dashboard extends AppCompatActivity {
         boolean isMobile = false;
         try {
             ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo nInfo = cm.getActiveNetworkInfo();
+            @SuppressLint("MissingPermission") NetworkInfo nInfo = cm.getActiveNetworkInfo();
             connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
             return connected;
         } catch (Exception e) {
@@ -1115,7 +1234,15 @@ public class Dashboard extends AppCompatActivity {
                     float barWidth = 0.46f;
 
                     BarData leavedata = new BarData(set1, set2);
-                    leavedata.setValueTextSize(12);
+                    if (earn.size() > 5) {
+                        leavedata.setValueTextSize(8);
+                    }
+                    else if (earn.size() > 3){
+                        leavedata.setValueTextSize(10);
+                    }
+                    else {
+                        leavedata.setValueTextSize(12);
+                    }
                     leavedata.setBarWidth(barWidth); // set the width of each bar
                     leaveChart.animateY(1000);
                     leaveChart.setData(leavedata);
@@ -1156,7 +1283,10 @@ public class Dashboard extends AppCompatActivity {
                     createNotificationChannel();
 
                     Intent intent = new Intent(Dashboard.this, Uploader.class);
-                    PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent,PendingIntent.FLAG_UPDATE_CURRENT);
+                    PendingIntent pendingIntent = null;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                        pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent,PendingIntent.FLAG_IMMUTABLE);
+                    }
 
 
                     Calendar calendar = Calendar.getInstance();
@@ -1176,6 +1306,15 @@ public class Dashboard extends AppCompatActivity {
                     alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis(),AlarmManager.INTERVAL_HALF_HOUR,pendingIntent);
                 }
 
+                if (imageFound) {
+                    Glide.with(Dashboard.this)
+                            .load(selectedImage)
+                            .fitCenter()
+                            .into(userImage);
+                }
+                else {
+                    userImage.setImageResource(R.drawable.profile);
+                }
                 conn = false;
                 connected = false;
 
@@ -1294,7 +1433,15 @@ public class Dashboard extends AppCompatActivity {
                     float barWidth = 0.46f;
 
                     BarData leavedata = new BarData(set1, set2);
-                    leavedata.setValueTextSize(12);
+                    if (earn.size() > 5) {
+                        leavedata.setValueTextSize(8);
+                    }
+                    else if (earn.size() > 3){
+                        leavedata.setValueTextSize(10);
+                    }
+                    else {
+                        leavedata.setValueTextSize(12);
+                    }
                     leavedata.setBarWidth(barWidth); // set the width of each bar
                     leaveChart.animateY(1000);
                     leaveChart.setData(leavedata);
@@ -1805,7 +1952,7 @@ public class Dashboard extends AppCompatActivity {
 //                    "AND EM.LBEM_EMP_ID = "+emp_id+"\n" +
 //                    "AND TO_CHAR (YD.LBYD_YEAR, 'YYYY') = TO_CHAR (TO_DATE('"+ leaveDate +"'), 'YYYY')");
 
-            ResultSet rs=stmt.executeQuery("SELECT EM.LBEM_EMP_ID, lc.lc_short_code, case when lc.lc_short_code = 'LP' then 0 else get_leave_balance(EM.LBEM_EMP_ID,'"+leaveDate+"', lc.lc_short_code) end balance,LD.LBD_CURRENT_QTY\n" +
+            ResultSet rs=stmt.executeQuery("SELECT EM.LBEM_EMP_ID, lc.lc_short_code, case when lc.lc_short_code = 'LP' then 0 else get_leave_balance(EM.LBEM_EMP_ID,'"+leaveDate+"', lc.lc_short_code) end balance,NVL(LD.LBD_CURRENT_QTY,0) + NVL(ld.lbd_opening_qty,0)\n" +
                     "FROM LEAVE_BALANCE_EMP_MST  EM,\n" +
                     "LEAVE_BALANCE_YEAR_DTL YD,\n" +
                     "LEAVE_BALANCE_DTL      LD,\n" +
@@ -1868,6 +2015,8 @@ public class Dashboard extends AppCompatActivity {
             holiday = "";
             late = "";
             early = "";
+            imageFound = false;
+            selectedImage = null;
 
 //            beginDate = "01-MAR-22";
 //            lastDate = "31-MAR-22";
@@ -2003,7 +2152,7 @@ public class Dashboard extends AppCompatActivity {
 //                    "and ld.lbd_lc_id = lc.lc_id\n" +
 //                    "AND EM.LBEM_EMP_ID = "+emp_id+"\n" +
 //                    "AND TO_CHAR (YD.LBYD_YEAR, 'YYYY') = TO_CHAR (TO_DATE('"+ leaveDate +"'), 'YYYY')");
-            ResultSet rs2 = stmt.executeQuery("SELECT EM.LBEM_EMP_ID, lc.lc_short_code, case when lc.lc_short_code = 'LP' then 0 else get_leave_balance(EM.LBEM_EMP_ID,'"+leaveDate+"', lc.lc_short_code) end balance,LD.LBD_CURRENT_QTY\n" +
+            ResultSet rs2 = stmt.executeQuery("SELECT EM.LBEM_EMP_ID, lc.lc_short_code, case when lc.lc_short_code = 'LP' then 0 else get_leave_balance(EM.LBEM_EMP_ID,'"+leaveDate+"', lc.lc_short_code) end balance,NVL(LD.LBD_CURRENT_QTY,0) + NVL(ld.lbd_opening_qty,0)\n" +
                     "FROM LEAVE_BALANCE_EMP_MST  EM,\n" +
                     "LEAVE_BALANCE_YEAR_DTL YD,\n" +
                     "LEAVE_BALANCE_DTL      LD,\n" +
@@ -2085,6 +2234,21 @@ public class Dashboard extends AppCompatActivity {
                 callableStatement1.close();
             }
 
+            ResultSet imageResult = stmt.executeQuery("SELECT EMP_IMAGE FROM EMP_MST WHERE EMP_ID = "+emp_id+"");
+
+            while (imageResult.next()) {
+                Blob b = imageResult.getBlob(1);
+                if (b == null) {
+                    imageFound = false;
+                }
+                else {
+                    imageFound = true;
+                    byte[] barr =b.getBytes(1,(int)b.length());
+                    selectedImage = BitmapFactory.decodeByteArray(barr,0,barr.length);
+                }
+            }
+            imageResult.close();
+            stmt.close();
 
             connected = true;
 

@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -442,7 +443,7 @@ public class DirectoryWithDivision extends AppCompatActivity {
         boolean isMobile = false;
         try {
             ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo nInfo = cm.getActiveNetworkInfo();
+            @SuppressLint("MissingPermission") NetworkInfo nInfo = cm.getActiveNetworkInfo();
             connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
             return connected;
         } catch (Exception e) {
@@ -563,6 +564,7 @@ public class DirectoryWithDivision extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         dialog.dismiss();
+                        finish();
                     }
                 });
             }
@@ -783,21 +785,40 @@ public class DirectoryWithDivision extends AppCompatActivity {
             }
 
 
-            ResultSet rs=stmt.executeQuery(" SELECT EMP_ID,\n" +
-                    "    EMP_NAME,\n" +
-                    "       DEPT_NAME,\n" +
-                    "       DIVM_NAME,\n" +
-                    "       DESIG_NAME,\n" +
-                    "       PHONE_NUMBER,\n" +
-                    "       JOB_EMAIL EMAIL\n" +
-                    "  FROM EMP_DETAILS_V\n" +
-                    "  where divm_id = "+div_id+"" +
-                    "and emp_id <> "+emp_id+"");
+//            ResultSet rs=stmt.executeQuery(" SELECT EMP_ID,\n" +
+//                    "    EMP_NAME,\n" +
+//                    "       DEPT_NAME,\n" +
+//                    "       DIVM_NAME,\n" +
+//                    "       DESIG_NAME,\n" +
+//                    "       PHONE_NUMBER,\n" +
+//                    "       JOB_EMAIL EMAIL\n" +
+//                    "  FROM EMP_DETAILS_V\n" +
+//                    "  where divm_id = "+div_id+"" +
+//                    "and emp_id <> "+emp_id+"");
 
 
+            ResultSet rs = stmt.executeQuery("SELECT\n" +
+                    "emp_mst.emp_id,\n" +
+                    "emp_mst.emp_name,\n" +
+                    "dept_mst.dept_name,\n" +
+                    "division_mst.divm_name,\n" +
+                    "desig_mst.desig_name,\n" +
+                    "isp_user.usr_contact,\n" +
+                    "isp_user.usr_email\n" +
+                    "FROM\n" +
+                    "emp_mst,job_setup_dtl,job_setup_mst,division_mst,dept_mst,desig_mst,isp_user\n" +
+                    "WHERE\n" +
+                    "emp_mst.emp_jsd_id = job_setup_dtl.jsd_id\n" +
+                    "AND job_setup_dtl.jsd_jsm_id = job_setup_mst.jsm_id\n" +
+                    "AND job_setup_mst.jsm_divm_id = division_mst.divm_id\n" +
+                    "AND job_setup_mst.jsm_dept_id = dept_mst.dept_id\n" +
+                    "AND job_setup_mst.jsm_desig_id = desig_mst.desig_id\n" +
+                    "AND emp_mst.emp_id = isp_user.usr_emp_id\n" +
+                    "AND division_mst.divm_id = "+div_id+"\n" +
+                    "AND emp_mst.emp_id <> "+emp_id+"");
 
             while(rs.next())  {
-                allDirectoryLists.add(new DirectoryList(rs.getString(1),rs.getString(2),rs.getString(4),rs.getString(3),rs.getString(5),rs.getString(7),"2"));
+                allDirectoryLists.add(new DirectoryList(rs.getString(1),rs.getString(2),rs.getString(4),rs.getString(3),rs.getString(5),rs.getString(7),rs.getString(6),"2"));
 
                 String p_id = rs.getString(1);
                 System.out.println("DIRECTORY: " +p_id);
@@ -862,21 +883,41 @@ public class DirectoryWithDivision extends AppCompatActivity {
             }
 //            categoryLists.add(new ReceiveTypeList("","All Categories"));
 
-            ResultSet rs=stmt.executeQuery(" SELECT EMP_ID,\n" +
-                    "    EMP_NAME,\n" +
-                    "       DEPT_NAME,\n" +
-                    "       DIVM_NAME,\n" +
-                    "       DESIG_NAME,\n" +
-                    "       PHONE_NUMBER,\n" +
-                    "       JOB_EMAIL EMAIL\n" +
-                    "  FROM EMP_DETAILS_V\n" +
-                    "  where divm_id = "+div_id+"" +
-                    "and emp_id <> "+emp_id+"");
+//            ResultSet rs=stmt.executeQuery(" SELECT EMP_ID,\n" +
+//                    "    EMP_NAME,\n" +
+//                    "       DEPT_NAME,\n" +
+//                    "       DIVM_NAME,\n" +
+//                    "       DESIG_NAME,\n" +
+//                    "       PHONE_NUMBER,\n" +
+//                    "       JOB_EMAIL EMAIL\n" +
+//                    "  FROM EMP_DETAILS_V\n" +
+//                    "  where divm_id = "+div_id+"" +
+//                    "and emp_id <> "+emp_id+"");
 
+            // no isp_user for hamidur rahman
+            ResultSet rs = stmt.executeQuery("SELECT\n" +
+                    "emp_mst.emp_id,\n" +
+                    "emp_mst.emp_name,\n" +
+                    "dept_mst.dept_name,\n" +
+                    "division_mst.divm_name,\n" +
+                    "desig_mst.desig_name,\n" +
+                    "isp_user.usr_contact,\n" +
+                    "isp_user.usr_email\n" +
+                    "FROM\n" +
+                    "emp_mst,job_setup_dtl,job_setup_mst,division_mst,dept_mst,desig_mst,isp_user\n" +
+                    "WHERE\n" +
+                    "emp_mst.emp_jsd_id = job_setup_dtl.jsd_id\n" +
+                    "AND job_setup_dtl.jsd_jsm_id = job_setup_mst.jsm_id\n" +
+                    "AND job_setup_mst.jsm_divm_id = division_mst.divm_id\n" +
+                    "AND job_setup_mst.jsm_dept_id = dept_mst.dept_id\n" +
+                    "AND job_setup_mst.jsm_desig_id = desig_mst.desig_id\n" +
+                    "AND emp_mst.emp_id = isp_user.usr_emp_id\n" +
+                    "AND division_mst.divm_id = "+div_id+"\n" +
+                    "AND emp_mst.emp_id <> "+emp_id+"");
 
 
             while(rs.next())  {
-                allDirectoryLists.add(new DirectoryList(rs.getString(1),rs.getString(2),rs.getString(4),rs.getString(3),rs.getString(5),rs.getString(7),"2"));
+                allDirectoryLists.add(new DirectoryList(rs.getString(1),rs.getString(2),rs.getString(4),rs.getString(3),rs.getString(5),rs.getString(7),rs.getString(6),"2"));
 
                 String p_id = rs.getString(1);
                 System.out.println("DIRECTORY: " +p_id);
@@ -928,7 +969,16 @@ public class DirectoryWithDivision extends AppCompatActivity {
                 dep_id = null;
             }
 
-            ResultSet resultSet1 = stmt.executeQuery("select distinct desig_id, desig_name from emp_details_v where desig_name is not NULL and dept_id = "+dep_id+" and divm_id = "+div_id+"\n");
+//            ResultSet resultSet1 = stmt.executeQuery("select distinct desig_id, desig_name from emp_details_v where desig_name is not NULL and dept_id = "+dep_id+" and divm_id = "+div_id+"\n");
+
+            ResultSet resultSet1 = stmt.executeQuery("select distinct desig_mst.desig_id, desig_mst.desig_name \n" +
+                    "from desig_mst,job_setup_mst,dept_mst,division_mst \n" +
+                    "where desig_mst.desig_name is not NULL\n" +
+                    "and desig_mst.desig_id = job_setup_mst.jsm_desig_id\n" +
+                    "and job_setup_mst.jsm_divm_id = division_mst.divm_id\n" +
+                    "AND job_setup_mst.jsm_dept_id = dept_mst.dept_id\n" +
+                    "AND division_mst.divm_id = "+div_id+"\n" +
+                    "AND dept_mst.dept_id = "+dep_id+"");
 
             while (resultSet1.next()) {
                 desLists.add(new TwoItemLists(resultSet1.getString(1),resultSet1.getString(2)));

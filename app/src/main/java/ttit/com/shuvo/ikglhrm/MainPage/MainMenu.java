@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
@@ -44,6 +45,7 @@ import static ttit.com.shuvo.ikglhrm.Login.isLeaveApproved;
 import static ttit.com.shuvo.ikglhrm.Login.userDesignations;
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
 import static ttit.com.shuvo.ikglhrm.dashboard.Dashboard.alarmManager;
+import static ttit.com.shuvo.ikglhrm.dashboard.Dashboard.selectedImage;
 import static ttit.com.shuvo.ikglhrm.dashboard.Dashboard.trackerAvailable;
 
 public class MainMenu extends AppCompatActivity {
@@ -52,6 +54,7 @@ public class MainMenu extends AppCompatActivity {
     TextView designation;
     TextView department;
     TextView comp;
+    ImageView userImage;
 
     CardView personalInfo;
     CardView attendance;
@@ -97,6 +100,7 @@ public class MainMenu extends AppCompatActivity {
     public static final String COMPANY = "COMPANY";
     public static final String SOFTWARE = "SOFTWARE";
     public static final String LIVE_FLAG = "LIVE_FLAG";
+    public static final String DATABASE_NAME = "DATABASE_NAME";
 
 //    @Override
 //    public void onWindowFocusChanged(boolean hasFocus) {
@@ -155,6 +159,7 @@ public class MainMenu extends AppCompatActivity {
         userName = findViewById(R.id.user_name);
         department = findViewById(R.id.user_depart);
         designation = findViewById(R.id.user_desg);
+        userImage = findViewById(R.id.user_pic);
 
         personalInfo = findViewById(R.id.personal_info);
         attendance = findViewById(R.id.attendanceee);
@@ -163,6 +168,15 @@ public class MainMenu extends AppCompatActivity {
         directory = findViewById(R.id.directory);
 
 //        logout = findViewById(R.id.main_menu_log_out);
+        if (selectedImage != null) {
+            Glide.with(MainMenu.this)
+                    .load(selectedImage)
+                    .fitCenter()
+                    .into(userImage);
+        }
+        else {
+            userImage.setImageResource(R.drawable.profile);
+        }
 
         if (userInfoLists.size() != 0) {
             String firstname = userInfoLists.get(0).getUser_fname();
@@ -297,6 +311,7 @@ public class MainMenu extends AppCompatActivity {
                                     editor1.remove(COMPANY);
                                     editor1.remove(SOFTWARE);
                                     editor1.remove(LIVE_FLAG);
+                                    editor1.remove(DATABASE_NAME);
                                     editor1.apply();
                                     editor1.commit();
 
@@ -308,7 +323,10 @@ public class MainMenu extends AppCompatActivity {
                                         editor.commit();
 
                                         Intent intent1 = new Intent(MainMenu.this, Uploader.class);
-                                        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent1,PendingIntent.FLAG_UPDATE_CURRENT);
+                                        PendingIntent pendingIntent = null;
+                                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                                            pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent1,PendingIntent.FLAG_IMMUTABLE);
+                                        }
                                         alarmManager.cancel(pendingIntent);
                                     }
 

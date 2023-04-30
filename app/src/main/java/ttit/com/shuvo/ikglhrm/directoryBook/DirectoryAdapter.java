@@ -77,9 +77,19 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.Dire
             }
         }
         else if (no.equals("2")) {
-            for (int i = 0; i < DirectoryWithDivision.allPhoneLists.size(); i++) {
-                if (id.equals(DirectoryWithDivision.allPhoneLists.get(i).getP_emp_id())) {
-                    newArray.add(new PhoneList(DirectoryWithDivision.allPhoneLists.get(i).getP_emp_id(),DirectoryWithDivision.allPhoneLists.get(i).getPhone()));
+            if(DirectoryWithDivision.allPhoneLists.size() != 0) {
+                for (int i = 0; i < DirectoryWithDivision.allPhoneLists.size(); i++) {
+                    if (id.equals(DirectoryWithDivision.allPhoneLists.get(i).getP_emp_id())) {
+                        newArray.add(new PhoneList(DirectoryWithDivision.allPhoneLists.get(i).getP_emp_id(), DirectoryWithDivision.allPhoneLists.get(i).getPhone()));
+                    }
+                }
+            }
+        }
+
+        if (newArray.size() == 0) {
+            if (itemList.getContact_no() != null) {
+                if (!itemList.getContact_no().isEmpty()) {
+                    newArray.add(new PhoneList(id, itemList.getContact_no()));
                 }
             }
         }

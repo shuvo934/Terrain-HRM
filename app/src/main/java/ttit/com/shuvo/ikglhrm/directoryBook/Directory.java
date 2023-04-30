@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -504,7 +505,7 @@ public class Directory extends AppCompatActivity {
         boolean isMobile = false;
         try {
             ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo nInfo = cm.getActiveNetworkInfo();
+            @SuppressLint("MissingPermission") NetworkInfo nInfo = cm.getActiveNetworkInfo();
             connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
             return connected;
         } catch (Exception e) {
@@ -633,7 +634,7 @@ public class Directory extends AppCompatActivity {
 
 
             while(rs.next())  {
-                allDirectoryLists.add(new DirectoryList(rs.getString(1),rs.getString(2),rs.getString(4),rs.getString(3),rs.getString(5),rs.getString(7),"1"));
+                allDirectoryLists.add(new DirectoryList(rs.getString(1),rs.getString(2),rs.getString(4),rs.getString(3),rs.getString(5),rs.getString(7),rs.getString(6),"1"));
 
                 String p_id = rs.getString(1);
                 System.out.println("DIRECTORY: " +p_id);

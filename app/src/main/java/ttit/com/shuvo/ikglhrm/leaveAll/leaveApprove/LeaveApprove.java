@@ -3,6 +3,7 @@ package ttit.com.shuvo.ikglhrm.leaveAll.leaveApprove;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.net.ConnectivityManager;
@@ -89,7 +90,7 @@ public class LeaveApprove extends AppCompatActivity {
     String reason_desc = "";
     String comm = "";
 
-    String sl_check = null;
+    String sl_check = "0";
     String approveSuccess = "";
     String rejectSuccess = "";
 
@@ -342,7 +343,7 @@ public class LeaveApprove extends AppCompatActivity {
         boolean isMobile = false;
         try {
             ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo nInfo = cm.getActiveNetworkInfo();
+            @SuppressLint("MissingPermission") NetworkInfo nInfo = cm.getActiveNetworkInfo();
             connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
             return connected;
         } catch (Exception e) {
@@ -842,7 +843,7 @@ public class LeaveApprove extends AppCompatActivity {
                     " WHERE     LEAVE.LA_EMP_ID = EMP_MST.EMP_ID\n" +
                     "       AND LA_APP_CODE NOT IN\n" +
                     "       (SELECT CASE\n" +
-                    "          WHEN COM_PACK.GET_EMPLOYEE_ID_BY_USER ('"+emp_code+"') =\n" +
+                    "          WHEN "+user_id+" =\n" +
                     "                  LAD_FORWARD_TO_ID\n" +
                     "          THEN\n" +
                     "             'No code'\n" +

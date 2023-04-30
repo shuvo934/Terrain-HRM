@@ -13,6 +13,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.ComponentName;
@@ -22,6 +23,7 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -59,6 +61,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -70,6 +73,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
@@ -128,6 +132,9 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
     ImageView autoStartIcon;
 
     ActivityResultLauncher<Intent> someActivityResultLauncher;
+    String officeLatitude = "";
+    String officeLongitude = "";
+    String coverage = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -283,7 +290,6 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
         mMap = googleMap;
         final LatLng[] lastLatLongitude = {new LatLng(0, 0)};
 
-        enableGPS();
 
         SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yy, hh:mm:ss aa", Locale.getDefault());
 
@@ -317,33 +323,146 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
             @Override
             public void onClick(View v) {
                 if (!inTime.isEmpty()) {
-                    if (tracking_flag == 1 ) {
-                        if (isMyServiceRunning(Service.class)) {
+                    LatLng c_latLng = new LatLng(0,0);
+                    if (officeLatitude != null && officeLongitude != null) {
+                        if (!officeLatitude.isEmpty() && !officeLongitude.isEmpty()) {
+                            c_latLng = new LatLng(Double.parseDouble(officeLatitude),Double.parseDouble(officeLongitude));
+                        }
+                    }
+                    if (c_latLng.latitude != 0 && c_latLng.longitude != 0) {
+                        float[] distance = new float[1];
+                        Location.distanceBetween(c_latLng.latitude,c_latLng.longitude,lastLatLongitude[0].latitude,lastLatLongitude[0].longitude,distance);
 
-                            AlertDialog.Builder builder = new AlertDialog.Builder(AttendanceGive.this);
-                            builder.setTitle("Attendance!")
-                                    .setMessage("Do you want to punch & stop your tracker?")
-                                    .setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
+                        float radius = 0;
+                        if (coverage != null) {
+                            if (!coverage.isEmpty()) {
+                                radius = Float.parseFloat(coverage);
+                            }
+                        }
+
+                        if (distance[0] <= radius || radius == 0) {
+                            if (tracking_flag == 1 ) {
+                                if (isMyServiceRunning(Service.class)) {
+
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(AttendanceGive.this);
+                                    builder.setTitle("Attendance!")
+                                            .setMessage("Do you want to punch & stop your tracker?")
+                                            .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
 
 
-                                            new CheckAddress().execute();
+                                                    new CheckAddress().execute();
 
-                                        }
-                                    })
-                                    .setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
+                                                }
+                                            })
+                                            .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
 
-                                        }
-                                    });
-                            AlertDialog alert = builder.create();
-                            alert.show();
+                                                }
+                                            });
+                                    AlertDialog alert = builder.create();
+                                    alert.show();
+                                } else {
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(AttendanceGive.this);
+                                    builder.setTitle("Attendance!")
+                                            .setMessage("Do you want to punch & start your tracker?")
+                                            .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+
+
+                                                    new CheckAddress().execute();
+
+                                                }
+                                            })
+                                            .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+
+                                                }
+                                            });
+                                    AlertDialog alert = builder.create();
+                                    alert.show();
+                                }
+                            } else {
+                                AlertDialog.Builder builder = new AlertDialog.Builder(AttendanceGive.this);
+                                builder.setTitle("Punch Attendance!")
+                                        .setMessage("Do you want to punch now?")
+                                        .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+
+
+                                                new CheckAddress().execute();
+
+                                            }
+                                        })
+                                        .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+
+                                            }
+                                        });
+                                AlertDialog alert = builder.create();
+                                alert.show();
+                            }
+                        }
+                        else {
+                            Toast.makeText(getApplicationContext(),"You are not around your office area",Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    else {
+                        if (tracking_flag == 1) {
+                            if (isMyServiceRunning(Service.class)) {
+
+                                AlertDialog.Builder builder = new AlertDialog.Builder(AttendanceGive.this);
+                                builder.setTitle("Attendance!")
+                                        .setMessage("Do you want to punch & stop your tracker?")
+                                        .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+
+
+                                                new CheckAddress().execute();
+
+                                            }
+                                        })
+                                        .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+
+                                            }
+                                        });
+                                AlertDialog alert = builder.create();
+                                alert.show();
+                            } else {
+                                AlertDialog.Builder builder = new AlertDialog.Builder(AttendanceGive.this);
+                                builder.setTitle("Attendance!")
+                                        .setMessage("Do you want to punch & start your tracker?")
+                                        .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+
+
+                                                new CheckAddress().execute();
+
+                                            }
+                                        })
+                                        .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+
+                                            }
+                                        });
+                                AlertDialog alert = builder.create();
+                                alert.show();
+                            }
                         } else {
                             AlertDialog.Builder builder = new AlertDialog.Builder(AttendanceGive.this);
-                            builder.setTitle("Attendance!")
-                                    .setMessage("Do you want to punch & start your tracker?")
+                            builder.setTitle("Punch Attendance!")
+                                    .setMessage("Do you want to punch now?")
                                     .setPositiveButton("YES", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
@@ -362,27 +481,6 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
                             AlertDialog alert = builder.create();
                             alert.show();
                         }
-                    } else {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(AttendanceGive.this);
-                        builder.setTitle("Punch Attendance!")
-                                .setMessage("Do you want to punch now?")
-                                .setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-
-
-                                        new CheckAddress().execute();
-
-                                    }
-                                })
-                                .setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-
-                                    }
-                                });
-                        AlertDialog alert = builder.create();
-                        alert.show();
                     }
 
                 } else {
@@ -399,7 +497,7 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
             }
         });
 
-
+        new LocationGet().execute();
     }
 
     @Override
@@ -451,6 +549,7 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
         }
     }
 
+    @SuppressLint("MissingPermission")
     public void zoomToUserLocation(){
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -602,7 +701,7 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
         boolean isMobile = false;
         try {
             ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo nInfo = cm.getActiveNetworkInfo();
+            @SuppressLint("MissingPermission") NetworkInfo nInfo = cm.getActiveNetworkInfo();
             connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
             return connected;
         } catch (Exception e) {
@@ -800,9 +899,98 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
         }
     }
 
+    public class LocationGet extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            waitProgress.show(getSupportFragmentManager(),"WaitBar");
+            waitProgress.setCancelable(false);
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (isConnected() && isOnline()) {
+                GettingOfficeLocation();
+                if (connected) {
+                    conn = true;
+                    message= "Internet Connected";
+                }
+
+            } else {
+                conn = false;
+                message = "Not Connected";
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            waitProgress.dismiss();
+            if (conn) {
+//                LatLng c_latLng = new LatLng(0,0);
+//                if (officeLatitude != null && officeLongitude != null) {
+//                    if (!officeLatitude.isEmpty() && !officeLongitude.isEmpty()) {
+//                        c_latLng = new LatLng(Double.parseDouble(officeLatitude),Double.parseDouble(officeLongitude));
+//                    }
+//                }
+//                MarkerOptions markerOptions = new MarkerOptions();
+//                markerOptions.position(c_latLng);
+//
+//                mMap.addMarker(markerOptions);
+//
+//                CircleOptions circleOptions = new CircleOptions();
+//                circleOptions.center(c_latLng);
+//                circleOptions.strokeWidth(4);
+//                circleOptions.strokeColor(Color.parseColor("#d95206"));
+//                circleOptions.fillColor(Color.argb(30,242,165,21));
+//                circleOptions.radius(40);
+//                mMap.addCircle(circleOptions);
+                enableGPS();
+
+                conn = false;
+                connected = false;
+
+
+            }else {
+                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+                AlertDialog dialog = new AlertDialog.Builder(AttendanceGive.this)
+                        .setMessage("Please Check Your Internet Connection")
+                        .setPositiveButton("Retry", null)
+                        .setNegativeButton("Cancel",null)
+                        .show();
+
+                dialog.setCancelable(false);
+                dialog.setCanceledOnTouchOutside(false);
+                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                positive.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        new LocationGet().execute();
+                        dialog.dismiss();
+                    }
+                });
+                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+                negative.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                        finish();
+                    }
+                });
+            }
+        }
+    }
+
     public void AttendanceClicked() {
         try {
             this.connection = createConnection();
+            conn = false;
+            connected = false;
 
             Statement stmt = connection.createStatement();
 
@@ -817,6 +1005,39 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
             callableStatement.execute();
 
             callableStatement.close();
+
+            connected = true;
+            connection.close();
+
+        }
+        catch (Exception e) {
+
+            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
+            Log.i("ERRRRR", e.getLocalizedMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void GettingOfficeLocation() {
+        try {
+            this.connection = createConnection();
+            connected = false;
+
+            Statement stmt = connection.createStatement();
+
+            ResultSet resultSet = stmt.executeQuery("Select COA_LATITUDE, COA_LONGITUDE, COA_COVERAGE \n" +
+                    "FROM\n" +
+                    "COMPANY_OFFICE_ADDRESS, EMP_JOB_HISTORY \n" +
+                    "WHERE \n" +
+                    "COMPANY_OFFICE_ADDRESS.COA_ID = EMP_JOB_HISTORY.JOB_PRI_COA_ID\n" +
+                    "AND EMP_JOB_HISTORY.JOB_EMP_ID = "+emp_id+"");
+
+            while (resultSet.next()) {
+                officeLatitude = resultSet.getString(1);
+                officeLongitude = resultSet.getString(2);
+                coverage = resultSet.getString(3);
+            }
+            resultSet.close();
 
             connected = true;
             connection.close();

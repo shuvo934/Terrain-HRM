@@ -36,9 +36,9 @@ import ttit.com.shuvo.ikglhrm.dashboard.Dashboard;
 public class MainActivity extends AppCompatActivity {
 
     TextView permissionMsg;
-    private Handler mHandler = new Handler();
-    private int FINE_LOCATION_ACCESS_REQUEST_CODE = 10001;
-    private int MY_IGNORE_OPTIMIZATION_REQUEST = 101010;
+    private final Handler mHandler = new Handler();
+    private final int FINE_LOCATION_ACCESS_REQUEST_CODE = 10001;
+    private final int MY_IGNORE_OPTIMIZATION_REQUEST = 101010;
 
     SharedPreferences sharedPreferences;
     boolean loginfile = false;

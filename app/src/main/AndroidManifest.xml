@@ -25,7 +25,7 @@
         android:name="android.permission.MANAGE_DOCUMENTS"
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <application
         android:name=".attendance.trackService.Notification"
@@ -39,7 +39,10 @@
         android:theme="@style/Theme.IKGLHRM"
         android:usesCleartextTraffic="true"
         tools:targetApi="n">
-        <activity android:name=".directoryBook.DirectoryWithDivision"></activity>
+        <activity
+            android:name=".dashboard.UpdatePic"
+            android:exported="false" />
+        <activity android:name=".directoryBook.DirectoryWithDivision" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -97,7 +100,9 @@
         <activity
             android:name=".Login"
             android:screenOrientation="portrait" />
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

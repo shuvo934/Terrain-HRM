@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -53,6 +54,7 @@ import ttit.com.shuvo.ikglhrm.attendance.status.StatusList;
 
 import static ttit.com.shuvo.ikglhrm.Login.userDesignations;
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.OracleConnection.DEFAULT_USERNAME;
 import static ttit.com.shuvo.ikglhrm.OracleConnection.createConnection;
 
 public class LeaveStatus extends AppCompatActivity {
@@ -286,6 +288,28 @@ public class LeaveStatus extends AppCompatActivity {
                         selected_month_full = monthName;
                         year_full = String.valueOf(year);
                         selected_date = "15-"+mon+"-"+yearName;
+                        SimpleDateFormat sss = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
+
+                        Date today = null;
+                        try {
+                            today = sss.parse(selected_date);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+
+                        Calendar calendar1 = Calendar.getInstance();
+                        if (today != null) {
+                            calendar1.setTime(today);
+                            calendar1.add(Calendar.MONTH, 1);
+                            calendar1.set(Calendar.DAY_OF_MONTH, 1);
+                            calendar1.add(Calendar.DATE, -1);
+
+                            Date lastDayOfMonth = calendar1.getTime();
+
+                            SimpleDateFormat sdff = new SimpleDateFormat("dd",Locale.getDefault());
+                            String llll = sdff.format(lastDayOfMonth);
+                            selected_date =  llll+ "-" + mon +"-"+ yearName;
+                        }
                         selectMonth.setText(monthName + "-" + year);
                         selectMonthLay.setHint("Month");
 
@@ -306,7 +330,30 @@ public class LeaveStatus extends AppCompatActivity {
         Date c = Calendar.getInstance().getTime();
         SimpleDateFormat sss = new SimpleDateFormat("MMM-yy", Locale.getDefault());
         selected_date = sss.format(c);
-        selected_date = "15-" + selected_date;
+        String selected_date1 = "15-" + selected_date;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
+
+        Date today = null;
+        try {
+            today = simpleDateFormat.parse(selected_date1);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        Calendar calendar1 = Calendar.getInstance();
+        if (today != null) {
+            calendar1.setTime(today);
+            calendar1.add(Calendar.MONTH, 1);
+            calendar1.set(Calendar.DAY_OF_MONTH, 1);
+            calendar1.add(Calendar.DATE, -1);
+
+            Date lastDayOfMonth = calendar1.getTime();
+
+            SimpleDateFormat sdff = new SimpleDateFormat("dd",Locale.getDefault());
+            String llll = sdff.format(lastDayOfMonth);
+            selected_date1 =  llll+ "-" +selected_date;
+            selected_date = selected_date1;
+        }
         System.out.println(selected_date);
 
 
@@ -412,7 +459,7 @@ public class LeaveStatus extends AppCompatActivity {
         boolean isMobile = false;
         try {
             ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo nInfo = cm.getActiveNetworkInfo();
+            @SuppressLint("MissingPermission") NetworkInfo nInfo = cm.getActiveNetworkInfo();
             connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
             return connected;
         } catch (Exception e) {
@@ -626,7 +673,12 @@ public class LeaveStatus extends AppCompatActivity {
 
             String criteria = "Month,Year :"+selected_month_full+", "+year_full+", Employee ID:"+user_id+"";
 
-            URL = "http://103.56.208.123:7778/reports/rwservlet?hrsikgl+report=D:\\ibrahim_knit\\Reports\\EMP_LEAVE_CONS_BAL.rep+EMPID="+emp_id+"+P_DATE='"+selected_date+"'+CRITERIA='"+criteria+"'";
+            if (DEFAULT_USERNAME.equals("IKGL")) {
+                URL = "http://103.56.208.123:7778/reports/rwservlet?hrsikgl+report=D:\\ibrahim_knit\\Reports\\EMP_LEAVE_CONS_BAL.rep+EMPID="+emp_id+"+P_DATE='"+selected_date+"'+CRITERIA='"+criteria+"'";
+            }
+            else if (DEFAULT_USERNAME.equals("TTRAMS")) {
+                URL = "http://103.56.208.123:7778/reports/rwservlet?hrsikgl+report=D:\\ttit_rams\\Reports\\EMP_LEAVE_CONS_BAL.rep+EMPID="+emp_id+"+P_DATE='"+selected_date+"'+CRITERIA='"+criteria+"'";
+            }
 
 
             connected = true;

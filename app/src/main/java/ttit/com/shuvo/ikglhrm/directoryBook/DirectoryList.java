@@ -8,16 +8,18 @@ public class DirectoryList {
     private String dep_name;
     private String des_name;
     private String email_name;
+    private String contact_no;
     private String no;
 
 
-    public DirectoryList(String emp_id, String emp_name, String div_name, String dep_name, String des_name, String email_name,String no) {
+    public DirectoryList(String emp_id, String emp_name, String div_name, String dep_name, String des_name, String email_name,String contact_no,String no) {
         this.emp_id = emp_id;
         this.emp_name = emp_name;
         this.div_name = div_name;
         this.dep_name = dep_name;
         this.des_name = des_name;
         this.email_name = email_name;
+        this.contact_no = contact_no;
         this.no = no;
     }
 
@@ -67,6 +69,14 @@ public class DirectoryList {
 
     public void setEmail_name(String email_name) {
         this.email_name = email_name;
+    }
+
+    public String getContact_no() {
+        return contact_no;
+    }
+
+    public void setContact_no(String contact_no) {
+        this.contact_no = contact_no;
     }
 
     public String getNo() {

@@ -60,6 +60,7 @@ import ttit.com.shuvo.ikglhrm.attendance.update.AttendanceReqType;
 import ttit.com.shuvo.ikglhrm.attendance.update.AttendanceUpdate;
 
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.OracleConnection.DEFAULT_USERNAME;
 import static ttit.com.shuvo.ikglhrm.OracleConnection.createConnection;
 
 public class AttendanceReport extends AppCompatActivity {
@@ -1234,7 +1235,12 @@ public class AttendanceReport extends AppCompatActivity {
             }
 
             String criteria = "From: "+firstDate+" To "+lastDate+", Employee: "+reportInformations.get(0).getName()+"";
-            URL = "http://103.56.208.123:7778/reports/rwservlet?hrsikgl+report=D:\\ibrahim_knit\\Reports\\EMP_ATTENDANCE_PERSONAL.rep+EMPID="+emp_id+"+BEGIN_DATE='"+firstDate+"'+END_DATE='"+lastDate+"'+CRITERIA='"+criteria+"'";
+            if (DEFAULT_USERNAME.equals("IKGL")) {
+                URL = "http://103.56.208.123:7778/reports/rwservlet?hrsikgl+report=D:\\ibrahim_knit\\Reports\\EMP_ATTENDANCE_PERSONAL.rep+EMPID="+emp_id+"+BEGIN_DATE='"+firstDate+"'+END_DATE='"+lastDate+"'+CRITERIA='"+criteria+"'";
+            }
+            else if (DEFAULT_USERNAME.equals("TTRAMS")) {
+                URL = "http://103.56.208.123:7778/reports/rwservlet?hrsikgl+report=D:\\ttit_rams\\Reports\\EMP_ATTENDANCE_PERSONAL.rep+EMPID="+emp_id+"+BEGIN_DATE='"+firstDate+"'+END_DATE='"+lastDate+"'+CRITERIA='"+criteria+"'";
+            }
 
             connected = true;
 

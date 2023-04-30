@@ -56,6 +56,7 @@ import java.util.Map;
 import ttit.com.shuvo.ikglhrm.MainActivity;
 import ttit.com.shuvo.ikglhrm.R;
 
+import static ttit.com.shuvo.ikglhrm.OracleConnection.DEFAULT_USERNAME;
 import static ttit.com.shuvo.ikglhrm.attendance.trackService.DistanceCalculator.CalculationByDistance;
 import static ttit.com.shuvo.ikglhrm.attendance.trackService.Notification.CHANNEL_ID;
 
@@ -83,10 +84,21 @@ public class Service extends android.app.Service {
     final Double[] w = {0.0};
     public static String length_multi = "";
     //String url = "http://103.56.208.123:8001/apex/tracker/rest-v3/location/";
-    String url = "http://103.56.208.123:8001/apex/tracker/rest-v4/loctrackerv4/";
+//    String url =
+//    String url =
 
 
-
+    String getUrl() {
+        if (DEFAULT_USERNAME.equals("IKGL")) {
+            return "http://103.56.208.123:8001/apex/tracker/rest-v4/loctrackerv4/";
+        }
+        else if (DEFAULT_USERNAME.equals("TTRAMS")) {
+            return "http://103.56.208.123:8001/apex/ttrams/tracker/update_loc";
+        }
+        else {
+            return "";
+        }
+    }
 
 
     SharedPreferences sharedPreferences;
@@ -246,6 +258,8 @@ public class Service extends android.app.Service {
 
     public void UpdateLocation(String lat, String lon, String speed, String adds, String acc, String bear) {
 
+        String url = getUrl();
+        System.out.println("URL: "+url);
         RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
 
         StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
@@ -310,8 +324,10 @@ public class Service extends android.app.Service {
 //        lastTime = "";
 
         Intent notificationIntent = new Intent(this, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-
+        PendingIntent pendingIntent = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
+        }
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("Terrain HRM")
                 .setContentText("Tracking your Location")
