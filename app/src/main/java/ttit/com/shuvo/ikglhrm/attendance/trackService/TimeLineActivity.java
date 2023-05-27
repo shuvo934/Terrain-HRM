@@ -3,6 +3,7 @@ package ttit.com.shuvo.ikglhrm.attendance.trackService;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,6 +22,8 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -53,6 +56,7 @@ import java.util.Locale;
 
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
+import ttit.com.shuvo.ikglhrm.attendance.report.AttendanceReport;
 
 import static ttit.com.shuvo.ikglhrm.OracleConnection.createConnection;
 import static ttit.com.shuvo.ikglhrm.attendance.report.AttenReportAdapter.blobFromAdapter;
@@ -91,6 +95,10 @@ public class TimeLineActivity extends AppCompatActivity implements OnMapReadyCal
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Window window = getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(ContextCompat.getColor(TimeLineActivity.this,R.color.secondaryColor));
         setContentView(R.layout.activity_time_line);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -130,6 +138,7 @@ public class TimeLineActivity extends AppCompatActivity implements OnMapReadyCal
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.getUiSettings().setZoomControlsEnabled(true);
 
         // Add a marker in Sydney and move the camera
 
@@ -216,7 +225,7 @@ public class TimeLineActivity extends AppCompatActivity implements OnMapReadyCal
                         String addss = getAddress(wptList.get(i).getLocation().getLatitude(), wptList.get(i).getLocation().getLongitude());
                         locationNameArrays.add(new LocationNameArray(addss,"",true, wptList.get(i).getTime(),"","","",null,String.valueOf(i)));
                         LatLng wpt = new LatLng(wptList.get(i).getLocation().getLatitude(), wptList.get(i).getLocation().getLongitude());
-                        Marker marker = mMap.addMarker(new MarkerOptions().position(wpt).title(addss).icon(BitmapDescriptorFactory.fromResource(R.drawable.location_icon)));
+                        Marker marker = mMap.addMarker(new MarkerOptions().position(wpt).title(addss).snippet(wptList.get(i).getTime()).icon(BitmapDescriptorFactory.fromResource(R.drawable.location_icon)));
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(wpt, 18));
                         markerData.add(new MarkerData(marker,String.valueOf(i)));
                     }
@@ -225,7 +234,7 @@ public class TimeLineActivity extends AppCompatActivity implements OnMapReadyCal
                         String addss = getAddress(wptList.get(i).getLocation().getLatitude(), wptList.get(i).getLocation().getLongitude());
                         locationNameArrays.add(new LocationNameArray(addss,"",true,wptList.get(i).getTime(),"","","",null,String.valueOf(i)));
                         LatLng wpt = new LatLng(wptList.get(i).getLocation().getLatitude(), wptList.get(i).getLocation().getLongitude());
-                        Marker marker = mMap.addMarker(new MarkerOptions().position(wpt).title(addss).icon(BitmapDescriptorFactory.fromResource(R.drawable.location_icon)));
+                        Marker marker = mMap.addMarker(new MarkerOptions().position(wpt).title(addss).snippet(wptList.get(i).getTime()).icon(BitmapDescriptorFactory.fromResource(R.drawable.location_icon)));
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(wpt, 14));
                         markerData.add(new MarkerData(marker,String.valueOf(i)));
                     }

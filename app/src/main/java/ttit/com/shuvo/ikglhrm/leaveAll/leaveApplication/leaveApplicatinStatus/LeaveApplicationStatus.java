@@ -2,6 +2,7 @@ package ttit.com.shuvo.ikglhrm.leaveAll.leaveApplication.leaveApplicatinStatus;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,6 +32,7 @@ import ttit.com.shuvo.ikglhrm.WaitProgress;
 import ttit.com.shuvo.ikglhrm.attendance.status.AttendanceStatus;
 import ttit.com.shuvo.ikglhrm.attendance.status.StatusAdapter;
 import ttit.com.shuvo.ikglhrm.attendance.status.StatusList;
+import ttit.com.shuvo.ikglhrm.leaveAll.leaveStatus.LeaveStatus;
 
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
 import static ttit.com.shuvo.ikglhrm.OracleConnection.createConnection;
@@ -71,6 +73,10 @@ public class LeaveApplicationStatus extends AppCompatActivity {
 //// Hide the status bar.
 //        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
 //        decorView.setSystemUiVisibility(uiOptions);
+        Window window = getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(ContextCompat.getColor(LeaveApplicationStatus.this,R.color.secondaryColor));
         setContentView(R.layout.activity_leave_application_status);
 
         emp_id = userInfoLists.get(0).getEmp_id();

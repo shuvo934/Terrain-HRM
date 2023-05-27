@@ -2,6 +2,7 @@ package ttit.com.shuvo.ikglhrm.directoryBook;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,6 +18,8 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -37,6 +40,7 @@ import java.util.ArrayList;
 
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
+import ttit.com.shuvo.ikglhrm.leaveAll.leaveStatus.LeaveStatus;
 
 import static ttit.com.shuvo.ikglhrm.Login.userDesignations;
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
@@ -88,6 +92,10 @@ public class DirectoryWithDivision extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Window window = getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(ContextCompat.getColor(DirectoryWithDivision.this,R.color.secondaryColor));
         setContentView(R.layout.activity_directory_with_division);
 
         depSpinner = findViewById(R.id.department_type_spinner);

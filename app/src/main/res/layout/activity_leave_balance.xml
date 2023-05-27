@@ -4,33 +4,51 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/back"
+    android:background="@color/background_color"
     tools:context=".leaveAll.leaveBalance.LeaveBalance">
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/topLay_leave_balance"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:background="@drawable/design"
-        android:orientation="vertical"
-        android:gravity="center"
+        android:layout_height="86dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:fontFamily="@font/russo_one"
+            android:layout_height="match_parent"
+            android:background="@drawable/design_2"
+            android:orientation="vertical"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:gravity="center"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:background="@drawable/design"
+            android:orientation="vertical"
             android:gravity="center"
-            android:text="Leave Balance"
-            android:textColor="@color/white"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-    </LinearLayout>
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:fontFamily="@font/russo_one"
+                android:gravity="center"
+                android:text="Leave Balance"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </RelativeLayout>
 
     <ScrollView
         android:id="@+id/scrollView21_leave_balance"
@@ -38,7 +56,7 @@
         android:layout_height="match_parent"
 
         android:layout_marginTop="100dp"
-        android:layout_marginBottom="90dp"
+        android:layout_marginBottom="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -61,7 +79,7 @@
                 android:layout_marginBottom="10dp"
                 android:background="@color/white"
                 app:cardCornerRadius="10dp"
-                app:cardElevation="15dp">
+                app:cardElevation="6dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -76,7 +94,8 @@
                         android:layout_marginTop="5dp"
                         android:layout_marginBottom="5dp"
                         android:textStyle="bold"
-                        android:textColor="@color/black"
+                        android:fontFamily="@font/open_sans_bold"
+                        android:textColor="@color/mazarine_blue"
                         android:text="Leave Balance"
                         android:gravity="center"
                         />
@@ -89,6 +108,7 @@
                         android:textStyle="bold"
                         android:textSize="14sp"
                         android:gravity="center"
+                        android:fontFamily="@font/poppins_semibold"
                         android:layout_marginBottom="5dp"/>
 
                     <View
@@ -132,6 +152,7 @@
                                 android:enabled="false"
                                 android:textSize="12sp"
                                 android:text=""
+                                android:fontFamily="@font/poppins_semibold"
                                 android:textStyle="bold"
                                 android:textColor="@color/black"
                                 android:inputType="textMultiLine"
@@ -168,6 +189,7 @@
                                 android:clickable="false"
                                 android:enabled="false"
                                 android:textSize="12sp"
+                                android:fontFamily="@font/poppins_semibold"
                                 android:text=""
                                 android:textStyle="bold"
                                 android:textColor="@color/black"
@@ -219,6 +241,7 @@
                                 android:enabled="false"
                                 android:textSize="12sp"
                                 android:text=""
+                                android:fontFamily="@font/poppins_semibold"
                                 android:textStyle="bold"
                                 android:textColor="@color/black"
                                 android:inputType="textMultiLine"
@@ -254,9 +277,10 @@
                             android:layout_height="match_parent"
                             android:textStyle="bold"
                             android:padding="2dp"
-                            android:textSize="11sp"
+                            android:textSize="@dimen/_7sdp"
                             android:gravity="center"
                             android:background="#ced6e0"
+                            android:fontFamily="@font/poppins"
                             android:textColor="@color/black"
                             android:layout_weight=".25"
                             android:text="Leave Category"/>
@@ -266,11 +290,12 @@
                             android:background="@android:color/black" />
                         <TextView
                             android:layout_width="0dp"
-                            android:textSize="11sp"
+                            android:textSize="@dimen/_7sdp"
                             android:layout_height="match_parent"
                             android:textStyle="bold"
                             android:gravity="center"
                             android:background="#ced6e0"
+                            android:fontFamily="@font/poppins"
                             android:padding="2dp"
                             android:textColor="@color/black"
                             android:layout_weight=".1"
@@ -283,10 +308,11 @@
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:textStyle="bold"
-                            android:textSize="11sp"
+                            android:textSize="@dimen/_7sdp"
                             android:gravity="center"
                             android:padding="2dp"
                             android:background="#ced6e0"
+                            android:fontFamily="@font/poppins"
                             android:textColor="@color/black"
                             android:layout_weight=".15"
                             android:text="Opening Quantity"/>
@@ -296,12 +322,13 @@
                             android:background="@android:color/black" />
                         <TextView
                             android:layout_width="0dp"
-                            android:textSize="11sp"
+                            android:textSize="@dimen/_7sdp"
                             android:layout_height="match_parent"
                             android:textStyle="bold"
                             android:background="#ced6e0"
                             android:gravity="center"
                             android:padding="2dp"
+                            android:fontFamily="@font/poppins"
                             android:textColor="@color/black"
                             android:layout_weight=".15"
                             android:text="Current Quantity"/>
@@ -311,12 +338,13 @@
                             android:background="@android:color/black" />
                         <TextView
                             android:layout_width="0dp"
-                            android:textSize="11sp"
+                            android:textSize="@dimen/_7sdp"
                             android:layout_height="match_parent"
                             android:textStyle="bold"
                             android:gravity="center"
                             android:background="#ced6e0"
                             android:padding="2dp"
+                            android:fontFamily="@font/poppins"
                             android:textColor="@color/black"
                             android:layout_weight=".13"
                             android:text="Consumed"/>
@@ -326,12 +354,13 @@
                             android:background="@android:color/black" />
                         <TextView
                             android:layout_width="0dp"
-                            android:textSize="11sp"
+                            android:textSize="@dimen/_7sdp"
                             android:layout_height="match_parent"
                             android:textStyle="bold"
                             android:gravity="center"
                             android:background="#ced6e0"
                             android:padding="2dp"
+                            android:fontFamily="@font/poppins"
                             android:textColor="@color/black"
                             android:layout_weight=".14"
                             android:text="Transfered"/>
@@ -341,12 +370,13 @@
                             android:background="@android:color/black" />
                         <TextView
                             android:layout_width="0dp"
-                            android:textSize="11sp"
+                            android:textSize="@dimen/_7sdp"
                             android:layout_height="match_parent"
                             android:textStyle="bold"
                             android:gravity="center"
                             android:background="#ced6e0"
                             android:padding="2dp"
+                            android:fontFamily="@font/poppins"
                             android:textColor="@color/black"
                             android:layout_weight=".13"
                             android:text="Cash Taken"/>
@@ -356,12 +386,12 @@
                             android:background="@android:color/black" />
                         <TextView
                             android:layout_width="0dp"
-                            android:textSize="11sp"
+                            android:textSize="@dimen/_7sdp"
                             android:layout_height="match_parent"
                             android:textStyle="bold"
                             android:background="#ced6e0"
                             android:gravity="center"
-
+                            android:fontFamily="@font/poppins"
                             android:textColor="@color/black"
                             android:layout_weight=".15"
                             android:text="Balance Quantity"/>
@@ -372,11 +402,21 @@
 
                     </LinearLayout>
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/leave_list_view"
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="5dp"/>
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="5dp">
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/leave_list_view"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentStart="true"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentBottom="true"
+                            android:layout_alignParentTop="true"
+                            />
+                    </RelativeLayout>
+
 
 
 
@@ -397,6 +437,7 @@
         android:layout_height="80dp"
         android:layout_gravity="center"
         android:gravity="center"
+        android:visibility="gone"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

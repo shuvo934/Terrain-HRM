@@ -12,6 +12,7 @@
         android:textStyle="bold"
         android:padding="2dp"
         android:textColor="@color/black"
+        android:fontFamily="@font/poppins"
         android:layout_weight=".9"
         android:text="1000."/>
     <TextView
@@ -22,6 +23,7 @@
         android:textStyle="bold"
         android:textColor="@color/black"
         android:padding="2dp"
+        android:fontFamily="@font/poppins"
         android:layout_weight=".1"
         android:text="ASDASKJDLK kJKAJSDLKJASL KLJSADLKASJ"/>
 

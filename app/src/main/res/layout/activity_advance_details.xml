@@ -4,40 +4,58 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/back"
+    android:background="@color/background_color"
     tools:context=".payRoll.advance.AdvanceDetails">
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/topLay_advance"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:background="@drawable/design"
-        android:orientation="vertical"
-        android:gravity="center"
+        android:layout_height="86dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:fontFamily="@font/russo_one"
-            android:gravity="center"
-            android:text="Advance"
-            android:textColor="@color/white"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-    </LinearLayout>
+            android:layout_height="match_parent"
+            android:background="@drawable/design_2"
+            android:orientation="vertical"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:gravity="center"/>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:background="@drawable/design"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:fontFamily="@font/russo_one"
+                android:gravity="center"
+                android:text="Advance"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+    </RelativeLayout>
     <LinearLayout
         android:id="@+id/monthselectedLayforadvance"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="90dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -45,12 +63,13 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="15dp"
             android:background="@color/white"
             app:cardCornerRadius="10dp"
-            app:cardElevation="15dp">
+            app:cardElevation="8dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -68,10 +87,10 @@
                     android:textStyle="bold"
                     android:text="MONTH:"
                     android:gravity=""
+                    android:fontFamily="@font/open_sans_bold"
                     android:layout_marginStart="5dp"
                     android:padding="2dp"
                     android:layout_gravity="center"
-
                     android:textColor="@color/black"
                     />
 
@@ -109,15 +128,13 @@
                         android:clickable="true"
                         android:editable="false"
                         android:focusable="false"
+                        android:fontFamily="@font/poppins_semibold"
                         android:text=""
                         android:textColor="@color/black"
                         android:inputType="date"
                         />
 
                 </com.google.android.material.textfield.TextInputLayout>
-
-
-
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -129,13 +146,12 @@
             android:layout_height="wrap_content"
             android:text="Please Select Month First"
             android:visibility="gone"
+            android:fontFamily="@font/poppins_semibold"
             android:layout_gravity="center"
             android:gravity="center"
             android:textColor="#e74c3c"
             android:textStyle="bold"/>
         <LinearLayout
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -161,52 +177,50 @@
 
     </LinearLayout>
 
-    <ScrollView
-        android:id="@+id/scrollView21_advance"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-
-        android:layout_marginTop="0dp"
-        android:layout_marginBottom="90dp"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/monthselectedLayforadvance">
 
-
-        <LinearLayout
+        <androidx.cardview.widget.CardView
+            android:id="@+id/advance_report_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:visibility="gone"
+            android:background="@color/white"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="6dp">
 
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/advance_report_card"
+            <ScrollView
+                android:id="@+id/scrollView21_advance"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-
-                android:layout_marginEnd="10dp"
-                android:visibility="gone"
-                android:background="@color/white"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="15dp">
+                android:layout_height="match_parent"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="18sp"
+                        android:textSize="@dimen/_14sdp"
                         android:layout_marginTop="5dp"
                         android:layout_marginBottom="5dp"
                         android:textStyle="bold"
-                        android:textColor="@color/black"
+                        android:textColor="@color/mazarine_blue"
                         android:text="Advance Details"
+                        android:fontFamily="@font/open_sans_bold"
                         android:gravity="center"
                         />
                     <TextView
@@ -214,9 +228,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Month, Year"
+                        android:fontFamily="@font/open_sans_semibold"
                         android:textColor="@color/black"
                         android:textStyle="bold"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/_11sdp"
                         android:gravity="center"
                         android:layout_marginBottom="5dp"/>
 
@@ -224,8 +239,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="2dp"
                         android:background="@android:color/darker_gray" />
-
-
 
 
                     <LinearLayout
@@ -239,10 +252,11 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
-                            android:weightSum="1.2">
+                            android:weightSum="1.2"
+                            android:baselineAligned="false">
                             <com.google.android.material.textfield.TextInputLayout
                                 android:layout_width="0dp"
-                                android:layout_height="wrap_content"
+                                android:layout_height="match_parent"
                                 android:hint="Name:"
                                 android:layout_weight=".6"
                                 android:layout_marginStart="5dp"
@@ -265,11 +279,12 @@
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/name_advance"
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
+                                    android:layout_height="match_parent"
                                     android:ems="10"
                                     android:clickable="false"
                                     android:enabled="false"
-                                    android:textSize="12sp"
+                                    android:textSize="@dimen/_8sdp"
+                                    android:fontFamily="@font/poppins_semibold"
                                     android:text=""
                                     android:textStyle="bold"
                                     android:textColor="@color/black"
@@ -279,7 +294,7 @@
                             </com.google.android.material.textfield.TextInputLayout>
                             <com.google.android.material.textfield.TextInputLayout
                                 android:layout_width="0dp"
-                                android:layout_height="wrap_content"
+                                android:layout_height="match_parent"
                                 android:hint="ID:"
                                 android:layout_weight=".35"
                                 android:layout_marginStart="5dp"
@@ -302,11 +317,12 @@
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/id_advance"
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
+                                    android:layout_height="match_parent"
                                     android:ems="10"
                                     android:clickable="false"
                                     android:enabled="false"
-                                    android:textSize="12sp"
+                                    android:textSize="@dimen/_8sdp"
+                                    android:fontFamily="@font/poppins_semibold"
                                     android:text=""
                                     android:textStyle="bold"
                                     android:textColor="@color/black"
@@ -316,7 +332,7 @@
                             </com.google.android.material.textfield.TextInputLayout>
                             <com.google.android.material.textfield.TextInputLayout
                                 android:layout_width="0dp"
-                                android:layout_height="wrap_content"
+                                android:layout_height="match_parent"
                                 android:hint="Band:"
                                 android:layout_weight=".25"
                                 android:layout_margin="5dp"
@@ -337,11 +353,12 @@
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/band_advance"
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
+                                    android:layout_height="match_parent"
                                     android:ems="10"
                                     android:clickable="false"
                                     android:enabled="false"
-                                    android:textSize="12sp"
+                                    android:textSize="@dimen/_8sdp"
+                                    android:fontFamily="@font/poppins_semibold"
                                     android:text=""
                                     android:textStyle="bold"
                                     android:textColor="@color/black"
@@ -365,7 +382,7 @@
                             android:weightSum="1">
                             <com.google.android.material.textfield.TextInputLayout
                                 android:layout_width="0dp"
-                                android:layout_height="wrap_content"
+                                android:layout_height="match_parent"
                                 android:hint="Structure Designation:"
                                 android:layout_weight=".5"
                                 android:layout_marginStart="5dp"
@@ -388,11 +405,12 @@
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/str_des_advance"
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
+                                    android:layout_height="match_parent"
                                     android:ems="10"
                                     android:clickable="false"
                                     android:enabled="false"
-                                    android:textSize="12sp"
+                                    android:textSize="@dimen/_8sdp"
+                                    android:fontFamily="@font/poppins_semibold"
                                     android:text=""
                                     android:textStyle="bold"
                                     android:textColor="@color/black"
@@ -402,7 +420,7 @@
                             </com.google.android.material.textfield.TextInputLayout>
                             <com.google.android.material.textfield.TextInputLayout
                                 android:layout_width="0dp"
-                                android:layout_height="wrap_content"
+                                android:layout_height="match_parent"
                                 android:hint="Job Position:"
                                 android:layout_weight=".5"
                                 android:layout_marginStart="5dp"
@@ -425,11 +443,12 @@
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/job_pos_advance"
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
+                                    android:layout_height="match_parent"
                                     android:ems="10"
                                     android:clickable="false"
                                     android:enabled="false"
-                                    android:textSize="12sp"
+                                    android:textSize="@dimen/_8sdp"
+                                    android:fontFamily="@font/poppins_semibold"
                                     android:text=""
                                     android:textStyle="bold"
                                     android:textColor="@color/black"
@@ -457,291 +476,293 @@
 
 
 
-<!--                        <TextView-->
-<!--                            android:layout_width="match_parent"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:textSize="16sp"-->
-<!--                            android:layout_marginTop="5dp"-->
-<!--                            android:layout_marginBottom="5dp"-->
-<!--                            android:textStyle="bold"-->
-<!--                            android:textColor="@color/black"-->
-<!--                            android:text="Total Adavance Details (Yearly)"-->
-<!--                            android:gravity="center"-->
-<!--                            />-->
-<!--                        <LinearLayout-->
-<!--                            android:layout_width="match_parent"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:layout_marginStart="5dp"-->
-<!--                            android:layout_marginEnd="5dp"-->
-<!--                            android:layout_marginTop="5dp"-->
-<!--                            android:orientation="vertical">-->
-<!--                            <View-->
-<!--                                android:layout_width="match_parent"-->
-<!--                                android:layout_height="2dp"-->
-<!--                                android:background="@android:color/darker_gray" />-->
+                        <!--                        <TextView-->
+                        <!--                            android:layout_width="match_parent"-->
+                        <!--                            android:layout_height="wrap_content"-->
+                        <!--                            android:textSize="16sp"-->
+                        <!--                            android:layout_marginTop="5dp"-->
+                        <!--                            android:layout_marginBottom="5dp"-->
+                        <!--                            android:textStyle="bold"-->
+                        <!--                            android:textColor="@color/black"-->
+                        <!--                            android:text="Total Adavance Details (Yearly)"-->
+                        <!--                            android:gravity="center"-->
+                        <!--                            />-->
+                        <!--                        <LinearLayout-->
+                        <!--                            android:layout_width="match_parent"-->
+                        <!--                            android:layout_height="wrap_content"-->
+                        <!--                            android:layout_marginStart="5dp"-->
+                        <!--                            android:layout_marginEnd="5dp"-->
+                        <!--                            android:layout_marginTop="5dp"-->
+                        <!--                            android:orientation="vertical">-->
+                        <!--                            <View-->
+                        <!--                                android:layout_width="match_parent"-->
+                        <!--                                android:layout_height="2dp"-->
+                        <!--                                android:background="@android:color/darker_gray" />-->
 
-<!--                        </LinearLayout>-->
-<!--                        <LinearLayout-->
-<!--                            android:layout_width="match_parent"-->
-<!--                            android:layout_height="50dp"-->
-<!--                            android:layout_marginStart="5dp"-->
-<!--                            android:layout_marginEnd="5dp"-->
+                        <!--                        </LinearLayout>-->
+                        <!--                        <LinearLayout-->
+                        <!--                            android:layout_width="match_parent"-->
+                        <!--                            android:layout_height="50dp"-->
+                        <!--                            android:layout_marginStart="5dp"-->
+                        <!--                            android:layout_marginEnd="5dp"-->
 
-<!--                            android:orientation="horizontal"-->
+                        <!--                            android:orientation="horizontal"-->
 
-<!--                            android:weightSum="1">-->
-<!--                            <View-->
-<!--                                android:layout_width="1dp"-->
-<!--                                android:layout_height="match_parent"-->
-<!--                                android:background="@android:color/black" />-->
+                        <!--                            android:weightSum="1">-->
+                        <!--                            <View-->
+                        <!--                                android:layout_width="1dp"-->
+                        <!--                                android:layout_height="match_parent"-->
+                        <!--                                android:background="@android:color/black" />-->
 
-<!--                            <TextView-->
-<!--                                android:layout_width="0dp"-->
-<!--                                android:layout_height="match_parent"-->
-<!--                                android:textStyle="bold"-->
-<!--                                android:padding="2dp"-->
-<!--                                android:textSize="12sp"-->
-<!--                                android:gravity="center"-->
-<!--                                android:background="#ced6e0"-->
-<!--                                android:textColor="@color/black"-->
-<!--                                android:layout_weight=".6"-->
-<!--                                android:text="Advance"/>-->
-<!--                            <View-->
-<!--                                android:layout_width="1dp"-->
-<!--                                android:layout_height="match_parent"-->
-<!--                                android:background="@android:color/black" />-->
+                        <!--                            <TextView-->
+                        <!--                                android:layout_width="0dp"-->
+                        <!--                                android:layout_height="match_parent"-->
+                        <!--                                android:textStyle="bold"-->
+                        <!--                                android:padding="2dp"-->
+                        <!--                                android:textSize="12sp"-->
+                        <!--                                android:gravity="center"-->
+                        <!--                                android:background="#ced6e0"-->
+                        <!--                                android:textColor="@color/black"-->
+                        <!--                                android:layout_weight=".6"-->
+                        <!--                                android:text="Advance"/>-->
+                        <!--                            <View-->
+                        <!--                                android:layout_width="1dp"-->
+                        <!--                                android:layout_height="match_parent"-->
+                        <!--                                android:background="@android:color/black" />-->
 
-<!--                            <TextView-->
-<!--                                android:layout_width="0dp"-->
-<!--                                android:textSize="12sp"-->
-<!--                                android:layout_height="match_parent"-->
-<!--                                android:textStyle="bold"-->
-<!--                                android:background="#ced6e0"-->
-<!--                                android:gravity="center"-->
-<!--                                android:padding="2dp"-->
-<!--                                android:textColor="@color/black"-->
-<!--                                android:layout_weight=".4"-->
-<!--                                android:text="AMOUNT"/>-->
-<!--                            <View-->
-<!--                                android:layout_width="1dp"-->
-<!--                                android:layout_height="match_parent"-->
-<!--                                android:background="@android:color/black" />-->
-
-
-
-
-<!--                        </LinearLayout>-->
-<!--                        <LinearLayout-->
-<!--                            android:layout_width="match_parent"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:layout_marginStart="5dp"-->
-<!--                            android:layout_marginEnd="5dp"-->
-<!--                            android:orientation="vertical">-->
-<!--                            <View-->
-<!--                                android:layout_width="match_parent"-->
-<!--                                android:layout_height="2dp"-->
-<!--                                android:background="@android:color/darker_gray" />-->
-
-<!--                        </LinearLayout>-->
-<!--                        <LinearLayout-->
-<!--                            android:layout_width="match_parent"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:layout_marginStart="5dp"-->
-<!--                            android:layout_marginEnd="5dp"-->
-<!--                            android:orientation="horizontal"-->
-<!--                            android:weightSum="1">-->
-
-
-<!--                            <View-->
-<!--                                android:layout_width="1dp"-->
-<!--                                android:layout_height="match_parent"-->
-<!--                                android:background="@android:color/black" />-->
-<!--                            <TextView-->
-<!--                                android:layout_width="0dp"-->
-<!--                                android:layout_height="match_parent"-->
-<!--                                android:textStyle="bold"-->
-<!--                                android:padding="2dp"-->
-<!--                                android:textSize="12sp"-->
-<!--                                android:gravity=""-->
-<!--                                android:textColor="@color/black"-->
-<!--                                android:layout_weight=".6"-->
-<!--                                android:text="Total Advance Taken"/>-->
-
-<!--                            <View-->
-<!--                                android:layout_width="1dp"-->
-<!--                                android:layout_height="match_parent"-->
-<!--                                android:background="@android:color/black" />-->
-<!--                            <TextView-->
-<!--                                android:id="@+id/total_advance_taken"-->
-<!--                                android:layout_width="0dp"-->
-<!--                                android:textSize="12sp"-->
-<!--                                android:layout_height="match_parent"-->
-<!--                                android:textStyle="bold"-->
-<!--                                android:gravity="end"-->
-<!--                                android:padding="2dp"-->
-<!--                                android:textColor="@color/black"-->
-<!--                                android:layout_weight=".4"-->
-<!--                                android:text=""/>-->
-<!--                            <View-->
-<!--                                android:layout_width="1dp"-->
-<!--                                android:layout_height="match_parent"-->
-<!--                                android:background="@android:color/black" />-->
+                        <!--                            <TextView-->
+                        <!--                                android:layout_width="0dp"-->
+                        <!--                                android:textSize="12sp"-->
+                        <!--                                android:layout_height="match_parent"-->
+                        <!--                                android:textStyle="bold"-->
+                        <!--                                android:background="#ced6e0"-->
+                        <!--                                android:gravity="center"-->
+                        <!--                                android:padding="2dp"-->
+                        <!--                                android:textColor="@color/black"-->
+                        <!--                                android:layout_weight=".4"-->
+                        <!--                                android:text="AMOUNT"/>-->
+                        <!--                            <View-->
+                        <!--                                android:layout_width="1dp"-->
+                        <!--                                android:layout_height="match_parent"-->
+                        <!--                                android:background="@android:color/black" />-->
 
 
 
 
-<!--                        </LinearLayout>-->
-<!--                        <LinearLayout-->
-<!--                            android:layout_width="match_parent"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:layout_marginStart="5dp"-->
-<!--                            android:layout_marginEnd="5dp"-->
-<!--                            android:orientation="vertical">-->
-<!--                            <View-->
-<!--                                android:layout_width="match_parent"-->
-<!--                                android:layout_height="2dp"-->
-<!--                                android:background="@android:color/darker_gray" />-->
+                        <!--                        </LinearLayout>-->
+                        <!--                        <LinearLayout-->
+                        <!--                            android:layout_width="match_parent"-->
+                        <!--                            android:layout_height="wrap_content"-->
+                        <!--                            android:layout_marginStart="5dp"-->
+                        <!--                            android:layout_marginEnd="5dp"-->
+                        <!--                            android:orientation="vertical">-->
+                        <!--                            <View-->
+                        <!--                                android:layout_width="match_parent"-->
+                        <!--                                android:layout_height="2dp"-->
+                        <!--                                android:background="@android:color/darker_gray" />-->
 
-<!--                        </LinearLayout>-->
-<!--                        <LinearLayout-->
-<!--                            android:layout_width="match_parent"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:layout_marginStart="5dp"-->
-<!--                            android:layout_marginEnd="5dp"-->
-<!--                            android:orientation="horizontal"-->
-<!--                            android:weightSum="1">-->
-
-
-<!--                            <View-->
-<!--                                android:layout_width="1dp"-->
-<!--                                android:layout_height="match_parent"-->
-<!--                                android:background="@android:color/black" />-->
-<!--                            <TextView-->
-<!--                                android:layout_width="0dp"-->
-<!--                                android:layout_height="match_parent"-->
-<!--                                android:textStyle="bold"-->
-<!--                                android:padding="2dp"-->
-<!--                                android:textSize="12sp"-->
-<!--                                android:textColor="@color/black"-->
-<!--                                android:layout_weight=".6"-->
-<!--                                android:text="Total Advance Paid"/>-->
-
-<!--                            <View-->
-<!--                                android:layout_width="1dp"-->
-<!--                                android:layout_height="match_parent"-->
-<!--                                android:background="@android:color/black" />-->
-<!--                            <TextView-->
-<!--                                android:id="@+id/total_advance_paid_year"-->
-<!--                                android:layout_width="0dp"-->
-<!--                                android:textSize="12sp"-->
-<!--                                android:layout_height="match_parent"-->
-<!--                                android:textStyle="bold"-->
-<!--                                android:gravity="end"-->
-<!--                                android:padding="2dp"-->
-<!--                                android:textColor="@color/black"-->
-<!--                                android:layout_weight=".4"-->
-<!--                                android:text=""/>-->
-<!--                            <View-->
-<!--                                android:layout_width="1dp"-->
-<!--                                android:layout_height="match_parent"-->
-<!--                                android:background="@android:color/black" />-->
+                        <!--                        </LinearLayout>-->
+                        <!--                        <LinearLayout-->
+                        <!--                            android:layout_width="match_parent"-->
+                        <!--                            android:layout_height="wrap_content"-->
+                        <!--                            android:layout_marginStart="5dp"-->
+                        <!--                            android:layout_marginEnd="5dp"-->
+                        <!--                            android:orientation="horizontal"-->
+                        <!--                            android:weightSum="1">-->
 
 
+                        <!--                            <View-->
+                        <!--                                android:layout_width="1dp"-->
+                        <!--                                android:layout_height="match_parent"-->
+                        <!--                                android:background="@android:color/black" />-->
+                        <!--                            <TextView-->
+                        <!--                                android:layout_width="0dp"-->
+                        <!--                                android:layout_height="match_parent"-->
+                        <!--                                android:textStyle="bold"-->
+                        <!--                                android:padding="2dp"-->
+                        <!--                                android:textSize="12sp"-->
+                        <!--                                android:gravity=""-->
+                        <!--                                android:textColor="@color/black"-->
+                        <!--                                android:layout_weight=".6"-->
+                        <!--                                android:text="Total Advance Taken"/>-->
 
-
-<!--                        </LinearLayout>-->
-
-<!--                        <LinearLayout-->
-<!--                            android:layout_width="match_parent"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:layout_marginStart="5dp"-->
-<!--                            android:layout_marginEnd="5dp"-->
-<!--                            android:orientation="vertical">-->
-<!--                            <View-->
-<!--                                android:layout_width="match_parent"-->
-<!--                                android:layout_height="4dp"-->
-<!--                                android:background="@android:color/black" />-->
-
-<!--                        </LinearLayout>-->
-<!--                        <LinearLayout-->
-<!--                            android:layout_width="match_parent"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:layout_marginStart="5dp"-->
-<!--                            android:layout_marginEnd="5dp"-->
-<!--                            android:orientation="horizontal"-->
-<!--                            android:weightSum="1">-->
-
-
-<!--                            <View-->
-<!--                                android:layout_width="1dp"-->
-<!--                                android:layout_height="match_parent"-->
-<!--                                android:background="@android:color/black" />-->
-<!--                            <TextView-->
-<!--                                android:layout_width="0dp"-->
-<!--                                android:layout_height="match_parent"-->
-<!--                                android:textStyle="bold"-->
-<!--                                android:padding="2dp"-->
-<!--                                android:textSize="14sp"-->
-<!--                                android:background="#F5F5F5"-->
-<!--                                android:textColor="@color/black"-->
-<!--                                android:layout_weight=".6"-->
-<!--                                android:text="Total Advance Payable"/>-->
-
-<!--                            <View-->
-<!--                                android:layout_width="1dp"-->
-<!--                                android:layout_height="match_parent"-->
-<!--                                android:background="@android:color/black" />-->
-<!--                            <TextView-->
-<!--                                android:id="@+id/total_advance_payable_year"-->
-<!--                                android:layout_width="0dp"-->
-<!--                                android:textSize="14sp"-->
-<!--                                android:layout_height="match_parent"-->
-<!--                                android:textStyle="bold"-->
-<!--                                android:gravity="end"-->
-<!--                                android:background="#F5F5F5"-->
-<!--                                android:padding="2dp"-->
-<!--                                android:textColor="@color/black"-->
-<!--                                android:layout_weight=".4"-->
-<!--                                android:text=""/>-->
-<!--                            <View-->
-<!--                                android:layout_width="1dp"-->
-<!--                                android:layout_height="match_parent"-->
-<!--                                android:background="@android:color/black" />-->
+                        <!--                            <View-->
+                        <!--                                android:layout_width="1dp"-->
+                        <!--                                android:layout_height="match_parent"-->
+                        <!--                                android:background="@android:color/black" />-->
+                        <!--                            <TextView-->
+                        <!--                                android:id="@+id/total_advance_taken"-->
+                        <!--                                android:layout_width="0dp"-->
+                        <!--                                android:textSize="12sp"-->
+                        <!--                                android:layout_height="match_parent"-->
+                        <!--                                android:textStyle="bold"-->
+                        <!--                                android:gravity="end"-->
+                        <!--                                android:padding="2dp"-->
+                        <!--                                android:textColor="@color/black"-->
+                        <!--                                android:layout_weight=".4"-->
+                        <!--                                android:text=""/>-->
+                        <!--                            <View-->
+                        <!--                                android:layout_width="1dp"-->
+                        <!--                                android:layout_height="match_parent"-->
+                        <!--                                android:background="@android:color/black" />-->
 
 
 
 
-<!--                        </LinearLayout>-->
+                        <!--                        </LinearLayout>-->
+                        <!--                        <LinearLayout-->
+                        <!--                            android:layout_width="match_parent"-->
+                        <!--                            android:layout_height="wrap_content"-->
+                        <!--                            android:layout_marginStart="5dp"-->
+                        <!--                            android:layout_marginEnd="5dp"-->
+                        <!--                            android:orientation="vertical">-->
+                        <!--                            <View-->
+                        <!--                                android:layout_width="match_parent"-->
+                        <!--                                android:layout_height="2dp"-->
+                        <!--                                android:background="@android:color/darker_gray" />-->
 
-<!--                        <LinearLayout-->
-<!--                            android:layout_width="match_parent"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:layout_marginStart="5dp"-->
-<!--                            android:layout_marginEnd="5dp"-->
-<!--                            android:orientation="vertical">-->
-<!--                            <View-->
-<!--                                android:layout_width="match_parent"-->
-<!--                                android:layout_marginBottom="15dp"-->
-<!--                                android:layout_height="4dp"-->
-<!--                                android:background="@android:color/black" />-->
-
-<!--                        </LinearLayout>-->
+                        <!--                        </LinearLayout>-->
+                        <!--                        <LinearLayout-->
+                        <!--                            android:layout_width="match_parent"-->
+                        <!--                            android:layout_height="wrap_content"-->
+                        <!--                            android:layout_marginStart="5dp"-->
+                        <!--                            android:layout_marginEnd="5dp"-->
+                        <!--                            android:orientation="horizontal"-->
+                        <!--                            android:weightSum="1">-->
 
 
-<!--                        <View-->
-<!--                            android:layout_width="match_parent"-->
-<!--                            android:layout_height="5dp"-->
-<!--                            android:layout_marginTop="5dp"-->
-<!--                            android:background="@android:color/darker_gray" />-->
+                        <!--                            <View-->
+                        <!--                                android:layout_width="1dp"-->
+                        <!--                                android:layout_height="match_parent"-->
+                        <!--                                android:background="@android:color/black" />-->
+                        <!--                            <TextView-->
+                        <!--                                android:layout_width="0dp"-->
+                        <!--                                android:layout_height="match_parent"-->
+                        <!--                                android:textStyle="bold"-->
+                        <!--                                android:padding="2dp"-->
+                        <!--                                android:textSize="12sp"-->
+                        <!--                                android:textColor="@color/black"-->
+                        <!--                                android:layout_weight=".6"-->
+                        <!--                                android:text="Total Advance Paid"/>-->
+
+                        <!--                            <View-->
+                        <!--                                android:layout_width="1dp"-->
+                        <!--                                android:layout_height="match_parent"-->
+                        <!--                                android:background="@android:color/black" />-->
+                        <!--                            <TextView-->
+                        <!--                                android:id="@+id/total_advance_paid_year"-->
+                        <!--                                android:layout_width="0dp"-->
+                        <!--                                android:textSize="12sp"-->
+                        <!--                                android:layout_height="match_parent"-->
+                        <!--                                android:textStyle="bold"-->
+                        <!--                                android:gravity="end"-->
+                        <!--                                android:padding="2dp"-->
+                        <!--                                android:textColor="@color/black"-->
+                        <!--                                android:layout_weight=".4"-->
+                        <!--                                android:text=""/>-->
+                        <!--                            <View-->
+                        <!--                                android:layout_width="1dp"-->
+                        <!--                                android:layout_height="match_parent"-->
+                        <!--                                android:background="@android:color/black" />-->
+
+
+
+
+                        <!--                        </LinearLayout>-->
+
+                        <!--                        <LinearLayout-->
+                        <!--                            android:layout_width="match_parent"-->
+                        <!--                            android:layout_height="wrap_content"-->
+                        <!--                            android:layout_marginStart="5dp"-->
+                        <!--                            android:layout_marginEnd="5dp"-->
+                        <!--                            android:orientation="vertical">-->
+                        <!--                            <View-->
+                        <!--                                android:layout_width="match_parent"-->
+                        <!--                                android:layout_height="4dp"-->
+                        <!--                                android:background="@android:color/black" />-->
+
+                        <!--                        </LinearLayout>-->
+                        <!--                        <LinearLayout-->
+                        <!--                            android:layout_width="match_parent"-->
+                        <!--                            android:layout_height="wrap_content"-->
+                        <!--                            android:layout_marginStart="5dp"-->
+                        <!--                            android:layout_marginEnd="5dp"-->
+                        <!--                            android:orientation="horizontal"-->
+                        <!--                            android:weightSum="1">-->
+
+
+                        <!--                            <View-->
+                        <!--                                android:layout_width="1dp"-->
+                        <!--                                android:layout_height="match_parent"-->
+                        <!--                                android:background="@android:color/black" />-->
+                        <!--                            <TextView-->
+                        <!--                                android:layout_width="0dp"-->
+                        <!--                                android:layout_height="match_parent"-->
+                        <!--                                android:textStyle="bold"-->
+                        <!--                                android:padding="2dp"-->
+                        <!--                                android:textSize="14sp"-->
+                        <!--                                android:background="#F5F5F5"-->
+                        <!--                                android:textColor="@color/black"-->
+                        <!--                                android:layout_weight=".6"-->
+                        <!--                                android:text="Total Advance Payable"/>-->
+
+                        <!--                            <View-->
+                        <!--                                android:layout_width="1dp"-->
+                        <!--                                android:layout_height="match_parent"-->
+                        <!--                                android:background="@android:color/black" />-->
+                        <!--                            <TextView-->
+                        <!--                                android:id="@+id/total_advance_payable_year"-->
+                        <!--                                android:layout_width="0dp"-->
+                        <!--                                android:textSize="14sp"-->
+                        <!--                                android:layout_height="match_parent"-->
+                        <!--                                android:textStyle="bold"-->
+                        <!--                                android:gravity="end"-->
+                        <!--                                android:background="#F5F5F5"-->
+                        <!--                                android:padding="2dp"-->
+                        <!--                                android:textColor="@color/black"-->
+                        <!--                                android:layout_weight=".4"-->
+                        <!--                                android:text=""/>-->
+                        <!--                            <View-->
+                        <!--                                android:layout_width="1dp"-->
+                        <!--                                android:layout_height="match_parent"-->
+                        <!--                                android:background="@android:color/black" />-->
+
+
+
+
+                        <!--                        </LinearLayout>-->
+
+                        <!--                        <LinearLayout-->
+                        <!--                            android:layout_width="match_parent"-->
+                        <!--                            android:layout_height="wrap_content"-->
+                        <!--                            android:layout_marginStart="5dp"-->
+                        <!--                            android:layout_marginEnd="5dp"-->
+                        <!--                            android:orientation="vertical">-->
+                        <!--                            <View-->
+                        <!--                                android:layout_width="match_parent"-->
+                        <!--                                android:layout_marginBottom="15dp"-->
+                        <!--                                android:layout_height="4dp"-->
+                        <!--                                android:background="@android:color/black" />-->
+
+                        <!--                        </LinearLayout>-->
+
+
+                        <!--                        <View-->
+                        <!--                            android:layout_width="match_parent"-->
+                        <!--                            android:layout_height="5dp"-->
+                        <!--                            android:layout_marginTop="5dp"-->
+                        <!--                            android:background="@android:color/darker_gray" />-->
 
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textSize="16sp"
+                            android:textSize="@dimen/_13sdp"
                             android:layout_marginTop="5dp"
                             android:layout_marginBottom="5dp"
                             android:textStyle="bold"
-                            android:textColor="@color/black"
+                            android:visibility="gone"
+                            android:textColor="@color/mazarine_blue"
+                            android:fontFamily="@font/open_sans_bold"
                             android:text="Advance Details (Monthly)"
                             android:gravity="center"
                             />
@@ -777,7 +798,8 @@
                                 android:layout_height="match_parent"
                                 android:textStyle="bold"
                                 android:padding="2dp"
-                                android:textSize="12sp"
+                                android:textSize="@dimen/_10sdp"
+                                android:fontFamily="@font/poppins_semibold"
                                 android:gravity="center"
                                 android:background="#ced6e0"
                                 android:textColor="@color/black"
@@ -790,7 +812,8 @@
 
                             <TextView
                                 android:layout_width="0dp"
-                                android:textSize="12sp"
+                                android:textSize="@dimen/_10sdp"
+                                android:fontFamily="@font/poppins_semibold"
                                 android:layout_height="match_parent"
                                 android:textStyle="bold"
                                 android:background="#ced6e0"
@@ -838,7 +861,8 @@
                                 android:layout_height="match_parent"
                                 android:textStyle="bold"
                                 android:padding="2dp"
-                                android:textSize="12sp"
+                                android:textSize="@dimen/_8sdp"
+                                android:fontFamily="@font/poppins"
                                 android:gravity=""
                                 android:textColor="@color/black"
                                 android:layout_weight=".6"
@@ -851,7 +875,8 @@
                             <TextView
                                 android:id="@+id/advance_taken"
                                 android:layout_width="0dp"
-                                android:textSize="12sp"
+                                android:textSize="@dimen/_8sdp"
+                                android:fontFamily="@font/poppins"
                                 android:layout_height="match_parent"
                                 android:textStyle="bold"
                                 android:gravity="end"
@@ -898,7 +923,8 @@
                                 android:layout_height="match_parent"
                                 android:textStyle="bold"
                                 android:padding="2dp"
-                                android:textSize="12sp"
+                                android:textSize="@dimen/_8sdp"
+                                android:fontFamily="@font/poppins"
                                 android:gravity=""
                                 android:textColor="@color/black"
                                 android:layout_weight=".6"
@@ -911,7 +937,8 @@
                             <TextView
                                 android:id="@+id/advance_paid"
                                 android:layout_width="0dp"
-                                android:textSize="12sp"
+                                android:textSize="@dimen/_8sdp"
+                                android:fontFamily="@font/poppins"
                                 android:layout_height="match_parent"
                                 android:textStyle="bold"
                                 android:gravity="end"
@@ -958,7 +985,8 @@
                                 android:layout_height="match_parent"
                                 android:textStyle="bold"
                                 android:padding="2dp"
-                                android:textSize="12sp"
+                                android:textSize="@dimen/_8sdp"
+                                android:fontFamily="@font/poppins"
                                 android:gravity=""
                                 android:textColor="@color/black"
                                 android:layout_weight=".6"
@@ -971,7 +999,8 @@
                             <TextView
                                 android:id="@+id/schedule_advance_paid"
                                 android:layout_width="0dp"
-                                android:textSize="12sp"
+                                android:textSize="@dimen/_8sdp"
+                                android:fontFamily="@font/poppins"
                                 android:layout_height="match_parent"
                                 android:textStyle="bold"
                                 android:gravity="end"
@@ -1019,7 +1048,8 @@
                                 android:layout_height="match_parent"
                                 android:textStyle="bold"
                                 android:padding="2dp"
-                                android:textSize="14sp"
+                                android:textSize="@dimen/_9sdp"
+                                android:fontFamily="@font/poppins_semibold"
                                 android:gravity=""
                                 android:background="#F5F5F5"
                                 android:textColor="@color/black"
@@ -1033,7 +1063,8 @@
                             <TextView
                                 android:id="@+id/total_advance_paid"
                                 android:layout_width="0dp"
-                                android:textSize="14sp"
+                                android:textSize="@dimen/_9sdp"
+                                android:fontFamily="@font/poppins_semibold"
                                 android:layout_height="match_parent"
                                 android:textStyle="bold"
                                 android:gravity="end"
@@ -1081,7 +1112,8 @@
                                 android:layout_height="match_parent"
                                 android:textStyle="bold"
                                 android:padding="2dp"
-                                android:textSize="12sp"
+                                android:textSize="@dimen/_8sdp"
+                                android:fontFamily="@font/poppins"
                                 android:gravity=""
                                 android:textColor="@color/black"
                                 android:layout_weight=".6"
@@ -1094,7 +1126,8 @@
                             <TextView
                                 android:id="@+id/total_schedule_advance_taken"
                                 android:layout_width="0dp"
-                                android:textSize="12sp"
+                                android:textSize="@dimen/_8sdp"
+                                android:fontFamily="@font/poppins"
                                 android:layout_height="match_parent"
                                 android:textStyle="bold"
                                 android:gravity="end"
@@ -1141,7 +1174,8 @@
                                 android:layout_height="match_parent"
                                 android:textStyle="bold"
                                 android:padding="2dp"
-                                android:textSize="12sp"
+                                android:textSize="@dimen/_8sdp"
+                                android:fontFamily="@font/poppins"
                                 android:gravity=""
                                 android:textColor="@color/black"
                                 android:layout_weight=".6"
@@ -1154,7 +1188,8 @@
                             <TextView
                                 android:id="@+id/total_scheduling_advance_paid"
                                 android:layout_width="0dp"
-                                android:textSize="12sp"
+                                android:textSize="@dimen/_8sdp"
+                                android:fontFamily="@font/poppins"
                                 android:layout_height="match_parent"
                                 android:textStyle="bold"
                                 android:gravity="end"
@@ -1179,8 +1214,8 @@
                             android:orientation="vertical">
                             <View
                                 android:layout_width="match_parent"
-                                android:layout_height="2dp"
-                                android:background="@android:color/darker_gray" />
+                                android:layout_height="4dp"
+                                android:background="@android:color/black" />
 
                         </LinearLayout>
                         <LinearLayout
@@ -1201,9 +1236,11 @@
                                 android:layout_height="match_parent"
                                 android:textStyle="bold"
                                 android:padding="2dp"
-                                android:textSize="12sp"
+                                android:textSize="@dimen/_9sdp"
+                                android:fontFamily="@font/poppins_semibold"
                                 android:gravity=""
                                 android:textColor="@color/black"
+                                android:background="#F5F5F5"
                                 android:layout_weight=".6"
                                 android:text="Total Scheduling Advance Payable"/>
 
@@ -1214,10 +1251,12 @@
                             <TextView
                                 android:id="@+id/sc_adv_paya_tot"
                                 android:layout_width="0dp"
-                                android:textSize="12sp"
+                                android:textSize="@dimen/_9sdp"
+                                android:fontFamily="@font/poppins_semibold"
                                 android:layout_height="match_parent"
                                 android:textStyle="bold"
                                 android:gravity="end"
+                                android:background="#F5F5F5"
                                 android:padding="2dp"
                                 android:textColor="@color/black"
                                 android:layout_weight=".4"
@@ -1227,12 +1266,7 @@
                                 android:layout_height="match_parent"
                                 android:background="@android:color/black" />
 
-
-
-
                         </LinearLayout>
-
-
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -1242,35 +1276,21 @@
                             android:orientation="vertical">
                             <View
                                 android:layout_width="match_parent"
-                                android:layout_marginBottom="15dp"
+                                android:layout_marginBottom="5dp"
                                 android:layout_height="4dp"
                                 android:background="@android:color/black" />
 
                         </LinearLayout>
 
-
-
-
                     </LinearLayout>
-
-
-
-
-
-
-
-
 
                 </LinearLayout>
 
+            </ScrollView>
 
-            </androidx.cardview.widget.CardView>
+        </androidx.cardview.widget.CardView>
 
-
-
-        </LinearLayout>
-
-    </ScrollView>
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/linearLayout34_advance"
@@ -1278,6 +1298,7 @@
         android:layout_height="80dp"
         android:layout_gravity="center"
         android:gravity="center"
+        android:visibility="gone"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

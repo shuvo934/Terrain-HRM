@@ -4,31 +4,50 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/back"
+    android:background="@color/background_color"
     android:orientation="vertical"
     tools:context=".directoryBook.DirectoryWithDivision">
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/topLay_directory_division"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:background="@drawable/design"
-        android:orientation="vertical"
-        android:gravity="center">
+        android:layout_height="86dp">
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:fontFamily="@font/russo_one"
-            android:gravity="center"
-            android:text="Directory"
-            android:textColor="@color/white"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-    </LinearLayout>
+            android:layout_height="match_parent"
+            android:background="@drawable/design_2"
+            android:orientation="vertical"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:gravity="center"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:background="@drawable/design"
+            android:orientation="vertical"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:fontFamily="@font/russo_one"
+                android:gravity="center"
+                android:text="Directory"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+    </RelativeLayout>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/card_directory_division"
@@ -41,7 +60,7 @@
         android:layout_gravity="center"
         android:background="@color/white"
         app:cardCornerRadius="10dp"
-        app:cardElevation="15dp">
+        app:cardElevation="6dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -68,7 +87,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/window_color">
+                        android:background="@color/secondaryColor">
                         <com.google.android.material.textfield.TextInputLayout
                             android:id="@+id/spinner_layout_division"
                             android:layout_width="match_parent"
@@ -91,6 +110,9 @@
                                 style="@style/Widget.MaterialComponents.AutoCompleteTextView.FilledBox"
                                 android:layout_width="match_parent"
                                 android:text=""
+                                android:fontFamily="@font/poppins_semibold"
+                                android:textSize="@dimen/_10sdp"
+                                android:textStyle="bold"
                                 android:layout_height="wrap_content"
                                 />
                         </com.google.android.material.textfield.TextInputLayout>
@@ -113,7 +135,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/window_color">
+                        android:background="@color/secondaryColor">
                         <com.google.android.material.textfield.TextInputLayout
                             android:id="@+id/spinner_layout_department"
                             android:layout_width="match_parent"
@@ -136,6 +158,9 @@
                                 style="@style/Widget.MaterialComponents.AutoCompleteTextView.FilledBox"
                                 android:layout_width="match_parent"
                                 android:text=""
+                                android:fontFamily="@font/poppins_semibold"
+                                android:textSize="@dimen/_10sdp"
+                                android:textStyle="bold"
                                 android:layout_height="wrap_content"
                                 />
                         </com.google.android.material.textfield.TextInputLayout>
@@ -159,7 +184,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/window_color">
+                    android:background="@color/secondaryColor">
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/spinner_layout_designation"
                         android:layout_width="match_parent"
@@ -182,6 +207,9 @@
                             style="@style/Widget.MaterialComponents.AutoCompleteTextView.FilledBox"
                             android:layout_width="match_parent"
                             android:text=""
+                            android:fontFamily="@font/poppins_semibold"
+                            android:textSize="@dimen/_10sdp"
+                            android:textStyle="bold"
                             android:layout_height="wrap_content"
                             />
                     </com.google.android.material.textfield.TextInputLayout>
@@ -203,7 +231,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/window_color">
+                    android:background="@color/secondaryColor">
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/search_item_name_lay_directory_division"
                         android:layout_width="match_parent"
@@ -231,6 +259,8 @@
                             android:ems="10"
                             android:imeOptions="actionSearch"
                             android:inputType="text"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:textSize="@dimen/_10sdp"
                             android:textColor="#636e72"
                             android:textStyle="bold" />
 
@@ -254,7 +284,9 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight=".85">
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="10dp"
+            android:layout_weight="1">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -265,9 +297,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="5dp"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
                     android:scrollbars="vertical"
                     android:background="@android:color/transparent"/>
 
@@ -281,6 +313,7 @@
             android:layout_height="0dp"
             android:layout_weight=".15"
             android:layout_gravity="center"
+            android:visibility="gone"
             android:layout_marginBottom="5dp"
             android:gravity="center"
             android:orientation="horizontal">

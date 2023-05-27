@@ -39,11 +39,11 @@ import ttit.com.shuvo.ikglhrm.WaitProgress;
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
 import static ttit.com.shuvo.ikglhrm.OracleConnection.createConnection;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link SecondFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+///**
+// * A simple {@link Fragment} subclass.
+// * Use the {@link SecondFragment#newInstance} factory method to
+// * create an instance of this fragment.
+// */
 public class SecondFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
@@ -101,9 +101,12 @@ public class SecondFragment extends Fragment {
     EditText pabx_office;
     EditText pabx_factory;
 
-    Spinner fesTypeBonus;
-    Spinner foodSubsidyType;
-    Spinner taxBearer;
+//    Spinner fesTypeBonus;
+//    Spinner foodSubsidyType;
+//    Spinner taxBearer;
+    EditText fesTypeBonus;
+    EditText foodSubsidyType;
+    EditText taxBearer;
 
     ArrayList<String> fesBonus;
     ArrayList<String> foodsubsidy;
@@ -238,121 +241,121 @@ public class SecondFragment extends Fragment {
         taxBear.add("Self");
         taxBear.add("Company");
 
-        fesTypeBonus.setEnabled(false);
-        foodSubsidyType.setEnabled(false);
-        taxBearer.setEnabled(false);
+//        fesTypeBonus.setEnabled(false);
+//        foodSubsidyType.setEnabled(false);
+//        taxBearer.setEnabled(false);
 
         // Festival Bonus Type
-        fesAdapter = new ArrayAdapter<String>(
-                getContext(),R.layout.item_country,fesBonus){
-            @Override
-            public boolean isEnabled(int position){
-//                if(position == 0)
-//                {
-//                    // Disable the first item from Spinner
-//                    // First item will be use for hint
-//                    return false;
-//                }
-//                else
-//                {
-//                    return true;
-//                }
-                return true;
-            }
-            @Override
-            public View getDropDownView(int position, View convertView,
-                                        ViewGroup parent) {
-                View view = super.getDropDownView(position, convertView, parent);
-                TextView tv = (TextView) view.findViewById(R.id.tvCountry);
-//                if(position == 0){
-//                    // Set the hint text color gray
-//                    tv.setTextColor(Color.GRAY);
-//                }
-//                else {
-//                    tv.setTextColor(Color.BLACK);
-//                }
-                tv.setTextColor(Color.BLACK);
-                return view;
-            }
-        };
-        fesTypeBonus.setGravity(Gravity.END);
-        fesAdapter.setDropDownViewResource(R.layout.item_country);
-        fesTypeBonus.setAdapter(fesAdapter);
-
-
-        // Food Subsidy Type
-        foodAdapter = new ArrayAdapter<String>(
-                getContext(),R.layout.item_country,foodsubsidy){
-            @Override
-            public boolean isEnabled(int position){
-//                if(position == 0)
-//                {
-//                    // Disable the first item from Spinner
-//                    // First item will be use for hint
-//                    return false;
-//                }
-//                else
-//                {
-//                    return true;
-//                }
-                return true;
-            }
-            @Override
-            public View getDropDownView(int position, View convertView,
-                                        ViewGroup parent) {
-                View view = super.getDropDownView(position, convertView, parent);
-                TextView tv = (TextView) view.findViewById(R.id.tvCountry);
-//                if(position == 0){
-//                    // Set the hint text color gray
-//                    tv.setTextColor(Color.GRAY);
-//                }
-//                else {
-//                    tv.setTextColor(Color.BLACK);
-//                }
-                tv.setTextColor(Color.BLACK);
-                return view;
-            }
-        };
-        foodSubsidyType.setGravity(Gravity.END);
-        foodAdapter.setDropDownViewResource(R.layout.item_country);
-        foodSubsidyType.setAdapter(foodAdapter);
-
-        // TAX Bearer
-        taxAdapter = new ArrayAdapter<String>(
-                getContext(),R.layout.item_country,taxBear){
-            @Override
-            public boolean isEnabled(int position){
-//                if(position == 0)
-//                {
-//                    // Disable the first item from Spinner
-//                    // First item will be use for hint
-//                    return false;
-//                }
-//                else
-//                {
-//                    return true;
-//                }
-                return true;
-            }
-            @Override
-            public View getDropDownView(int position, View convertView,
-                                        ViewGroup parent) {
-                View view = super.getDropDownView(position, convertView, parent);
-                TextView tv = (TextView) view.findViewById(R.id.tvCountry);
-//                if(position == 0){
-//                    // Set the hint text color gray
-//                    tv.setTextColor(Color.GRAY);
-//                }
-//                else {
-//                    tv.setTextColor(Color.BLACK);
-//                }
-                tv.setTextColor(Color.BLACK);
-                return view;
-            }
-        };
-        taxBearer.setGravity(Gravity.END);
-        taxAdapter.setDropDownViewResource(R.layout.item_country);
-        taxBearer.setAdapter(taxAdapter);
+//        fesAdapter = new ArrayAdapter<String>(
+//                getContext(),R.layout.item_country,fesBonus){
+//            @Override
+//            public boolean isEnabled(int position){
+////                if(position == 0)
+////                {
+////                    // Disable the first item from Spinner
+////                    // First item will be use for hint
+////                    return false;
+////                }
+////                else
+////                {
+////                    return true;
+////                }
+//                return true;
+//            }
+//            @Override
+//            public View getDropDownView(int position, View convertView,
+//                                        ViewGroup parent) {
+//                View view = super.getDropDownView(position, convertView, parent);
+//                TextView tv = (TextView) view.findViewById(R.id.tvCountry);
+////                if(position == 0){
+////                    // Set the hint text color gray
+////                    tv.setTextColor(Color.GRAY);
+////                }
+////                else {
+////                    tv.setTextColor(Color.BLACK);
+////                }
+//                tv.setTextColor(Color.BLACK);
+//                return view;
+//            }
+//        };
+//        fesTypeBonus.setGravity(Gravity.END);
+//        fesAdapter.setDropDownViewResource(R.layout.item_country);
+//        fesTypeBonus.setAdapter(fesAdapter);
+//
+//
+//        // Food Subsidy Type
+//        foodAdapter = new ArrayAdapter<String>(
+//                getContext(),R.layout.item_country,foodsubsidy){
+//            @Override
+//            public boolean isEnabled(int position){
+////                if(position == 0)
+////                {
+////                    // Disable the first item from Spinner
+////                    // First item will be use for hint
+////                    return false;
+////                }
+////                else
+////                {
+////                    return true;
+////                }
+//                return true;
+//            }
+//            @Override
+//            public View getDropDownView(int position, View convertView,
+//                                        ViewGroup parent) {
+//                View view = super.getDropDownView(position, convertView, parent);
+//                TextView tv = (TextView) view.findViewById(R.id.tvCountry);
+////                if(position == 0){
+////                    // Set the hint text color gray
+////                    tv.setTextColor(Color.GRAY);
+////                }
+////                else {
+////                    tv.setTextColor(Color.BLACK);
+////                }
+//                tv.setTextColor(Color.BLACK);
+//                return view;
+//            }
+//        };
+//        foodSubsidyType.setGravity(Gravity.END);
+//        foodAdapter.setDropDownViewResource(R.layout.item_country);
+//        foodSubsidyType.setAdapter(foodAdapter);
+//
+//        // TAX Bearer
+//        taxAdapter = new ArrayAdapter<String>(
+//                getContext(),R.layout.item_country,taxBear){
+//            @Override
+//            public boolean isEnabled(int position){
+////                if(position == 0)
+////                {
+////                    // Disable the first item from Spinner
+////                    // First item will be use for hint
+////                    return false;
+////                }
+////                else
+////                {
+////                    return true;
+////                }
+//                return true;
+//            }
+//            @Override
+//            public View getDropDownView(int position, View convertView,
+//                                        ViewGroup parent) {
+//                View view = super.getDropDownView(position, convertView, parent);
+//                TextView tv = (TextView) view.findViewById(R.id.tvCountry);
+////                if(position == 0){
+////                    // Set the hint text color gray
+////                    tv.setTextColor(Color.GRAY);
+////                }
+////                else {
+////                    tv.setTextColor(Color.BLACK);
+////                }
+//                tv.setTextColor(Color.BLACK);
+//                return view;
+//            }
+//        };
+//        taxBearer.setGravity(Gravity.END);
+//        taxAdapter.setDropDownViewResource(R.layout.item_country);
+//        taxBearer.setAdapter(taxAdapter);
 
         new Check().execute();
 
@@ -646,7 +649,8 @@ public class SecondFragment extends Fragment {
                             committedSalary.setText(secondPageData.get(i).getComm_sal());
                         }
                         if (secondPageData.get(i).getFes_bon_type() != null) {
-                            fesTypeBonus.setSelection(Integer.parseInt(secondPageData.get(i).getFes_bon_type()));
+//                            fesTypeBonus.setSelection(Integer.parseInt(secondPageData.get(i).getFes_bon_type()));
+                            fesTypeBonus.setText(fesBonus.get(Integer.parseInt(secondPageData.get(i).getFes_bon_type())));
                         }
                         if (secondPageData.get(i).getMobile_bill() != null) {
                             mobileBill.setText(secondPageData.get(i).getMobile_bill());
@@ -658,7 +662,8 @@ public class SecondFragment extends Fragment {
                             fixedOt.setText(secondPageData.get(i).getFixed_ot());
                         }
                         if (secondPageData.get(i).getFood_sub_type() != null) {
-                            foodSubsidyType.setSelection(Integer.parseInt(secondPageData.get(i).getFood_sub_type()));
+//                            foodSubsidyType.setSelection(Integer.parseInt(secondPageData.get(i).getFood_sub_type()));
+                            foodSubsidyType.setText(foodsubsidy.get(Integer.parseInt(secondPageData.get(i).getFood_sub_type())));
                         }
                         if (secondPageData.get(i).getFood_sub() != null) {
                             foodSubsidy.setText(secondPageData.get(i).getFood_sub());
@@ -685,7 +690,8 @@ public class SecondFragment extends Fragment {
 
 
                         if (secondPageData.get(i).getTax_bearer() != null) {
-                            taxBearer.setSelection(Integer.parseInt(secondPageData.get(i).getTax_bearer()));
+//                            taxBearer.setSelection(Integer.parseInt(secondPageData.get(i).getTax_bearer()));
+                            taxBearer.setText(taxBear.get(Integer.parseInt(secondPageData.get(i).getTax_bearer())));
                         }
                         if (secondPageData.get(i).getTax_deduc() != null) {
                             taxDeduc.setText(secondPageData.get(i).getTax_deduc());

@@ -3,6 +3,7 @@ package ttit.com.shuvo.ikglhrm.payRoll.paySlip;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 
 import android.app.DownloadManager;
 import android.app.ProgressDialog;
@@ -26,6 +27,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -55,7 +57,7 @@ public class PaySlip extends AppCompatActivity {
     public static TextView errorMsgMonth;
 
     Button show;
-    Button download;
+    MaterialButton download;
 
     CardView reportCard;
 
@@ -189,6 +191,10 @@ public class PaySlip extends AppCompatActivity {
 //// Hide the status bar.
 //        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
 //        decorView.setSystemUiVisibility(uiOptions);
+        Window window = getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(ContextCompat.getColor(PaySlip.this,R.color.secondaryColor));
         setContentView(R.layout.activity_pay_slip);
 
         select_month_id = "";
@@ -533,7 +539,7 @@ public class PaySlip extends AppCompatActivity {
             if (conn) {
 
                 errorMsgMonth.setVisibility(View.GONE);
-                download.setVisibility(View.VISIBLE);
+
                 reportCard.setVisibility(View.VISIBLE);
 
                 monthName.setText(selectMonth.getText().toString());
@@ -600,9 +606,11 @@ public class PaySlip extends AppCompatActivity {
                 if (count.equals("1")) {
                     salaryLay.setVisibility(View.VISIBLE);
                     salaryData.setVisibility(View.GONE);
+                    download.setVisibility(View.VISIBLE);
                 } else {
                     salaryLay.setVisibility(View.GONE);
                     salaryData.setVisibility(View.VISIBLE);
+                    download.setVisibility(View.GONE);
                 }
                 basic.setText(basic_salary);
                 houseRent.setText(hou_rent);

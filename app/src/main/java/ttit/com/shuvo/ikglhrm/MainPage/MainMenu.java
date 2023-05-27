@@ -25,6 +25,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import ttit.com.shuvo.ikglhrm.EmployeeInfo.EmplyeeInformation;
 import ttit.com.shuvo.ikglhrm.Login;
@@ -101,6 +102,7 @@ public class MainMenu extends AppCompatActivity {
     public static final String SOFTWARE = "SOFTWARE";
     public static final String LIVE_FLAG = "LIVE_FLAG";
     public static final String DATABASE_NAME = "DATABASE_NAME";
+    TextView welcomeText;
 
 //    @Override
 //    public void onWindowFocusChanged(boolean hasFocus) {
@@ -166,6 +168,23 @@ public class MainMenu extends AppCompatActivity {
         leave = findViewById(R.id.leave_all);
         payRoll = findViewById(R.id.pay_roll_info);
         directory = findViewById(R.id.directory);
+        welcomeText = findViewById(R.id.welcome_text_view_main_menu);
+
+        int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        String wt = "";
+        if (currentHour >= 4 && currentHour <= 11) {
+            wt = "GOOD MORNING,";
+        }
+        else if (currentHour >= 12 && currentHour <= 16) {
+            wt = "GOOD AFTERNOON,";
+        }
+        else if (currentHour >= 17 && currentHour <= 22) {
+            wt = "GOOD EVENING,";
+        }
+        else {
+            wt = "HELLO,";
+        }
+        welcomeText.setText(wt);
 
 //        logout = findViewById(R.id.main_menu_log_out);
         if (selectedImage != null) {
@@ -260,7 +279,7 @@ public class MainMenu extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (isMyServiceRunning(Service.class)) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(MainMenu.this);
+                    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(MainMenu.this);
                     builder.setMessage("Your Tracking Service is running. You can not Log Out while Running this Service!")
                             .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                 @Override
@@ -271,8 +290,9 @@ public class MainMenu extends AppCompatActivity {
                     AlertDialog alert = builder.create();
                     alert.show();
                 } else {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(MainMenu.this);
+                    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(MainMenu.this);
                     builder.setTitle("LOG OUT!")
+                            .setIcon(R.drawable.thrm_logo)
                             .setMessage("Do you want to Log Out?")
                             .setPositiveButton("YES", new DialogInterface.OnClickListener() {
                                 @Override
@@ -413,7 +433,7 @@ public class MainMenu extends AppCompatActivity {
         MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(MainMenu.this)
                 .setTitle("EXIT!")
                 .setMessage("Do You Want to Exit?")
-                .setIcon(R.drawable.thrm_black)
+                .setIcon(R.drawable.thrm_logo)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

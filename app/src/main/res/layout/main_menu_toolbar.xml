@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/window_color">
+    android:background="@color/primaryColor">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -13,7 +13,7 @@
             android:layout_height="30dp"
             android:id="@+id/terrain_logo"
             android:layout_centerVertical="true"
-            android:src="@drawable/thrm_black"/>
+            android:src="@drawable/thrm_logo"/>
         <TextView
             android:id="@+id/thrm_app_name_main_menu"
             android:layout_width="match_parent"

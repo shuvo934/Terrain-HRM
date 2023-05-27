@@ -4,42 +4,62 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/back"
+    android:background="@color/background_color"
     tools:context=".EmployeeInfo.transcript.EMPTranscript">
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/topLay"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:background="@drawable/design"
-        android:orientation="vertical"
-        android:gravity="center"
+        android:layout_height="86dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:fontFamily="@font/russo_one"
-            android:gravity="center"
-            android:text="Employee Transcripts"
-            android:textColor="@color/white"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-    </LinearLayout>
+            android:layout_height="match_parent"
+            android:background="@drawable/design_2"
+            android:orientation="vertical"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:gravity="center"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:background="@drawable/design"
+            android:orientation="vertical"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:fontFamily="@font/russo_one"
+                android:gravity="center"
+                android:text="Employee Transcripts"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
 
     <androidx.cardview.widget.CardView
         android:id="@+id/scrollView2"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
         app:cardCornerRadius="10dp"
-        app:cardElevation="15dp"
+        app:cardElevation="10dp"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:background="@color/white"
@@ -53,12 +73,13 @@
 
 
         <ScrollView
+            android:id="@+id/emp_trans_scroll_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
-            android:layout_marginBottom="15dp"
+            android:layout_marginBottom="10dp"
             android:background="@color/white"
             >
             <LinearLayout
@@ -87,6 +108,7 @@
         android:layout_gravity="center"
         android:layout_marginBottom="20dp"
         android:gravity="center"
+        android:visibility="gone"
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
         app:layout_constraintEnd_toEndOf="parent"
@@ -113,9 +135,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="?android:attr/windowBackground"
-        app:backgroundTint="#f7b731"
-        app:itemIconTint="@null"
+        android:background="@drawable/design_3"
+        app:itemIconTint="#ffeaa7"
+        app:itemTextColor="@color/white"
         style="@style/Widget.MaterialComponents.BottomNavigationView.PrimarySurface"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

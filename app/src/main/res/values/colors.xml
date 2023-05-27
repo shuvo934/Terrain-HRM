@@ -11,4 +11,10 @@
 <!--    <color name="window_color">#f0932b</color>-->
     <color name="window_color">#fac13f</color>
     <color name="loc">#FFBB77</color>
+    <color name="primaryColor">#3463ab</color>
+    <color name="primaryVariant">#fac13f</color>
+    <color name="secondaryColor">#0984e3</color>
+    <color name="mazarine_blue">#273c75</color>
+    <color name="background_color">#f5f6fa</color>
+    <color name="light_orange">#ffeaa7</color>
 </resources>

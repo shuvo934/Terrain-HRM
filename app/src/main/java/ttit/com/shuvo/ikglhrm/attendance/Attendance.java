@@ -33,6 +33,8 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -78,6 +80,7 @@ public class Attendance extends AppCompatActivity {
 
     PieChart pieChart;
     TextView refresh;
+    FloatingActionButton floatingActionButton;
 
     int dateCount = 0;
 
@@ -92,6 +95,10 @@ public class Attendance extends AppCompatActivity {
     String emp_code = "";
     String beginDate = "";
     String lastDate = "";
+    String lastDateForAttBot = "";
+    String intTimeAttBot = "";
+    String outTimeAttBot = "";
+    String lastLtimAttBot = "";
 
     String absent = "";
     String present = "";
@@ -175,6 +182,14 @@ public class Attendance extends AppCompatActivity {
 
         pieChart = findViewById(R.id.piechart_attendance);
         refresh = findViewById(R.id.refresh_graph_attendance);
+        floatingActionButton = findViewById(R.id.floating_button_att_bottom);
+
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showBottomSheetDialog();
+            }
+        });
 
 
         attReport.setOnClickListener(new View.OnClickListener() {
@@ -197,6 +212,8 @@ public class Attendance extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Attendance.this, AttendanceGive.class);
+                intent.putExtra("LAST_TIME",lastLtimAttBot);
+                intent.putExtra("TODAY_DATE",lastDateForAttBot);
                 startActivity(intent);
             }
         });
@@ -219,6 +236,10 @@ public class Attendance extends AppCompatActivity {
         SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yy", Locale.getDefault());
 
         lastDate = df.format(c);
+
+        SimpleDateFormat dfffff = new SimpleDateFormat("dd-MMMM-yyyy", Locale.getDefault());
+
+        lastDateForAttBot = dfffff.format(c);
 
         SimpleDateFormat sdf = new SimpleDateFormat("MMM-yy", Locale.getDefault());
 
@@ -473,6 +494,28 @@ public class Attendance extends AppCompatActivity {
 
     }
 
+    private void showBottomSheetDialog() {
+        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(Attendance.this);
+        bottomSheetDialog.setContentView(R.layout.bottom_sheet_dial_attendance);
+        TextView today_date_att_bot = bottomSheetDialog.findViewById(R.id.today_date_att_bottom);
+        TextView inTime_att_bot = bottomSheetDialog.findViewById(R.id.in_time_att_bottom);
+        TextView outTime_att_bot = bottomSheetDialog.findViewById(R.id.out_time_att_bottom);
+        TextView lastTime = bottomSheetDialog.findViewById(R.id.last_time_att_bottom);
+        if (today_date_att_bot != null) {
+            today_date_att_bot.setText(lastDateForAttBot);
+        }
+        if (inTime_att_bot != null) {
+            inTime_att_bot.setText(intTimeAttBot);
+        }
+        if (outTime_att_bot != null) {
+            outTime_att_bot.setText(outTimeAttBot);
+        }
+        if (lastTime != null) {
+            lastTime.setText(lastLtimAttBot);
+        }
+        bottomSheetDialog.show();
+    }
+
     public boolean isConnected() {
         boolean connected = false;
         boolean isMobile = false;
@@ -710,6 +753,37 @@ public class Attendance extends AppCompatActivity {
 
                 }
 
+                if (intTimeAttBot != null) {
+                    if (!intTimeAttBot.isEmpty()) {
+                        intTimeAttBot = intTimeAttBot;
+                    }
+                    else {
+                        intTimeAttBot = "--:--";
+                    }
+                }
+                else {
+                    intTimeAttBot = "--:--";
+                }
+                if (outTimeAttBot != null) {
+                    if (!outTimeAttBot.isEmpty()) {
+                        outTimeAttBot = outTimeAttBot;
+                    }
+                    else {
+                        outTimeAttBot = "--:--";
+                    }
+                }
+                else {
+                    outTimeAttBot = "--:--";
+                }
+                if (!outTimeAttBot.equals("--:--") && !intTimeAttBot.equals("--:--")) {
+                    lastLtimAttBot = outTimeAttBot;
+                }
+                else if (outTimeAttBot.equals("--:--") && !intTimeAttBot.equals("--:--")){
+                    lastLtimAttBot = intTimeAttBot;
+                }
+                else {
+                    lastLtimAttBot = "--:--";
+                }
                 conn = false;
                 connected = false;
 
@@ -759,6 +833,9 @@ public class Attendance extends AppCompatActivity {
              holiday = "";
              late = "";
              early = "";
+             intTimeAttBot = "";
+             outTimeAttBot = "";
+             lastLtimAttBot = "";
 
 //             beginDate = "01-JUN-21";
 //             lastDate = "30-JUN-21";
@@ -971,7 +1048,20 @@ public class Attendance extends AppCompatActivity {
                 }
             }
 
+            ResultSet resultSet3 = stmt.executeQuery("SELECT DISTINCT TO_CHAR(DA_CHECK.DAC_IN_DATE_TIME,'HH:MI AM') DAC_IN_DATE_TIME, \n" +
+                    "TO_CHAR(DA_CHECK.DAC_OUT_DATE_TIME,'HH:MI AM') DAC_OUT_DATE_TIME\n" +
+                    "FROM EMP_MST,DA_CHECK\n" +
+                    "WHERE DA_CHECK.DAC_EMP_ID = EMP_MST.EMP_ID\n" +
+                    "AND DA_CHECK.DAC_DATE = '"+lastDateForAttBot+"'\n" +
+                    "AND EMP_MST.EMP_ID = "+emp_id+"");
 
+            while (resultSet3.next()) {
+                intTimeAttBot = resultSet3.getString(1);
+                outTimeAttBot = resultSet3.getString(2);
+            }
+            resultSet3.close();
+
+            stmt.close();
             connected = true;
 
             connection.close();

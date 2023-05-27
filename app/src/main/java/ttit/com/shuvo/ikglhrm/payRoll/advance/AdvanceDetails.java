@@ -3,6 +3,7 @@ package ttit.com.shuvo.ikglhrm.payRoll.advance;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 
 import android.content.Context;
 import android.content.Intent;
@@ -122,6 +123,10 @@ public class AdvanceDetails extends AppCompatActivity {
 //// Hide the status bar.
 //        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
 //        decorView.setSystemUiVisibility(uiOptions);
+        Window window = getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(ContextCompat.getColor(AdvanceDetails.this,R.color.secondaryColor));
         setContentView(R.layout.activity_advance_details);
 
         selectMonth = findViewById(R.id.select_month_advance);

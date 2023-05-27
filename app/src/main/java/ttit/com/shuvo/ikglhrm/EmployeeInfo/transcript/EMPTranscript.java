@@ -2,6 +2,7 @@ package ttit.com.shuvo.ikglhrm.EmployeeInfo.transcript;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.graphics.Color;
@@ -13,15 +14,18 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ScrollView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import ttit.com.shuvo.ikglhrm.R;
+import ttit.com.shuvo.ikglhrm.attendance.report.AttendanceReport;
 
 public class EMPTranscript extends AppCompatActivity {
 
     BottomNavigationView bottomNavigationView;
     Button transFinish;
+    ScrollView scrollView;
 
 //    @Override
 //    public void onWindowFocusChanged(boolean hasFocus) {
@@ -61,12 +65,17 @@ public class EMPTranscript extends AppCompatActivity {
 //        // Hide the status bar.
 //        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
 //        decorView.setSystemUiVisibility(uiOptions);
+        Window window = getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(ContextCompat.getColor(EMPTranscript.this,R.color.secondaryColor));
 
         setContentView(R.layout.activity_e_m_p_transcript);
 
         transFinish = findViewById(R.id.transcript_finish);
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
+        scrollView = findViewById(R.id.emp_trans_scroll_view);
         bottomNavigationView.setOnNavigationItemSelectedListener(onClickListener);
 
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FirstFragment(EMPTranscript.this)).commit();
@@ -105,6 +114,7 @@ public class EMPTranscript extends AppCompatActivity {
 
                             break;
                     }
+                    scrollView.smoothScrollTo(0,0);
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFrag).commit();
                     return true;
                 }

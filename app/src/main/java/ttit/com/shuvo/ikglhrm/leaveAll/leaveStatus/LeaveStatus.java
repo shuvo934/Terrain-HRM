@@ -3,6 +3,7 @@ package ttit.com.shuvo.ikglhrm.leaveAll.leaveStatus;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
@@ -28,6 +29,7 @@ import android.widget.Toast;
 import com.github.dewinjm.monthyearpicker.MonthFormat;
 import com.github.dewinjm.monthyearpicker.MonthYearPickerDialog;
 import com.github.dewinjm.monthyearpicker.MonthYearPickerDialogFragment;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -67,7 +69,7 @@ public class LeaveStatus extends AppCompatActivity {
     CardView statusReport;
 
     Button show;
-    Button download;
+    MaterialButton download;
     Button close;
 
     TextInputEditText name;
@@ -128,6 +130,10 @@ public class LeaveStatus extends AppCompatActivity {
 //// Hide the status bar.
 //        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
 //        decorView.setSystemUiVisibility(uiOptions);
+        Window window = getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(ContextCompat.getColor(LeaveStatus.this,R.color.secondaryColor));
         setContentView(R.layout.activity_leave_status);
 
         selectMonth = findViewById(R.id.select_month);

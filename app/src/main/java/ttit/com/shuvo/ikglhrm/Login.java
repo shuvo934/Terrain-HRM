@@ -5,6 +5,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -18,6 +19,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageDecoder;
+import android.graphics.Typeface;
 import android.media.Image;
 import android.media.ImageReader;
 import android.net.ConnectivityManager;
@@ -26,6 +28,8 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -43,6 +47,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.rosemaryapp.amazingspinner.AmazingSpinner;
 
@@ -172,6 +177,10 @@ public class Login extends AppCompatActivity {
 //// Hide the status bar.
 //        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
 //        decorView.setSystemUiVisibility(uiOptions);
+        Window window = getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(ContextCompat.getColor(Login.this,R.color.secondaryColor));
         setContentView(R.layout.activity_login);
 
 
@@ -221,6 +230,38 @@ public class Login extends AppCompatActivity {
             }
         });
 
+        pass.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                login_failed.setVisibility(View.GONE);
+            }
+        });
+        user.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                login_failed.setVisibility(View.GONE);
+            }
+        });
 
         new Check().execute();
 
@@ -249,7 +290,7 @@ public class Login extends AppCompatActivity {
 
                 closeKeyBoard();
 
-                login_failed.setVisibility(View.INVISIBLE);
+                login_failed.setVisibility(View.GONE);
                 userName = user.getText().toString();
                 password = pass.getText().toString();
 
@@ -329,8 +370,9 @@ public class Login extends AppCompatActivity {
 
     @Override
     public void onBackPressed () {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
         builder.setTitle("EXIT!")
+                .setIcon(R.drawable.thrm_logo)
                 .setMessage("Do you want to EXIT?")
                 .setPositiveButton("YES", new DialogInterface.OnClickListener() {
                     @Override
@@ -684,7 +726,7 @@ public class Login extends AppCompatActivity {
             if (!userId.equals("-1")) {
 
                 String empCode = "";
-                ResultSet resEmpCode = stmt.executeQuery("select COM_PACK.GET_EMP_CODE_BY_EMP_ID(COM_PACK.GET_EMPLOYEE_ID_BY_USER('"+userName+"')) valu from dual");
+                ResultSet resEmpCode = stmt.executeQuery("select COM_PACK.GET_EMP_CODE_BY_EMP_ID((SELECT USR_EMP_ID FROM ISP_USER WHERE USR_ID = "+userId+")) valu from dual");
                 while (resEmpCode.next()) {
                     empCode = resEmpCode.getString(1);
                 }
@@ -693,7 +735,7 @@ public class Login extends AppCompatActivity {
                 if (empCode.equals("0000")) {
                     adminConnected = true;
                 }
-                else {
+                else if (!empCode.equals("NO USER FOUND")){
                     adminConnected = false;
                     ResultSet resultSet = stmt.executeQuery("Select USR_NAME, USR_FNAME, USR_LNAME, USR_EMAIL, USR_CONTACT, USR_EMP_ID FROM ISP_USER\n" +
                             "where USR_ID = " + userId + "\n");

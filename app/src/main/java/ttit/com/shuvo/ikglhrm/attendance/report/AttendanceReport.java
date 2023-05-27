@@ -3,6 +3,7 @@ package ttit.com.shuvo.ikglhrm.attendance.report;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,6 +34,7 @@ import android.widget.Toast;
 import com.github.dewinjm.monthyearpicker.MonthFormat;
 import com.github.dewinjm.monthyearpicker.MonthYearPickerDialog;
 import com.github.dewinjm.monthyearpicker.MonthYearPickerDialogFragment;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -75,7 +77,7 @@ public class AttendanceReport extends AppCompatActivity {
     TextInputEditText selecetMonth;
     TextInputLayout selectMonthLay;
 
-    Button downlaodReport;
+    MaterialButton downlaodReport;
     Button showReport;
     TextView errorReport;
 
@@ -183,6 +185,10 @@ public class AttendanceReport extends AppCompatActivity {
 //// Hide the status bar.
 //        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
 //        decorView.setSystemUiVisibility(uiOptions);
+        Window window = getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(ContextCompat.getColor(AttendanceReport.this,R.color.secondaryColor));
 
         setContentView(R.layout.activity_attendance_report);
 

@@ -30,6 +30,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
+            android:fontFamily="@font/open_sans_bold"
+            android:textSize="@dimen/_11sdp"
             android:textStyle="bold"
             android:textColor="#636e72"
             android:inputType="textMultiLine"
@@ -53,6 +55,8 @@
             android:layout_gravity="center"
             android:background="#dfe6e9"
             android:text="Month Name"
+            android:fontFamily="@font/poppins_semibold"
+            android:textSize="@dimen/_9sdp"
             android:textColor="@color/black"
             android:layout_weight=".4"/>
 
@@ -64,6 +68,8 @@
             android:gravity="center"
             android:layout_gravity="center"
             android:text="Month Start"
+            android:fontFamily="@font/poppins_semibold"
+            android:textSize="@dimen/_9sdp"
             android:textColor="@color/black"
             android:background="#dfe6e9"
             android:layout_weight=".4"/>
@@ -75,11 +81,26 @@
             android:gravity="center"
             android:textColor="@color/black"
             android:text="Month End"
+            android:fontFamily="@font/poppins_semibold"
+            android:textSize="@dimen/_9sdp"
             android:background="#dfe6e9"
             android:layout_weight=".4"/>
 
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/no_month_found_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="NO MONTH FOUND"
+        android:visibility="gone"
+        android:textColor="@color/mazarine_blue"
+        android:fontFamily="@font/poppins_bold"
+        android:textSize="@dimen/_11sdp"
+        android:layout_margin="5dp"
+        android:textStyle="bold"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="300dp"

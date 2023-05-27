@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/back"
+    android:background="@color/background_color"
     android:orientation="vertical"
     tools:context=".attendance.giveAttendance.AttendanceGive">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/window_color">
+        android:background="@color/primaryColor">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -22,7 +22,7 @@
                 android:layout_height="30dp"
                 android:id="@+id/terrain_logo_giva"
                 android:layout_centerVertical="true"
-                android:src="@drawable/thrm_black"/>
+                android:src="@drawable/thrm_logo"/>
             <TextView
                 android:id="@+id/name_of_company_attendance_give"
                 android:layout_width="match_parent"
@@ -51,7 +51,7 @@
     <LinearLayout
         android:id="@+id/topLay_give_att"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center"
         app:layout_constraintEnd_toEndOf="parent"
@@ -64,10 +64,11 @@
             android:layout_gravity="center"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
-            android:fontFamily="@font/russo_one"
+            android:fontFamily="@font/bungee"
             android:gravity="center"
             android:text="Give Attendance"
-            android:textColor="@color/white"
+            android:layout_marginTop="5dp"
+            android:textColor="@color/mazarine_blue"
             android:textSize="20sp"
             android:textStyle="bold" />
     </LinearLayout>
@@ -89,12 +90,13 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
-            android:layout_weight=".5"
-            android:layout_marginBottom="10dp"
+            android:layout_weight=".6"
+            android:layout_marginBottom="5dp"
             android:background="@color/white"
             app:cardCornerRadius="10dp"
-            app:cardElevation="15dp">
+            app:cardElevation="7dp">
 
 
             <LinearLayout
@@ -123,20 +125,19 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight=".5"
-            android:weightSum=".5"
+            android:layout_weight=".4"
             android:orientation="vertical">
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginTop="5dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
-                android:layout_weight=".35"
                 android:layout_marginBottom="10dp"
                 android:background="@color/white"
                 app:cardCornerRadius="10dp"
-                app:cardElevation="15dp">
+                app:cardElevation="5dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -145,67 +146,57 @@
                     android:layout_gravity="center"
                     android:gravity="center">
 
-                    <LinearLayout
+                    <TextView
+                        android:id="@+id/today_date_time_give_att"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_gravity="center"
+                        android:textColor="@color/mazarine_blue"
+                        android:textSize="@dimen/_15sdp"
+                        android:text=""
                         android:gravity="center"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginBottom="5dp"
-                        android:weightSum="1">
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:text="Your Attendance Location:"
-                            android:textStyle="bold"
-                            android:textSize="12sp"
-                            android:layout_gravity="center"
-                            android:layout_weight=".5"
-                            android:textColor="@color/black"
-                            android:fontFamily="@font/amiko"
-                            android:layout_marginStart="5dp"/>
-                        <TextView
-                            android:id="@+id/text_of_cu_loc"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight=".5"
-                            android:textStyle="bold"
-                            android:maxLines="2"
-                            android:textSize="12sp"
-                            android:layout_gravity="center"
-                            android:textColor="@color/black"
-                            android:layout_marginStart="5dp"
-                            android:fontFamily="@font/amiko"
-                            android:layout_marginEnd="5dp"/>
-                    </LinearLayout>
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:background="@android:color/darker_gray" />
-                    <TextView
+                        android:fontFamily="@font/poppins_bold"
+                        />
+                    <TextClock
+                        android:id="@+id/text_clock_give_att"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:layout_gravity="center"
-                        android:text="- - - - - - - - - - - -"/>
-                    <View
+                        android:fontFamily="@font/poppins_bold"
+                        android:format12Hour="hh:mm:ss a"
+                        android:format24Hour="hh:mm:ss a"
+                        android:textStyle="bold"
+                        android:text=""
+                        android:textSize="@dimen/_13sdp"
+                        android:textColor="#576574"/>
+                    <TextView
+                        android:id="@+id/check_int_time"
                         android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:background="@android:color/darker_gray" />
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:layout_marginTop="3dp"
+                        android:textSize="@dimen/_10sdp"
+                        android:fontFamily="@font/poppins_semibold"
+                        android:textColor="@color/black"
+                        android:text=""/>
+<!--                    <View-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="2dp"-->
+<!--                        android:background="@android:color/darker_gray" />-->
+<!--                    <TextView-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:gravity="center"-->
+<!--                        android:layout_gravity="center"-->
+<!--                        android:text="- - - - - - - - - - - -"/>-->
+<!--                    <View-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="2dp"-->
+<!--                        android:background="@android:color/darker_gray" />-->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
-                        <TextView
-                            android:id="@+id/check_int_time"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textStyle="bold"
-                            android:layout_gravity="center"
-                            android:gravity="center"
-                            android:textColor="@color/black"
-                            android:text=""/>
                         <!--                        <Button-->
                         <!--                            android:id="@+id/check_in_time_button"-->
                         <!--                            android:layout_width="match_parent"-->
@@ -223,7 +214,7 @@
                             android:layout_height="50dp"
                             android:layout_margin="10dp"
                             app:cardCornerRadius="10dp"
-                            app:cardElevation="15dp">
+                            app:cardElevation="5dp">
                             <RelativeLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
@@ -233,7 +224,7 @@
                                 <ImageView
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
-                                    android:src="@drawable/custom_button2"
+                                    android:src="@drawable/custom_button"
                                     android:layout_alignParentEnd="true"
                                     android:layout_alignParentTop="true"
                                     android:layout_alignParentBottom="true"
@@ -280,6 +271,42 @@
 
 
                     </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:weightSum="1">
+<!--                        <TextView-->
+<!--                            android:layout_width="0dp"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:text="Your Attendance Location:"-->
+<!--                            android:textStyle="bold"-->
+<!--                            android:textSize="12sp"-->
+<!--                            android:layout_gravity="center"-->
+<!--                            android:layout_weight=".5"-->
+<!--                            android:textColor="@color/black"-->
+<!--                            android:fontFamily="@font/poppins_semibold"-->
+<!--                            android:layout_marginStart="5dp"/>-->
+                        <TextView
+                            android:id="@+id/text_of_cu_loc"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:textStyle="bold"
+                            android:maxLines="2"
+                            android:text=""
+                            android:textSize="12sp"
+                            android:gravity="center"
+                            android:layout_gravity="center"
+                            android:textColor="@color/black"
+                            android:layout_marginStart="5dp"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:layout_marginEnd="5dp"/>
+                    </LinearLayout>
 
 
                 </LinearLayout>
@@ -292,6 +319,7 @@
                 android:layout_height="0dp"
                 android:layout_gravity="center"
                 android:gravity="center"
+                android:visibility="gone"
                 android:layout_weight=".15"
                 android:orientation="horizontal">
 

@@ -59,6 +59,7 @@ public class MonthSelectDialogue extends AppCompatDialogFragment implements Mont
 
     TextInputEditText search;
     AlertDialog dialog;
+    TextView noMonthMsg;
 
     Boolean isfiltered = false;
     ArrayList<MonthSelectList> filteredList = new ArrayList<>();
@@ -89,6 +90,8 @@ public class MonthSelectDialogue extends AppCompatDialogFragment implements Mont
 
         activity = (AppCompatActivity) view.getContext();
         recyclerView = view.findViewById(R.id.month_list_of_item);
+        noMonthMsg = view.findViewById(R.id.no_month_found_msg);
+        noMonthMsg.setVisibility(View.GONE);
 
         search = view.findViewById(R.id.month_search);
         lists = new ArrayList<>();
@@ -243,6 +246,12 @@ public class MonthSelectDialogue extends AppCompatDialogFragment implements Mont
             waitProgress.dismiss();
             if (conn) {
 
+                if (lists.size() == 0) {
+                    noMonthMsg.setVisibility(View.VISIBLE);
+                }
+                else {
+                    noMonthMsg.setVisibility(View.GONE);
+                }
                 monthSelectAdapter = new MonthSelectAdapter(lists,getContext(), MonthSelectDialogue.this);
                 recyclerView.setAdapter(monthSelectAdapter);
 

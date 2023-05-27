@@ -2,6 +2,7 @@ package ttit.com.shuvo.ikglhrm.EmployeeInfo.personal;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.content.Context;
 import android.content.Intent;
@@ -41,18 +42,25 @@ import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.UserDesignation;
 import ttit.com.shuvo.ikglhrm.UserInfoList;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
+import ttit.com.shuvo.ikglhrm.attendance.report.AttendanceReport;
 
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
 import static ttit.com.shuvo.ikglhrm.OracleConnection.createConnection;
 
 public class PersonalData extends AppCompatActivity {
 
-    Spinner bloodGroup;
-    Spinner groupDisplay;
-    Spinner religion;
-    Spinner sex;
-    Spinner marital_status;
-    Spinner mailing_address;
+//    Spinner bloodGroup;
+//    Spinner groupDisplay;
+//    Spinner religion;
+//    Spinner sex;
+//    Spinner marital_status;
+//    Spinner mailing_address;
+    EditText bloodGroup;
+    EditText groupDisplay;
+    EditText religion;
+    EditText sex;
+    EditText marital_status;
+    EditText mailing_address;
 
     public ArrayList<String> bg;
     public ArrayList<String> gd;
@@ -136,6 +144,10 @@ public class PersonalData extends AppCompatActivity {
 //// Hide the status bar.
 //        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
 //        decorView.setSystemUiVisibility(uiOptions);
+        Window window = getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(ContextCompat.getColor(PersonalData.this,R.color.secondaryColor));
 
         setContentView(R.layout.activity_personal_data);
 
@@ -164,12 +176,12 @@ public class PersonalData extends AppCompatActivity {
 
         ok = findViewById(R.id.finish_button);
 
-        bloodGroup.setEnabled(false);
-        groupDisplay.setEnabled(false);
-        religion.setEnabled(false);
-        sex.setEnabled(false);
-        marital_status.setEnabled(false);
-        mailing_address.setEnabled(false);
+//        bloodGroup.setEnabled(false);
+//        groupDisplay.setEnabled(false);
+//        religion.setEnabled(false);
+//        sex.setEnabled(false);
+//        marital_status.setEnabled(false);
+//        mailing_address.setEnabled(false);
 
         bg = new ArrayList<>();
         gd = new ArrayList<>();
@@ -228,153 +240,10 @@ public class PersonalData extends AppCompatActivity {
 
 
 // BLOOD GROUP
-        bgArrayAdapter = new ArrayAdapter<String>(
-                this,R.layout.item_country,bg){
-            @Override
-            public boolean isEnabled(int position){
-                if(position == 0)
-                {
-                    // Disable the first item from Spinner
-                    // First item will be use for hint
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
-            }
-            @Override
-            public View getDropDownView(int position, View convertView,
-                                        ViewGroup parent) {
-                View view = super.getDropDownView(position, convertView, parent);
-                TextView tv = (TextView) view.findViewById(R.id.tvCountry);
-                if(position == 0){
-                    // Set the hint text color gray
-                    tv.setTextColor(Color.GRAY);
-                }
-                else {
-                    tv.setTextColor(Color.BLACK);
-                }
-                return view;
-            }
-        };
-        bloodGroup.setGravity(Gravity.END);
-        bgArrayAdapter.setDropDownViewResource(R.layout.item_country);
-        bloodGroup.setAdapter(bgArrayAdapter);
-
-        // SEX
-        seArrayAdapter = new ArrayAdapter<String>(
-                this,R.layout.item_country,se){
-            @Override
-            public boolean isEnabled(int position){
-                if(position == 0)
-                {
-                    // Disable the first item from Spinner
-                    // First item will be use for hint
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
-            }
-            @Override
-            public View getDropDownView(int position, View convertView,
-                                        ViewGroup parent) {
-                View view = super.getDropDownView(position, convertView, parent);
-                TextView tv = (TextView) view.findViewById(R.id.tvCountry);
-                if(position == 0){
-                    // Set the hint text color gray
-                    tv.setTextColor(Color.GRAY);
-                }
-                else {
-                    tv.setTextColor(Color.BLACK);
-                }
-                return view;
-            }
-        };
-        sex.setGravity(Gravity.END);
-        seArrayAdapter.setDropDownViewResource(R.layout.item_country);
-        sex.setAdapter(seArrayAdapter);
-
-
-        // RELIGION
-        relArrayAdapter = new ArrayAdapter<String>(
-                this,R.layout.item_country,rel){
-            @Override
-            public boolean isEnabled(int position){
-                if(position == 0)
-                {
-                    // Disable the first item from Spinner
-                    // First item will be use for hint
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
-            }
-            @Override
-            public View getDropDownView(int position, View convertView,
-                                        ViewGroup parent) {
-                View view = super.getDropDownView(position, convertView, parent);
-                TextView tv = (TextView) view.findViewById(R.id.tvCountry);
-                if(position == 0){
-                    // Set the hint text color gray
-                    tv.setTextColor(Color.GRAY);
-                }
-                else {
-                    tv.setTextColor(Color.BLACK);
-                }
-                return view;
-            }
-        };
-        religion.setGravity(Gravity.END);
-        relArrayAdapter.setDropDownViewResource(R.layout.item_country);
-        religion.setAdapter(relArrayAdapter);
-
-        // MARITAL STATUS
-        msArrayAdapter = new ArrayAdapter<String>(
-                this,R.layout.item_country,ms){
-            @Override
-            public boolean isEnabled(int position){
-                if(position == 0)
-                {
-                    // Disable the first item from Spinner
-                    // First item will be use for hint
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
-            }
-            @Override
-            public View getDropDownView(int position, View convertView,
-                                        ViewGroup parent) {
-                View view = super.getDropDownView(position, convertView, parent);
-                TextView tv = (TextView) view.findViewById(R.id.tvCountry);
-                if(position == 0){
-                    // Set the hint text color gray
-                    tv.setTextColor(Color.GRAY);
-                }
-                else {
-                    tv.setTextColor(Color.BLACK);
-                }
-                return view;
-            }
-        };
-        marital_status.setGravity(Gravity.END);
-        msArrayAdapter.setDropDownViewResource(R.layout.item_country);
-        marital_status.setAdapter(msArrayAdapter);
-
-
-        // GROUP DISPLAY
-
-        gdArrayAdapter = new ArrayAdapter<String>(
-                this,R.layout.item_country,gd){
-            @Override
-            public boolean isEnabled(int position){
+//        bgArrayAdapter = new ArrayAdapter<String>(
+//                this,R.layout.item_country,bg){
+//            @Override
+//            public boolean isEnabled(int position){
 //                if(position == 0)
 //                {
 //                    // Disable the first item from Spinner
@@ -385,13 +254,12 @@ public class PersonalData extends AppCompatActivity {
 //                {
 //                    return true;
 //                }
-                return true;
-            }
-            @Override
-            public View getDropDownView(int position, View convertView,
-                                        ViewGroup parent) {
-                View view = super.getDropDownView(position, convertView, parent);
-                TextView tv = (TextView) view.findViewById(R.id.tvCountry);
+//            }
+//            @Override
+//            public View getDropDownView(int position, View convertView,
+//                                        ViewGroup parent) {
+//                View view = super.getDropDownView(position, convertView, parent);
+//                TextView tv = (TextView) view.findViewById(R.id.tvCountry);
 //                if(position == 0){
 //                    // Set the hint text color gray
 //                    tv.setTextColor(Color.GRAY);
@@ -399,20 +267,18 @@ public class PersonalData extends AppCompatActivity {
 //                else {
 //                    tv.setTextColor(Color.BLACK);
 //                }
-                tv.setTextColor(Color.BLACK);
-                return view;
-            }
-        };
-        groupDisplay.setGravity(Gravity.END);
-        gdArrayAdapter.setDropDownViewResource(R.layout.item_country);
-        groupDisplay.setAdapter(gdArrayAdapter);
-
-
-        // MAILING ADDRESS
-        maArrayAdapter = new ArrayAdapter<String>(
-                this,R.layout.item_country,ma){
-            @Override
-            public boolean isEnabled(int position){
+//                return view;
+//            }
+//        };
+//        bloodGroup.setGravity(Gravity.END);
+//        bgArrayAdapter.setDropDownViewResource(R.layout.item_country);
+//        bloodGroup.setAdapter(bgArrayAdapter);
+//
+//        // SEX
+//        seArrayAdapter = new ArrayAdapter<String>(
+//                this,R.layout.item_country,se){
+//            @Override
+//            public boolean isEnabled(int position){
 //                if(position == 0)
 //                {
 //                    // Disable the first item from Spinner
@@ -423,13 +289,12 @@ public class PersonalData extends AppCompatActivity {
 //                {
 //                    return true;
 //                }
-                return true;
-            }
-            @Override
-            public View getDropDownView(int position, View convertView,
-                                        ViewGroup parent) {
-                View view = super.getDropDownView(position, convertView, parent);
-                TextView tv = (TextView) view.findViewById(R.id.tvCountry);
+//            }
+//            @Override
+//            public View getDropDownView(int position, View convertView,
+//                                        ViewGroup parent) {
+//                View view = super.getDropDownView(position, convertView, parent);
+//                TextView tv = (TextView) view.findViewById(R.id.tvCountry);
 //                if(position == 0){
 //                    // Set the hint text color gray
 //                    tv.setTextColor(Color.GRAY);
@@ -437,13 +302,160 @@ public class PersonalData extends AppCompatActivity {
 //                else {
 //                    tv.setTextColor(Color.BLACK);
 //                }
-                tv.setTextColor(Color.BLACK);
-                return view;
-            }
-        };
-        mailing_address.setGravity(Gravity.END);
-        maArrayAdapter.setDropDownViewResource(R.layout.item_country);
-        mailing_address.setAdapter(maArrayAdapter);
+//                return view;
+//            }
+//        };
+//        sex.setGravity(Gravity.END);
+//        seArrayAdapter.setDropDownViewResource(R.layout.item_country);
+//        sex.setAdapter(seArrayAdapter);
+//
+//
+//        // RELIGION
+//        relArrayAdapter = new ArrayAdapter<String>(
+//                this,R.layout.item_country,rel){
+//            @Override
+//            public boolean isEnabled(int position){
+//                if(position == 0)
+//                {
+//                    // Disable the first item from Spinner
+//                    // First item will be use for hint
+//                    return false;
+//                }
+//                else
+//                {
+//                    return true;
+//                }
+//            }
+//            @Override
+//            public View getDropDownView(int position, View convertView,
+//                                        ViewGroup parent) {
+//                View view = super.getDropDownView(position, convertView, parent);
+//                TextView tv = (TextView) view.findViewById(R.id.tvCountry);
+//                if(position == 0){
+//                    // Set the hint text color gray
+//                    tv.setTextColor(Color.GRAY);
+//                }
+//                else {
+//                    tv.setTextColor(Color.BLACK);
+//                }
+//                return view;
+//            }
+//        };
+//        religion.setGravity(Gravity.END);
+//        relArrayAdapter.setDropDownViewResource(R.layout.item_country);
+//        religion.setAdapter(relArrayAdapter);
+//
+//        // MARITAL STATUS
+//        msArrayAdapter = new ArrayAdapter<String>(
+//                this,R.layout.item_country,ms){
+//            @Override
+//            public boolean isEnabled(int position){
+//                if(position == 0)
+//                {
+//                    // Disable the first item from Spinner
+//                    // First item will be use for hint
+//                    return false;
+//                }
+//                else
+//                {
+//                    return true;
+//                }
+//            }
+//            @Override
+//            public View getDropDownView(int position, View convertView,
+//                                        ViewGroup parent) {
+//                View view = super.getDropDownView(position, convertView, parent);
+//                TextView tv = (TextView) view.findViewById(R.id.tvCountry);
+//                if(position == 0){
+//                    // Set the hint text color gray
+//                    tv.setTextColor(Color.GRAY);
+//                }
+//                else {
+//                    tv.setTextColor(Color.BLACK);
+//                }
+//                return view;
+//            }
+//        };
+//        marital_status.setGravity(Gravity.END);
+//        msArrayAdapter.setDropDownViewResource(R.layout.item_country);
+//        marital_status.setAdapter(msArrayAdapter);
+//
+//
+//        // GROUP DISPLAY
+//
+//        gdArrayAdapter = new ArrayAdapter<String>(
+//                this,R.layout.item_country,gd){
+//            @Override
+//            public boolean isEnabled(int position){
+////                if(position == 0)
+////                {
+////                    // Disable the first item from Spinner
+////                    // First item will be use for hint
+////                    return false;
+////                }
+////                else
+////                {
+////                    return true;
+////                }
+//                return true;
+//            }
+//            @Override
+//            public View getDropDownView(int position, View convertView,
+//                                        ViewGroup parent) {
+//                View view = super.getDropDownView(position, convertView, parent);
+//                TextView tv = (TextView) view.findViewById(R.id.tvCountry);
+////                if(position == 0){
+////                    // Set the hint text color gray
+////                    tv.setTextColor(Color.GRAY);
+////                }
+////                else {
+////                    tv.setTextColor(Color.BLACK);
+////                }
+//                tv.setTextColor(Color.BLACK);
+//                return view;
+//            }
+//        };
+//        groupDisplay.setGravity(Gravity.END);
+//        gdArrayAdapter.setDropDownViewResource(R.layout.item_country);
+//        groupDisplay.setAdapter(gdArrayAdapter);
+//
+//
+//        // MAILING ADDRESS
+//        maArrayAdapter = new ArrayAdapter<String>(
+//                this,R.layout.item_country,ma){
+//            @Override
+//            public boolean isEnabled(int position){
+////                if(position == 0)
+////                {
+////                    // Disable the first item from Spinner
+////                    // First item will be use for hint
+////                    return false;
+////                }
+////                else
+////                {
+////                    return true;
+////                }
+//                return true;
+//            }
+//            @Override
+//            public View getDropDownView(int position, View convertView,
+//                                        ViewGroup parent) {
+//                View view = super.getDropDownView(position, convertView, parent);
+//                TextView tv = (TextView) view.findViewById(R.id.tvCountry);
+////                if(position == 0){
+////                    // Set the hint text color gray
+////                    tv.setTextColor(Color.GRAY);
+////                }
+////                else {
+////                    tv.setTextColor(Color.BLACK);
+////                }
+//                tv.setTextColor(Color.BLACK);
+//                return view;
+//            }
+//        };
+//        mailing_address.setGravity(Gravity.END);
+//        maArrayAdapter.setDropDownViewResource(R.layout.item_country);
+//        mailing_address.setAdapter(maArrayAdapter);
 
         new Check().execute();
 
@@ -564,19 +576,23 @@ public class PersonalData extends AppCompatActivity {
                         revision.setText(empInformations.get(i).getRevision());
 
                         if (empInformations.get(i).getBlood_grp() != null) {
-                            bloodGroup.setSelection(Integer.parseInt(empInformations.get(i).getBlood_grp()));
+//                            bloodGroup.setSelection(Integer.parseInt(empInformations.get(i).getBlood_grp()));
+                            bloodGroup.setText(bg.get(Integer.parseInt(empInformations.get(i).getBlood_grp())));
                         }
                         if (empInformations.get(i).getGrop_dis() != null) {
-                            groupDisplay.setSelection(Integer.parseInt(empInformations.get(i).getGrop_dis()));
+//                            groupDisplay.setSelection(Integer.parseInt(empInformations.get(i).getGrop_dis()));
+                            groupDisplay.setText(gd.get(Integer.parseInt(empInformations.get(i).getGrop_dis())));
                         }
                         if (empInformations.get(i).getReligion() != null) {
-                            religion.setSelection(Integer.parseInt(empInformations.get(i).getReligion()));
+//                            religion.setSelection(Integer.parseInt(empInformations.get(i).getReligion()));
+                            religion.setText(rel.get(Integer.parseInt(empInformations.get(i).getReligion())));
                         }
 
                         nationality.setText(empInformations.get(i).getNational());
 
                         if (empInformations.get(i).getSex() != null) {
-                            sex.setSelection(Integer.parseInt(empInformations.get(i).getSex()));
+//                            sex.setSelection(Integer.parseInt(empInformations.get(i).getSex()));
+                            sex.setText(se.get(Integer.parseInt(empInformations.get(i).getSex())));
                         }
 
                         familyName.setText(empInformations.get(i).getFamilyName());
@@ -586,14 +602,16 @@ public class PersonalData extends AppCompatActivity {
                         permanentAdd.setText(empInformations.get(i).getPerManentAdd());
 
                         if (empInformations.get(i).getMarital_status() != null) {
-                            marital_status.setSelection(Integer.parseInt(empInformations.get(i).getMarital_status()));
+//                            marital_status.setSelection(Integer.parseInt(empInformations.get(i).getMarital_status()));
+                            marital_status.setText(ms.get(Integer.parseInt(empInformations.get(i).getMarital_status())));
                         }
 
                         personalAddBangla.setText(empInformations.get(i).getPresent_bangla());
                         permanentAddBangla.setText(empInformations.get(i).getPermanent_bangla());
 
                         if (empInformations.get(i).getMailingAdd() != null) {
-                            mailing_address.setSelection(Integer.parseInt(empInformations.get(i).getMailingAdd()));
+//                            mailing_address.setSelection(Integer.parseInt(empInformations.get(i).getMailingAdd()));
+                            mailing_address.setText(ma.get(Integer.parseInt(empInformations.get(i).getMailingAdd())));
                         }
 
                         if (banglaName == null) {

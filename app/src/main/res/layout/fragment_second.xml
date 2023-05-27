@@ -20,8 +20,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:weightSum="1">
 
@@ -32,6 +32,7 @@
                 android:layout_gravity="center"
                 android:textColor="@color/black"
                 android:layout_weight=".7"
+                android:fontFamily="@font/poppins"
                 android:text="Expected Joining: "/>
             <EditText
                 android:id="@+id/expected_join"
@@ -44,7 +45,9 @@
                 android:gravity="end"
                 android:editable="false"
                 android:focusable="false"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:importantForAutofill="no"
@@ -56,8 +59,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -68,6 +71,7 @@
                 android:layout_gravity="center"
                 android:layout_weight=".7"
                 android:textColor="@color/black"
+                android:fontFamily="@font/poppins"
                 android:text="Actual Joining: "/>
             <EditText
                 android:id="@+id/actual_join"
@@ -80,7 +84,9 @@
                 android:gravity="end"
                 android:editable="false"
                 android:focusable="false"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -92,8 +98,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -104,6 +110,7 @@
                 android:layout_gravity="center"
                 android:layout_weight=".7"
                 android:textColor="@color/black"
+                android:fontFamily="@font/poppins"
                 android:text="Calculation Joining: "/>
             <EditText
                 android:id="@+id/calculation_join"
@@ -116,7 +123,9 @@
                 android:gravity="end"
                 android:editable="false"
                 android:focusable="false"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -128,8 +137,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -140,6 +149,7 @@
                 android:layout_gravity="center"
                 android:layout_weight=".7"
                 android:textColor="@color/black"
+                android:fontFamily="@font/poppins"
                 android:text="Appointment Type: "/>
             <EditText
                 android:id="@+id/appointment_type"
@@ -152,7 +162,9 @@
                 android:gravity="end"
                 android:editable="false"
                 android:focusable="false"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -165,8 +177,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -177,6 +189,7 @@
                 android:layout_gravity="center"
                 android:layout_weight=".7"
                 android:textColor="@color/black"
+                android:fontFamily="@font/poppins"
                 android:text="Revision Type: "/>
             <EditText
                 android:id="@+id/revision_type"
@@ -189,7 +202,9 @@
                 android:editable="false"
                 android:focusable="false"
                 android:gravity="end"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -201,8 +216,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -212,6 +227,7 @@
                 android:textStyle="bold"
                 android:layout_gravity="center"
                 android:layout_weight=".7"
+                android:fontFamily="@font/poppins"
                 android:textColor="@color/black"
                 android:text="Service Status: "/>
             <EditText
@@ -225,7 +241,9 @@
                 android:gravity="end"
                 android:editable="false"
                 android:focusable="false"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -237,8 +255,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -249,6 +267,7 @@
                 android:layout_gravity="center"
                 android:layout_weight=".7"
                 android:textColor="@color/black"
+                android:fontFamily="@font/poppins"
                 android:text="Description: "/>
             <EditText
                 android:id="@+id/description"
@@ -261,7 +280,9 @@
                 android:gravity="end"
                 android:editable="false"
                 android:focusable="false"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -273,8 +294,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -285,6 +306,7 @@
                 android:layout_gravity="center"
                 android:layout_weight=".7"
                 android:textColor="@color/black"
+                android:fontFamily="@font/poppins"
                 android:text="Probation/Contract Period: "/>
             <EditText
                 android:id="@+id/probation_period"
@@ -297,7 +319,9 @@
                 android:gravity="end"
                 android:editable="false"
                 android:focusable="false"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -309,8 +333,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -321,6 +345,7 @@
                 android:layout_gravity="center"
                 android:layout_weight=".7"
                 android:textColor="@color/black"
+                android:fontFamily="@font/poppins"
                 android:text="Probation/Contract Completion: "/>
             <EditText
                 android:id="@+id/probation_comp"
@@ -333,7 +358,9 @@
                 android:gravity="end"
                 android:editable="false"
                 android:focusable="false"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -346,8 +373,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -358,6 +385,7 @@
                 android:layout_gravity="center"
                 android:layout_weight=".7"
                 android:textColor="@color/black"
+                android:fontFamily="@font/poppins"
                 android:text="Work Permit Effected Date: "/>
             <EditText
                 android:id="@+id/work_pe_eff_dat"
@@ -370,7 +398,9 @@
                 android:gravity="end"
                 android:editable="false"
                 android:focusable="false"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -383,8 +413,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -395,6 +425,7 @@
                 android:layout_gravity="center"
                 android:layout_weight=".7"
                 android:textColor="@color/black"
+                android:fontFamily="@font/poppins"
                 android:text="Work Permit Period: "/>
             <EditText
                 android:id="@+id/work_per_period"
@@ -407,7 +438,9 @@
                 android:gravity="end"
                 android:editable="false"
                 android:focusable="false"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -419,8 +452,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -431,6 +464,7 @@
                 android:layout_gravity="center"
                 android:layout_weight=".7"
                 android:textColor="@color/black"
+                android:fontFamily="@font/poppins"
                 android:text="Work Permit Completion: "/>
             <EditText
                 android:id="@+id/work_pe_completion"
@@ -443,7 +477,9 @@
                 android:gravity="end"
                 android:editable="false"
                 android:focusable="false"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -455,8 +491,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -467,6 +503,7 @@
                 android:layout_gravity="center"
                 android:layout_weight=".7"
                 android:textColor="@color/black"
+                android:fontFamily="@font/poppins"
                 android:text="Quit Date: "/>
             <EditText
                 android:id="@+id/quit_dat"
@@ -479,7 +516,9 @@
                 android:gravity="end"
                 android:editable="false"
                 android:focusable="false"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -491,8 +530,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -503,6 +542,7 @@
                 android:layout_gravity="center"
                 android:layout_weight=".7"
                 android:textColor="@color/black"
+                android:fontFamily="@font/poppins"
                 android:text="Shift Allocation: "/>
             <EditText
                 android:id="@+id/shift_allocation"
@@ -515,7 +555,9 @@
                 android:gravity="end"
                 android:editable="false"
                 android:focusable="false"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -528,8 +570,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -539,6 +581,7 @@
                 android:textStyle="bold"
                 android:layout_gravity="center"
                 android:layout_weight=".7"
+                android:fontFamily="@font/poppins"
                 android:textColor="@color/black"
                 android:text="Salary Package: "/>
             <EditText
@@ -552,7 +595,9 @@
                 android:gravity="end"
                 android:editable="false"
                 android:focusable="false"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -565,8 +610,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -577,6 +622,7 @@
                 android:layout_gravity="center"
                 android:layout_weight=".7"
                 android:textColor="@color/black"
+                android:fontFamily="@font/poppins"
                 android:text="Increment Amount: "/>
             <EditText
                 android:id="@+id/increment_amnt"
@@ -589,7 +635,9 @@
                 android:gravity="end"
                 android:editable="false"
                 android:focusable="false"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -601,8 +649,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -613,6 +661,7 @@
                 android:layout_gravity="center"
                 android:layout_weight=".7"
                 android:textColor="@color/black"
+                android:fontFamily="@font/poppins"
                 android:text="Decrement Amount: "/>
             <EditText
                 android:id="@+id/decrement_amnt"
@@ -625,7 +674,9 @@
                 android:gravity="end"
                 android:editable="false"
                 android:focusable="false"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -637,8 +688,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -649,6 +700,7 @@
                 android:layout_gravity="center"
                 android:layout_weight=".7"
                 android:textColor="@color/black"
+                android:fontFamily="@font/poppins"
                 android:text="Gross Salary: "/>
             <EditText
                 android:id="@+id/gross_salary"
@@ -661,7 +713,9 @@
                 android:gravity="end"
                 android:editable="false"
                 android:focusable="false"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -673,8 +727,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -684,6 +738,7 @@
                 android:textStyle="bold"
                 android:layout_gravity="center"
                 android:layout_weight=".7"
+                android:fontFamily="@font/poppins"
                 android:textColor="@color/black"
                 android:text="Cash Salary: "/>
             <EditText
@@ -697,7 +752,9 @@
                 android:gravity="end"
                 android:editable="false"
                 android:focusable="false"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -709,8 +766,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -720,6 +777,7 @@
                 android:textStyle="bold"
                 android:layout_gravity="center"
                 android:layout_weight=".7"
+                android:fontFamily="@font/poppins"
                 android:textColor="@color/black"
                 android:text="Basic Salary: "/>
             <EditText
@@ -733,7 +791,9 @@
                 android:gravity="end"
                 android:editable="false"
                 android:focusable="false"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -745,8 +805,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -757,6 +817,7 @@
                 android:layout_gravity="center"
                 android:layout_weight=".7"
                 android:textColor="@color/black"
+                android:fontFamily="@font/poppins"
                 android:text="House Rent: "/>
             <EditText
                 android:id="@+id/house_rent"
@@ -769,7 +830,9 @@
                 android:gravity="end"
                 android:editable="false"
                 android:focusable="false"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -781,8 +844,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -792,6 +855,7 @@
                 android:textStyle="bold"
                 android:layout_gravity="center"
                 android:layout_weight=".7"
+                android:fontFamily="@font/poppins"
                 android:textColor="@color/black"
                 android:text="Medical Allowance: "/>
             <EditText
@@ -805,7 +869,9 @@
                 android:gravity="end"
                 android:editable="false"
                 android:focusable="false"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -817,8 +883,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -829,6 +895,7 @@
                 android:layout_gravity="center"
                 android:layout_weight=".7"
                 android:textColor="@color/black"
+                android:fontFamily="@font/poppins"
                 android:text="Conveyance Allowance: "/>
             <EditText
                 android:id="@+id/conveyance_allow"
@@ -841,7 +908,9 @@
                 android:gravity="end"
                 android:editable="false"
                 android:focusable="false"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -853,8 +922,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -863,6 +932,7 @@
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
                 android:layout_gravity="center"
+                android:fontFamily="@font/poppins"
                 android:layout_weight=".7"
                 android:textColor="@color/black"
                 android:text="Habitation: "/>
@@ -877,7 +947,9 @@
                 android:gravity="end"
                 android:editable="false"
                 android:focusable="false"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -889,8 +961,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -900,6 +972,7 @@
                 android:textStyle="bold"
                 android:layout_gravity="center"
                 android:layout_weight=".7"
+                android:fontFamily="@font/poppins"
                 android:textColor="@color/black"
                 android:text="Utilities: "/>
             <EditText
@@ -913,7 +986,9 @@
                 android:gravity="end"
                 android:editable="false"
                 android:focusable="false"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -925,8 +1000,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -937,6 +1012,7 @@
                 android:layout_gravity="center"
                 android:layout_weight=".7"
                 android:textColor="@color/black"
+                android:fontFamily="@font/poppins"
                 android:text="House Allowance: "/>
             <EditText
                 android:id="@+id/house_allow"
@@ -949,7 +1025,9 @@
                 android:gravity="end"
                 android:editable="false"
                 android:focusable="false"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -961,8 +1039,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -973,6 +1051,7 @@
                 android:layout_gravity="center"
                 android:layout_weight=".7"
                 android:textColor="@color/black"
+                android:fontFamily="@font/poppins"
                 android:text="Entertainment: "/>
             <EditText
                 android:id="@+id/entertainment"
@@ -985,7 +1064,9 @@
                 android:gravity="end"
                 android:editable="false"
                 android:focusable="false"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -997,8 +1078,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -1008,6 +1089,7 @@
                 android:textStyle="bold"
                 android:layout_gravity="center"
                 android:layout_weight=".7"
+                android:fontFamily="@font/poppins"
                 android:textColor="@color/black"
                 android:text="Factory Allowance: "/>
             <EditText
@@ -1021,7 +1103,9 @@
                 android:gravity="end"
                 android:editable="false"
                 android:focusable="false"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -1033,8 +1117,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -1044,6 +1128,7 @@
                 android:textStyle="bold"
                 android:layout_gravity="center"
                 android:layout_weight=".7"
+                android:fontFamily="@font/poppins"
                 android:textColor="@color/black"
                 android:text="Committed/Special Salary/Benefit: "/>
             <EditText
@@ -1057,7 +1142,9 @@
                 android:gravity="end"
                 android:editable="false"
                 android:focusable="false"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -1070,8 +1157,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:orientation="horizontal">
 
             <TextView
@@ -1081,18 +1168,38 @@
                 android:layout_weight=".7"
                 android:layout_gravity="center"
                 android:textColor="@color/black"
+                android:fontFamily="@font/poppins"
                 android:text="Festival Bonus Type: "/>
-            <Spinner
-                android:layout_gravity="center"
+<!--            <Spinner-->
+<!--                android:layout_gravity="center"-->
+<!--                android:id="@+id/spinner_fes_bon_type"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_margin = "5dp"-->
+<!--                android:layout_weight=".3"-->
+<!--                android:clickable="false"-->
+<!--                android:background="@drawable/blue_outline"-->
+<!--                android:popupBackground="@drawable/blue_outline_white_background"-->
+<!--                android:spinnerMode="dropdown"/>-->
+            <EditText
                 android:id="@+id/spinner_fes_bon_type"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin = "5dp"
+                android:text=""
                 android:layout_weight=".3"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
+                android:enabled="false"
+                android:inputType="textMultiLine"
                 android:clickable="false"
-                android:background="@drawable/blue_outline"
-                android:popupBackground="@drawable/blue_outline_white_background"
-                android:spinnerMode="dropdown"/>
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
 
 
         </LinearLayout>
@@ -1100,8 +1207,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -1111,6 +1218,7 @@
                 android:textStyle="bold"
                 android:layout_gravity="center"
                 android:layout_weight=".7"
+                android:fontFamily="@font/poppins"
                 android:textColor="@color/black"
                 android:text="Mobile Bill Coverage: "/>
             <EditText
@@ -1124,7 +1232,9 @@
                 android:gravity="end"
                 android:editable="false"
                 android:focusable="false"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -1136,8 +1246,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -1148,6 +1258,7 @@
                 android:layout_gravity="center"
                 android:layout_weight=".7"
                 android:textColor="@color/black"
+                android:fontFamily="@font/poppins"
                 android:text="Additional Allowance: "/>
             <EditText
                 android:id="@+id/additional_allow"
@@ -1160,7 +1271,9 @@
                 android:gravity="end"
                 android:editable="false"
                 android:focusable="false"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -1172,8 +1285,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -1184,6 +1297,7 @@
                 android:layout_gravity="center"
                 android:layout_weight=".7"
                 android:textColor="@color/black"
+                android:fontFamily="@font/poppins"
                 android:text="Fixed OT: "/>
             <EditText
                 android:id="@+id/fixed_ot"
@@ -1196,7 +1310,9 @@
                 android:editable="false"
                 android:focusable="false"
                 android:gravity="end"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -1210,8 +1326,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:orientation="horizontal">
 
             <TextView
@@ -1221,18 +1337,38 @@
                 android:layout_gravity="center"
                 android:layout_weight=".7"
                 android:textColor="@color/black"
+                android:fontFamily="@font/poppins"
                 android:text="Food Subsidy Type: "/>
-            <Spinner
-                android:layout_gravity="center"
+<!--            <Spinner-->
+<!--                android:layout_gravity="center"-->
+<!--                android:id="@+id/spinner_food_sub_type"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight=".3"-->
+<!--                android:layout_margin = "5dp"-->
+<!--                android:clickable="false"-->
+<!--                android:background="@drawable/blue_outline"-->
+<!--                android:popupBackground="@drawable/blue_outline_white_background"-->
+<!--                android:spinnerMode="dropdown"/>-->
+            <EditText
                 android:id="@+id/spinner_food_sub_type"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text=""
                 android:layout_weight=".3"
-                android:layout_margin = "5dp"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:editable="false"
+                android:focusable="false"
+                android:gravity="end"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
+                android:enabled="false"
+                android:inputType="textMultiLine"
                 android:clickable="false"
-                android:background="@drawable/blue_outline"
-                android:popupBackground="@drawable/blue_outline_white_background"
-                android:spinnerMode="dropdown"/>
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
 
 
         </LinearLayout>
@@ -1241,8 +1377,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -1252,6 +1388,7 @@
                 android:textStyle="bold"
                 android:layout_gravity="center"
                 android:layout_weight=".7"
+                android:fontFamily="@font/poppins"
                 android:textColor="@color/black"
                 android:text="Food Subsidy: "/>
             <EditText
@@ -1265,7 +1402,9 @@
                 android:gravity="end"
                 android:editable="false"
                 android:focusable="false"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -1277,8 +1416,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -1289,6 +1428,7 @@
                 android:layout_gravity="center"
                 android:layout_weight=".7"
                 android:textColor="@color/black"
+                android:fontFamily="@font/poppins"
                 android:text="Others Allowance Details: "/>
             <EditText
                 android:id="@+id/others_allow_detl"
@@ -1301,7 +1441,9 @@
                 android:gravity="end"
                 android:editable="false"
                 android:focusable="false"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -1313,8 +1455,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -1325,6 +1467,7 @@
                 android:layout_gravity="center"
                 android:layout_weight=".7"
                 android:textColor="@color/black"
+                android:fontFamily="@font/poppins"
                 android:text="Overtime Allowance Applicable: "/>
             <EditText
                 android:id="@+id/overtime_allow_applic"
@@ -1337,7 +1480,9 @@
                 android:gravity="end"
                 android:editable="false"
                 android:focusable="false"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -1349,8 +1494,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -1361,6 +1506,7 @@
                 android:layout_gravity="center"
                 android:layout_weight=".7"
                 android:textColor="@color/black"
+                android:fontFamily="@font/poppins"
                 android:text="Overtime Rate: "/>
             <EditText
                 android:id="@+id/overtime_rate"
@@ -1373,7 +1519,9 @@
                 android:gravity="end"
                 android:editable="false"
                 android:focusable="false"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -1385,8 +1533,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -1397,6 +1545,7 @@
                 android:layout_gravity="center"
                 android:layout_weight=".7"
                 android:textColor="@color/black"
+                android:fontFamily="@font/poppins"
                 android:text="Provident Fund Type: "/>
             <EditText
                 android:id="@+id/provident_fund_type"
@@ -1409,7 +1558,9 @@
                 android:gravity="end"
                 android:editable="false"
                 android:focusable="false"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -1421,8 +1572,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -1433,6 +1584,7 @@
                 android:layout_gravity="center"
                 android:layout_weight=".7"
                 android:textColor="@color/black"
+                android:fontFamily="@font/poppins"
                 android:text="Provident Fund Amount: "/>
             <EditText
                 android:id="@+id/provident_fund"
@@ -1445,7 +1597,9 @@
                 android:gravity="end"
                 android:editable="false"
                 android:focusable="false"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -1457,8 +1611,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -1469,6 +1623,7 @@
                 android:layout_gravity="center"
                 android:layout_weight=".7"
                 android:textColor="@color/black"
+                android:fontFamily="@font/poppins"
                 android:text="OT Cal Period: "/>
             <EditText
                 android:id="@+id/ot_cal_period"
@@ -1481,7 +1636,9 @@
                 android:gravity="end"
                 android:editable="false"
                 android:focusable="false"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -1495,8 +1652,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:orientation="horizontal">
 
             <TextView
@@ -1506,26 +1663,47 @@
                 android:layout_gravity="center"
                 android:layout_weight=".7"
                 android:textColor="@color/black"
+                android:fontFamily="@font/poppins"
                 android:text="TAX Bearer: "/>
-            <Spinner
-                android:layout_gravity="center"
+<!--            <Spinner-->
+<!--                android:layout_gravity="center"-->
+<!--                android:id="@+id/spinner_tax_bearer"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight=".3"-->
+<!--                android:layout_margin = "5dp"-->
+<!--                android:clickable="false"-->
+<!--                android:background="@drawable/blue_outline"-->
+<!--                android:popupBackground="@drawable/blue_outline_white_background"-->
+<!--                android:spinnerMode="dropdown"/>-->
+
+            <EditText
                 android:id="@+id/spinner_tax_bearer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text=""
                 android:layout_weight=".3"
-                android:layout_margin = "5dp"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
+                android:enabled="false"
+                android:inputType="textMultiLine"
                 android:clickable="false"
-                android:background="@drawable/blue_outline"
-                android:popupBackground="@drawable/blue_outline_white_background"
-                android:spinnerMode="dropdown"/>
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor" />
 
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -1536,6 +1714,7 @@
                 android:layout_gravity="center"
                 android:layout_weight=".7"
                 android:textColor="@color/black"
+                android:fontFamily="@font/poppins"
                 android:text="TAX Deduction %: "/>
             <EditText
                 android:id="@+id/tax_deduction"
@@ -1548,7 +1727,9 @@
                 android:gravity="end"
                 android:editable="false"
                 android:focusable="false"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -1560,8 +1741,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -1572,6 +1753,7 @@
                 android:layout_gravity="center"
                 android:layout_weight=".7"
                 android:textColor="@color/black"
+                android:fontFamily="@font/poppins"
                 android:text="Sitting: "/>
             <EditText
                 android:id="@+id/sitting"
@@ -1584,7 +1766,9 @@
                 android:gravity="end"
                 android:editable="false"
                 android:focusable="false"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -1596,8 +1780,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -1608,6 +1792,7 @@
                 android:layout_gravity="center"
                 android:layout_weight=".7"
                 android:textColor="@color/black"
+                android:fontFamily="@font/poppins"
                 android:text="Lunch Status: "/>
             <EditText
                 android:id="@+id/lunch_status"
@@ -1618,7 +1803,9 @@
                 android:layout_gravity="center"
                 android:textStyle="bold"
                 android:gravity="end"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:editable="false"
                 android:focusable="false"
@@ -1632,8 +1819,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -1644,6 +1831,7 @@
                 android:layout_gravity="center"
                 android:layout_weight=".7"
                 android:textColor="@color/black"
+                android:fontFamily="@font/poppins"
                 android:text="Transport: "/>
             <EditText
                 android:id="@+id/transport"
@@ -1656,7 +1844,9 @@
                 android:gravity="end"
                 android:editable="false"
                 android:focusable="false"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -1668,8 +1858,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -1680,6 +1870,7 @@
                 android:layout_gravity="center"
                 android:layout_weight=".7"
                 android:textColor="@color/black"
+                android:fontFamily="@font/poppins"
                 android:text="PABX Corporate Office: "/>
             <EditText
                 android:id="@+id/pabx_corporate_offc"
@@ -1692,7 +1883,9 @@
                 android:gravity="end"
                 android:editable="false"
                 android:focusable="false"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"
@@ -1704,8 +1897,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -1716,6 +1909,7 @@
                 android:layout_gravity="center"
                 android:layout_weight=".7"
                 android:textColor="@color/black"
+                android:fontFamily="@font/poppins"
                 android:text="PABX Factory: "/>
             <EditText
                 android:id="@+id/pabx_factory"
@@ -1728,7 +1922,9 @@
                 android:editable="false"
                 android:focusable="false"
                 android:gravity="end"
-                android:textColor="@color/black"
+                android:textColor="@color/mazarine_blue"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="15sp"
                 android:enabled="false"
                 android:inputType="textMultiLine"
                 android:clickable="false"

@@ -2,6 +2,7 @@ package ttit.com.shuvo.ikglhrm.leaveAll;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
@@ -104,6 +105,7 @@ public class LeaveApplication extends AppCompatActivity {
     Button leaveBalance;
     Button apply;
     Button close;
+    LinearLayout applyButtonEnable;
 
     TextView errorLeaveDuration;
     public static TextView errorReason;
@@ -172,6 +174,10 @@ public class LeaveApplication extends AppCompatActivity {
 //        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
 //        decorView.setSystemUiVisibility(uiOptions);
 
+        Window window = getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(ContextCompat.getColor(LeaveApplication.this,R.color.secondaryColor));
         setContentView(R.layout.activity_leave_application);
 
         leaveTypeLay = findViewById(R.id.leave_type_Layout);
@@ -201,6 +207,7 @@ public class LeaveApplication extends AppCompatActivity {
         leaveBalance = findViewById(R.id.show_leave_balance);
         apply = findViewById(R.id.leave_new_application_button);
         close = findViewById(R.id.leave_app_new_finish);
+        applyButtonEnable = findViewById(R.id.linearLayout50_leave_application_apply_button);
 
         errorLeaveDuration = findViewById(R.id.error_input_leave_duration);
         errorReason = findViewById(R.id.error_input_reason_leave);
@@ -320,7 +327,7 @@ public class LeaveApplication extends AppCompatActivity {
 
                         System.out.println(1);
                         afterselecting.setVisibility(View.VISIBLE);
-                        apply.setVisibility(View.VISIBLE);
+                        applyButtonEnable.setVisibility(View.VISIBLE);
                     }
 
                 }

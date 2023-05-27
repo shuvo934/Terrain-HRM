@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:paddingBottom="15dp">
 
@@ -13,7 +13,8 @@
         android:text="You were in:"
         android:textStyle="bold"
         android:textSize="16sp"
-        android:textColor="@color/white"
+        android:fontFamily="@font/open_sans_bold"
+        android:textColor="@color/mazarine_blue"
         android:layout_marginStart="5dp"
         android:layout_marginEnd="5dp"
         android:layout_marginBottom="5dp"/>
@@ -29,15 +30,17 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/location_on_24"/>
+            android:src="@drawable/location_on_24"
+            app:tint="@color/mazarine_blue"/>
 
         <TextView
             android:id="@+id/place_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Shewrapara"
+            android:fontFamily="@font/poppins"
             android:textStyle="bold"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"/>
 
@@ -52,7 +55,7 @@
             android:id="@+id/start_time_layout"
             android:layout_width="2.5dp"
             android:layout_height="match_parent"
-            android:background="@color/loc"
+            android:background="@color/mazarine_blue"
             android:layout_marginStart="16dp"
             android:orientation="horizontal" />
 
@@ -61,8 +64,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="end"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:text="10:10 AM"
+            android:fontFamily="@font/poppins"
             android:layout_marginEnd="5dp"
             android:textStyle="bold"
             android:textSize="12sp"/>
@@ -80,7 +84,7 @@
         <LinearLayout
             android:layout_width="2.5dp"
             android:layout_height="match_parent"
-            android:background="@color/loc"
+            android:background="@color/mazarine_blue"
             android:layout_marginStart="16dp"/>
 
         <TextView
@@ -92,7 +96,8 @@
             android:paddingBottom="10dp"
             android:textStyle="bold"
             android:textSize="16sp"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
+            android:fontFamily="@font/poppins"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="5dp"
             android:layout_marginBottom="5dp"/>
@@ -111,14 +116,16 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/location_on_24"/>
+            android:src="@drawable/location_on_24"
+            app:tint="@color/mazarine_blue"/>
 
         <TextView
             android:id="@+id/last_place_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Shewrapara"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
+            android:fontFamily="@font/poppins"
             android:textStyle="bold"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"/>
@@ -132,9 +139,10 @@
         android:layout_height="wrap_content"
         android:gravity="end"
         android:text="10:10 AM"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:layout_marginEnd="5dp"
         android:layout_marginBottom="5dp"
+        android:fontFamily="@font/poppins"
         android:textStyle="bold"
         android:textSize="12sp"/>
     <LinearLayout
@@ -149,8 +157,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Travel Distance: "
+            android:fontFamily="@font/open_sans_bold"
             android:textSize="13sp"
-            android:textColor="@color/loc"
+            android:textColor="@color/mazarine_blue"
             android:textStyle="bold"/>
         <TextView
             android:layout_marginStart="5dp"
@@ -158,7 +167,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Travel Time"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
+            android:fontFamily="@font/poppins"
             android:textSize="12sp"
             android:textStyle="bold"/>
 
@@ -176,7 +186,8 @@
             android:layout_height="wrap_content"
             android:text="Travel Time: "
             android:textSize="13sp"
-            android:textColor="@color/loc"
+            android:textColor="@color/mazarine_blue"
+            android:fontFamily="@font/open_sans_bold"
             android:textStyle="bold"/>
         <TextView
             android:layout_marginStart="5dp"
@@ -184,7 +195,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Travel Time"
-            android:textColor="@color/white"
+            android:fontFamily="@font/poppins"
+            android:textColor="@color/black"
             android:textSize="12sp"
             android:textStyle="bold"/>
 

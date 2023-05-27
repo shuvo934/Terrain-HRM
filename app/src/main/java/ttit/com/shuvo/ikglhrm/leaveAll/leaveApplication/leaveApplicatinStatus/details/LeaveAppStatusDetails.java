@@ -3,6 +3,7 @@ package ttit.com.shuvo.ikglhrm.leaveAll.leaveApplication.leaveApplicatinStatus.d
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 
 import android.content.Context;
 import android.content.Intent;
@@ -31,6 +32,7 @@ import java.sql.Statement;
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
 import ttit.com.shuvo.ikglhrm.attendance.status.statusDetail.AttendanceStatusDetails;
+import ttit.com.shuvo.ikglhrm.leaveAll.leaveApplication.leaveApplicatinStatus.LeaveApplicationStatus;
 
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
 import static ttit.com.shuvo.ikglhrm.OracleConnection.createConnection;
@@ -102,6 +104,10 @@ public class LeaveAppStatusDetails extends AppCompatActivity {
 //// Hide the status bar.
 //        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
 //        decorView.setSystemUiVisibility(uiOptions);
+        Window window = getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(ContextCompat.getColor(LeaveAppStatusDetails.this,R.color.secondaryColor));
         setContentView(R.layout.activity_leave_app_status_details);
 
         status = findViewById(R.id.leave_app_status_of_from_list);

@@ -42,11 +42,11 @@ import ttit.com.shuvo.ikglhrm.WaitProgress;
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
 import static ttit.com.shuvo.ikglhrm.OracleConnection.createConnection;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link FirstFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+///**
+// * A simple {@link Fragment} subclass.
+// * Use the {@link FirstFragment#newInstance} factory method to
+// * create an instance of this fragment.
+// */
 public class FirstFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
@@ -90,9 +90,12 @@ public class FirstFragment extends Fragment {
     EditText uniform;
     EditText apart;
 
-    Spinner st_pos;
-    Spinner late_accp;
-    Spinner att_bon;
+//    Spinner st_pos;
+//    Spinner late_accp;
+//    Spinner att_bon;
+    EditText st_pos;
+    EditText late_accp;
+    EditText att_bon;
 
     ArrayList<String> strrPos;
     ArrayList<String> late;
@@ -213,53 +216,18 @@ public class FirstFragment extends Fragment {
         attBon.add("No");
         attBon.add("Yes");
 
-        st_pos.setEnabled(false);
-        late_accp.setEnabled(false);
-        att_bon.setEnabled(false);
+//        st_pos.setEnabled(false);
+//        late_accp.setEnabled(false);
+//        att_bon.setEnabled(false);
 
         firstPageData = new ArrayList<>();
         firstPageAnotherData = new ArrayList<>();
 
         // STRUCTURAL POSITION
-        strrPosAdapter = new ArrayAdapter<String>(
-                getContext(),R.layout.item_country,strrPos){
-            @Override
-            public boolean isEnabled(int position){
-                if(position == 0)
-                {
-                    // Disable the first item from Spinner
-                    // First item will be use for hint
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
-            }
-            @Override
-            public View getDropDownView(int position, View convertView,
-                                        ViewGroup parent) {
-                View view = super.getDropDownView(position, convertView, parent);
-                TextView tv = (TextView) view.findViewById(R.id.tvCountry);
-                if(position == 0){
-                    // Set the hint text color gray
-                    tv.setTextColor(Color.GRAY);
-                }
-                else {
-                    tv.setTextColor(Color.BLACK);
-                }
-                return view;
-            }
-        };
-        st_pos.setGravity(Gravity.END);
-        strrPosAdapter.setDropDownViewResource(R.layout.item_country);
-        st_pos.setAdapter(strrPosAdapter);
-
-        // LATE ACCEPTABLE
-        lateAdapter = new ArrayAdapter<String>(
-                getContext(),R.layout.item_country,late){
-            @Override
-            public boolean isEnabled(int position){
+//        strrPosAdapter = new ArrayAdapter<String>(
+//                getContext(),R.layout.item_country,strrPos){
+//            @Override
+//            public boolean isEnabled(int position){
 //                if(position == 0)
 //                {
 //                    // Disable the first item from Spinner
@@ -270,13 +238,12 @@ public class FirstFragment extends Fragment {
 //                {
 //                    return true;
 //                }
-                return true;
-            }
-            @Override
-            public View getDropDownView(int position, View convertView,
-                                        ViewGroup parent) {
-                View view = super.getDropDownView(position, convertView, parent);
-                TextView tv = (TextView) view.findViewById(R.id.tvCountry);
+//            }
+//            @Override
+//            public View getDropDownView(int position, View convertView,
+//                                        ViewGroup parent) {
+//                View view = super.getDropDownView(position, convertView, parent);
+//                TextView tv = (TextView) view.findViewById(R.id.tvCountry);
 //                if(position == 0){
 //                    // Set the hint text color gray
 //                    tv.setTextColor(Color.GRAY);
@@ -284,50 +251,86 @@ public class FirstFragment extends Fragment {
 //                else {
 //                    tv.setTextColor(Color.BLACK);
 //                }
-                tv.setTextColor(Color.BLACK);
-                return view;
-            }
-        };
-        late_accp.setGravity(Gravity.END);
-        lateAdapter.setDropDownViewResource(R.layout.item_country);
-        late_accp.setAdapter(lateAdapter);
-
-        // ATTENDANCE BONUS
-        attAdapter = new ArrayAdapter<String>(
-                getContext(),R.layout.item_country,attBon){
-            @Override
-            public boolean isEnabled(int position){
-//                if(position == 0)
-//                {
-//                    // Disable the first item from Spinner
-//                    // First item will be use for hint
-//                    return false;
-//                }
-//                else
-//                {
-//                    return true;
-//                }
-                return true;
-            }
-            @Override
-            public View getDropDownView(int position, View convertView,
-                                        ViewGroup parent) {
-                View view = super.getDropDownView(position, convertView, parent);
-                TextView tv = (TextView) view.findViewById(R.id.tvCountry);
-//                if(position == 0){
-//                    // Set the hint text color gray
-//                    tv.setTextColor(Color.GRAY);
-//                }
-//                else {
-//                    tv.setTextColor(Color.BLACK);
-//                }
-                tv.setTextColor(Color.BLACK);
-                return view;
-            }
-        };
-        att_bon.setGravity(Gravity.END);
-        attAdapter.setDropDownViewResource(R.layout.item_country);
-        att_bon.setAdapter(attAdapter);
+//                return view;
+//            }
+//        };
+//        st_pos.setGravity(Gravity.END);
+//        strrPosAdapter.setDropDownViewResource(R.layout.item_country);
+//        st_pos.setAdapter(strrPosAdapter);
+//
+//        // LATE ACCEPTABLE
+//        lateAdapter = new ArrayAdapter<String>(
+//                getContext(),R.layout.item_country,late){
+//            @Override
+//            public boolean isEnabled(int position){
+////                if(position == 0)
+////                {
+////                    // Disable the first item from Spinner
+////                    // First item will be use for hint
+////                    return false;
+////                }
+////                else
+////                {
+////                    return true;
+////                }
+//                return true;
+//            }
+//            @Override
+//            public View getDropDownView(int position, View convertView,
+//                                        ViewGroup parent) {
+//                View view = super.getDropDownView(position, convertView, parent);
+//                TextView tv = (TextView) view.findViewById(R.id.tvCountry);
+////                if(position == 0){
+////                    // Set the hint text color gray
+////                    tv.setTextColor(Color.GRAY);
+////                }
+////                else {
+////                    tv.setTextColor(Color.BLACK);
+////                }
+//                tv.setTextColor(Color.BLACK);
+//                return view;
+//            }
+//        };
+//        late_accp.setGravity(Gravity.END);
+//        lateAdapter.setDropDownViewResource(R.layout.item_country);
+//        late_accp.setAdapter(lateAdapter);
+//
+//        // ATTENDANCE BONUS
+//        attAdapter = new ArrayAdapter<String>(
+//                getContext(),R.layout.item_country,attBon){
+//            @Override
+//            public boolean isEnabled(int position){
+////                if(position == 0)
+////                {
+////                    // Disable the first item from Spinner
+////                    // First item will be use for hint
+////                    return false;
+////                }
+////                else
+////                {
+////                    return true;
+////                }
+//                return true;
+//            }
+//            @Override
+//            public View getDropDownView(int position, View convertView,
+//                                        ViewGroup parent) {
+//                View view = super.getDropDownView(position, convertView, parent);
+//                TextView tv = (TextView) view.findViewById(R.id.tvCountry);
+////                if(position == 0){
+////                    // Set the hint text color gray
+////                    tv.setTextColor(Color.GRAY);
+////                }
+////                else {
+////                    tv.setTextColor(Color.BLACK);
+////                }
+//                tv.setTextColor(Color.BLACK);
+//                return view;
+//            }
+//        };
+//        att_bon.setGravity(Gravity.END);
+//        attAdapter.setDropDownViewResource(R.layout.item_country);
+//        att_bon.setAdapter(attAdapter);
 
         new Check().execute();
 
@@ -523,7 +526,8 @@ public class FirstFragment extends Fragment {
                             dorm.setText(firstPageData.get(i).getDorm());
                         }
                         if (firstPageData.get(i).getSt_pos() != null) {
-                            st_pos.setSelection(Integer.parseInt(firstPageData.get(i).getSt_pos()));
+//                            st_pos.setSelection(Integer.parseInt(firstPageData.get(i).getSt_pos()));
+                            st_pos.setText(strrPos.get(Integer.parseInt(firstPageData.get(i).getSt_pos())));
                         }
                         if (firstPageData.get(i).getUniff() != null) {
                             uniform.setText(firstPageData.get(i).getUniff());
@@ -532,10 +536,12 @@ public class FirstFragment extends Fragment {
                             apart.setText(firstPageData.get(i).getApart());
                         }
                         if (firstPageData.get(i).getLat_acc() != null) {
-                            late_accp.setSelection(Integer.parseInt(firstPageData.get(i).getLat_acc()));
+//                            late_accp.setSelection(Integer.parseInt(firstPageData.get(i).getLat_acc()));
+                            late_accp.setText(late.get(Integer.parseInt(firstPageData.get(i).getLat_acc())));
                         }
                         if (firstPageData.get(i).getAtt_bonus() != null) {
-                            att_bon.setSelection(Integer.parseInt(firstPageData.get(i).getAtt_bonus()));
+//                            att_bon.setSelection(Integer.parseInt(firstPageData.get(i).getAtt_bonus()));
+                            att_bon.setText(attBon.get(Integer.parseInt(firstPageData.get(i).getAtt_bonus())));
                         }
 
                     }

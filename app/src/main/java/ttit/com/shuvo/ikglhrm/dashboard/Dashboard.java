@@ -48,6 +48,7 @@ import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.LargeValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -218,6 +219,7 @@ public class Dashboard extends AppCompatActivity {
     public static int RESULT_LOAD_IMG = 1901;
     public static Bitmap selectedImage;
     boolean imageFound = false;
+    TextView welcomeText;
 
     @SuppressLint("HardwareIds")
     @Override
@@ -233,6 +235,23 @@ public class Dashboard extends AppCompatActivity {
         comp = findViewById(R.id.company_name_dashboard);
         userCard = findViewById(R.id.userinfo_card);
         userImage = findViewById(R.id.user_pic_dashboard);
+        welcomeText = findViewById(R.id.welcome_text_view);
+
+        int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        String wt = "";
+        if (currentHour >= 4 && currentHour <= 11) {
+            wt = "GOOD MORNING,";
+        }
+        else if (currentHour >= 12 && currentHour <= 16) {
+            wt = "GOOD AFTERNOON,";
+        }
+        else if (currentHour >= 17 && currentHour <= 22) {
+            wt = "GOOD EVENING,";
+        }
+        else {
+            wt = "HELLO,";
+        }
+        welcomeText.setText(wt);
 
         Intent in = getIntent();
         loginLog_check = in.getBooleanExtra("FROMMAINMENU", true);
@@ -408,7 +427,7 @@ public class Dashboard extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (isMyServiceRunning(Service.class)) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(Dashboard.this);
+                    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(Dashboard.this);
                     builder.setMessage("Your Tracking Service is running. You can not Log Out while Running this Service!")
                             .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                 @Override
@@ -419,8 +438,9 @@ public class Dashboard extends AppCompatActivity {
                     AlertDialog alert = builder.create();
                     alert.show();
                 } else {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(Dashboard.this);
+                    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(Dashboard.this);
                     builder.setTitle("LOG OUT!")
+                            .setIcon(R.drawable.thrm_logo)
                             .setMessage("Do you want to Log Out?")
                             .setPositiveButton("YES", new DialogInterface.OnClickListener() {
                                 @Override
@@ -791,8 +811,8 @@ public class Dashboard extends AppCompatActivity {
 
         MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(Dashboard.this)
                 .setTitle("EXIT!")
-                .setMessage("Do You Want to Exit?")
-                .setIcon(R.drawable.thrm_black)
+                .setMessage("Do you want to exit?")
+                .setIcon(R.drawable.thrm_logo)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -929,7 +949,7 @@ public class Dashboard extends AppCompatActivity {
         //pieChart.setCenterText("Attendance");
         pieChart.setDrawEntryLabels(true);
         pieChart.setCenterTextSize(12);
-        pieChart.setHoleRadius(20);
+        pieChart.setHoleRadius(30);
         pieChart.setTransparentCircleRadius(20);
 
         pieChart.setEntryLabelTextSize(11);
@@ -942,12 +962,12 @@ public class Dashboard extends AppCompatActivity {
 
 
         Legend l = pieChart.getLegend();
-        l.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
-        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
+        l.setVerticalAlignment(Legend.LegendVerticalAlignment.CENTER);
+        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
         l.setOrientation(Legend.LegendOrientation.VERTICAL);
-        l.setForm(Legend.LegendForm.SQUARE);
+        l.setForm(Legend.LegendForm.CIRCLE);
 
-        l.setTextSize(10);
+        l.setTextSize(12);
         l.setWordWrapEnabled(false);
         l.setDrawInside(false);
         l.setYOffset(10f);
@@ -1088,9 +1108,11 @@ public class Dashboard extends AppCompatActivity {
                 bardataset.setColors(ColorTemplate.VORDIPLOM_COLORS);
 
                 bardataset.setBarBorderColor(Color.DKGRAY);
-                bardataset.setValueTextSize(12);
+                bardataset.setValueTextSize(8);
+                bardataset.setValueFormatter(new LargeValueFormatter());
                 salaryChart.setData(data1);
                 salaryChart.getXAxis().setValueFormatter(new MyAxisValueFormatter(monthName));
+                salaryChart.getAxisLeft().setValueFormatter(new LargeValueFormatter());
 
 
 
@@ -1726,9 +1748,11 @@ public class Dashboard extends AppCompatActivity {
                 bardataset.setColors(ColorTemplate.VORDIPLOM_COLORS);
 
                 bardataset.setBarBorderColor(Color.DKGRAY);
-                bardataset.setValueTextSize(12);
+                bardataset.setValueTextSize(8);
+                bardataset.setValueFormatter(new LargeValueFormatter());
                 salaryChart.setData(data1);
                 salaryChart.getXAxis().setValueFormatter(new MyAxisValueFormatter(monthName));
+                salaryChart.getAxisLeft().setValueFormatter(new LargeValueFormatter());
 
                 conn = false;
                 connected = false;

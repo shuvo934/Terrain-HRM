@@ -6,6 +6,8 @@
         android:id="@+id/drop_down_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_semibold"
+        android:textSize="@dimen/_10sdp"
         android:padding="16dp"
         android:ellipsize="end"
         android:maxLines="1"

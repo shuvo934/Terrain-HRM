@@ -2,6 +2,8 @@ package ttit.com.shuvo.ikglhrm.leaveAll.leaveApprove;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -14,6 +16,8 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -53,7 +57,7 @@ public class LeaveApprove extends AppCompatActivity {
 
     public static int fromLApp = 0;
 
-    LinearLayout afterSelecting;
+    CardView afterSelecting;
     LinearLayout afterSelectingButton;
     LinearLayout forLay;
 
@@ -129,6 +133,10 @@ public class LeaveApprove extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Window window = getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(ContextCompat.getColor(LeaveApprove.this,R.color.secondaryColor));
         setContentView(R.layout.activity_leave_approve);
 
         afterSelecting = findViewById(R.id.after_request_selecting_leave_approve);

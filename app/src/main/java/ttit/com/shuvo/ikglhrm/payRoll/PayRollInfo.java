@@ -30,6 +30,7 @@ import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.formatter.LargeValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
@@ -564,10 +565,11 @@ public class PayRollInfo extends AppCompatActivity {
                 bardataset.setColors(ColorTemplate.VORDIPLOM_COLORS);
 
                 bardataset.setBarBorderColor(Color.DKGRAY);
-                bardataset.setValueTextSize(12);
+                bardataset.setValueTextSize(11);
                 chart.setData(data1);
 
                 chart.getXAxis().setValueFormatter(new MyAxisValueFormatter(monthName));
+                chart.getAxisLeft().setValueFormatter(new LargeValueFormatter());
 
 
 

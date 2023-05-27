@@ -2,6 +2,7 @@ package ttit.com.shuvo.ikglhrm.EmployeeInfo.performance;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,6 +32,7 @@ import ttit.com.shuvo.ikglhrm.EmployeeInfo.jobDesc.JobDescDetails;
 import ttit.com.shuvo.ikglhrm.EmployeeInfo.jobDesc.JobDescription;
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
+import ttit.com.shuvo.ikglhrm.attendance.report.AttendanceReport;
 
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
 import static ttit.com.shuvo.ikglhrm.OracleConnection.createConnection;
@@ -98,6 +100,10 @@ public class PerformanceApp extends AppCompatActivity {
 //        // Hide the status bar.
 //        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
 //        decorView.setSystemUiVisibility(uiOptions);
+        Window window = getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(ContextCompat.getColor(PerformanceApp.this,R.color.secondaryColor));
 
         setContentView(R.layout.activity_performance_app);
 

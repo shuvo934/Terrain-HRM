@@ -4,42 +4,61 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/back"
+    android:background="@color/background_color"
     tools:context=".EmployeeInfo.personal.PersonalData">
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/topLay_personal_data"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:background="@drawable/design"
-        android:orientation="vertical"
-        android:gravity="center"
+        android:layout_height="86dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:fontFamily="@font/russo_one"
-            android:gravity="center"
-            android:text="Personal Information"
-            android:textColor="@color/white"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-    </LinearLayout>
+            android:layout_height="match_parent"
+            android:background="@drawable/design_2"
+            android:orientation="vertical"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:gravity="center"/>
+        <LinearLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:background="@drawable/design"
+            android:orientation="vertical"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:fontFamily="@font/russo_one"
+                android:gravity="center"
+                android:text="Personal Information"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
 
     <androidx.cardview.widget.CardView
         android:id="@+id/scrollView2"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
         app:cardCornerRadius="10dp"
-        app:cardElevation="15dp"
+        app:cardElevation="10dp"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:background="@color/white"
@@ -58,28 +77,24 @@
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
-            android:layout_marginBottom="15dp"
+            android:layout_marginBottom="10dp"
             android:background="@color/white"
             >
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dp"
                 android:orientation="vertical">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginEnd="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:orientation="vertical">
+
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:layout_gravity="center"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"
                         android:weightSum="1">
 
                         <TextView
@@ -89,6 +104,7 @@
                             android:layout_gravity="center"
                             android:textColor="@color/black"
                             android:layout_weight=".7"
+                            android:fontFamily="@font/poppins"
                             android:text="Name: "/>
                         <EditText
                             android:id="@+id/emp_name_p"
@@ -99,7 +115,9 @@
                             android:textStyle="bold"
                             android:layout_weight=".3"
                             android:gravity="end"
-                            android:textColor="@color/black"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:textSize="15sp"
+                            android:textColor="@color/mazarine_blue"
                             android:enabled="false"
                             android:editable="false"
                             android:focusable="false"
@@ -114,6 +132,8 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:layout_gravity="center"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"
                         android:weightSum="1">
 
                         <TextView
@@ -123,6 +143,7 @@
                             android:layout_gravity="center"
                             android:textColor="@color/black"
                             android:layout_weight=".7"
+                            android:fontFamily="@font/poppins"
                             android:text="Name (Bangla): "/>
                         <EditText
                             android:id="@+id/bangla_name_p"
@@ -133,7 +154,9 @@
                             android:textStyle="bold"
                             android:layout_weight=".3"
                             android:gravity="end"
-                            android:textColor="@color/black"
+                            android:textColor="@color/mazarine_blue"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:textSize="15sp"
                             android:enabled="false"
                             android:editable="false"
                             android:focusable="false"
@@ -148,6 +171,8 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:layout_gravity="center"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"
                         android:weightSum="1">
 
                         <TextView
@@ -157,6 +182,7 @@
                             android:layout_gravity="center"
                             android:textColor="@color/black"
                             android:layout_weight=".7"
+                            android:fontFamily="@font/poppins"
                             android:text="Revision No: "/>
                         <EditText
                             android:id="@+id/revision_no"
@@ -167,7 +193,9 @@
                             android:textStyle="bold"
                             android:layout_weight=".3"
                             android:gravity="end"
-                            android:textColor="@color/black"
+                            android:textColor="@color/mazarine_blue"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:textSize="15sp"
                             android:enabled="false"
                             android:editable="false"
                             android:focusable="false"
@@ -181,6 +209,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:weightSum="1"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"
                         android:layout_gravity="center"
                         android:orientation="horizontal">
 
@@ -191,6 +221,7 @@
                             android:layout_gravity="center"
                             android:layout_weight=".7"
                             android:textColor="@color/black"
+                            android:fontFamily="@font/poppins"
                             android:text="Effected Date: "/>
                         <EditText
                             android:id="@+id/effected_da"
@@ -201,7 +232,9 @@
                             android:layout_gravity="center"
                             android:textStyle="bold"
                             android:gravity="end"
-                            android:textColor="@color/black"
+                            android:textColor="@color/mazarine_blue"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:textSize="15sp"
                             android:enabled="false"
                             android:editable="false"
                             android:focusable="false"
@@ -216,6 +249,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:weightSum="1"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"
                         android:orientation="horizontal">
 
                         <TextView
@@ -225,19 +260,38 @@
                             android:layout_weight=".7"
                             android:layout_gravity="center"
                             android:textColor="@color/black"
+                            android:fontFamily="@font/poppins"
                             android:text="Blood Group: "/>
-                        <Spinner
-                            android:layout_gravity="center"
+<!--                        <Spinner-->
+<!--                            android:layout_gravity="center"-->
+<!--                            android:id="@+id/spinner_blood"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_margin = "5dp"-->
+<!--                            android:layout_weight=".3"-->
+<!--                            android:clickable="false"-->
+<!--                            android:background="@drawable/blue_outline"-->
+<!--                            android:popupBackground="@drawable/blue_outline_white_background"-->
+<!--                            android:spinnerMode="dropdown"/>-->
+                        <EditText
                             android:id="@+id/spinner_blood"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_margin = "5dp"
+                            android:text=""
+                            android:layout_gravity="center"
+                            android:textStyle="bold"
                             android:layout_weight=".3"
-                            android:clickable="false"
-                            android:background="@drawable/blue_outline"
-                            android:popupBackground="@drawable/blue_outline_white_background"
-                            android:spinnerMode="dropdown"/>
-
+                            android:gravity="end"
+                            android:textColor="@color/mazarine_blue"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:textSize="15sp"
+                            android:enabled="false"
+                            android:editable="false"
+                            android:focusable="false"
+                            android:inputType="textMultiLine"
+                            android:importantForAutofill="no"
+                            tools:ignore="LabelFor"
+                            android:clickable="false"/>
 
                     </LinearLayout>
                     <LinearLayout
@@ -245,6 +299,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:weightSum="1"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"
                         android:orientation="horizontal">
 
                         <TextView
@@ -254,18 +310,38 @@
                             android:layout_gravity="center"
                             android:layout_weight=".7"
                             android:textColor="@color/black"
+                            android:fontFamily="@font/poppins"
                             android:text="Group Display: "/>
-                        <Spinner
-                            android:layout_gravity="center"
+<!--                        <Spinner-->
+<!--                            android:layout_gravity="center"-->
+<!--                            android:id="@+id/spinner_gr_display"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_weight=".3"-->
+<!--                            android:layout_margin = "5dp"-->
+<!--                            android:clickable="false"-->
+<!--                            android:background="@drawable/blue_outline"-->
+<!--                            android:popupBackground="@drawable/blue_outline_white_background"-->
+<!--                            android:spinnerMode="dropdown"/>-->
+                        <EditText
                             android:id="@+id/spinner_gr_display"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:text=""
+                            android:layout_gravity="center"
+                            android:textStyle="bold"
                             android:layout_weight=".3"
-                            android:layout_margin = "5dp"
-                            android:clickable="false"
-                            android:background="@drawable/blue_outline"
-                            android:popupBackground="@drawable/blue_outline_white_background"
-                            android:spinnerMode="dropdown"/>
+                            android:gravity="end"
+                            android:textColor="@color/mazarine_blue"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:textSize="15sp"
+                            android:enabled="false"
+                            android:editable="false"
+                            android:focusable="false"
+                            android:inputType="textMultiLine"
+                            android:importantForAutofill="no"
+                            tools:ignore="LabelFor"
+                            android:clickable="false"/>
 
 
                     </LinearLayout>
@@ -274,6 +350,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:weightSum="1"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"
                         android:orientation="horizontal">
 
                         <TextView
@@ -283,6 +361,7 @@
                             android:layout_weight=".7"
                             android:layout_gravity="center"
                             android:textColor="@color/black"
+                            android:fontFamily="@font/poppins"
                             android:text="Date of Birth: "/>
                         <EditText
                             android:id="@+id/birth"
@@ -293,7 +372,9 @@
                             android:layout_gravity="center"
                             android:textStyle="bold"
                             android:gravity="end"
-                            android:textColor="@color/black"
+                            android:textColor="@color/mazarine_blue"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:textSize="15sp"
                             android:enabled="false"
                             android:editable="false"
                             android:focusable="false"
@@ -308,6 +389,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:weightSum="1"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"
                         android:orientation="horizontal">
 
                         <TextView
@@ -317,18 +400,38 @@
                             android:layout_weight=".7"
                             android:layout_gravity="center"
                             android:textColor="@color/black"
+                            android:fontFamily="@font/poppins"
                             android:text="Religion: "/>
-                        <Spinner
-                            android:layout_gravity="center"
+<!--                        <Spinner-->
+<!--                            android:layout_gravity="center"-->
+<!--                            android:id="@+id/spineer_religion"-->
+<!--                            android:layout_weight=".3"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_margin = "5dp"-->
+<!--                            android:clickable="false"-->
+<!--                            android:background="@drawable/blue_outline"-->
+<!--                            android:popupBackground="@drawable/blue_outline_white_background"-->
+<!--                            android:spinnerMode="dropdown"/>-->
+                        <EditText
                             android:id="@+id/spineer_religion"
-                            android:layout_weight=".3"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_margin = "5dp"
-                            android:clickable="false"
-                            android:background="@drawable/blue_outline"
-                            android:popupBackground="@drawable/blue_outline_white_background"
-                            android:spinnerMode="dropdown"/>
+                            android:text=""
+                            android:layout_gravity="center"
+                            android:textStyle="bold"
+                            android:layout_weight=".3"
+                            android:gravity="end"
+                            android:textColor="@color/mazarine_blue"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:textSize="15sp"
+                            android:enabled="false"
+                            android:editable="false"
+                            android:focusable="false"
+                            android:inputType="textMultiLine"
+                            android:importantForAutofill="no"
+                            tools:ignore="LabelFor"
+                            android:clickable="false"/>
 
 
                     </LinearLayout>
@@ -337,6 +440,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:weightSum="1"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"
                         android:orientation="horizontal">
 
                         <TextView
@@ -346,6 +451,7 @@
                             android:layout_weight=".7"
                             android:layout_gravity="center"
                             android:textColor="@color/black"
+                            android:fontFamily="@font/poppins"
                             android:text="Nationality: "/>
                         <EditText
                             android:id="@+id/nationality"
@@ -356,7 +462,9 @@
                             android:layout_gravity="center"
                             android:textStyle="bold"
                             android:gravity="end"
-                            android:textColor="@color/black"
+                            android:textColor="@color/mazarine_blue"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:textSize="15sp"
                             android:enabled="false"
                             android:editable="false"
                             android:focusable="false"
@@ -371,6 +479,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:weightSum="1"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"
                         android:orientation="horizontal">
 
                         <TextView
@@ -379,19 +489,39 @@
                             android:textStyle="bold"
                             android:layout_weight=".7"
                             android:layout_gravity="center"
+                            android:fontFamily="@font/poppins"
                             android:textColor="@color/black"
                             android:text="Sex: "/>
-                        <Spinner
-                            android:layout_gravity="center"
+<!--                        <Spinner-->
+<!--                            android:layout_gravity="center"-->
+<!--                            android:id="@+id/spinner_sex"-->
+<!--                            android:layout_weight=".3"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_margin = "5dp"-->
+<!--                            android:clickable="false"-->
+<!--                            android:background="@drawable/blue_outline"-->
+<!--                            android:popupBackground="@drawable/blue_outline_white_background"-->
+<!--                            android:spinnerMode="dropdown"/>-->
+                        <EditText
                             android:id="@+id/spinner_sex"
-                            android:layout_weight=".3"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_margin = "5dp"
-                            android:clickable="false"
-                            android:background="@drawable/blue_outline"
-                            android:popupBackground="@drawable/blue_outline_white_background"
-                            android:spinnerMode="dropdown"/>
+                            android:text=""
+                            android:layout_gravity="center"
+                            android:textStyle="bold"
+                            android:layout_weight=".3"
+                            android:gravity="end"
+                            android:textColor="@color/mazarine_blue"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:textSize="15sp"
+                            android:enabled="false"
+                            android:editable="false"
+                            android:focusable="false"
+                            android:inputType="textMultiLine"
+                            android:importantForAutofill="no"
+                            tools:ignore="LabelFor"
+                            android:clickable="false"/>
 
 
                     </LinearLayout>
@@ -400,6 +530,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:weightSum="1"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"
                         android:orientation="horizontal">
 
                         <TextView
@@ -409,6 +541,7 @@
                             android:layout_weight=".7"
                             android:layout_gravity="center"
                             android:textColor="@color/black"
+                            android:fontFamily="@font/poppins"
                             android:text="Family Name: "/>
                         <EditText
                             android:id="@+id/family_name"
@@ -419,7 +552,9 @@
                             android:layout_gravity="center"
                             android:textStyle="bold"
                             android:gravity="end"
-                            android:textColor="@color/black"
+                            android:textColor="@color/mazarine_blue"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:textSize="15sp"
                             android:enabled="false"
                             android:editable="false"
                             android:focusable="false"
@@ -434,6 +569,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:weightSum="1"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"
                         android:orientation="horizontal">
 
                         <TextView
@@ -443,6 +580,7 @@
                             android:layout_weight=".7"
                             android:layout_gravity="center"
                             android:textColor="@color/black"
+                            android:fontFamily="@font/poppins"
                             android:text="Calling Name: "/>
                         <EditText
                             android:id="@+id/calling_name"
@@ -453,7 +591,9 @@
                             android:layout_gravity="center"
                             android:textStyle="bold"
                             android:gravity="end"
-                            android:textColor="@color/black"
+                            android:textColor="@color/mazarine_blue"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:textSize="15sp"
                             android:enabled="false"
                             android:editable="false"
                             android:focusable="false"
@@ -468,6 +608,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:weightSum="1"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"
                         android:orientation="horizontal">
 
                         <TextView
@@ -477,6 +619,7 @@
                             android:layout_weight=".7"
                             android:layout_gravity="center"
                             android:textColor="@color/black"
+                            android:fontFamily="@font/poppins"
                             android:text="Personal Email: "/>
                         <EditText
                             android:id="@+id/personal_email"
@@ -489,7 +632,9 @@
                             android:gravity="end"
                             android:editable="false"
                             android:focusable="false"
-                            android:textColor="@color/black"
+                            android:textColor="@color/mazarine_blue"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:textSize="15sp"
                             android:enabled="false"
                             android:inputType="textMultiLine"
                             android:clickable="false"
@@ -502,6 +647,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:weightSum="1"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"
                         android:orientation="horizontal">
 
                         <TextView
@@ -511,6 +658,7 @@
                             android:layout_weight=".7"
                             android:layout_gravity="center"
                             android:textColor="@color/black"
+                            android:fontFamily="@font/poppins"
                             android:text="Present Address: "/>
                         <EditText
                             android:id="@+id/present_address"
@@ -523,7 +671,9 @@
                             android:gravity="end"
                             android:editable="false"
                             android:focusable="false"
-                            android:textColor="@color/black"
+                            android:textColor="@color/mazarine_blue"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:textSize="15sp"
                             android:enabled="false"
                             android:inputType="textMultiLine"
                             android:clickable="false"
@@ -536,6 +686,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:weightSum="1"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"
                         android:orientation="horizontal">
 
                         <TextView
@@ -545,6 +697,7 @@
                             android:layout_weight=".7"
                             android:layout_gravity="center"
                             android:textColor="@color/black"
+                            android:fontFamily="@font/poppins"
                             android:text="Permanent Address: "/>
                         <EditText
                             android:id="@+id/permanent_address"
@@ -557,7 +710,9 @@
                             android:gravity="end"
                             android:editable="false"
                             android:focusable="false"
-                            android:textColor="@color/black"
+                            android:textColor="@color/mazarine_blue"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:textSize="15sp"
                             android:enabled="false"
                             android:inputType="textMultiLine"
                             android:clickable="false"
@@ -570,6 +725,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:weightSum="1"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"
                         android:orientation="horizontal">
 
                         <TextView
@@ -579,18 +736,38 @@
                             android:layout_weight=".7"
                             android:layout_gravity="center"
                             android:textColor="@color/black"
+                            android:fontFamily="@font/poppins"
                             android:text="Marital Status: "/>
-                        <Spinner
-                            android:layout_gravity="center"
+<!--                        <Spinner-->
+<!--                            android:layout_gravity="center"-->
+<!--                            android:id="@+id/spinner_marital_status"-->
+<!--                            android:layout_weight=".3"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_margin = "5dp"-->
+<!--                            android:clickable="false"-->
+<!--                            android:background="@drawable/blue_outline"-->
+<!--                            android:popupBackground="@drawable/blue_outline_white_background"-->
+<!--                            android:spinnerMode="dropdown"/>-->
+                        <EditText
                             android:id="@+id/spinner_marital_status"
-                            android:layout_weight=".3"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_margin = "5dp"
-                            android:clickable="false"
-                            android:background="@drawable/blue_outline"
-                            android:popupBackground="@drawable/blue_outline_white_background"
-                            android:spinnerMode="dropdown"/>
+                            android:text=""
+                            android:layout_gravity="center"
+                            android:textStyle="bold"
+                            android:layout_weight=".3"
+                            android:gravity="end"
+                            android:textColor="@color/mazarine_blue"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:textSize="15sp"
+                            android:enabled="false"
+                            android:editable="false"
+                            android:focusable="false"
+                            android:inputType="textMultiLine"
+                            android:importantForAutofill="no"
+                            tools:ignore="LabelFor"
+                            android:clickable="false"/>
 
 
                     </LinearLayout>
@@ -599,6 +776,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:weightSum="1"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"
                         android:orientation="horizontal">
 
                         <TextView
@@ -608,6 +787,7 @@
                             android:layout_weight=".7"
                             android:layout_gravity="center"
                             android:textColor="@color/black"
+                            android:fontFamily="@font/poppins"
                             android:text="Present Address Bangla: "/>
                         <EditText
                             android:id="@+id/present_address_bangla"
@@ -620,7 +800,9 @@
                             android:gravity="end"
                             android:editable="false"
                             android:focusable="false"
-                            android:textColor="@color/black"
+                            android:textColor="@color/mazarine_blue"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:textSize="15sp"
                             android:enabled="false"
                             android:inputType="textMultiLine"
                             android:clickable="false"
@@ -632,6 +814,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"
                         android:weightSum="1"
                         android:orientation="horizontal">
 
@@ -642,6 +826,7 @@
                             android:layout_weight=".7"
                             android:layout_gravity="center"
                             android:textColor="@color/black"
+                            android:fontFamily="@font/poppins"
                             android:text="Permanent Address Bangla: "/>
                         <EditText
                             android:id="@+id/permanent_address_bangla"
@@ -652,7 +837,9 @@
                             android:layout_gravity="center"
                             android:textStyle="bold"
                             android:gravity="end"
-                            android:textColor="@color/black"
+                            android:textColor="@color/mazarine_blue"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:textSize="15sp"
                             android:enabled="false"
                             android:editable="false"
                             android:focusable="false"
@@ -666,6 +853,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"
                         android:weightSum="1"
                         android:orientation="horizontal">
 
@@ -676,18 +865,38 @@
                             android:layout_weight=".7"
                             android:layout_gravity="center"
                             android:textColor="@color/black"
+                            android:fontFamily="@font/poppins"
                             android:text="Mailing Address: "/>
-                        <Spinner
-                            android:layout_gravity="center"
+<!--                        <Spinner-->
+<!--                            android:layout_gravity="center"-->
+<!--                            android:id="@+id/spinner_mailing_address"-->
+<!--                            android:layout_weight=".3"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_margin = "5dp"-->
+<!--                            android:clickable="false"-->
+<!--                            android:background="@drawable/blue_outline"-->
+<!--                            android:popupBackground="@drawable/blue_outline_white_background"-->
+<!--                            android:spinnerMode="dropdown"/>-->
+                        <EditText
                             android:id="@+id/spinner_mailing_address"
-                            android:layout_weight=".3"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_margin = "5dp"
-                            android:clickable="false"
-                            android:background="@drawable/blue_outline"
-                            android:popupBackground="@drawable/blue_outline_white_background"
-                            android:spinnerMode="dropdown"/>
+                            android:text=""
+                            android:layout_gravity="center"
+                            android:textStyle="bold"
+                            android:layout_weight=".3"
+                            android:gravity="end"
+                            android:textColor="@color/mazarine_blue"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:textSize="15sp"
+                            android:enabled="false"
+                            android:editable="false"
+                            android:focusable="false"
+                            android:inputType="textMultiLine"
+                            android:importantForAutofill="no"
+                            tools:ignore="LabelFor"
+                            android:clickable="false"/>
 
 
                     </LinearLayout>
@@ -720,7 +929,7 @@
 
                     <!--                </com.google.android.material.textfield.TextInputLayout>-->
 
-                </LinearLayout>
+
 
             </LinearLayout>
 
@@ -738,6 +947,7 @@
         android:layout_height="80dp"
         android:layout_gravity="center"
         android:gravity="center"
+        android:visibility="gone"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

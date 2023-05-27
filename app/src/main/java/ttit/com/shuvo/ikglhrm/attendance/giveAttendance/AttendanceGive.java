@@ -10,6 +10,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
@@ -24,6 +25,7 @@ import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -38,7 +40,9 @@ import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DigitalClock;
 import android.widget.ImageView;
+import android.widget.TextClock;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -135,18 +139,36 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
     String officeLatitude = "";
     String officeLongitude = "";
     String coverage = "";
+    String machineCode = "3";
+    String last_time = "";
+    String today_date = "";
+    String timeToShow = "";
+    TextClock digitalClock;
+    TextView todayTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_attendance_give);
         currLoc = findViewById(R.id.text_of_cu_loc);
+        currLoc.setVisibility(View.GONE);
         checkInTime = findViewById(R.id.check_int_time);
         chekInButton = findViewById(R.id.check_in_time_button);
         nameOfCheckIN = findViewById(R.id.name_of_punch);
         close = findViewById(R.id.give_att_finish);
         software = findViewById(R.id.name_of_company_attendance_give);
         autoStartIcon = findViewById(R.id.app_auto_start_icon);
+        digitalClock = findViewById(R.id.text_clock_give_att);
+        todayTime = findViewById(R.id.today_date_time_give_att);
+
+        Intent intent = getIntent();
+        last_time = intent.getStringExtra("LAST_TIME");
+        today_date = intent.getStringExtra("TODAY_DATE");
+
+        Typeface typeface = ResourcesCompat.getFont(getApplicationContext(),R.font.poppins_bold);
+        digitalClock.setTypeface(typeface);
+
+        todayTime.setText(today_date);
 
         software.setText(SoftwareName);
 
@@ -179,9 +201,11 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
         preferences = getSharedPreferences(emp_id,MODE_PRIVATE);
 
         getTime = preferences.getString(timeKey,null);
-        if (getTime != null) {
-            checkInTime.setText(getTime);
-        }
+//        if (getTime != null) {
+//            checkInTime.setText(getTime);
+//        }
+        String lt = "Your last recorded time : " + last_time;
+        checkInTime.setText(lt);
 
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
@@ -292,6 +316,7 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
 
 
         SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yy, hh:mm:ss aa", Locale.getDefault());
+        SimpleDateFormat dftoShow = new SimpleDateFormat("hh:mm aa", Locale.getDefault());
 
         locationCallback = new LocationCallback() {
             @Override
@@ -312,6 +337,7 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
                     ts = new Timestamp(date.getTime());
                     System.out.println(ts.toString());
                     inTime = df.format(c);
+                    timeToShow = dftoShow.format(c);
                     System.out.println("IN TIME : " + inTime);
                     //getAddress(lastLatLongitude[0].latitude,lastLatLongitude[0].longitude);
 
@@ -338,6 +364,12 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
                             if (!coverage.isEmpty()) {
                                 radius = Float.parseFloat(coverage);
                             }
+                        }
+
+                        if (radius == 0) {
+                            machineCode = "3";
+                        } else {
+                            machineCode = "1";
                         }
 
                         if (distance[0] <= radius || radius == 0) {
@@ -414,6 +446,7 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
                         }
                     }
                     else {
+                        machineCode = "3";
                         if (tracking_flag == 1) {
                             if (isMyServiceRunning(Service.class)) {
 
@@ -751,12 +784,7 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
 
             if (conn) {
                 conn = false;
-                if (address.isEmpty()) {
 
-                    address = "No Address found for ("+lat+", "+lon+")";
-                }
-                System.out.println("Ekhane Ashbe 2nd");
-                currLoc.setText(address);
 
                 new Check().execute();
             } else {
@@ -826,7 +854,7 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
                 System.out.println("Ekhane Ashbe 3rd");
                 checkInTime.setVisibility(View.VISIBLE);
 
-                String ss = "Your last recorded time: "+inTime;
+                String ss = "Your last recorded time : "+timeToShow;
                 checkInTime.setText(ss);
 
                 SharedPreferences.Editor editor = preferences.edit();
@@ -834,6 +862,17 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
                 editor.putString(timeKey,ss);
                 editor.apply();
                 editor.commit();
+                String puncher = "";
+                if (address.isEmpty()) {
+
+                    address = "No Address found for ("+lat+", "+lon+")";
+                    puncher = "Punched at "+ timeToShow + " in ("+address+")";
+                }
+                else {
+                    puncher = "Punched at "+ timeToShow + " in "+address;
+                }
+                currLoc.setText(puncher);
+                currLoc.setVisibility(View.VISIBLE);
 
                 if (tracking_flag == 1) {
                     if (isMyServiceRunning(Service.class)) {
@@ -997,7 +1036,7 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
             CallableStatement callableStatement = connection.prepareCall("begin SET_EMP_ATTENDANCE(?,?,?,?,?,?); end;");
             callableStatement.setInt(1, Integer.parseInt(emp_id));
             callableStatement.setTimestamp(2, ts);
-            callableStatement.setString(3,"3");
+            callableStatement.setString(3,machineCode);
             callableStatement.setString(4,lat);
             callableStatement.setString(5,lon);
             callableStatement.setString(6,address);

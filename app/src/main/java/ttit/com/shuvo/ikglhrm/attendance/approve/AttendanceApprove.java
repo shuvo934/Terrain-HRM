@@ -2,6 +2,8 @@ package ttit.com.shuvo.ikglhrm.attendance.approve;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,6 +16,8 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -54,7 +58,7 @@ public class AttendanceApprove extends AppCompatActivity {
 
     public static int fromAttApp = 0;
 
-    LinearLayout afterSelecting;
+    CardView afterSelecting;
     LinearLayout afterSelectingButton;
     LinearLayout inLay;
     LinearLayout outLay;
@@ -145,6 +149,10 @@ public class AttendanceApprove extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Window window = getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(ContextCompat.getColor(AttendanceApprove.this,R.color.secondaryColor));
         setContentView(R.layout.activity_attendance_approve);
 
         afterSelecting = findViewById(R.id.after_request_selecting_att_approve);

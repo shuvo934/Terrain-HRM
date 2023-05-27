@@ -2,6 +2,7 @@ package ttit.com.shuvo.ikglhrm.attendance.update;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -113,6 +114,7 @@ public class AttendanceUpdate extends AppCompatActivity {
 
     Button close;
     Button update;
+    LinearLayout updateButtonEnable;
 
     Button arriClear;
     Button deptClear;
@@ -256,6 +258,10 @@ public class AttendanceUpdate extends AppCompatActivity {
 //        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
 //        decorView.setSystemUiVisibility(uiOptions);
 
+        Window window = getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(ContextCompat.getColor(AttendanceUpdate.this,R.color.secondaryColor));
         setContentView(R.layout.activity_attendance_update);
 
         selected_shift_id = "";
@@ -281,6 +287,7 @@ public class AttendanceUpdate extends AppCompatActivity {
         showShoftTime = findViewById(R.id.show_shift_item_button);
         close = findViewById(R.id.update_finish);
         update = findViewById(R.id.update_req_button);
+        updateButtonEnable = findViewById(R.id.linearLayout_new_request_att_send);
         arriClear = findViewById(R.id.arrival_clear);
         deptClear = findViewById(R.id.departure_clear);
 
@@ -500,7 +507,7 @@ public class AttendanceUpdate extends AppCompatActivity {
 
                         System.out.println(1);
                         after.setVisibility(View.VISIBLE);
-                        update.setVisibility(View.VISIBLE);
+                        updateButtonEnable.setVisibility(View.VISIBLE);
                     }
 
                 }
@@ -570,7 +577,7 @@ public class AttendanceUpdate extends AppCompatActivity {
 
                         System.out.println(2);
                         after.setVisibility(View.VISIBLE);
-                        update.setVisibility(View.VISIBLE);
+                        updateButtonEnable.setVisibility(View.VISIBLE);
                     }
 
                 }
