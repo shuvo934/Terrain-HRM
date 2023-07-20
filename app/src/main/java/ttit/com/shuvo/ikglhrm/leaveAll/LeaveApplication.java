@@ -5,16 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import android.app.DatePickerDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,26 +23,24 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-
-import java.io.IOException;
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.sql.Timestamp;
-import java.sql.Types;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
-import ttit.com.shuvo.ikglhrm.attendance.update.AttendanceUpdate;
 import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.DialogueText;
 import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.SelectAll;
 import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.SelectAllList;
@@ -58,7 +50,10 @@ import ttit.com.shuvo.ikglhrm.leaveAll.leaveApplication.ShowLeaveBalance;
 
 import static ttit.com.shuvo.ikglhrm.Login.userDesignations;
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
-import static ttit.com.shuvo.ikglhrm.OracleConnection.createConnection;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class LeaveApplication extends AppCompatActivity {
 
@@ -118,7 +113,7 @@ public class LeaveApplication extends AppCompatActivity {
     private Boolean insertCon = false;
     private Boolean insertConnn = false;
     private Boolean insertedCon = false;
-    private Connection connection;
+//    private Connection connection;
 
     private int mYear, mMonth, mDay, mHour, mMinute;
 
@@ -137,10 +132,10 @@ public class LeaveApplication extends AppCompatActivity {
     String selected_leave_address = "";
     public static String selected_worker = "";
     public static String selected_worker_id = "";
-    String la_id = "";
+//    String la_id = "";
     String date_of_today = "";
-    String app_code = "";
-    String app_code_id = "";
+//    String app_code = "";
+//    String app_code_id = "";
     String selected_jsm_id = "";
     String calling_title = "";
     String selected_dept_id = "";
@@ -266,7 +261,8 @@ public class LeaveApplication extends AppCompatActivity {
 
         todayDate.setText(formattedDate);
 
-        new Check().execute();
+//        new Check().execute();
+        getInfo();
 
         // Spinner Application Type
         leaveAppAdapter = new ArrayAdapter<String>(
@@ -867,7 +863,7 @@ public class LeaveApplication extends AppCompatActivity {
         leaveBalance.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ShowLeaveBalance showLeaveBalance = new ShowLeaveBalance();
+                ShowLeaveBalance showLeaveBalance = new ShowLeaveBalance(LeaveApplication.this);
                 showLeaveBalance.show(getSupportFragmentManager(),"BALANCE");
             }
         });
@@ -967,7 +963,8 @@ public class LeaveApplication extends AppCompatActivity {
                                                             @Override
                                                             public void onClick(DialogInterface dialog, int which) {
 
-                                                                new InsertCheck().execute();
+//                                                                new InsertCheck().execute();
+                                                                insertLeaveApply();
 
                                                             }
                                                         })
@@ -1001,7 +998,8 @@ public class LeaveApplication extends AppCompatActivity {
                                                         @Override
                                                         public void onClick(DialogInterface dialog, int which) {
 
-                                                            new InsertCheck().execute();
+//                                                            new InsertCheck().execute();
+                                                            insertLeaveApply();
 
                                                         }
                                                     })
@@ -1093,75 +1091,486 @@ public class LeaveApplication extends AppCompatActivity {
 
     }
 
-    public boolean isConnected() {
-        boolean connected = false;
-        boolean isMobile = false;
-        try {
-            ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo nInfo = cm.getActiveNetworkInfo();
-            connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
-            return connected;
-        } catch (Exception e) {
-            Log.e("Connectivity Exception", e.getMessage());
-        }
-        return connected;
-    }
+//    public boolean isConnected() {
+//        boolean connected = false;
+//        boolean isMobile = false;
+//        try {
+//            ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+//            NetworkInfo nInfo = cm.getActiveNetworkInfo();
+//            connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
+//            return connected;
+//        } catch (Exception e) {
+//            Log.e("Connectivity Exception", e.getMessage());
+//        }
+//        return connected;
+//    }
+//
+//    public boolean isOnline() {
+//
+//        Runtime runtime = Runtime.getRuntime();
+//        try {
+//            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+//            int     exitValue = ipProcess.waitFor();
+//            return (exitValue == 0);
+//        }
+//        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
+//
+//        return false;
+//    }
 
-    public boolean isOnline() {
+//    public class Check extends AsyncTask<Void, Void, Void> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//
+//            waitProgress.show(getSupportFragmentManager(),"WaitBar");
+//            waitProgress.setCancelable(false);
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            if (isConnected() && isOnline()) {
+//
+//                UpdateInfo();
+//                if (connected) {
+//                    conn = true;
+//                    message= "Internet Connected";
+//                }
+//
+//            } else {
+//                conn = false;
+//                message = "Not Connected";
+//            }
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//
+//            waitProgress.dismiss();
+//            if (conn) {
+//
+//                allreasonLists.add(new LeaveTypeList("9999","Others"));
+//
+//
+//            }
+//            else {
+//                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+//                AlertDialog dialog = new AlertDialog.Builder(LeaveApplication.this)
+//                        .setMessage("Please Check Your Internet Connection")
+//                        .setPositiveButton("Retry", null)
+//                        .setNegativeButton("Cancel",null)
+//                        .show();
+//
+//                dialog.setCancelable(false);
+//                dialog.setCanceledOnTouchOutside(false);
+//                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+//                positive.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//
+//                        new Check().execute();
+//                        dialog.dismiss();
+//                    }
+//                });
+//                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+//                negative.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        dialog.dismiss();
+//                        finish();
+//                    }
+//                });
+//            }
+//        }
+//    }
 
-        Runtime runtime = Runtime.getRuntime();
-        try {
-            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
-            int     exitValue = ipProcess.waitFor();
-            return (exitValue == 0);
-        }
-        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
+//    public class InsertCheck extends AsyncTask<Void, Void, Void> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//
+//            waitProgress.show(getSupportFragmentManager(),"WaitBar");
+//            waitProgress.setCancelable(false);
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            if (isConnected() && isOnline()) {
+//
+//                InsertReq();
+//                if (insertCon) {
+//                    insertConnn = true;
+//                    System.out.println("INSERTED");
+//                    message= "Internet Connected";
+//                }
+//
+//            } else {
+//                insertConnn = false;
+//                message = "Not Connected";
+//            }
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//
+//            waitProgress.dismiss();
+//            if (insertConnn) {
+//
+//                if (insertedCon) {
+//                    showD = 0;
+//                    isOtherReason = false;
+//                    leaveNumber = 0;
+//                    dialogText_leave = 0;
+//
+//                    hint = "";
+//                    text = "";
+//
+//                    selected_leave_type_name = "";
+//                    selected_leave_type_id = "";
+//                    selected_reason = "";
+//
+//                    selected_worker = "";
+//                    selected_worker_id = "";
+//
+//                    System.out.println("INSERTED");
+//
+//                    AlertDialog dialog = new AlertDialog.Builder(LeaveApplication.this)
+//                            .setMessage("Applied Successfully")
+//                            .setPositiveButton("OK", null)
+//                            .show();
+//
+//                    dialog.setCancelable(false);
+//                    dialog.setCanceledOnTouchOutside(false);
+//                    Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+//                    positive.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//
+//                            dialog.dismiss();
+//                            finish();
+//                        }
+//                    });
+//                } else {
+//                    AlertDialog dialog = new AlertDialog.Builder(LeaveApplication.this)
+//                            .setMessage(leaveAppCheck)
+//                            .setPositiveButton("OK", null)
+//                            .show();
+//
+//                    dialog.setCancelable(false);
+//                    dialog.setCanceledOnTouchOutside(false);
+//                    Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+//                    positive.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//
+//                            dialog.dismiss();
+//                        }
+//                    });
+//                }
+//
+//                insertedCon = false;
+//                insertCon = false;
+//                insertConnn = false;
+//
+//
+//            }
+//            else {
+//                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+//                AlertDialog dialog = new AlertDialog.Builder(LeaveApplication.this)
+//                        .setMessage("Please Check Your Internet Connection")
+//                        .setPositiveButton("Retry", null)
+//                        .setNegativeButton("Cancel",null)
+//                        .show();
+//
+////                dialog.setCancelable(false);
+////                dialog.setCanceledOnTouchOutside(false);
+//                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+//                positive.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//
+//                        new InsertCheck().execute();
+//                        dialog.dismiss();
+//                    }
+//                });
+//            }
+//        }
+//    }
 
-        return false;
-    }
+//    public void UpdateInfo() {
+//        try {
+//            this.connection = createConnection();
+//
+//            Statement stmt = connection.createStatement();
+//
+//            leaveTypeLists = new ArrayList<>();
+//            allreasonLists = new ArrayList<>();
+//            selectingIndivdual = new ArrayList<>();
+//            workBackupList = new ArrayList<>();
+//
+//
+//            ResultSet rs=stmt.executeQuery(" SELECT ALL LEAVE_CATEGORY.LC_NAME, LEAVE_CATEGORY.LC_ID\n" +
+//                    "FROM LEAVE_CATEGORY, LEAVE_BALANCE_DTL, LEAVE_BALANCE_YEAR_DTL, LEAVE_BALANCE_EMP_MST\n" +
+//                    "WHERE LEAVE_CATEGORY.LC_ID = LEAVE_BALANCE_DTL.LBD_LC_ID\n" +
+//                    "AND LEAVE_BALANCE_DTL.LBD_LBYD_ID = LEAVE_BALANCE_YEAR_DTL.LBYD_ID\n" +
+//                    "AND LEAVE_BALANCE_YEAR_DTL.LBYD_LBEM_ID = LEAVE_BALANCE_EMP_MST.LBEM_ID\n" +
+//                    "AND LEAVE_BALANCE_EMP_MST.LBEM_EMP_ID = to_number("+emp_id+")\n" +
+//                    "AND TO_CHAR(LEAVE_BALANCE_YEAR_DTL.LBYD_YEAR,'RRRR')=TO_CHAR(sysdate,'RRRR')\n" +
+//                    "AND LEAVE_CATEGORY.LC_ACTIVE = 1 \n" +
+//                    "AND NVL(LEAVE_CATEGORY.LC_LEAVE_APPLY_FLAG,0)=1\n" +
+//                    "AND NVL(LEAVE_CATEGORY.LC_DAY_OFF_FLAG,0)=0\n" +
+//                    "AND ( LEAVE_BALANCE_DTL.LBD_BALANCE_QTY > 0 OR LEAVE_CATEGORY.LC_ID  IN (8) )\n");
+//
+//
+//
+//            while(rs.next())  {
+//                leaveTypeLists.add(new LeaveTypeList(rs.getString(2),rs.getString(1)));
+//            }
+//
+//            ResultSet resultSet = stmt.executeQuery("SELECT ALL LEAVE_REASON.LR_ID, LEAVE_REASON.LR_NAME\n" +
+//                    "FROM LEAVE_REASON ");
+//
+//            while (resultSet.next()) {
+//                allreasonLists.add(new LeaveTypeList(resultSet.getString(1),resultSet.getString(2)));
+//            }
+//
+//            ResultSet resultSet1 = stmt.executeQuery("SELECT ALL EMP_MST.EMP_ID, EMP_MST.EMP_NAME, \n" +
+//                    " EMP_JOB_HISTORY.JOB_CALLING_TITLE, JOB_SETUP_MST.JSM_NAME,\n" +
+//                    " DIVISION_MST.DIVM_NAME\n" +
+//                    "FROM EMP_MST, COMPANY_OFFICE_ADDRESS, EMP_JOB_HISTORY, JOB_SETUP_DTL, JOB_SETUP_MST, DEPT_MST, DIVISION_MST\n" +
+//                    "WHERE (EMP_JOB_HISTORY.JOB_STATUS<>'Closed'\n" +
+//                    " AND EMP_JOB_HISTORY.JOB_ACTUAL_DATE IS NOT NULL)\n" +
+//                    " AND ((EMP_JOB_HISTORY.JOB_PRI_COA_ID = COMPANY_OFFICE_ADDRESS.COA_ID)\n" +
+//                    " AND (JOB_SETUP_DTL.JSD_JSM_ID = JOB_SETUP_MST.JSM_ID)\n" +
+//                    " AND (JOB_SETUP_MST.JSM_DEPT_ID = DEPT_MST.DEPT_ID)\n" +
+//                    " AND (JOB_SETUP_MST.JSM_DIVM_ID = DIVISION_MST.DIVM_ID)\n" +
+//                    " AND (EMP_JOB_HISTORY.JOB_ID = EMP_MST.EMP_JOB_ID)\n" +
+//                    " AND (JOB_SETUP_DTL.JSD_ID = EMP_JOB_HISTORY.JOB_JSD_ID))\n" +
+//                    " AND DIVISION_MST.DIVM_ID="+div_id+"\n" +
+//                    " and EMP_MST.EMP_ID <> "+emp_id+"\n" +
+//                    "ORDER BY COMPANY_OFFICE_ADDRESS.COA_NAME, EMP_MST.EMP_NAME ");
+//
+//            while (resultSet1.next()) {
+//
+//                workBackupList.add(new SelectAllList(resultSet1.getString(1),resultSet1.getString(2),resultSet1.getString(3),resultSet1.getString(4),resultSet1.getString(5)));
+//            }
+//
+//            // Employee Information
+//            ResultSet emp = stmt.executeQuery("SELECT DISTINCT \n" +
+//                    " JOB_SETUP_MST.JSM_ID, \n" +
+//                    "EMP_JOB_HISTORY.JOB_CALLING_TITLE, \n" +
+//                    "dept_mst.dept_id, division_mst.divm_id\n" +
+//                    "FROM EMP_MST, JOB_SETUP_DTL, JOB_SETUP_MST, DEPT_MST, DIVISION_MST, EMP_JOB_HISTORY, DESIG_MST, COMPANY_OFFICE_ADDRESS, COMPANY_OFFICE_ADDRESS COMPANY_OFFICE_ADDRESS_A1\n" +
+//                    "WHERE EMP_MST.EMP_ID = "+emp_id+"\n" +
+//                    "  AND ((JOB_SETUP_DTL.JSD_JSM_ID = JOB_SETUP_MST.JSM_ID)\n" +
+//                    " AND (JOB_SETUP_MST.JSM_DEPT_ID = DEPT_MST.DEPT_ID)\n" +
+//                    " AND (JOB_SETUP_MST.JSM_DIVM_ID = DIVISION_MST.DIVM_ID)\n" +
+//                    " AND (JOB_SETUP_MST.JSM_DESIG_ID = DESIG_MST.DESIG_ID)\n" +
+//                    " AND (EMP_JOB_HISTORY.JOB_PRI_COA_ID = COMPANY_OFFICE_ADDRESS.COA_ID)\n" +
+//                    " AND (JOB_SETUP_DTL.JSD_ID = EMP_MST.EMP_JSD_ID)\n" +
+//                    " AND (EMP_JOB_HISTORY.JOB_ID = EMP_MST.EMP_JOB_ID)\n" +
+//                    " AND (COMPANY_OFFICE_ADDRESS_A1.COA_ID(+) = EMP_JOB_HISTORY.JOB_SEC_COA_ID))");
+//
+//            while (emp.next()) {
+//                selected_jsm_id = emp.getString(1);
+//                calling_title = emp.getString(2);
+//                selected_dept_id = emp.getString(3);
+//                selected_divm_id = emp.getString(4);
+//            }
+//
+//
+//            connected = true;
+//
+//            connection.close();
+//
+//        }
+//        catch (Exception e) {
+//
+//            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
+//            Log.i("ERRRRR", e.getLocalizedMessage());
+//            e.printStackTrace();
+//        }
+//    }
 
-    public class Check extends AsyncTask<Void, Void, Void> {
+    public void getInfo() {
+        waitProgress.show(getSupportFragmentManager(),"WaitBar");
+        waitProgress.setCancelable(false);
+        conn = false;
+        connected = false;
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
+        leaveTypeLists = new ArrayList<>();
+        allreasonLists = new ArrayList<>();
+        selectingIndivdual = new ArrayList<>();
+        workBackupList = new ArrayList<>();
 
-            waitProgress.show(getSupportFragmentManager(),"WaitBar");
-            waitProgress.setCancelable(false);
-        }
+        String leaveTypeUrl = "http://103.56.208.123:8001/apex/ttrams/leave/getLeaveType/"+emp_id+"";
+        String reasonsUrl = "http://103.56.208.123:8001/apex/ttrams/leave/getReasons";
+        String workBackupUrl = "http://103.56.208.123:8001/apex/ttrams/leave/getWorkBackupEmp/"+div_id+"/"+emp_id+"";
+        String empInfoUrl = "http://103.56.208.123:8001/apex/ttrams/attendanceUpNewReq/getEmpInfo/"+emp_id+"";
 
-        @Override
-        protected Void doInBackground(Void... voids) {
-            if (isConnected() && isOnline()) {
+        RequestQueue requestQueue = Volley.newRequestQueue(LeaveApplication.this);
 
-                UpdateInfo();
-                if (connected) {
-                    conn = true;
-                    message= "Internet Connected";
+        StringRequest empInfoReq = new StringRequest(Request.Method.GET, empInfoUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject empSomeInfo = array.getJSONObject(i);
+
+                        selected_jsm_id = empSomeInfo.getString("jsm_id");
+                        calling_title = empSomeInfo.getString("job_calling_title");
+                        selected_dept_id = empSomeInfo.getString("dept_id");
+                        selected_divm_id = empSomeInfo.getString("divm_id");
+                    }
                 }
 
-            } else {
-                conn = false;
-                message = "Not Connected";
+                connected = true;
+                updateInterface();
             }
+            catch (JSONException e) {
+                e.printStackTrace();
+                connected = false;
+                updateInterface();
+            }
+        }, error -> {
+            error.printStackTrace();
+            conn = false;
+            connected = false;
+            updateInterface();
+        });
 
-            return null;
-        }
+        StringRequest workBackupReq = new StringRequest(Request.Method.GET, workBackupUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject workBackupInfo = array.getJSONObject(i);
 
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
+                        String emp_id_new = workBackupInfo.getString("emp_id")
+                                .equals("null") ? "" : workBackupInfo.getString("emp_id");
+                        String emp_name_new = workBackupInfo.getString("emp_name")
+                                .equals("null") ? "" : workBackupInfo.getString("emp_name");
+                        String job_calling_title_new = workBackupInfo.getString("job_calling_title")
+                                .equals("null") ? "" : workBackupInfo.getString("job_calling_title");
+                        String jsm_name_new = workBackupInfo.getString("jsm_name")
+                                .equals("null") ? "" : workBackupInfo.getString("jsm_name");
+                        String divm_name_new = workBackupInfo.getString("divm_name")
+                                .equals("null") ? "" : workBackupInfo.getString("divm_name");
 
-            waitProgress.dismiss();
-            if (conn) {
+                        workBackupList.add(new SelectAllList(emp_id_new,emp_name_new,job_calling_title_new,
+                                jsm_name_new,divm_name_new));
 
-                allreasonLists.add(new LeaveTypeList("9999","Others"));
+                    }
+                }
+                requestQueue.add(empInfoReq);
+            }
+            catch (JSONException e) {
+                e.printStackTrace();
+                connected = false;
+                updateInterface();
+            }
+        }, error -> {
+            error.printStackTrace();
+            conn = false;
+            connected = false;
+            updateInterface();
+        });
 
+        StringRequest reasonReq = new StringRequest(Request.Method.GET, reasonsUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject reasonsInfo = array.getJSONObject(i);
 
-            }else {
-                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+                        String lr_id_new = reasonsInfo.getString("lr_id")
+                                .equals("null") ? "" : reasonsInfo.getString("lr_id");
+                        String lr_name_name = reasonsInfo.getString("lr_name")
+                                .equals("null") ? "" : reasonsInfo.getString("lr_name");
+
+                        allreasonLists.add(new LeaveTypeList(lr_id_new,lr_name_name));
+                    }
+                }
+                requestQueue.add(workBackupReq);
+            }
+            catch (JSONException e) {
+                e.printStackTrace();
+                connected = false;
+                updateInterface();
+            }
+        }, error -> {
+            error.printStackTrace();
+            conn = false;
+            connected = false;
+            updateInterface();
+        });
+
+        StringRequest leaveTypeReq = new StringRequest(Request.Method.GET, leaveTypeUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject leaveTypeInfo = array.getJSONObject(i);
+
+                        String lc_name_new = leaveTypeInfo.getString("lc_name")
+                                .equals("null") ? "" : leaveTypeInfo.getString("lc_name");
+                        String lc_id_new = leaveTypeInfo.getString("lc_id")
+                                .equals("null") ? "" : leaveTypeInfo.getString("lc_id");
+
+                        leaveTypeLists.add(new LeaveTypeList(lc_id_new,lc_name_new));
+                    }
+                }
+
+                requestQueue.add(reasonReq);
+            }
+            catch (JSONException e) {
+                e.printStackTrace();
+                connected = false;
+                updateInterface();
+            }
+        }, error -> {
+           error.printStackTrace();
+           conn = false;
+           connected = false;
+           updateInterface();
+        });
+
+        requestQueue.add(leaveTypeReq);
+    }
+
+    private void updateInterface() {
+        waitProgress.dismiss();
+        if (conn) {
+            if (connected) {
+                allreasonLists.add(new LeaveTypeList("9999", "Others"));
+            }
+            else {
                 AlertDialog dialog = new AlertDialog.Builder(LeaveApplication.this)
-                        .setMessage("Please Check Your Internet Connection")
+                        .setMessage("There is a network issue in the server. Please Try later.")
                         .setPositiveButton("Retry", null)
                         .setNegativeButton("Cancel",null)
                         .show();
@@ -1169,62 +1578,299 @@ public class LeaveApplication extends AppCompatActivity {
                 dialog.setCancelable(false);
                 dialog.setCanceledOnTouchOutside(false);
                 Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                positive.setOnClickListener(v -> {
 
-                        new Check().execute();
-                        dialog.dismiss();
-                    }
+                    getInfo();
+                    dialog.dismiss();
                 });
                 Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                        finish();
-                    }
+                negative.setOnClickListener(v -> {
+                    dialog.dismiss();
+                    finish();
                 });
             }
+        }
+        else {
+            AlertDialog dialog = new AlertDialog.Builder(LeaveApplication.this)
+                    .setMessage("Please Check Your Internet Connection")
+                    .setPositiveButton("Retry", null)
+                    .setNegativeButton("Cancel",null)
+                    .show();
+
+            dialog.setCancelable(false);
+            dialog.setCanceledOnTouchOutside(false);
+            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            positive.setOnClickListener(v -> {
+
+                getInfo();
+                dialog.dismiss();
+            });
+            Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+            negative.setOnClickListener(v -> {
+                dialog.dismiss();
+                finish();
+            });
         }
     }
 
-    public class InsertCheck extends AsyncTask<Void, Void, Void> {
+//    public void InsertReq() {
+//        try {
+//            this.connection = createConnection();
+//
+//            Statement stmt = connection.createStatement();
+//
+//            leaveAppCheck = "";
+//
+//
+//            CallableStatement callableStatement = connection.prepareCall("begin SET_LEAVE_CHECK(?,?,?,?,?); end;");
+//            callableStatement.setInt(1, Integer.parseInt(emp_id));
+//            callableStatement.setInt(2, Integer.parseInt(selected_leave_type_id));
+//            callableStatement.setString(3, selected_date_on_from);
+//            callableStatement.setString(4, selected_date_to);
+//            callableStatement.registerOutParameter(5, Types.VARCHAR);
+//
+//            callableStatement.execute();
+//
+//            leaveAppCheck = callableStatement.getString(5);
+//            System.out.println("FROM set_leave_check PROCE:: " +leaveAppCheck);
+//
+//            callableStatement.close();
+//
+//            if (leaveAppCheck.toLowerCase().equals("ok")) {
+//
+//                ResultSet rs=stmt.executeQuery("  SELECT SEQ_LEAVE_APPLICATION.NEXTVAL \n" +
+//                        "\tFROM Dual");
+//
+//                while(rs.next())  {
+//                    la_id = rs.getString(1);
+//                }
+//
+//                if (!la_id.isEmpty()) {
+//                    ResultSet rs1 = stmt.executeQuery("SELECT (SELECT NVL (MAX (LA_APP_CODE_ID), 0) + 1\n" +
+//                            "                FROM LEAVE_APPLICATION\n" +
+//                            "               WHERE     TO_CHAR (LA_DATE, 'RRRR') = TO_CHAR (TO_DATE('"+date_of_today+"'), 'RRRR')\n" +
+//                            "                     AND LA_EMP_ID = "+emp_id+")\n" +
+//                            "                APP_CODE_ID,\n" +
+//                            "                TO_CHAR (TO_DATE('"+date_of_today+"'), 'RRRR')\n" +
+//                            "             || '/'\n" +
+//                            "             || (SELECT EMP_CODE\n" +
+//                            "                   FROM EMP_MST\n" +
+//                            "                  WHERE EMP_ID = "+emp_id+")\n" +
+//                            "             || '/'\n" +
+//                            "             || LTRIM (\n" +
+//                            "                   RTRIM (\n" +
+//                            "                      (SELECT NVL (MAX (LA_APP_CODE_ID), 0) + 1\n" +
+//                            "                         FROM LEAVE_APPLICATION\n" +
+//                            "                        WHERE     TO_CHAR (LA_DATE, 'RRRR') =\n" +
+//                            "                                     TO_CHAR (TO_DATE('"+date_of_today+"'), 'RRRR')\n" +
+//                            "                              AND LA_EMP_ID = "+emp_id+")))\n" +
+//                            "                APP_CODE\n" +
+//                            "        FROM DUAL");
+//
+//                    while (rs1.next()) {
+//                        app_code_id = rs1.getString(1);
+//                        app_code = rs1.getString(2);
+//
+//                    }
+//
+//                    if (!app_code.isEmpty()) {
+//
+////                    System.out.println("LA_ID: " + la_id);
+////                    System.out.println("EMP ID: "+ emp_id);
+////                    System.out.println("REASON DESC: "+ selected_reason_desc);
+////                    System.out.println("Address Station: "+ selected_address_station);
+////                    System.out.println("Updated Date: "+ selected_update_date);
+////                    System.out.println("Now Date: "+ now_date);
+////                    System.out.println("Dept ID: "+ selected_dept_id);
+////                    System.out.println("Divm ID: "+ selected_divm_id);
+////                    System.out.println("JSM ID: "+ selected_jsm_id);
+////                    System.out.println("Calling Title: " + calling_title);
+////                    System.out.println("Request: "+ selected_request);
+////                    System.out.println("App Code: "+ app_code);
+////                    System.out.println("APP CODE ID: "+ app_code_id);
+////                    System.out.println("Approver ID: "+ selected_approver_id);
+////                    System.out.println("Attendance Type: " + selected_attendance_type);
+////                    System.out.println("Depart Time: "+ depart_time);
+////                    System.out.println("Arrival Time: " + arrival_time);
+////                    System.out.println("Loc ID: "+ selected_loc_id);
+////                    System.out.println("Shift: "+ selected_shift_id);
+////                    System.out.println("Reason ID: "+ selected_reason_id);
+////
+////
+//                        stmt.executeUpdate("INSERT INTO LEAVE_APPLICATION (LA_ID,\n" +
+//                                "                               LA_EMP_ID,\n" +
+//                                "                               LA_ADD_DURING_LEAVE,\n" +
+//                                "                               LA_FROM_DATE,\n" +
+//                                "                               LA_TO_DATE,\n" +
+//                                "                               LA_DATE,\n" +
+//                                "                               LA_LEAVE_DAYS,\n" +
+//                                "                               LA_DEPT_ID,\n" +
+//                                "                               LA_COMMENTS,\n" +
+//                                "                               LA_APPROVED,\n" +
+//                                "                               LA_TEL_DURING_LEAVE,\n" +
+//                                "                               LA_APPLICATION_TYPE,\n" +
+//                                "                               LA_APPLIED_TO_ID,\n" +
+//                                "                               LA_APP_CODE,\n" +
+//                                "                               LA_APP_CODE_ID,\n" +
+//                                "                               LA_APP_REJECT_CALLING_TITLE,\n" +
+//                                "                               LA_APP_REJECT_DEPT_ID,\n" +
+//                                "                               LA_APP_REJECT_DIVM_ID,\n" +
+//                                "                               LA_APP_REJECT_EMP_ID,\n" +
+//                                "                               LA_APP_REJECT_JSM_ID,\n" +
+//                                "                               LA_APP_REJ_DATE,\n" +
+//                                "                               LA_CALLING_TITLE,\n" +
+//                                "                               LA_CANCEL_CALLING_TITLE,\n" +
+//                                "                               LA_CANCEL_COMMENTS,\n" +
+//                                "                               LA_CANCEL_DATE,\n" +
+//                                "                               LA_CANCEL_DEPT_ID,\n" +
+//                                "                               LA_CANCEL_DIVM_ID,\n" +
+//                                "                               LA_CANCEL_EMP_ID,\n" +
+//                                "                               LA_CANCEL_JSM_ID,\n" +
+//                                "                               LA_DAY_OFF_FLAG,\n" +
+//                                "                               LA_DIVM_ID,\n" +
+//                                "                               LA_ENTRY_USER,\n" +
+//                                "                               LA_JSM_ID,\n" +
+//                                "                               LA_LC_ID,\n" +
+//                                "                               LA_REASON,\n" +
+//                                "                               LA_SICK_LEAVE_PRES_CHK,\n" +
+//                                "                               LA_WORK_BCK_EMP_ID,\n" +
+//                                "                               LA_LEAVE_TYPE,\n" +
+//                                "                               LA_FILE_PATH)\n" +
+//                                "     VALUES ("+la_id+",\n" +
+//                                "             "+emp_id+",\n" +
+//                                "             '"+selected_leave_address+"',\n" +
+//                                "             TO_DATE('"+selected_date_on_from+"', 'DD-MON-YY'),\n" +
+//                                "             TO_DATE('"+selected_date_to+"', 'DD-MON-YY'),\n" +
+//                                "             TO_DATE('"+date_of_today+"', 'DD-MON-YY'),\n" +
+//                                "             "+selected_total_leave_days+",\n" +
+//                                "             "+selected_dept_id+",\n" +
+//                                "             NULL,\n" +
+//                                "             0,\n" +
+//                                "             NULL,\n" +
+//                                "             '"+selected_application_type+"',\n" +
+//                                "             NULL,\n" +
+//                                "             '"+app_code+"',\n" +
+//                                "             "+app_code_id+",\n" +
+//                                "             NULL,\n" +
+//                                "             NULL,\n" +
+//                                "             NULL,\n" +
+//                                "             NULL,\n" +
+//                                "             NULL,\n" +
+//                                "             NULL,\n" +
+//                                "             '"+calling_title+"',\n" +
+//                                "             NULL,\n" +
+//                                "             NULL,\n" +
+//                                "             NULL,\n" +
+//                                "             NULL,\n" +
+//                                "             NULL,\n" +
+//                                "             NULL,\n" +
+//                                "             NULL,\n" +
+//                                "             0,\n" +
+//                                "             "+selected_divm_id+",\n" +
+//                                "             '"+user_id+"',\n" +
+//                                "             "+selected_jsm_id+",\n" +
+//                                "             "+selected_leave_type_id+",\n" +
+//                                "             '"+selected_reason+"',\n" +
+//                                "             NULL,\n" +
+//                                "             "+selected_worker_id+",\n" +
+//                                "             "+selected_leave_duration_id+",\n" +
+//                                "             NULL)");
+////
+//
+//                        insertedCon = true;
+//
+//                    }
+//
+//
+//                }
+//
+//            }
+//
+//
+//            insertCon = true;
+//
+//            connection.close();
+//
+//        }
+//        catch (Exception e) {
+//
+//            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
+//            Log.i("ERRRRR", e.getLocalizedMessage());
+//            e.printStackTrace();
+//        }
+//    }
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
+    public void insertLeaveApply() {
+        waitProgress.show(getSupportFragmentManager(),"WaitBar");
+        waitProgress.setCancelable(false);
+        insertCon = false;
+        insertConnn = false;
+        insertedCon = false;
 
-            waitProgress.show(getSupportFragmentManager(),"WaitBar");
-            waitProgress.setCancelable(false);
-        }
+        leaveAppCheck = "";
 
-        @Override
-        protected Void doInBackground(Void... voids) {
-            if (isConnected() && isOnline()) {
+        String url = "http://103.56.208.123:8001/apex/ttrams/leave/applyLeave";
 
-                InsertReq();
-                if (insertCon) {
-                    insertConnn = true;
-                    System.out.println("INSERTED");
-                    message= "Internet Connected";
+        RequestQueue requestQueue = Volley.newRequestQueue(LeaveApplication.this);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, response -> {
+            insertConnn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String string_out = jsonObject.getString("string_out");
+                String updated_req = jsonObject.getString("updated_req");
+                if (string_out.equals("Successfully Created")) {
+                    insertCon = true;
+                    insertedCon = updated_req.equals("true");
+                    leaveAppCheck = updated_req;
                 }
-
-            } else {
-                insertConnn = false;
-                message = "Not Connected";
+                else {
+                    System.out.println(string_out);
+                    insertCon = false;
+                }
+                applyLeaveLayUpdate();
             }
+            catch (JSONException e) {
+                e.printStackTrace();
+                insertCon = false;
+                applyLeaveLayUpdate();
+            }
+        }, error -> {
+            error.printStackTrace();
+            insertConnn = false;
+            insertCon = false;
+            applyLeaveLayUpdate();
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("P_EMP_ID",emp_id);
+                headers.put("P_LEAVE_TYPE",selected_leave_type_id);
+                headers.put("P_SELECTED_DATE_FROM",selected_date_on_from);
+                headers.put("P_SELECTED_DATE_TO",selected_date_to);
+                headers.put("P_NOW_DATE",date_of_today);
+                headers.put("P_LEAVE_ADDRESS",selected_leave_address);
+                headers.put("P_TOTAL_LEAVE_DAYS",selected_total_leave_days);
+                headers.put("P_DEP_ID",selected_dept_id);
+                headers.put("P_APPLICATION_TYPE",selected_application_type);
+                headers.put("P_CALLING_TITLE",calling_title);
+                headers.put("P_DIV_ID",selected_divm_id);
+                headers.put("P_USER_ID",user_id);
+                headers.put("P_JSM_ID",selected_jsm_id);
+                headers.put("P_SELECTED_REASON",selected_reason);
+                headers.put("P_SELECTED_WORKER",selected_worker_id);
+                headers.put("P_SELECTED_LEAVE_DURATION",selected_leave_duration_id);
+                return headers;
+            }
+        };
 
-            return null;
-        }
+        requestQueue.add(stringRequest);
+    }
 
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-            waitProgress.dismiss();
-            if (insertConnn) {
-
+    private void applyLeaveLayUpdate() {
+        waitProgress.dismiss();
+        if (insertConnn) {
+            if (insertCon) {
                 if (insertedCon) {
                     showD = 0;
                     isOtherReason = false;
@@ -1259,7 +1905,8 @@ public class LeaveApplication extends AppCompatActivity {
                             finish();
                         }
                     });
-                } else {
+                }
+                else {
                     AlertDialog dialog = new AlertDialog.Builder(LeaveApplication.this)
                             .setMessage(leaveAppCheck)
                             .setPositiveButton("OK", null)
@@ -1280,310 +1927,35 @@ public class LeaveApplication extends AppCompatActivity {
                 insertedCon = false;
                 insertCon = false;
                 insertConnn = false;
-
-
-            }else {
-                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+            }
+            else {
                 AlertDialog dialog = new AlertDialog.Builder(LeaveApplication.this)
-                        .setMessage("Please Check Your Internet Connection")
+                        .setMessage("There is a network issue in the server. Please Try later.")
                         .setPositiveButton("Retry", null)
                         .setNegativeButton("Cancel",null)
                         .show();
 
-//                dialog.setCancelable(false);
-//                dialog.setCanceledOnTouchOutside(false);
                 Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                positive.setOnClickListener(v -> {
 
-                        new InsertCheck().execute();
-                        dialog.dismiss();
-                    }
+                    insertLeaveApply();
+                    dialog.dismiss();
                 });
             }
         }
-    }
+        else {
+            AlertDialog dialog = new AlertDialog.Builder(LeaveApplication.this)
+                    .setMessage("Please Check Your Internet Connection")
+                    .setPositiveButton("Retry", null)
+                    .setNegativeButton("Cancel",null)
+                    .show();
 
-    public void UpdateInfo() {
-        try {
-            this.connection = createConnection();
+            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            positive.setOnClickListener(v -> {
 
-            Statement stmt = connection.createStatement();
-
-            leaveTypeLists = new ArrayList<>();
-            allreasonLists = new ArrayList<>();
-            selectingIndivdual = new ArrayList<>();
-            workBackupList = new ArrayList<>();
-
-
-            ResultSet rs=stmt.executeQuery(" SELECT ALL LEAVE_CATEGORY.LC_NAME, LEAVE_CATEGORY.LC_ID\n" +
-                    "FROM LEAVE_CATEGORY, LEAVE_BALANCE_DTL, LEAVE_BALANCE_YEAR_DTL, LEAVE_BALANCE_EMP_MST\n" +
-                    "WHERE LEAVE_CATEGORY.LC_ID = LEAVE_BALANCE_DTL.LBD_LC_ID\n" +
-                    "AND LEAVE_BALANCE_DTL.LBD_LBYD_ID = LEAVE_BALANCE_YEAR_DTL.LBYD_ID\n" +
-                    "AND LEAVE_BALANCE_YEAR_DTL.LBYD_LBEM_ID = LEAVE_BALANCE_EMP_MST.LBEM_ID\n" +
-                    "AND LEAVE_BALANCE_EMP_MST.LBEM_EMP_ID = to_number("+emp_id+")\n" +
-                    "AND TO_CHAR(LEAVE_BALANCE_YEAR_DTL.LBYD_YEAR,'RRRR')=TO_CHAR(sysdate,'RRRR')\n" +
-                    "AND LEAVE_CATEGORY.LC_ACTIVE = 1 \n" +
-                    "AND NVL(LEAVE_CATEGORY.LC_LEAVE_APPLY_FLAG,0)=1\n" +
-                    "AND NVL(LEAVE_CATEGORY.LC_DAY_OFF_FLAG,0)=0\n" +
-                    "AND ( LEAVE_BALANCE_DTL.LBD_BALANCE_QTY > 0 OR LEAVE_CATEGORY.LC_ID  IN (8) )\n");
-
-
-
-            while(rs.next())  {
-                leaveTypeLists.add(new LeaveTypeList(rs.getString(2),rs.getString(1)));
-            }
-
-            ResultSet resultSet = stmt.executeQuery("SELECT ALL LEAVE_REASON.LR_ID, LEAVE_REASON.LR_NAME\n" +
-                    "FROM LEAVE_REASON ");
-
-            while (resultSet.next()) {
-                allreasonLists.add(new LeaveTypeList(resultSet.getString(1),resultSet.getString(2)));
-            }
-
-            ResultSet resultSet1 = stmt.executeQuery("SELECT ALL EMP_MST.EMP_ID, EMP_MST.EMP_NAME, \n" +
-                    " EMP_JOB_HISTORY.JOB_CALLING_TITLE, JOB_SETUP_MST.JSM_NAME,\n" +
-                    " DIVISION_MST.DIVM_NAME\n" +
-                    "FROM EMP_MST, COMPANY_OFFICE_ADDRESS, EMP_JOB_HISTORY, JOB_SETUP_DTL, JOB_SETUP_MST, DEPT_MST, DIVISION_MST\n" +
-                    "WHERE (EMP_JOB_HISTORY.JOB_STATUS<>'Closed'\n" +
-                    " AND EMP_JOB_HISTORY.JOB_ACTUAL_DATE IS NOT NULL)\n" +
-                    " AND ((EMP_JOB_HISTORY.JOB_PRI_COA_ID = COMPANY_OFFICE_ADDRESS.COA_ID)\n" +
-                    " AND (JOB_SETUP_DTL.JSD_JSM_ID = JOB_SETUP_MST.JSM_ID)\n" +
-                    " AND (JOB_SETUP_MST.JSM_DEPT_ID = DEPT_MST.DEPT_ID)\n" +
-                    " AND (JOB_SETUP_MST.JSM_DIVM_ID = DIVISION_MST.DIVM_ID)\n" +
-                    " AND (EMP_JOB_HISTORY.JOB_ID = EMP_MST.EMP_JOB_ID)\n" +
-                    " AND (JOB_SETUP_DTL.JSD_ID = EMP_JOB_HISTORY.JOB_JSD_ID))\n" +
-                    " AND DIVISION_MST.DIVM_ID="+div_id+"\n" +
-                    " and EMP_MST.EMP_ID <> "+emp_id+"\n" +
-                    "ORDER BY COMPANY_OFFICE_ADDRESS.COA_NAME, EMP_MST.EMP_NAME ");
-
-            while (resultSet1.next()) {
-
-                workBackupList.add(new SelectAllList(resultSet1.getString(1),resultSet1.getString(2),resultSet1.getString(3),resultSet1.getString(4),resultSet1.getString(5)));
-            }
-
-            // Employee Information
-            ResultSet emp = stmt.executeQuery("SELECT DISTINCT \n" +
-                    " JOB_SETUP_MST.JSM_ID, \n" +
-                    "EMP_JOB_HISTORY.JOB_CALLING_TITLE, \n" +
-                    "dept_mst.dept_id, division_mst.divm_id\n" +
-                    "FROM EMP_MST, JOB_SETUP_DTL, JOB_SETUP_MST, DEPT_MST, DIVISION_MST, EMP_JOB_HISTORY, DESIG_MST, COMPANY_OFFICE_ADDRESS, COMPANY_OFFICE_ADDRESS COMPANY_OFFICE_ADDRESS_A1\n" +
-                    "WHERE EMP_MST.EMP_ID = "+emp_id+"\n" +
-                    "  AND ((JOB_SETUP_DTL.JSD_JSM_ID = JOB_SETUP_MST.JSM_ID)\n" +
-                    " AND (JOB_SETUP_MST.JSM_DEPT_ID = DEPT_MST.DEPT_ID)\n" +
-                    " AND (JOB_SETUP_MST.JSM_DIVM_ID = DIVISION_MST.DIVM_ID)\n" +
-                    " AND (JOB_SETUP_MST.JSM_DESIG_ID = DESIG_MST.DESIG_ID)\n" +
-                    " AND (EMP_JOB_HISTORY.JOB_PRI_COA_ID = COMPANY_OFFICE_ADDRESS.COA_ID)\n" +
-                    " AND (JOB_SETUP_DTL.JSD_ID = EMP_MST.EMP_JSD_ID)\n" +
-                    " AND (EMP_JOB_HISTORY.JOB_ID = EMP_MST.EMP_JOB_ID)\n" +
-                    " AND (COMPANY_OFFICE_ADDRESS_A1.COA_ID(+) = EMP_JOB_HISTORY.JOB_SEC_COA_ID))");
-
-            while (emp.next()) {
-                selected_jsm_id = emp.getString(1);
-                calling_title = emp.getString(2);
-                selected_dept_id = emp.getString(3);
-                selected_divm_id = emp.getString(4);
-            }
-
-
-            connected = true;
-
-            connection.close();
-
-        }
-        catch (Exception e) {
-
-            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
-            Log.i("ERRRRR", e.getLocalizedMessage());
-            e.printStackTrace();
-        }
-    }
-
-    public void InsertReq() {
-        try {
-            this.connection = createConnection();
-
-            Statement stmt = connection.createStatement();
-
-            leaveAppCheck = "";
-
-
-            CallableStatement callableStatement = connection.prepareCall("begin SET_LEAVE_CHECK(?,?,?,?,?); end;");
-            callableStatement.setInt(1, Integer.parseInt(emp_id));
-            callableStatement.setInt(2, Integer.parseInt(selected_leave_type_id));
-            callableStatement.setString(3, selected_date_on_from);
-            callableStatement.setString(4, selected_date_to);
-            callableStatement.registerOutParameter(5, Types.VARCHAR);
-
-            callableStatement.execute();
-
-            leaveAppCheck = callableStatement.getString(5);
-            System.out.println("FROM set_leave_check PROCE:: " +leaveAppCheck);
-
-            callableStatement.close();
-
-            if (leaveAppCheck.toLowerCase().equals("ok")) {
-
-                ResultSet rs=stmt.executeQuery("  SELECT SEQ_LEAVE_APPLICATION.NEXTVAL \n" +
-                        "\tFROM Dual");
-
-                while(rs.next())  {
-                    la_id = rs.getString(1);
-                }
-
-                if (!la_id.isEmpty()) {
-                    ResultSet rs1 = stmt.executeQuery("SELECT (SELECT NVL (MAX (LA_APP_CODE_ID), 0) + 1\n" +
-                            "                FROM LEAVE_APPLICATION\n" +
-                            "               WHERE     TO_CHAR (LA_DATE, 'RRRR') = TO_CHAR (TO_DATE('"+date_of_today+"'), 'RRRR')\n" +
-                            "                     AND LA_EMP_ID = "+emp_id+")\n" +
-                            "                APP_CODE_ID,\n" +
-                            "                TO_CHAR (TO_DATE('"+date_of_today+"'), 'RRRR')\n" +
-                            "             || '/'\n" +
-                            "             || (SELECT EMP_CODE\n" +
-                            "                   FROM EMP_MST\n" +
-                            "                  WHERE EMP_ID = "+emp_id+")\n" +
-                            "             || '/'\n" +
-                            "             || LTRIM (\n" +
-                            "                   RTRIM (\n" +
-                            "                      (SELECT NVL (MAX (LA_APP_CODE_ID), 0) + 1\n" +
-                            "                         FROM LEAVE_APPLICATION\n" +
-                            "                        WHERE     TO_CHAR (LA_DATE, 'RRRR') =\n" +
-                            "                                     TO_CHAR (TO_DATE('"+date_of_today+"'), 'RRRR')\n" +
-                            "                              AND LA_EMP_ID = "+emp_id+")))\n" +
-                            "                APP_CODE\n" +
-                            "        FROM DUAL");
-
-                    while (rs1.next()) {
-                        app_code_id = rs1.getString(1);
-                        app_code = rs1.getString(2);
-
-                    }
-
-                    if (!app_code.isEmpty()) {
-
-//                    System.out.println("LA_ID: " + la_id);
-//                    System.out.println("EMP ID: "+ emp_id);
-//                    System.out.println("REASON DESC: "+ selected_reason_desc);
-//                    System.out.println("Address Station: "+ selected_address_station);
-//                    System.out.println("Updated Date: "+ selected_update_date);
-//                    System.out.println("Now Date: "+ now_date);
-//                    System.out.println("Dept ID: "+ selected_dept_id);
-//                    System.out.println("Divm ID: "+ selected_divm_id);
-//                    System.out.println("JSM ID: "+ selected_jsm_id);
-//                    System.out.println("Calling Title: " + calling_title);
-//                    System.out.println("Request: "+ selected_request);
-//                    System.out.println("App Code: "+ app_code);
-//                    System.out.println("APP CODE ID: "+ app_code_id);
-//                    System.out.println("Approver ID: "+ selected_approver_id);
-//                    System.out.println("Attendance Type: " + selected_attendance_type);
-//                    System.out.println("Depart Time: "+ depart_time);
-//                    System.out.println("Arrival Time: " + arrival_time);
-//                    System.out.println("Loc ID: "+ selected_loc_id);
-//                    System.out.println("Shift: "+ selected_shift_id);
-//                    System.out.println("Reason ID: "+ selected_reason_id);
-//
-//
-                        stmt.executeUpdate("INSERT INTO LEAVE_APPLICATION (LA_ID,\n" +
-                                "                               LA_EMP_ID,\n" +
-                                "                               LA_ADD_DURING_LEAVE,\n" +
-                                "                               LA_FROM_DATE,\n" +
-                                "                               LA_TO_DATE,\n" +
-                                "                               LA_DATE,\n" +
-                                "                               LA_LEAVE_DAYS,\n" +
-                                "                               LA_DEPT_ID,\n" +
-                                "                               LA_COMMENTS,\n" +
-                                "                               LA_APPROVED,\n" +
-                                "                               LA_TEL_DURING_LEAVE,\n" +
-                                "                               LA_APPLICATION_TYPE,\n" +
-                                "                               LA_APPLIED_TO_ID,\n" +
-                                "                               LA_APP_CODE,\n" +
-                                "                               LA_APP_CODE_ID,\n" +
-                                "                               LA_APP_REJECT_CALLING_TITLE,\n" +
-                                "                               LA_APP_REJECT_DEPT_ID,\n" +
-                                "                               LA_APP_REJECT_DIVM_ID,\n" +
-                                "                               LA_APP_REJECT_EMP_ID,\n" +
-                                "                               LA_APP_REJECT_JSM_ID,\n" +
-                                "                               LA_APP_REJ_DATE,\n" +
-                                "                               LA_CALLING_TITLE,\n" +
-                                "                               LA_CANCEL_CALLING_TITLE,\n" +
-                                "                               LA_CANCEL_COMMENTS,\n" +
-                                "                               LA_CANCEL_DATE,\n" +
-                                "                               LA_CANCEL_DEPT_ID,\n" +
-                                "                               LA_CANCEL_DIVM_ID,\n" +
-                                "                               LA_CANCEL_EMP_ID,\n" +
-                                "                               LA_CANCEL_JSM_ID,\n" +
-                                "                               LA_DAY_OFF_FLAG,\n" +
-                                "                               LA_DIVM_ID,\n" +
-                                "                               LA_ENTRY_USER,\n" +
-                                "                               LA_JSM_ID,\n" +
-                                "                               LA_LC_ID,\n" +
-                                "                               LA_REASON,\n" +
-                                "                               LA_SICK_LEAVE_PRES_CHK,\n" +
-                                "                               LA_WORK_BCK_EMP_ID,\n" +
-                                "                               LA_LEAVE_TYPE,\n" +
-                                "                               LA_FILE_PATH)\n" +
-                                "     VALUES ("+la_id+",\n" +
-                                "             "+emp_id+",\n" +
-                                "             '"+selected_leave_address+"',\n" +
-                                "             TO_DATE('"+selected_date_on_from+"', 'DD-MON-YY'),\n" +
-                                "             TO_DATE('"+selected_date_to+"', 'DD-MON-YY'),\n" +
-                                "             TO_DATE('"+date_of_today+"', 'DD-MON-YY'),\n" +
-                                "             "+selected_total_leave_days+",\n" +
-                                "             "+selected_dept_id+",\n" +
-                                "             NULL,\n" +
-                                "             0,\n" +
-                                "             NULL,\n" +
-                                "             '"+selected_application_type+"',\n" +
-                                "             NULL,\n" +
-                                "             '"+app_code+"',\n" +
-                                "             "+app_code_id+",\n" +
-                                "             NULL,\n" +
-                                "             NULL,\n" +
-                                "             NULL,\n" +
-                                "             NULL,\n" +
-                                "             NULL,\n" +
-                                "             NULL,\n" +
-                                "             '"+calling_title+"',\n" +
-                                "             NULL,\n" +
-                                "             NULL,\n" +
-                                "             NULL,\n" +
-                                "             NULL,\n" +
-                                "             NULL,\n" +
-                                "             NULL,\n" +
-                                "             NULL,\n" +
-                                "             0,\n" +
-                                "             "+selected_divm_id+",\n" +
-                                "             '"+user_id+"',\n" +
-                                "             "+selected_jsm_id+",\n" +
-                                "             "+selected_leave_type_id+",\n" +
-                                "             '"+selected_reason+"',\n" +
-                                "             NULL,\n" +
-                                "             "+selected_worker_id+",\n" +
-                                "             "+selected_leave_duration_id+",\n" +
-                                "             NULL)");
-//
-
-                        insertedCon = true;
-
-                    }
-
-
-                }
-
-            }
-
-
-            insertCon = true;
-
-            connection.close();
-
-        }
-        catch (Exception e) {
-
-            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
-            Log.i("ERRRRR", e.getLocalizedMessage());
-            e.printStackTrace();
+                insertLeaveApply();
+                dialog.dismiss();
+            });
         }
     }
 

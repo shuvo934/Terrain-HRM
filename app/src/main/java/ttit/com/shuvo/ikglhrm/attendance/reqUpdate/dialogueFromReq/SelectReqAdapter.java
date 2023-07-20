@@ -13,8 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 import ttit.com.shuvo.ikglhrm.R;
-import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.SelectAllAdapter;
-import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.SelectAllList;
 
 public class SelectReqAdapter extends RecyclerView.Adapter<SelectReqAdapter.ReqViewHolder> {
 

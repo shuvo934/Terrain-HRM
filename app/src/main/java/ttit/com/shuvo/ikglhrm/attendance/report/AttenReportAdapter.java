@@ -3,8 +3,6 @@ package ttit.com.shuvo.ikglhrm.attendance.report;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Environment;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,21 +14,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.InputStream;
 import java.sql.Blob;
 import java.sql.Connection;
 import java.util.ArrayList;
 
-import ttit.com.shuvo.ikglhrm.EmployeeInfo.jobDesc.JobAdapter;
-import ttit.com.shuvo.ikglhrm.EmployeeInfo.jobDesc.JobDescDetails;
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.attendance.giveAttendance.MapsActivity;
-import ttit.com.shuvo.ikglhrm.attendance.status.statusDetail.AttendanceStatusDetails;
 import ttit.com.shuvo.ikglhrm.attendance.trackService.TimeLineActivity;
-
-import static ttit.com.shuvo.ikglhrm.OracleConnection.createConnection;
 
 public class AttenReportAdapter extends RecyclerView.Adapter<AttenReportAdapter.AttenHolder> {
 
@@ -272,7 +262,7 @@ public class AttenReportAdapter extends RecyclerView.Adapter<AttenReportAdapter.
                     Intent intent = new Intent(myContext, TimeLineActivity.class);
                     String elr_id = attenReportLists.get(getAdapterPosition()).getElr_id();
                     intent.putExtra("ELR", elr_id);
-
+                    blobFromAdapter = attenReportLists.get(getAdapterPosition()).getBlob();
 
                     activity.startActivity(intent);
                 }

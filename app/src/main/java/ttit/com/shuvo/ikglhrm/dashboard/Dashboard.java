@@ -1,6 +1,12 @@
 package ttit.com.shuvo.ikglhrm.dashboard;
 
-import androidx.annotation.Nullable;
+import static com.google.android.play.core.install.model.AppUpdateType.IMMEDIATE;
+
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.IntentSenderRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -14,28 +20,25 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Matrix;
-import android.media.ExifInterface;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.provider.Settings;
-import android.util.Log;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
@@ -51,30 +54,31 @@ import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.LargeValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.play.core.appupdate.AppUpdateInfo;
+import com.google.android.play.core.appupdate.AppUpdateManager;
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
+import com.google.android.play.core.appupdate.AppUpdateOptions;
+import com.google.android.play.core.common.IntentSenderForResultStarter;
+import com.google.android.play.core.install.model.AppUpdateType;
+import com.google.android.play.core.install.model.UpdateAvailability;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
-import java.sql.Blob;
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
+import java.util.Map;
 
 import ttit.com.shuvo.ikglhrm.EmployeeInfo.EmplyeeInformation;
 import ttit.com.shuvo.ikglhrm.Login;
@@ -85,7 +89,6 @@ import ttit.com.shuvo.ikglhrm.UserInfoList;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
 import ttit.com.shuvo.ikglhrm.attendance.Attendance;
 import ttit.com.shuvo.ikglhrm.attendance.trackService.Service;
-import ttit.com.shuvo.ikglhrm.directoryBook.Directory;
 import ttit.com.shuvo.ikglhrm.leaveAll.Leave;
 import ttit.com.shuvo.ikglhrm.payRoll.PayRollInfo;
 import ttit.com.shuvo.ikglhrm.payRoll.SalaryMonthList;
@@ -97,9 +100,11 @@ import static ttit.com.shuvo.ikglhrm.Login.isApproved;
 import static ttit.com.shuvo.ikglhrm.Login.isLeaveApproved;
 import static ttit.com.shuvo.ikglhrm.Login.userDesignations;
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
-import static ttit.com.shuvo.ikglhrm.OracleConnection.DEFAULT_USERNAME;
-import static ttit.com.shuvo.ikglhrm.OracleConnection.createConnection;
 import static ttit.com.shuvo.ikglhrm.scheduler.Uploader.channelId;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Dashboard extends AppCompatActivity {
 
@@ -130,10 +135,11 @@ public class Dashboard extends AppCompatActivity {
     private Boolean conn = false;
     private Boolean connected = false;
 
-    private Connection connection;
+//    private Connection connection;
 
     public static String emp_id_for_xml = "";
     String emp_id = "";
+    String emp_code = "";
     String formattedDate = "";
     public static int trackerAvailable = 0;
 
@@ -195,7 +201,7 @@ public class Dashboard extends AppCompatActivity {
     public static final String COMPANY = "COMPANY";
     public static final String SOFTWARE = "SOFTWARE";
     public static final String LIVE_FLAG = "LIVE_FLAG";
-    public static final String DATABASE_NAME = "DATABASE_NAME";
+//    public static final String DATABASE_NAME = "DATABASE_NAME";
 
     public static final String SCHEDULING_FILE = "SCHEDULING FILE";
     public static final String SCHEDULING_EMP_ID = "SCHEDULING EMP ID";
@@ -208,6 +214,7 @@ public class Dashboard extends AppCompatActivity {
     public static String STOPPED_TIME = "STOPPED_TIME";
 
     boolean loginLog_check;
+    boolean checkEmpFlag = false;
 
     String android_id = "";
     String model = "";
@@ -220,6 +227,37 @@ public class Dashboard extends AppCompatActivity {
     public static Bitmap selectedImage;
     boolean imageFound = false;
     TextView welcomeText;
+    AppUpdateManager appUpdateManager;
+
+    ActivityResultLauncher<IntentSenderRequest> activityResultLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartIntentSenderForResult(),
+                    new ActivityResultCallback<ActivityResult>() {
+
+                        @Override
+                        public void onActivityResult(ActivityResult result) {
+                            if (result.getResultCode() != RESULT_OK) {
+
+                                MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(Dashboard.this)
+                                        .setTitle("Update Failed!")
+                                        .setMessage("Failed to update the app. Please retry again.")
+                                        .setIcon(R.drawable.thrm_logo)
+                                        .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                getAppUpdate();
+                                            }
+                                        })
+                                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                finish();
+                                            }
+                                        });
+                                AlertDialog alertDialog = alertDialogBuilder.create();
+                                alertDialog.show();
+                            }
+                        }
+            });
 
     @SuppressLint("HardwareIds")
     @Override
@@ -236,6 +274,7 @@ public class Dashboard extends AppCompatActivity {
         userCard = findViewById(R.id.userinfo_card);
         userImage = findViewById(R.id.user_pic_dashboard);
         welcomeText = findViewById(R.id.welcome_text_view);
+        appUpdateManager = AppUpdateManagerFactory.create(Dashboard.this);
 
         int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
         String wt = "";
@@ -295,7 +334,7 @@ public class Dashboard extends AppCompatActivity {
 
                 isApproved = sharedPreferences.getInt(IS_ATT_APPROVED,0);
                 isLeaveApproved = sharedPreferences.getInt(IS_LEAVE_APPROVED,0);
-                DEFAULT_USERNAME = sharedPreferences.getString(DATABASE_NAME,DEFAULT_USERNAME);
+//                DEFAULT_USERNAME = sharedPreferences.getString(DATABASE_NAME,DEFAULT_USERNAME);
             }
 
 
@@ -318,6 +357,7 @@ public class Dashboard extends AppCompatActivity {
         lastTenDaysXml = new ArrayList<>();
 
         emp_id = userInfoLists.get(0).getEmp_id();
+        emp_code = userInfoLists.get(0).getUserName();
 
         if (userInfoLists.size() != 0) {
             String firstname = userInfoLists.get(0).getUser_fname();
@@ -417,10 +457,9 @@ public class Dashboard extends AppCompatActivity {
             lastTenDaysXml.add(ddd);
         }
 
+        getAppUpdate();
+//        new Check().execute();
 
-
-
-        new Check().execute();
 
 
         logout.setOnClickListener(new View.OnClickListener() {
@@ -479,7 +518,7 @@ public class Dashboard extends AppCompatActivity {
                                     editor1.remove(COMPANY);
                                     editor1.remove(SOFTWARE);
                                     editor1.remove(LIVE_FLAG);
-                                    editor1.remove(DATABASE_NAME);
+//                                    editor1.remove(DATABASE_NAME);
                                     editor1.apply();
                                     editor1.commit();
 
@@ -529,57 +568,39 @@ public class Dashboard extends AppCompatActivity {
             }
         });
 
-        refreshLeave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new LeaveCheck().execute();
-            }
+        refreshLeave.setOnClickListener(v -> {
+//                new LeaveCheck().execute();
+            getLeaveGraph();
         });
 
-        refreshAttendance.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new AttendanceCheck().execute();
-            }
+        refreshAttendance.setOnClickListener(v -> {
+//                new AttendanceCheck().execute();
+            getAttendanceGraph();
         });
 
-        refreshSalary.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new SalaryCheck().execute();
-            }
+        refreshSalary.setOnClickListener(v -> {
+//                new SalaryCheck().execute();
+            getSalaryGraph();
         });
 
-        leaveChart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Dashboard.this, Leave.class);
-                startActivity(intent);
-            }
+        leaveChart.setOnClickListener(v -> {
+            Intent intent = new Intent(Dashboard.this, Leave.class);
+            startActivity(intent);
         });
 
-        pieChart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Dashboard.this, Attendance.class);
-                startActivity(intent);
-            }
+        pieChart.setOnClickListener(v -> {
+            Intent intent = new Intent(Dashboard.this, Attendance.class);
+            startActivity(intent);
         });
 
-        salaryChart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Dashboard.this, PayRollInfo.class);
-                startActivity(intent);
-            }
+        salaryChart.setOnClickListener(v -> {
+            Intent intent = new Intent(Dashboard.this, PayRollInfo.class);
+            startActivity(intent);
         });
 
-        userCard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Dashboard.this, EmplyeeInformation.class);
-                startActivity(intent);
-            }
+        userCard.setOnClickListener(v -> {
+            Intent intent = new Intent(Dashboard.this, EmplyeeInformation.class);
+            startActivity(intent);
         });
 
 //        userImage.setOnClickListener(new View.OnClickListener() {
@@ -596,7 +617,68 @@ public class Dashboard extends AppCompatActivity {
 
     }
 
-//    public static String getPath( Context context, Uri uri ) {
+    private void getAppUpdate() {
+        System.out.println("HELLO1");
+        waitProgress.show(getSupportFragmentManager(),"WaitBar");
+        waitProgress.setCancelable(false);
+        Task<AppUpdateInfo> appUpdateInfoTask = appUpdateManager.getAppUpdateInfo();
+        appUpdateInfoTask.addOnSuccessListener(appUpdateInfo -> {
+            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+                    && appUpdateInfo.isUpdateTypeAllowed(IMMEDIATE))  {
+                waitProgress.dismiss();
+//                try {
+//                    appUpdateManager.startUpdateFlowForResult(appUpdateInfo,
+//                            (IntentSenderForResultStarter) activityResultLauncher,
+//                            AppUpdateOptions
+//                                    .newBuilder(IMMEDIATE)
+//                                    .build(),
+//                            10101);
+//                    appUpdateManager.startUpdateFlowForResult(appUpdateInfo,
+//                            Dashboard.this,AppUpdateOptions.newBuilder(IMMEDIATE).build(),
+//                            101010);
+//                } catch (IntentSender.SendIntentException e) {
+//                    e.printStackTrace();
+//                }
+                appUpdateManager.startUpdateFlowForResult(appUpdateInfo,
+                        activityResultLauncher,AppUpdateOptions
+                                .newBuilder(IMMEDIATE)
+                                .build());
+            }
+            else {
+                System.out.println("No update available");
+                getAllData();
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        appUpdateManager
+                .getAppUpdateInfo()
+                .addOnSuccessListener(
+                        appUpdateInfo -> {
+                            if (appUpdateInfo.updateAvailability()
+                                    == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
+                                // If an in-app update is already running, resume the update.
+//                                try {
+//                                    appUpdateManager.startUpdateFlowForResult(
+//                                            appUpdateInfo,
+//                                            this,
+//                                            AppUpdateOptions.defaultOptions(IMMEDIATE),
+//                                            10101);
+//                                } catch (IntentSender.SendIntentException e) {
+//                                    e.printStackTrace();
+//                                }
+                                appUpdateManager.startUpdateFlowForResult(appUpdateInfo,
+                                        activityResultLauncher,AppUpdateOptions
+                                                .newBuilder(IMMEDIATE)
+                                                .build());
+                            }
+                        });
+    }
+
+    //    public static String getPath( Context context, Uri uri ) {
 //        String result = null;
 //        String[] proj = { MediaStore.Images.Media.DATA };
 //        Cursor cursor = context.getContentResolver( ).query( uri, proj, null, null, null );
@@ -1013,68 +1095,916 @@ public class Dashboard extends AppCompatActivity {
         }
     }
 
-    public boolean isConnected() {
-        boolean connected = false;
-        boolean isMobile = false;
-        try {
-            ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-            @SuppressLint("MissingPermission") NetworkInfo nInfo = cm.getActiveNetworkInfo();
-            connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
-            return connected;
-        } catch (Exception e) {
-            Log.e("Connectivity Exception", e.getMessage());
-        }
-        return connected;
-    }
+//    public boolean isConnected() {
+//        boolean connected = false;
+//        boolean isMobile = false;
+//        try {
+//            ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+//            @SuppressLint("MissingPermission") NetworkInfo nInfo = cm.getActiveNetworkInfo();
+//            connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
+//            return connected;
+//        } catch (Exception e) {
+//            Log.e("Connectivity Exception", e.getMessage());
+//        }
+//        return connected;
+//    }
+//
+//    public boolean isOnline() {
+//
+//        Runtime runtime = Runtime.getRuntime();
+//        try {
+//            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+//            int     exitValue = ipProcess.waitFor();
+//            return (exitValue == 0);
+//        }
+//        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
+//
+//        return false;
+//    }
 
-    public boolean isOnline() {
+//    public class Check extends AsyncTask<Void, Void, Void> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//
+//            waitProgress.show(getSupportFragmentManager(),"WaitBar");
+//            waitProgress.setCancelable(false);
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            if (isConnected() && isOnline()) {
+//
+//                AllGraph();
+//                if (connected) {
+//                    conn = true;
+//                    message= "Internet Connected";
+//                }
+//
+//            } else {
+//                conn = false;
+//                message = "Not Connected";
+//            }
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//
+//            waitProgress.dismiss();
+//            if (conn) {
+//
+//                monthName = new ArrayList<>();
+//                salary = new ArrayList<>();
+//                salaryValue = new ArrayList<>();
+//
+//                for (int i = 0; i < salaryMonthLists.size(); i++) {
+//                    for (int j = 0; j < months.size(); j++) {
+//                        if (months.get(j).getMonth().equals(salaryMonthLists.get(i).getMonth())) {
+//                            months.get(j).setSalary(salaryMonthLists.get(i).getSalary());
+//                        }
+//                    }
+//                }
+//
+//                for (int i = months.size()-1; i >= 0; i--) {
+//
+//                    monthName.add(months.get(i).getMonth());
+//                    salary.add(months.get(i).getSalary());
+//
+//                }
+//
+//                System.out.println(monthName);
+//                System.out.println(salary);
+//
+//                for (int i = 0; i < salary.size(); i++) {
+//                    salaryValue.add(new BarEntry(i, Float.parseFloat(salary.get(i)),i));
+//                }
+//
+//                BarDataSet bardataset = new BarDataSet(salaryValue, "Months");
+//                salaryChart.animateY(1000);
+//
+//                BarData data1 = new BarData(bardataset);
+//                bardataset.setColors(ColorTemplate.VORDIPLOM_COLORS);
+//
+//                bardataset.setBarBorderColor(Color.DKGRAY);
+//                bardataset.setValueTextSize(8);
+//                bardataset.setValueFormatter(new LargeValueFormatter());
+//                salaryChart.setData(data1);
+//                salaryChart.getXAxis().setValueFormatter(new MyAxisValueFormatter(monthName));
+//                salaryChart.getAxisLeft().setValueFormatter(new LargeValueFormatter());
+//
+//
+//
+//                // Pie Chart for Attendance
+//                final int[] piecolors = new int[]{
+//
+//
+//                        Color.rgb(116, 185, 255),
+//                        Color.rgb(85, 239, 196),
+//                        Color.rgb(162, 155, 254),
+//                        Color.rgb(223, 230, 233),
+//                        Color.rgb(255, 234, 167),
+//
+//                        Color.rgb(250, 177, 160),
+//                        Color.rgb(129, 236, 236),
+//                        Color.rgb(255, 118, 117),
+//                        Color.rgb(253, 121, 168),
+//                        Color.rgb(96, 163, 188)};
+//
+//
+//                if (absent != null) {
+//                    if (!absent.isEmpty()) {
+//                        if (!absent.equals("0")) {
+//                            NoOfEmp.add(new PieEntry(Float.parseFloat(absent), "Absent", 0));
+//                        }
+//                    }
+//                }
+//
+//                if (present != null) {
+//                    if (!present.isEmpty()) {
+//                        if (!present.equals("0")) {
+//                            NoOfEmp.add(new PieEntry(Float.parseFloat(present),"Present", 1));
+//                        }
+//                    }
+//                }
+//
+//                if (late != null) {
+//                    if (!late.isEmpty()) {
+//                        if (!late.equals("0")) {
+//                            NoOfEmp.add(new PieEntry(Float.parseFloat(late),"Late", 2));
+//
+//                        }
+//                    }
+//                }
+//
+//                if (early != null) {
+//                    if (!early.isEmpty()) {
+//                        if (!early.equals("0")) {
+//                            NoOfEmp.add(new PieEntry(Float.parseFloat(early),"Early", 3));
+//                        }
+//                    }
+//                }
+//
+//                if (leave != null) {
+//                    if (!leave.isEmpty()) {
+//                        if (!leave.equals("0")) {
+//                            NoOfEmp.add(new PieEntry(Float.parseFloat(leave),"Leave", 4));
+//                        }
+//                    }
+//                }
+//
+//                if (holiday != null) {
+//                    if (!holiday.isEmpty()) {
+//                        if (!holiday.equals("0")) {
+//                            NoOfEmp.add(new PieEntry(Float.parseFloat(holiday),"Holiday/Weekend", 5));
+//                        }
+//                    }
+//                }
+//
+//                if (NoOfEmp.size() == 0) {
+//                    NoOfEmp.add(new PieEntry(1,"No Data Found", 6));
+//
+//                }
+//
+//                PieDataSet dataSet = new PieDataSet(NoOfEmp, "");
+//                pieChart.animateXY(1000, 1000);
+//                pieChart.setEntryLabelColor(Color.TRANSPARENT);
+//
+//                PieData data = new PieData(dataSet);
+//                dataSet.setValueFormatter(new ValueFormatter() {
+//                    @Override
+//                    public String getFormattedValue(float value) {
+//                        return String.valueOf((int) Math.floor(value));
+//                    }
+//                });
+//                String label = dataSet.getValues().get(0).getLabel();
+//                System.out.println(label);
+//                if (label.equals("No Data Found")) {
+//                    dataSet.setValueTextColor(Color.TRANSPARENT);
+//                } else {
+//                    dataSet.setValueTextColor(Color.BLACK);
+//                }
+//                dataSet.setHighlightEnabled(true);
+//                dataSet.setValueTextSize(12);
+//
+//                int[] num = new int[NoOfEmp.size()];
+//                for (int i = 0; i < NoOfEmp.size(); i++) {
+//                    int neki = (int) NoOfEmp.get(i).getData();
+//                    num[i] = piecolors[neki];
+//                }
+//
+//                dataSet.setColors(ColorTemplate.createColors(num));
+//
+//                pieChart.setData(data);
+//                pieChart.invalidate();
+//
+//
+//                // Leave Multi Bar
+//
+//                if (balance.size() == 0 || earn.size() == 0 || shortCode.size() == 0) {
+//                    // do nothing
+//                } else {
+//                    XAxis xAxis = leaveChart.getXAxis();
+//                    xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+//                    xAxis.setDrawGridLines(false);
+//                    xAxis.setCenterAxisLabels(true);
+//                    xAxis.setAxisMinimum(0);
+//                    xAxis.setAxisMaximum(balance.size());
+//                    xAxis.setGranularity(1);
+//
+//
+//                    BarDataSet set1 = new BarDataSet(earn, "Earned Leave");
+//                    set1.setColor(ColorTemplate.VORDIPLOM_COLORS[3]);
+//                    set1.setValueFormatter(new ValueFormatter() {
+//                        @Override
+//                        public String getFormattedValue(float value) {
+//                            return String.valueOf((int) Math.floor(value));
+//                        }
+//                    });
+//                    BarDataSet set2 = new BarDataSet(balance, "Leave Balance");
+//                    set2.setValueFormatter(new ValueFormatter() {
+//                        @Override
+//                        public String getFormattedValue(float value) {
+//                            return String.valueOf((int) Math.floor(value));
+//                        }
+//                    });
+//                    set2.setColor(ColorTemplate.VORDIPLOM_COLORS[2]);
+//
+//                    float groupSpace = 0.04f;
+//                    float barSpace = 0.02f; // x2 dataset
+//                    float barWidth = 0.46f;
+//
+//                    BarData leavedata = new BarData(set1, set2);
+//                    if (earn.size() > 5) {
+//                        leavedata.setValueTextSize(8);
+//                    }
+//                    else if (earn.size() > 3){
+//                        leavedata.setValueTextSize(10);
+//                    }
+//                    else {
+//                        leavedata.setValueTextSize(12);
+//                    }
+//                    leavedata.setBarWidth(barWidth); // set the width of each bar
+//                    leaveChart.animateY(1000);
+//                    leaveChart.setData(leavedata);
+//                    leaveChart.groupBars(0, groupSpace, barSpace); // perform the "explicit" grouping
+//                    leaveChart.invalidate();
+//
+//                    xAxis.setValueFormatter(new ValueFormatter() {
+//                        @Override
+//                        public String getAxisLabel(float value, AxisBase axis) {
+//                            if (value < 0 || value >= shortCode.size()) {
+//                                return null;
+//                            } else {
+////                                System.out.println(value);
+////                                System.out.println(axis);
+////                                System.out.println(shortCode.get((int)value));
+//                                return (shortCode.get((int) value));
+//                            }
+//
+//                        }
+//                    });
+//                }
+//
+//
+//                if (trackerAvailable == 1) {
+//                    sharedSchedule = getSharedPreferences(SCHEDULING_FILE, MODE_PRIVATE);
+//                    boolean isNewLogin = sharedSchedule.getBoolean(TRIGGERING,false);
+//
+//                    // Triggering Schedule
+//                    System.out.println("SCHEDULING TASK STARTED");
+//                    SharedPreferences.Editor editor = sharedSchedule.edit();
+//                    editor.remove(SCHEDULING_EMP_ID);
+//                    editor.remove(TRIGGERING);
+//
+//                    editor.putString(SCHEDULING_EMP_ID,emp_id);
+//                    editor.putBoolean(TRIGGERING, true);
+//                    editor.apply();
+//                    editor.commit();
+//                    createNotificationChannel();
+//
+//                    Intent intent = new Intent(Dashboard.this, Uploader.class);
+//                    PendingIntent pendingIntent = null;
+//                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+//                        pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent,PendingIntent.FLAG_IMMUTABLE);
+//                    }
+//
+//
+//                    Calendar calendar = Calendar.getInstance();
+//                    calendar.set(Calendar.HOUR_OF_DAY, 0);
+//                    calendar.set(Calendar.MINUTE, 5);
+//                    calendar.set(Calendar.SECOND, 0);
+//                    //calendar.set(Calendar.AM_PM, Calendar.PM);
+//
+////                    Calendar calendar = Calendar.getInstance();
+////                    calendar.setTimeInMillis(System.currentTimeMillis());
+////                    calendar.set(Calendar.SECOND, 0);
+////                    calendar.set(Calendar.MINUTE, 5);
+////                    calendar.set(Calendar.HOUR, 0);
+////                    calendar.set(Calendar.AM_PM, Calendar.AM);
+////                    calendar.add(Calendar.DAY_OF_MONTH, 1);
+//
+//                    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis(),AlarmManager.INTERVAL_HALF_HOUR,pendingIntent);
+//                }
+//
+//                if (imageFound) {
+//                    Glide.with(Dashboard.this)
+//                            .load(selectedImage)
+//                            .fitCenter()
+//                            .into(userImage);
+//                }
+//                else {
+//                    userImage.setImageResource(R.drawable.profile);
+//                }
+//                conn = false;
+//                connected = false;
+//
+//
+//
+//            }
+//            else {
+//                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+//                AlertDialog dialog = new AlertDialog.Builder(Dashboard.this)
+//                        .setMessage("Please Check Your Internet Connection")
+//                        .setPositiveButton("Retry", null)
+//                        .setNegativeButton("Cancel",null)
+//                        .show();
+//
+//                dialog.setCancelable(false);
+//                dialog.setCanceledOnTouchOutside(false);
+//                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+//                positive.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//
+//                        new Check().execute();
+//                        dialog.dismiss();
+//                    }
+//                });
+//
+//                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+//                negative.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        if (loginLog_check) {
+//                            userInfoLists.clear();
+//                            userDesignations.clear();
+//                            userInfoLists = new ArrayList<>();
+//                            userDesignations = new ArrayList<>();
+//                            isApproved = 0;
+//                            isLeaveApproved = 0;
+//                            dialog.dismiss();
+//                            finish();
+//                        } else {
+//                            dialog.dismiss();
+//                        }
+//
+//
+//                    }
+//                });
+//            }
+//        }
+//    }
 
-        Runtime runtime = Runtime.getRuntime();
-        try {
-            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
-            int     exitValue = ipProcess.waitFor();
-            return (exitValue == 0);
-        }
-        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
+//    public class LeaveCheck extends AsyncTask<Void, Void, Void> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//
+//            waitProgress.show(getSupportFragmentManager(),"WaitBar");
+//            waitProgress.setCancelable(false);
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            if (isConnected() && isOnline()) {
+//
+//                LeaveBalanceGraph();
+//                if (connected) {
+//                    conn = true;
+//                    message= "Internet Connected";
+//                }
+//
+//            } else {
+//                conn = false;
+//                message = "Not Connected";
+//            }
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//
+//            waitProgress.dismiss();
+//            if (conn) {
+//
+//                if (balance.size() == 0 || earn.size() == 0 || shortCode.size() == 0) {
+//                    // do nothing
+//                } else {
+//                    XAxis xAxis = leaveChart.getXAxis();
+//                    xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+//                    xAxis.setDrawGridLines(false);
+//                    xAxis.setCenterAxisLabels(true);
+//                    xAxis.setAxisMinimum(0);
+//                    xAxis.setAxisMaximum(balance.size());
+//                    xAxis.setGranularity(1);
+//
+//
+//                    BarDataSet set1 = new BarDataSet(earn, "Earned Leave");
+//                    set1.setColor(ColorTemplate.VORDIPLOM_COLORS[3]);
+//                    set1.setValueFormatter(new ValueFormatter() {
+//                        @Override
+//                        public String getFormattedValue(float value) {
+//                            return String.valueOf((int) Math.floor(value));
+//                        }
+//                    });
+//                    BarDataSet set2 = new BarDataSet(balance, "Leave Balance");
+//                    set2.setValueFormatter(new ValueFormatter() {
+//                        @Override
+//                        public String getFormattedValue(float value) {
+//                            return String.valueOf((int) Math.floor(value));
+//                        }
+//                    });
+//                    set2.setColor(ColorTemplate.VORDIPLOM_COLORS[2]);
+//
+//                    float groupSpace = 0.04f;
+//                    float barSpace = 0.02f; // x2 dataset
+//                    float barWidth = 0.46f;
+//
+//                    BarData leavedata = new BarData(set1, set2);
+//                    if (earn.size() > 5) {
+//                        leavedata.setValueTextSize(8);
+//                    }
+//                    else if (earn.size() > 3){
+//                        leavedata.setValueTextSize(10);
+//                    }
+//                    else {
+//                        leavedata.setValueTextSize(12);
+//                    }
+//                    leavedata.setBarWidth(barWidth); // set the width of each bar
+//                    leaveChart.animateY(1000);
+//                    leaveChart.setData(leavedata);
+//                    leaveChart.groupBars(0, groupSpace, barSpace); // perform the "explicit" grouping
+//                    leaveChart.invalidate();
+//
+//                    xAxis.setValueFormatter(new ValueFormatter() {
+//                        @Override
+//                        public String getAxisLabel(float value, AxisBase axis) {
+//                            if (value < 0 || value >= shortCode.size()) {
+//                                return null;
+//                            } else {
+//                                System.out.println(value);
+//                                System.out.println(axis);
+//                                System.out.println(shortCode.get((int)value));
+//                                return (shortCode.get((int) value));
+//                            }
+//
+//                        }
+//                    });
+//                }
+//
+//
+//                conn = false;
+//                connected = false;
+//
+//
+//            }
+//            else {
+//                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+//                AlertDialog dialog = new AlertDialog.Builder(Dashboard.this)
+//                        .setMessage("Please Check Your Internet Connection")
+//                        .setPositiveButton("Retry", null)
+//                        .setNegativeButton("Cancel",null)
+//                        .show();
+//
+////                dialog.setCancelable(false);
+////                dialog.setCanceledOnTouchOutside(false);
+//                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+//                positive.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//
+//                        new LeaveCheck().execute();
+//                        dialog.dismiss();
+//                    }
+//                });
+//            }
+//        }
+//    }
 
-        return false;
-    }
+//    public class AttendanceCheck extends AsyncTask<Void, Void, Void> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//
+//            waitProgress.show(getSupportFragmentManager(),"WaitBar");
+//            waitProgress.setCancelable(false);
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            if (isConnected() && isOnline()) {
+//
+//                AttendanceGraph();
+//                if (connected) {
+//                    conn = true;
+//                    message= "Internet Connected";
+//                }
+//
+//            } else {
+//                conn = false;
+//                message = "Not Connected";
+//            }
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//
+//            waitProgress.dismiss();
+//            if (conn) {
+//
+//
+//                final int[] piecolors = new int[]{
+//
+//
+//                        Color.rgb(116, 185, 255),
+//                        Color.rgb(85, 239, 196),
+//                        Color.rgb(162, 155, 254),
+//                        Color.rgb(223, 230, 233),
+//                        Color.rgb(255, 234, 167),
+//
+//                        Color.rgb(250, 177, 160),
+//                        Color.rgb(129, 236, 236),
+//                        Color.rgb(255, 118, 117),
+//                        Color.rgb(253, 121, 168),
+//                        Color.rgb(96, 163, 188)};
+//
+//
+//                if (absent != null) {
+//                    if (!absent.isEmpty()) {
+//                        if (!absent.equals("0")) {
+//                            NoOfEmp.add(new PieEntry(Float.parseFloat(absent), "Absent", 0));
+//                        }
+//                    }
+//                }
+//
+//                if (present != null) {
+//                    if (!present.isEmpty()) {
+//                        if (!present.equals("0")) {
+//                            NoOfEmp.add(new PieEntry(Float.parseFloat(present),"Present", 1));
+//                        }
+//                    }
+//                }
+//
+//                if (late != null) {
+//                    if (!late.isEmpty()) {
+//                        if (!late.equals("0")) {
+//                            NoOfEmp.add(new PieEntry(Float.parseFloat(late),"Late", 2));
+//
+//                        }
+//                    }
+//                }
+//
+//                if (early != null) {
+//                    if (!early.isEmpty()) {
+//                        if (!early.equals("0")) {
+//                            NoOfEmp.add(new PieEntry(Float.parseFloat(early),"Early", 3));
+//                        }
+//                    }
+//                }
+//
+//                if (leave != null) {
+//                    if (!leave.isEmpty()) {
+//                        if (!leave.equals("0")) {
+//                            NoOfEmp.add(new PieEntry(Float.parseFloat(leave),"Leave", 4));
+//                        }
+//                    }
+//                }
+//
+//                if (holiday != null) {
+//                    if (!holiday.isEmpty()) {
+//                        if (!holiday.equals("0")) {
+//                            NoOfEmp.add(new PieEntry(Float.parseFloat(holiday),"Holiday/Weekend", 5));
+//                        }
+//                    }
+//                }
+//
+//                if (NoOfEmp.size() == 0) {
+//                    NoOfEmp.add(new PieEntry(1,"No Data Found", 6));
+//
+//                }
+//
+//                PieDataSet dataSet = new PieDataSet(NoOfEmp, "");
+//                pieChart.animateXY(1000, 1000);
+//                pieChart.setEntryLabelColor(Color.TRANSPARENT);
+//
+//                PieData data = new PieData(dataSet);
+//                dataSet.setValueFormatter(new ValueFormatter() {
+//                    @Override
+//                    public String getFormattedValue(float value) {
+//                        return String.valueOf((int) Math.floor(value));
+//                    }
+//                });
+//                String label = dataSet.getValues().get(0).getLabel();
+//                System.out.println(label);
+//                if (label.equals("No Data Found")) {
+//                    dataSet.setValueTextColor(Color.TRANSPARENT);
+//                } else {
+//                    dataSet.setValueTextColor(Color.BLACK);
+//                }
+//                dataSet.setHighlightEnabled(true);
+//                dataSet.setValueTextSize(12);
+//
+//                int[] num = new int[NoOfEmp.size()];
+//                for (int i = 0; i < NoOfEmp.size(); i++) {
+//                    int neki = (int) NoOfEmp.get(i).getData();
+//                    num[i] = piecolors[neki];
+//                }
+//
+//                dataSet.setColors(ColorTemplate.createColors(num));
+//
+//                pieChart.setData(data);
+//                pieChart.invalidate();
+//
+//                conn = false;
+//                connected = false;
+//
+//
+//            }
+//            else {
+//                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+//                AlertDialog dialog = new AlertDialog.Builder(Dashboard.this)
+//                        .setMessage("Please Check Your Internet Connection")
+//                        .setPositiveButton("Retry", null)
+//                        .setNegativeButton("Cancel",null)
+//                        .show();
+//
+////                dialog.setCancelable(false);
+////                dialog.setCanceledOnTouchOutside(false);
+//                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+//                positive.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//
+//                        new AttendanceCheck().execute();
+//                        dialog.dismiss();
+//
+//                    }
+//                });
+//            }
+//        }
+//    }
 
-    public class Check extends AsyncTask<Void, Void, Void> {
+//    public class SalaryCheck extends AsyncTask<Void, Void, Void> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//
+//            waitProgress.show(getSupportFragmentManager(),"WaitBar");
+//            waitProgress.setCancelable(false);
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            if (isConnected() && isOnline()) {
+//
+//                SalaryGraph();
+//                if (connected) {
+//                    conn = true;
+//                    message= "Internet Connected";
+//                }
+//
+//            } else {
+//                conn = false;
+//                message = "Not Connected";
+//            }
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//
+//            waitProgress.dismiss();
+//            if (conn) {
+//
+//                monthName = new ArrayList<>();
+//                salary = new ArrayList<>();
+//                salaryValue = new ArrayList<>();
+//
+//                for (int i = 0; i < salaryMonthLists.size(); i++) {
+//                    for (int j = 0; j < months.size(); j++) {
+//                        if (months.get(j).getMonth().equals(salaryMonthLists.get(i).getMonth())) {
+//                            months.get(j).setSalary(salaryMonthLists.get(i).getSalary());
+//                        }
+//                    }
+//                }
+//
+//                for (int i = months.size()-1; i >= 0; i--) {
+//
+//                    monthName.add(months.get(i).getMonth());
+//                    salary.add(months.get(i).getSalary());
+//
+//                }
+//
+//                System.out.println(monthName);
+//                System.out.println(salary);
+//
+//                for (int i = 0; i < salary.size(); i++) {
+//                    salaryValue.add(new BarEntry(i, Float.parseFloat(salary.get(i)),i));
+//                }
+//
+//                BarDataSet bardataset = new BarDataSet(salaryValue, "Months");
+//                salaryChart.animateY(1000);
+//
+//                BarData data1 = new BarData(bardataset);
+//                bardataset.setColors(ColorTemplate.VORDIPLOM_COLORS);
+//
+//                bardataset.setBarBorderColor(Color.DKGRAY);
+//                bardataset.setValueTextSize(8);
+//                bardataset.setValueFormatter(new LargeValueFormatter());
+//                salaryChart.setData(data1);
+//                salaryChart.getXAxis().setValueFormatter(new MyAxisValueFormatter(monthName));
+//                salaryChart.getAxisLeft().setValueFormatter(new LargeValueFormatter());
+//
+//                conn = false;
+//                connected = false;
+//
+//            }
+//            else {
+//                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+//                AlertDialog dialog = new AlertDialog.Builder(Dashboard.this)
+//                        .setMessage("Please Check Your Internet Connection")
+//                        .setPositiveButton("Retry", null)
+//                        .setNegativeButton("Cancel",null)
+//                        .show();
+//
+////                dialog.setCancelable(false);
+////                dialog.setCanceledOnTouchOutside(false);
+//                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+//                positive.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//
+//                        new SalaryCheck().execute();
+//                        dialog.dismiss();
+//                    }
+//                });
+//            }
+//        }
+//    }
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
+//    public void SalaryGraph() {
+//        try {
+//            this.connection = createConnection();
+//            //    Toast.makeText(MainActivity.this, "Connected",Toast.LENGTH_SHORT).show();
+//
+//
+//            salaryMonthLists = new ArrayList<>();
+//            Statement stmt = connection.createStatement();
+//
+//
+//
+//
+//            ResultSet rs=stmt.executeQuery("SELECT TO_CHAR(SM_PMS_MONTH,'MON'),EMP_NAME, NET_SALARY\n" +
+//                    "  FROM (SELECT SM.SM_PMS_MONTH,\n" +
+//                    "               E.EMP_NAME,\n" +
+//                    "               (  (  NVL (SD.SD_ATTD_BONUS_AMT, 0)\n" +
+//                    "                   + NVL (SD.SD_GROSS_SAL, 0)\n" +
+//                    "                   + (ROUND (\n" +
+//                    "                         (NVL (SD.SD_OT_HR, 0) * NVL (SD.SD_OT_RATE, 0))))\n" +
+//                    "                   + (  NVL (SD.SD_JOB_HABITATION, 0)\n" +
+//                    "                      + NVL (SD.SD_JOB_UTILITIES, 0)\n" +
+//                    "                      + NVL (SD.SD_JOB_HOUSE_ALLOWANCE, 0)\n" +
+//                    "                      + NVL (SD.SD_JOB_ENTERTAINMENT, 0)\n" +
+//                    "                      + NVL (SD.SD_COMMITTED_SALARY, 0)\n" +
+//                    "                      + NVL (SD.SD_FIXED_OT_AMT, 0)\n" +
+//                    "                      + NVL (SD.SD_FOOD_SUBSIDY_AMT, 0)\n" +
+//                    "                      + NVL (SD.SD_FACTORY_ALLOWANCE_AMT, 0)\n" +
+//                    "                      + NVL (SD.SD_HOLIDAY_AMT, 0)\n" +
+//                    "                      + NVL (SD.SD_REFUND_OTH_PAYMENT_AMT, 0)\n" +
+//                    "                      + NVL (SD.SD_PROFIT_SHARE_AMT, 0)\n" +
+//                    "                      + NVL (SD.SD_PERFORMANCE_BONUS_AMT, 0)))\n" +
+//                    "                - (  NVL (SD.SD_PF, 0)\n" +
+//                    "                   + NVL (SD.SD_LWPAY_AMT, 0)\n" +
+//                    "                   + NVL (SD.SD_ABSENT_AMT, 0)\n" +
+//                    "                   + NVL (SD.SD_ADVANCE_DEDUCT, 0)\n" +
+//                    "                   + NVL (SD.SD_SCH_ADVANCE_DEDUCT, 0)\n" +
+//                    "                   + NVL (SD.SD_PF_LOAN_DEDUCT, 0)\n" +
+//                    "                   + NVL (SD.SD_TAX, 0)\n" +
+//                    "                   + NVL (SD.SD_LUNCH_DEDUCT, 0)\n" +
+//                    "                   + NVL (SD.SD_STAMP, 0)\n" +
+//                    "                   + NVL (SD.SD_OTH_DEDUCT, 0)\n" +
+//                    "                   + NVL (SD.SD_MD_ADVANCE_DEDUCT, 0)))\n" +
+//                    "                  NET_SALARY\n" +
+//                    "          FROM SALARY_DTL    SD,\n" +
+//                    "               SALARY_MST    SM,\n" +
+//                    "               EMP_MST       E,\n" +
+//                    "               (SELECT *\n" +
+//                    "                  FROM EMP_JOB_HISTORY\n" +
+//                    "                 WHERE JOB_ID IN (  SELECT MAX (JOB_ID)\n" +
+//                    "                                      FROM EMP_JOB_HISTORY\n" +
+//                    "                                  GROUP BY JOB_EMP_ID)) EJH,\n" +
+//                    "               JOB_SETUP_MST JSM,\n" +
+//                    "               JOB_SETUP_DTL JSD,\n" +
+//                    "               DIVISION_MST  DM,\n" +
+//                    "               DEPT_MST      DPT\n" +
+//                    "         WHERE     SM.SM_ID = SD.SD_SM_ID\n" +
+//                    "               AND SD.SD_EMP_ID = E.EMP_ID\n" +
+//                    "               AND E.EMP_ID = EJH.JOB_EMP_ID\n" +
+//                    "               AND EJH.JOB_JSD_ID = JSD.JSD_ID\n" +
+//                    "               AND JSD.JSD_JSM_ID = JSM.JSM_ID\n" +
+//                    "               AND JSM.JSM_DIVM_ID = DM.DIVM_ID\n" +
+//                    "               AND JSM.JSM_DEPT_ID = DPT.DEPT_ID\n" +
+//                    "               AND SD.SD_EMP_ID = "+emp_id+"\n" +
+//                    "               AND SM.SM_PMS_MONTH <=\n" +
+//                    "                      TRUNC (ADD_MONTHS ( (LAST_DAY ('"+formattedDate+"') + 1), -1))\n" +
+//                    "order by SM.SM_PMS_MONTH desc)\n" +
+//                    " WHERE ROWNUM <= 6");
+//
+//
+//            int i = 0;
+//            while(rs.next()) {
+//
+//                salaryMonthLists.add(new SalaryMonthList(rs.getString(1),rs.getString(3)));
+//
+//            }
+//
+//
+//            connected = true;
+//
+//            connection.close();
+//
+//        }
+//        catch (Exception e) {
+//
+//            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
+//            Log.i("ERRRRR", e.getLocalizedMessage());
+//            e.printStackTrace();
+//        }
+//    }
 
-            waitProgress.show(getSupportFragmentManager(),"WaitBar");
-            waitProgress.setCancelable(false);
-        }
+    public void getSalaryGraph() {
+        waitProgress.show(getSupportFragmentManager(),"WaitBar");
+        waitProgress.setCancelable(false);
+        connected = false;
+        conn = false;
 
-        @Override
-        protected Void doInBackground(Void... voids) {
-            if (isConnected() && isOnline()) {
+        salaryMonthLists = new ArrayList<>();
 
-                AllGraph();
-                if (connected) {
-                    conn = true;
-                    message= "Internet Connected";
+        RequestQueue requestQueue = Volley.newRequestQueue(Dashboard.this);
+
+        String salaryDataUrl = "http://103.56.208.123:8001/apex/ttrams/dashboard/getSalaryAndMonth/"+emp_id+"/"+formattedDate+"";
+
+        StringRequest salaryMonthReq = new StringRequest(Request.Method.GET, salaryDataUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject salaryMonthInfo = array.getJSONObject(i);
+                        String mon_name = salaryMonthInfo.getString("mon_name");
+                        String net_salary = salaryMonthInfo.getString("net_salary");
+                        salaryMonthLists.add(new SalaryMonthList(mon_name,net_salary));
+                    }
                 }
-
-            } else {
-                conn = false;
-                message = "Not Connected";
+                connected = true;
+                updateSalaryGraph();
             }
+            catch (JSONException e) {
+                connected = false;
+                e.printStackTrace();
+                updateSalaryGraph();
+            }
+        }, error -> {
+            conn = false;
+            connected = false;
+            error.printStackTrace();
+            updateSalaryGraph();
+        });
 
-            return null;
-        }
+        requestQueue.add(salaryMonthReq);
+    }
 
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-            waitProgress.dismiss();
-            if (conn) {
-
+    public void updateSalaryGraph() {
+        waitProgress.dismiss();
+        if (conn) {
+            if (connected) {
                 monthName = new ArrayList<>();
                 salary = new ArrayList<>();
                 salaryValue = new ArrayList<>();
@@ -1114,12 +2044,181 @@ public class Dashboard extends AppCompatActivity {
                 salaryChart.getXAxis().setValueFormatter(new MyAxisValueFormatter(monthName));
                 salaryChart.getAxisLeft().setValueFormatter(new LargeValueFormatter());
 
+                conn = false;
+                connected = false;
+            }
+            else {
+                AlertDialog dialog = new AlertDialog.Builder(Dashboard.this)
+                        .setMessage("There is a network issue in the server. Please Try later")
+                        .setPositiveButton("Retry", null)
+                        .setNegativeButton("Cancel",null)
+                        .show();
+                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                positive.setOnClickListener(v -> {
+                    getSalaryGraph();
+                    dialog.dismiss();
+                });
+            }
+        }
+        else {
+            AlertDialog dialog = new AlertDialog.Builder(Dashboard.this)
+                    .setMessage("Please Check Your Internet Connection")
+                    .setPositiveButton("Retry", null)
+                    .setNegativeButton("Cancel",null)
+                    .show();
+            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            positive.setOnClickListener(v -> {
+                getSalaryGraph();
+                dialog.dismiss();
+            });
+        }
+    }
 
+//    public void AttendanceGraph() {
+//        try {
+//            this.connection = createConnection();
+//            //    Toast.makeText(MainActivity.this, "Connected",Toast.LENGTH_SHORT).show();
+//
+//
+//            NoOfEmp = new ArrayList<>();
+//            absent = "";
+//            present = "";
+//            leave = "";
+//            holiday = "";
+//            late = "";
+//            early = "";
+//
+//
+//            Statement stmt = connection.createStatement();
+//
+//
+//
+//
+//            ResultSet rs=stmt.executeQuery("SELECT ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'A') ABSENT,\n" +
+//                    "       (  ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'P')\n" +
+//                    "        + ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'PW')\n" +
+//                    "        + ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'PH')\n" +
+//                    "        + ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'PL')\n" +
+//                    "        + ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'PLH')\n" +
+//                    "        + ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'PA')\n" +
+//                    "        + ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'PLW'))\n" +
+//                    "          PRESENT,\n" +
+//                    "       (  ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'L')\n" +
+//                    "        + ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'LW')\n" +
+//                    "        + ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'LH'))\n" +
+//                    "          LEAVE,\n" +
+//                    "       ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'H') +\n" +
+//                    "       ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'W') HOLIDAY_WEEKEND\n" +
+//                    "  FROM DUAL");
+//
+//
+//            while(rs.next()) {
+//
+//                absent = rs.getString(1);
+//                present = rs.getString(2);
+//                leave = rs.getString(3);
+//                holiday = rs.getString(4);
+//
+//
+//            }
+//
+//            ResultSet resultSet = stmt.executeQuery("SELECT LATE_COUNT_NEW\n" +
+//                    "("+emp_id+",\n" +
+//                    " '"+beginDate+"',\n" +
+//                    " '"+ lastDate +"')\n" +
+//                    "  FROM DUAL");
+//
+//            while (resultSet.next()) {
+//                late = resultSet.getString(1);
+//            }
+//
+//            ResultSet resultSet1 = stmt.executeQuery("  SELECT GET_EARLY_COUNT \n" +
+//                    "("+emp_id+",\n" +
+//                    " '"+beginDate+"',\n" +
+//                    " '"+ lastDate +"')\n" +
+//                    "  FROM DUAL");
+//
+//            while (resultSet1.next()) {
+//                early = resultSet1.getString(1);
+//            }
+//
+//
+//            connected = true;
+//
+//            connection.close();
+//
+//        }
+//        catch (Exception e) {
+//
+//            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
+//            Log.i("ERRRRR", e.getLocalizedMessage());
+//            e.printStackTrace();
+//        }
+//    }
 
-                // Pie Chart for Attendance
+    public void getAttendanceGraph() {
+        waitProgress.show(getSupportFragmentManager(),"WaitBar");
+        waitProgress.setCancelable(false);
+        connected = false;
+        conn = false;
+
+        NoOfEmp = new ArrayList<>();
+        absent = "";
+        present = "";
+        leave = "";
+        holiday = "";
+        late = "";
+        early = "";
+
+        String attendDataUrl = "http://103.56.208.123:8001/apex/ttrams/dashboard/getAttendanceData/"+beginDate+"/"+lastDate+"/"+emp_id+"";
+
+        RequestQueue requestQueue = Volley.newRequestQueue(Dashboard.this);
+
+        StringRequest attendDataReq = new StringRequest(Request.Method.GET, attendDataUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject attendanceInfo = array.getJSONObject(i);
+                        absent = attendanceInfo.getString("absent");
+                        present = attendanceInfo.getString("present");
+                        leave = attendanceInfo.getString("leave");
+                        holiday = attendanceInfo.getString("holiday_weekend");
+                        late = attendanceInfo.getString("late_count");
+                        early = attendanceInfo.getString("early_count");
+                    }
+                    connected = true;
+                }
+                else {
+                    connected = false;
+                }
+                updateAttendanceGraph();
+            }
+            catch (JSONException e) {
+                connected = false;
+                e.printStackTrace();
+                updateAttendanceGraph();
+            }
+        }, error -> {
+            conn = false;
+            connected = false;
+            error.printStackTrace();
+            updateAttendanceGraph();
+        });
+
+        requestQueue.add(attendDataReq);
+
+    }
+
+    public void updateAttendanceGraph() {
+        waitProgress.dismiss();
+        if (conn) {
+            if (connected) {
                 final int[] piecolors = new int[]{
-
-
                         Color.rgb(116, 185, 255),
                         Color.rgb(85, 239, 196),
                         Color.rgb(162, 155, 254),
@@ -1219,211 +2318,174 @@ public class Dashboard extends AppCompatActivity {
                 pieChart.setData(data);
                 pieChart.invalidate();
 
-
-                // Leave Multi Bar
-
-                if (balance.size() == 0 || earn.size() == 0 || shortCode.size() == 0) {
-                    // do nothing
-                } else {
-                    XAxis xAxis = leaveChart.getXAxis();
-                    xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-                    xAxis.setDrawGridLines(false);
-                    xAxis.setCenterAxisLabels(true);
-                    xAxis.setAxisMinimum(0);
-                    xAxis.setAxisMaximum(balance.size());
-                    xAxis.setGranularity(1);
-
-
-                    BarDataSet set1 = new BarDataSet(earn, "Earned Leave");
-                    set1.setColor(ColorTemplate.VORDIPLOM_COLORS[3]);
-                    set1.setValueFormatter(new ValueFormatter() {
-                        @Override
-                        public String getFormattedValue(float value) {
-                            return String.valueOf((int) Math.floor(value));
-                        }
-                    });
-                    BarDataSet set2 = new BarDataSet(balance, "Leave Balance");
-                    set2.setValueFormatter(new ValueFormatter() {
-                        @Override
-                        public String getFormattedValue(float value) {
-                            return String.valueOf((int) Math.floor(value));
-                        }
-                    });
-                    set2.setColor(ColorTemplate.VORDIPLOM_COLORS[2]);
-
-                    float groupSpace = 0.04f;
-                    float barSpace = 0.02f; // x2 dataset
-                    float barWidth = 0.46f;
-
-                    BarData leavedata = new BarData(set1, set2);
-                    if (earn.size() > 5) {
-                        leavedata.setValueTextSize(8);
-                    }
-                    else if (earn.size() > 3){
-                        leavedata.setValueTextSize(10);
-                    }
-                    else {
-                        leavedata.setValueTextSize(12);
-                    }
-                    leavedata.setBarWidth(barWidth); // set the width of each bar
-                    leaveChart.animateY(1000);
-                    leaveChart.setData(leavedata);
-                    leaveChart.groupBars(0, groupSpace, barSpace); // perform the "explicit" grouping
-                    leaveChart.invalidate();
-
-                    xAxis.setValueFormatter(new ValueFormatter() {
-                        @Override
-                        public String getAxisLabel(float value, AxisBase axis) {
-                            if (value < 0 || value >= shortCode.size()) {
-                                return null;
-                            } else {
-//                                System.out.println(value);
-//                                System.out.println(axis);
-//                                System.out.println(shortCode.get((int)value));
-                                return (shortCode.get((int) value));
-                            }
-
-                        }
-                    });
-                }
-
-
-                if (trackerAvailable == 1) {
-                    sharedSchedule = getSharedPreferences(SCHEDULING_FILE, MODE_PRIVATE);
-                    boolean isNewLogin = sharedSchedule.getBoolean(TRIGGERING,false);
-
-                    // Triggering Schedule
-                    System.out.println("SCHEDULING TASK STARTED");
-                    SharedPreferences.Editor editor = sharedSchedule.edit();
-                    editor.remove(SCHEDULING_EMP_ID);
-                    editor.remove(TRIGGERING);
-
-                    editor.putString(SCHEDULING_EMP_ID,emp_id);
-                    editor.putBoolean(TRIGGERING, true);
-                    editor.apply();
-                    editor.commit();
-                    createNotificationChannel();
-
-                    Intent intent = new Intent(Dashboard.this, Uploader.class);
-                    PendingIntent pendingIntent = null;
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                        pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent,PendingIntent.FLAG_IMMUTABLE);
-                    }
-
-
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.set(Calendar.HOUR_OF_DAY, 0);
-                    calendar.set(Calendar.MINUTE, 5);
-                    calendar.set(Calendar.SECOND, 0);
-                    //calendar.set(Calendar.AM_PM, Calendar.PM);
-
-//                    Calendar calendar = Calendar.getInstance();
-//                    calendar.setTimeInMillis(System.currentTimeMillis());
-//                    calendar.set(Calendar.SECOND, 0);
-//                    calendar.set(Calendar.MINUTE, 5);
-//                    calendar.set(Calendar.HOUR, 0);
-//                    calendar.set(Calendar.AM_PM, Calendar.AM);
-//                    calendar.add(Calendar.DAY_OF_MONTH, 1);
-
-                    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis(),AlarmManager.INTERVAL_HALF_HOUR,pendingIntent);
-                }
-
-                if (imageFound) {
-                    Glide.with(Dashboard.this)
-                            .load(selectedImage)
-                            .fitCenter()
-                            .into(userImage);
-                }
-                else {
-                    userImage.setImageResource(R.drawable.profile);
-                }
                 conn = false;
                 connected = false;
-
-
-
-            }else {
-                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+            }
+            else {
                 AlertDialog dialog = new AlertDialog.Builder(Dashboard.this)
-                        .setMessage("Please Check Your Internet Connection")
+                        .setMessage("There is a network issue in the server. Please Try later")
                         .setPositiveButton("Retry", null)
                         .setNegativeButton("Cancel",null)
                         .show();
-
-                dialog.setCancelable(false);
-                dialog.setCanceledOnTouchOutside(false);
                 Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                positive.setOnClickListener(v -> {
 
-                        new Check().execute();
-                        dialog.dismiss();
-                    }
-                });
-
-                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (loginLog_check) {
-                            userInfoLists.clear();
-                            userDesignations.clear();
-                            userInfoLists = new ArrayList<>();
-                            userDesignations = new ArrayList<>();
-                            isApproved = 0;
-                            isLeaveApproved = 0;
-                            dialog.dismiss();
-                            finish();
-                        } else {
-                            dialog.dismiss();
-                        }
-
-
-                    }
+                    getAttendanceGraph();
+                    dialog.dismiss();
                 });
             }
+        }
+        else {
+            AlertDialog dialog = new AlertDialog.Builder(Dashboard.this)
+                    .setMessage("Please Check Your Internet Connection")
+                    .setPositiveButton("Retry", null)
+                    .setNegativeButton("Cancel",null)
+                    .show();
+            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            positive.setOnClickListener(v -> {
+
+                getAttendanceGraph();
+                dialog.dismiss();
+            });
         }
     }
 
-    public class LeaveCheck extends AsyncTask<Void, Void, Void> {
+//    public void LeaveBalanceGraph() {
+//        try {
+//            this.connection = createConnection();
+//            //    Toast.makeText(MainActivity.this, "Connected",Toast.LENGTH_SHORT).show();
+//
+//            balance = new ArrayList<>();
+//            earn = new ArrayList<>();
+//            shortCode = new ArrayList<>();
+//            Statement stmt = connection.createStatement();
+//
+//
+//
+//
+////            ResultSet rs=stmt.executeQuery("SELECT EM.LBEM_EMP_ID, lc.lc_short_code, LD.LBD_BALANCE_QTY,LD.LBD_CURRENT_QTY\n" +
+////                    "FROM LEAVE_BALANCE_EMP_MST  EM,\n" +
+////                    "LEAVE_BALANCE_YEAR_DTL YD,\n" +
+////                    "LEAVE_BALANCE_DTL      LD,\n" +
+////                    "leave_category lc\n" +
+////                    "WHERE EM.LBEM_ID = YD.LBYD_LBEM_ID\n" +
+////                    "AND YD.LBYD_ID = LD.LBD_LBYD_ID\n" +
+////                    "and ld.lbd_lc_id = lc.lc_id\n" +
+////                    "AND EM.LBEM_EMP_ID = "+emp_id+"\n" +
+////                    "AND TO_CHAR (YD.LBYD_YEAR, 'YYYY') = TO_CHAR (TO_DATE('"+ leaveDate +"'), 'YYYY')");
+//
+//            ResultSet rs=stmt.executeQuery("SELECT EM.LBEM_EMP_ID, lc.lc_short_code, case when lc.lc_short_code = 'LP' then 0 else get_leave_balance(EM.LBEM_EMP_ID,'"+leaveDate+"', lc.lc_short_code) end balance,NVL(LD.LBD_CURRENT_QTY,0) + NVL(ld.lbd_opening_qty,0)\n" +
+//                    "FROM LEAVE_BALANCE_EMP_MST  EM,\n" +
+//                    "LEAVE_BALANCE_YEAR_DTL YD,\n" +
+//                    "LEAVE_BALANCE_DTL      LD,\n" +
+//                    "leave_category lc\n" +
+//                    "WHERE EM.LBEM_ID = YD.LBYD_LBEM_ID\n" +
+//                    "AND YD.LBYD_ID = LD.LBD_LBYD_ID\n" +
+//                    "and ld.lbd_lc_id = lc.lc_id\n" +
+//                    "AND EM.LBEM_EMP_ID = "+emp_id+"\n" +
+//                    "AND TO_CHAR (YD.LBYD_YEAR, 'YYYY') = TO_CHAR (TO_DATE('"+ leaveDate +"'), 'YYYY')");
+//
+//
+//            int i = 0;
+//            while(rs.next()) {
+//
+//
+//                String data = rs.getString(4);
+//                String sc = rs.getString(2);
+//                String bl = rs.getString(3);
+//                if (data != null) {
+//                    if (!data.equals("0")) {
+//
+//                        balance.add(new BarEntry(i, Float.parseFloat(rs.getString(3)),i));
+//                        earn.add(new BarEntry(i, Float.parseFloat(rs.getString(4)),i));
+//                        shortCode.add(rs.getString(2));
+//                        i++;
+//                    }
+//
+//                }
+//
+//
+//
+//            }
+//
+//
+//            connected = true;
+//
+//            connection.close();
+//
+//        }
+//        catch (Exception e) {
+//
+//            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
+//            Log.i("ERRRRR", e.getLocalizedMessage());
+//            e.printStackTrace();
+//        }
+//    }
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
+    public void getLeaveGraph() {
+        waitProgress.show(getSupportFragmentManager(),"WaitBar");
+        waitProgress.setCancelable(false);
+        connected = false;
+        conn = false;
 
-            waitProgress.show(getSupportFragmentManager(),"WaitBar");
-            waitProgress.setCancelable(false);
-        }
+        balance = new ArrayList<>();
+        earn = new ArrayList<>();
+        shortCode = new ArrayList<>();
 
-        @Override
-        protected Void doInBackground(Void... voids) {
-            if (isConnected() && isOnline()) {
+        String leaveDataUrl = "http://103.56.208.123:8001/apex/ttrams/dashboard/getLeaveData/"+emp_id+"/"+leaveDate+"";
 
-                LeaveBalanceGraph();
-                if (connected) {
-                    conn = true;
-                    message= "Internet Connected";
+        RequestQueue requestQueue = Volley.newRequestQueue(Dashboard.this);
+
+        StringRequest leaveDataReq = new StringRequest(Request.Method.GET, leaveDataUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject leaveInfo = array.getJSONObject(i);
+//                        String lbem_emp_id = leaveInfo.getString("lbem_emp_id");
+                        String lc_short_code = leaveInfo.getString("lc_short_code");
+                        String balance_all = leaveInfo.getString("balance");
+                        String quantity = leaveInfo.getString("quantity");
+                        if (!quantity.equals("null") && !quantity.equals("NULL")) {
+                            if (!quantity.equals("0")) {
+                                balance.add(new BarEntry(i, Float.parseFloat(balance_all),i));
+                                earn.add(new BarEntry(i, Float.parseFloat(quantity),i));
+                                shortCode.add(lc_short_code);
+                            }
+                        }
+                    }
                 }
-
-            } else {
-                conn = false;
-                message = "Not Connected";
+                connected = true;
+                updateLeaveGraph();
             }
+            catch (JSONException e) {
+                connected = false;
+                e.printStackTrace();
+                updateLeaveGraph();
+            }
+        }, error -> {
+            conn = false;
+            connected = false;
+            error.printStackTrace();
+            updateLeaveGraph();
+        });
 
-            return null;
-        }
+        requestQueue.add(leaveDataReq);
+    }
 
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-            waitProgress.dismiss();
-            if (conn) {
-
+    public void updateLeaveGraph() {
+        waitProgress.dismiss();
+        if (conn) {
+            if(connected) {
                 if (balance.size() == 0 || earn.size() == 0 || shortCode.size() == 0) {
                     // do nothing
-                } else {
+                    System.out.println("NO DATA FOUND");
+                }
+                else {
                     XAxis xAxis = leaveChart.getXAxis();
                     xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
                     xAxis.setDrawGridLines(false);
@@ -1486,486 +2548,193 @@ public class Dashboard extends AppCompatActivity {
                     });
                 }
 
-
                 conn = false;
                 connected = false;
-
-
-            }else {
-                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+            }
+            else {
                 AlertDialog dialog = new AlertDialog.Builder(Dashboard.this)
-                        .setMessage("Please Check Your Internet Connection")
+                        .setMessage("There is a network issue in the server. Please Try later")
                         .setPositiveButton("Retry", null)
                         .setNegativeButton("Cancel",null)
                         .show();
 
-//                dialog.setCancelable(false);
-//                dialog.setCanceledOnTouchOutside(false);
                 Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                positive.setOnClickListener(v -> {
 
-                        new LeaveCheck().execute();
-                        dialog.dismiss();
-                    }
+                    getLeaveGraph();
+                    dialog.dismiss();
                 });
             }
         }
-    }
+        else {
+            AlertDialog dialog = new AlertDialog.Builder(Dashboard.this)
+                    .setMessage("Please Check Your Internet Connection")
+                    .setPositiveButton("Retry", null)
+                    .setNegativeButton("Cancel",null)
+                    .show();
 
-    public class AttendanceCheck extends AsyncTask<Void, Void, Void> {
+            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            positive.setOnClickListener(v -> {
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            waitProgress.show(getSupportFragmentManager(),"WaitBar");
-            waitProgress.setCancelable(false);
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            if (isConnected() && isOnline()) {
-
-                AttendanceGraph();
-                if (connected) {
-                    conn = true;
-                    message= "Internet Connected";
-                }
-
-            } else {
-                conn = false;
-                message = "Not Connected";
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-            waitProgress.dismiss();
-            if (conn) {
-
-
-                final int[] piecolors = new int[]{
-
-
-                        Color.rgb(116, 185, 255),
-                        Color.rgb(85, 239, 196),
-                        Color.rgb(162, 155, 254),
-                        Color.rgb(223, 230, 233),
-                        Color.rgb(255, 234, 167),
-
-                        Color.rgb(250, 177, 160),
-                        Color.rgb(129, 236, 236),
-                        Color.rgb(255, 118, 117),
-                        Color.rgb(253, 121, 168),
-                        Color.rgb(96, 163, 188)};
-
-
-                if (absent != null) {
-                    if (!absent.isEmpty()) {
-                        if (!absent.equals("0")) {
-                            NoOfEmp.add(new PieEntry(Float.parseFloat(absent), "Absent", 0));
-                        }
-                    }
-                }
-
-                if (present != null) {
-                    if (!present.isEmpty()) {
-                        if (!present.equals("0")) {
-                            NoOfEmp.add(new PieEntry(Float.parseFloat(present),"Present", 1));
-                        }
-                    }
-                }
-
-                if (late != null) {
-                    if (!late.isEmpty()) {
-                        if (!late.equals("0")) {
-                            NoOfEmp.add(new PieEntry(Float.parseFloat(late),"Late", 2));
-
-                        }
-                    }
-                }
-
-                if (early != null) {
-                    if (!early.isEmpty()) {
-                        if (!early.equals("0")) {
-                            NoOfEmp.add(new PieEntry(Float.parseFloat(early),"Early", 3));
-                        }
-                    }
-                }
-
-                if (leave != null) {
-                    if (!leave.isEmpty()) {
-                        if (!leave.equals("0")) {
-                            NoOfEmp.add(new PieEntry(Float.parseFloat(leave),"Leave", 4));
-                        }
-                    }
-                }
-
-                if (holiday != null) {
-                    if (!holiday.isEmpty()) {
-                        if (!holiday.equals("0")) {
-                            NoOfEmp.add(new PieEntry(Float.parseFloat(holiday),"Holiday/Weekend", 5));
-                        }
-                    }
-                }
-
-                if (NoOfEmp.size() == 0) {
-                    NoOfEmp.add(new PieEntry(1,"No Data Found", 6));
-
-                }
-
-                PieDataSet dataSet = new PieDataSet(NoOfEmp, "");
-                pieChart.animateXY(1000, 1000);
-                pieChart.setEntryLabelColor(Color.TRANSPARENT);
-
-                PieData data = new PieData(dataSet);
-                dataSet.setValueFormatter(new ValueFormatter() {
-                    @Override
-                    public String getFormattedValue(float value) {
-                        return String.valueOf((int) Math.floor(value));
-                    }
-                });
-                String label = dataSet.getValues().get(0).getLabel();
-                System.out.println(label);
-                if (label.equals("No Data Found")) {
-                    dataSet.setValueTextColor(Color.TRANSPARENT);
-                } else {
-                    dataSet.setValueTextColor(Color.BLACK);
-                }
-                dataSet.setHighlightEnabled(true);
-                dataSet.setValueTextSize(12);
-
-                int[] num = new int[NoOfEmp.size()];
-                for (int i = 0; i < NoOfEmp.size(); i++) {
-                    int neki = (int) NoOfEmp.get(i).getData();
-                    num[i] = piecolors[neki];
-                }
-
-                dataSet.setColors(ColorTemplate.createColors(num));
-
-                pieChart.setData(data);
-                pieChart.invalidate();
-
-                conn = false;
-                connected = false;
-
-
-            }else {
-                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
-                AlertDialog dialog = new AlertDialog.Builder(Dashboard.this)
-                        .setMessage("Please Check Your Internet Connection")
-                        .setPositiveButton("Retry", null)
-                        .setNegativeButton("Cancel",null)
-                        .show();
-
-//                dialog.setCancelable(false);
-//                dialog.setCanceledOnTouchOutside(false);
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        new AttendanceCheck().execute();
-                        dialog.dismiss();
-
-                    }
-                });
-            }
+                getLeaveGraph();
+                dialog.dismiss();
+            });
         }
     }
 
-    public class SalaryCheck extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            waitProgress.show(getSupportFragmentManager(),"WaitBar");
-            waitProgress.setCancelable(false);
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            if (isConnected() && isOnline()) {
-
-                SalaryGraph();
-                if (connected) {
-                    conn = true;
-                    message= "Internet Connected";
-                }
-
-            } else {
-                conn = false;
-                message = "Not Connected";
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-            waitProgress.dismiss();
-            if (conn) {
-
-                monthName = new ArrayList<>();
-                salary = new ArrayList<>();
-                salaryValue = new ArrayList<>();
-
-                for (int i = 0; i < salaryMonthLists.size(); i++) {
-                    for (int j = 0; j < months.size(); j++) {
-                        if (months.get(j).getMonth().equals(salaryMonthLists.get(i).getMonth())) {
-                            months.get(j).setSalary(salaryMonthLists.get(i).getSalary());
-                        }
-                    }
-                }
-
-                for (int i = months.size()-1; i >= 0; i--) {
-
-                    monthName.add(months.get(i).getMonth());
-                    salary.add(months.get(i).getSalary());
-
-                }
-
-                System.out.println(monthName);
-                System.out.println(salary);
-
-                for (int i = 0; i < salary.size(); i++) {
-                    salaryValue.add(new BarEntry(i, Float.parseFloat(salary.get(i)),i));
-                }
-
-                BarDataSet bardataset = new BarDataSet(salaryValue, "Months");
-                salaryChart.animateY(1000);
-
-                BarData data1 = new BarData(bardataset);
-                bardataset.setColors(ColorTemplate.VORDIPLOM_COLORS);
-
-                bardataset.setBarBorderColor(Color.DKGRAY);
-                bardataset.setValueTextSize(8);
-                bardataset.setValueFormatter(new LargeValueFormatter());
-                salaryChart.setData(data1);
-                salaryChart.getXAxis().setValueFormatter(new MyAxisValueFormatter(monthName));
-                salaryChart.getAxisLeft().setValueFormatter(new LargeValueFormatter());
-
-                conn = false;
-                connected = false;
-
-            }else {
-                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
-                AlertDialog dialog = new AlertDialog.Builder(Dashboard.this)
-                        .setMessage("Please Check Your Internet Connection")
-                        .setPositiveButton("Retry", null)
-                        .setNegativeButton("Cancel",null)
-                        .show();
-
-//                dialog.setCancelable(false);
-//                dialog.setCanceledOnTouchOutside(false);
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        new SalaryCheck().execute();
-                        dialog.dismiss();
-                    }
-                });
-            }
-        }
-    }
-
-    public void SalaryGraph() {
-        try {
-            this.connection = createConnection();
-            //    Toast.makeText(MainActivity.this, "Connected",Toast.LENGTH_SHORT).show();
-
-
-            salaryMonthLists = new ArrayList<>();
-            Statement stmt = connection.createStatement();
-
-
-
-
-            ResultSet rs=stmt.executeQuery("SELECT TO_CHAR(SM_PMS_MONTH,'MON'),EMP_NAME, NET_SALARY\n" +
-                    "  FROM (SELECT SM.SM_PMS_MONTH,\n" +
-                    "               E.EMP_NAME,\n" +
-                    "               (  (  NVL (SD.SD_ATTD_BONUS_AMT, 0)\n" +
-                    "                   + NVL (SD.SD_GROSS_SAL, 0)\n" +
-                    "                   + (ROUND (\n" +
-                    "                         (NVL (SD.SD_OT_HR, 0) * NVL (SD.SD_OT_RATE, 0))))\n" +
-                    "                   + (  NVL (SD.SD_JOB_HABITATION, 0)\n" +
-                    "                      + NVL (SD.SD_JOB_UTILITIES, 0)\n" +
-                    "                      + NVL (SD.SD_JOB_HOUSE_ALLOWANCE, 0)\n" +
-                    "                      + NVL (SD.SD_JOB_ENTERTAINMENT, 0)\n" +
-                    "                      + NVL (SD.SD_COMMITTED_SALARY, 0)\n" +
-                    "                      + NVL (SD.SD_FIXED_OT_AMT, 0)\n" +
-                    "                      + NVL (SD.SD_FOOD_SUBSIDY_AMT, 0)\n" +
-                    "                      + NVL (SD.SD_FACTORY_ALLOWANCE_AMT, 0)\n" +
-                    "                      + NVL (SD.SD_HOLIDAY_AMT, 0)\n" +
-                    "                      + NVL (SD.SD_REFUND_OTH_PAYMENT_AMT, 0)\n" +
-                    "                      + NVL (SD.SD_PROFIT_SHARE_AMT, 0)\n" +
-                    "                      + NVL (SD.SD_PERFORMANCE_BONUS_AMT, 0)))\n" +
-                    "                - (  NVL (SD.SD_PF, 0)\n" +
-                    "                   + NVL (SD.SD_LWPAY_AMT, 0)\n" +
-                    "                   + NVL (SD.SD_ABSENT_AMT, 0)\n" +
-                    "                   + NVL (SD.SD_ADVANCE_DEDUCT, 0)\n" +
-                    "                   + NVL (SD.SD_SCH_ADVANCE_DEDUCT, 0)\n" +
-                    "                   + NVL (SD.SD_PF_LOAN_DEDUCT, 0)\n" +
-                    "                   + NVL (SD.SD_TAX, 0)\n" +
-                    "                   + NVL (SD.SD_LUNCH_DEDUCT, 0)\n" +
-                    "                   + NVL (SD.SD_STAMP, 0)\n" +
-                    "                   + NVL (SD.SD_OTH_DEDUCT, 0)\n" +
-                    "                   + NVL (SD.SD_MD_ADVANCE_DEDUCT, 0)))\n" +
-                    "                  NET_SALARY\n" +
-                    "          FROM SALARY_DTL    SD,\n" +
-                    "               SALARY_MST    SM,\n" +
-                    "               EMP_MST       E,\n" +
-                    "               (SELECT *\n" +
-                    "                  FROM EMP_JOB_HISTORY\n" +
-                    "                 WHERE JOB_ID IN (  SELECT MAX (JOB_ID)\n" +
-                    "                                      FROM EMP_JOB_HISTORY\n" +
-                    "                                  GROUP BY JOB_EMP_ID)) EJH,\n" +
-                    "               JOB_SETUP_MST JSM,\n" +
-                    "               JOB_SETUP_DTL JSD,\n" +
-                    "               DIVISION_MST  DM,\n" +
-                    "               DEPT_MST      DPT\n" +
-                    "         WHERE     SM.SM_ID = SD.SD_SM_ID\n" +
-                    "               AND SD.SD_EMP_ID = E.EMP_ID\n" +
-                    "               AND E.EMP_ID = EJH.JOB_EMP_ID\n" +
-                    "               AND EJH.JOB_JSD_ID = JSD.JSD_ID\n" +
-                    "               AND JSD.JSD_JSM_ID = JSM.JSM_ID\n" +
-                    "               AND JSM.JSM_DIVM_ID = DM.DIVM_ID\n" +
-                    "               AND JSM.JSM_DEPT_ID = DPT.DEPT_ID\n" +
-                    "               AND SD.SD_EMP_ID = "+emp_id+"\n" +
-                    "               AND SM.SM_PMS_MONTH <=\n" +
-                    "                      TRUNC (ADD_MONTHS ( (LAST_DAY ('"+formattedDate+"') + 1), -1))\n" +
-                    "order by SM.SM_PMS_MONTH desc)\n" +
-                    " WHERE ROWNUM <= 6");
-
-
-            int i = 0;
-            while(rs.next()) {
-
-                salaryMonthLists.add(new SalaryMonthList(rs.getString(1),rs.getString(3)));
-
-            }
-
-
-            connected = true;
-
-            connection.close();
-
-        }
-        catch (Exception e) {
-
-            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
-            Log.i("ERRRRR", e.getLocalizedMessage());
-            e.printStackTrace();
-        }
-    }
-
-    public void AttendanceGraph() {
-        try {
-            this.connection = createConnection();
-            //    Toast.makeText(MainActivity.this, "Connected",Toast.LENGTH_SHORT).show();
-
-
-            NoOfEmp = new ArrayList<>();
-            absent = "";
-            present = "";
-            leave = "";
-            holiday = "";
-            late = "";
-            early = "";
-
-
-            Statement stmt = connection.createStatement();
-
-
-
-
-            ResultSet rs=stmt.executeQuery("SELECT ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'A') ABSENT,\n" +
-                    "       (  ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'P')\n" +
-                    "        + ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'PW')\n" +
-                    "        + ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'PH')\n" +
-                    "        + ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'PL')\n" +
-                    "        + ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'PLH')\n" +
-                    "        + ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'PA')\n" +
-                    "        + ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'PLW'))\n" +
-                    "          PRESENT,\n" +
-                    "       (  ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'L')\n" +
-                    "        + ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'LW')\n" +
-                    "        + ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'LH'))\n" +
-                    "          LEAVE,\n" +
-                    "       ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'H') +\n" +
-                    "       ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'W') HOLIDAY_WEEKEND\n" +
-                    "  FROM DUAL");
-
-
-            while(rs.next()) {
-
-                absent = rs.getString(1);
-                present = rs.getString(2);
-                leave = rs.getString(3);
-                holiday = rs.getString(4);
-
-
-            }
-
-            ResultSet resultSet = stmt.executeQuery("SELECT LATE_COUNT_NEW\n" +
-                    "("+emp_id+",\n" +
-                    " '"+beginDate+"',\n" +
-                    " '"+ lastDate +"')\n" +
-                    "  FROM DUAL");
-
-            while (resultSet.next()) {
-                late = resultSet.getString(1);
-            }
-
-            ResultSet resultSet1 = stmt.executeQuery("  SELECT GET_EARLY_COUNT \n" +
-                    "("+emp_id+",\n" +
-                    " '"+beginDate+"',\n" +
-                    " '"+ lastDate +"')\n" +
-                    "  FROM DUAL");
-
-            while (resultSet1.next()) {
-                early = resultSet1.getString(1);
-            }
-
-
-            connected = true;
-
-            connection.close();
-
-        }
-        catch (Exception e) {
-
-            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
-            Log.i("ERRRRR", e.getLocalizedMessage());
-            e.printStackTrace();
-        }
-    }
-
-    public void LeaveBalanceGraph() {
-        try {
-            this.connection = createConnection();
-            //    Toast.makeText(MainActivity.this, "Connected",Toast.LENGTH_SHORT).show();
-
-            balance = new ArrayList<>();
-            earn = new ArrayList<>();
-            shortCode = new ArrayList<>();
-            Statement stmt = connection.createStatement();
-
-
-
-
-//            ResultSet rs=stmt.executeQuery("SELECT EM.LBEM_EMP_ID, lc.lc_short_code, LD.LBD_BALANCE_QTY,LD.LBD_CURRENT_QTY\n" +
+//    public void AllGraph() {
+//        try {
+//            this.connection = createConnection();
+//            //    Toast.makeText(MainActivity.this, "Connected",Toast.LENGTH_SHORT).show();
+//
+//
+//            salaryMonthLists = new ArrayList<>();
+//
+//            NoOfEmp = new ArrayList<>();
+//            absent = "";
+//            present = "";
+//            leave = "";
+//            holiday = "";
+//            late = "";
+//            early = "";
+//            imageFound = false;
+//            selectedImage = null;
+//
+////            beginDate = "01-MAR-22";
+////            lastDate = "31-MAR-22";
+//            //formattedDate = "30-JUL-21";
+//
+//            balance = new ArrayList<>();
+//            earn = new ArrayList<>();
+//            shortCode = new ArrayList<>();
+//            Statement stmt = connection.createStatement();
+//
+//
+//
+//
+//            ResultSet rs=stmt.executeQuery("SELECT TO_CHAR(SM_PMS_MONTH,'MON'),EMP_NAME, NET_SALARY\n" +
+//                    "  FROM (SELECT SM.SM_PMS_MONTH,\n" +
+//                    "               E.EMP_NAME,\n" +
+//                    "               (  (  NVL (SD.SD_ATTD_BONUS_AMT, 0)\n" +
+//                    "                   + NVL (SD.SD_GROSS_SAL, 0)\n" +
+//                    "                   + (ROUND (\n" +
+//                    "                         (NVL (SD.SD_OT_HR, 0) * NVL (SD.SD_OT_RATE, 0))))\n" +
+//                    "                   + (  NVL (SD.SD_JOB_HABITATION, 0)\n" +
+//                    "                      + NVL (SD.SD_JOB_UTILITIES, 0)\n" +
+//                    "                      + NVL (SD.SD_JOB_HOUSE_ALLOWANCE, 0)\n" +
+//                    "                      + NVL (SD.SD_JOB_ENTERTAINMENT, 0)\n" +
+//                    "                      + NVL (SD.SD_COMMITTED_SALARY, 0)\n" +
+//                    "                      + NVL (SD.SD_FIXED_OT_AMT, 0)\n" +
+//                    "                      + NVL (SD.SD_FOOD_SUBSIDY_AMT, 0)\n" +
+//                    "                      + NVL (SD.SD_FACTORY_ALLOWANCE_AMT, 0)\n" +
+//                    "                      + NVL (SD.SD_HOLIDAY_AMT, 0)\n" +
+//                    "                      + NVL (SD.SD_REFUND_OTH_PAYMENT_AMT, 0)\n" +
+//                    "                      + NVL (SD.SD_PROFIT_SHARE_AMT, 0)\n" +
+//                    "                      + NVL (SD.SD_PERFORMANCE_BONUS_AMT, 0)))\n" +
+//                    "                - (  NVL (SD.SD_PF, 0)\n" +
+//                    "                   + NVL (SD.SD_LWPAY_AMT, 0)\n" +
+//                    "                   + NVL (SD.SD_ABSENT_AMT, 0)\n" +
+//                    "                   + NVL (SD.SD_ADVANCE_DEDUCT, 0)\n" +
+//                    "                   + NVL (SD.SD_SCH_ADVANCE_DEDUCT, 0)\n" +
+//                    "                   + NVL (SD.SD_PF_LOAN_DEDUCT, 0)\n" +
+//                    "                   + NVL (SD.SD_TAX, 0)\n" +
+//                    "                   + NVL (SD.SD_LUNCH_DEDUCT, 0)\n" +
+//                    "                   + NVL (SD.SD_STAMP, 0)\n" +
+//                    "                   + NVL (SD.SD_OTH_DEDUCT, 0)\n" +
+//                    "                   + NVL (SD.SD_MD_ADVANCE_DEDUCT, 0)))\n" +
+//                    "                  NET_SALARY\n" +
+//                    "          FROM SALARY_DTL    SD,\n" +
+//                    "               SALARY_MST    SM,\n" +
+//                    "               EMP_MST       E,\n" +
+//                    "               (SELECT *\n" +
+//                    "                  FROM EMP_JOB_HISTORY\n" +
+//                    "                 WHERE JOB_ID IN (  SELECT MAX (JOB_ID)\n" +
+//                    "                                      FROM EMP_JOB_HISTORY\n" +
+//                    "                                  GROUP BY JOB_EMP_ID)) EJH,\n" +
+//                    "               JOB_SETUP_MST JSM,\n" +
+//                    "               JOB_SETUP_DTL JSD,\n" +
+//                    "               DIVISION_MST  DM,\n" +
+//                    "               DEPT_MST      DPT\n" +
+//                    "         WHERE     SM.SM_ID = SD.SD_SM_ID\n" +
+//                    "               AND SD.SD_EMP_ID = E.EMP_ID\n" +
+//                    "               AND E.EMP_ID = EJH.JOB_EMP_ID\n" +
+//                    "               AND EJH.JOB_JSD_ID = JSD.JSD_ID\n" +
+//                    "               AND JSD.JSD_JSM_ID = JSM.JSM_ID\n" +
+//                    "               AND JSM.JSM_DIVM_ID = DM.DIVM_ID\n" +
+//                    "               AND JSM.JSM_DEPT_ID = DPT.DEPT_ID\n" +
+//                    "               AND SD.SD_EMP_ID = "+emp_id+"\n" +
+//                    "               AND SM.SM_PMS_MONTH <=\n" +
+//                    "                      TRUNC (ADD_MONTHS ( (LAST_DAY ('"+formattedDate+"') + 1), -1))\n" +
+//                    "order by SM.SM_PMS_MONTH desc)\n" +
+//                    " WHERE ROWNUM <= 6");
+//
+//
+//            int i = 0;
+//            while(rs.next()) {
+//
+//                salaryMonthLists.add(new SalaryMonthList(rs.getString(1),rs.getString(3)));
+//
+//            }
+//
+//            ResultSet rs1=stmt.executeQuery("SELECT ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'A') ABSENT,\n" +
+//                    "       (  ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'P')\n" +
+//                    "        + ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'PW')\n" +
+//                    "        + ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'PH')\n" +
+//                    "        + ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'PL')\n" +
+//                    "        + ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'PLH')\n" +
+//                    "        + ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'PA')\n" +
+//                    "        + ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'PLW'))\n" +
+//                    "          PRESENT,\n" +
+//                    "       (  ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'L')\n" +
+//                    "        + ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'LW')\n" +
+//                    "        + ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'LH'))\n" +
+//                    "          LEAVE,\n" +
+//                    "       ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'H') +\n" +
+//                    "       ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'W') HOLIDAY_WEEKEND\n" +
+//                    "  FROM DUAL");
+//
+//
+//            while(rs1.next()) {
+//
+//                absent = rs1.getString(1);
+//                present = rs1.getString(2);
+//                leave = rs1.getString(3);
+//                holiday = rs1.getString(4);
+//
+//
+//            }
+//
+//            ResultSet resultSet = stmt.executeQuery("SELECT LATE_COUNT_NEW\n" +
+//                    "("+emp_id+",\n" +
+//                    " '"+beginDate+"',\n" +
+//                    " '"+ lastDate +"')\n" +
+//                    "  FROM DUAL");
+//
+//            while (resultSet.next()) {
+//                late = resultSet.getString(1);
+//            }
+//
+//            ResultSet resultSet1 = stmt.executeQuery("  SELECT GET_EARLY_COUNT \n" +
+//                    "("+emp_id+",\n" +
+//                    " '"+beginDate+"',\n" +
+//                    " '"+ lastDate +"')\n" +
+//                    "  FROM DUAL");
+//
+//            while (resultSet1.next()) {
+//                early = resultSet1.getString(1);
+//            }
+//
+////            ResultSet rs2=stmt.executeQuery("SELECT EM.LBEM_EMP_ID, lc.lc_short_code, LD.LBD_BALANCE_QTY,LD.LBD_CURRENT_QTY\n" +
+////                    "FROM LEAVE_BALANCE_EMP_MST  EM,\n" +
+////                    "LEAVE_BALANCE_YEAR_DTL YD,\n" +
+////                    "LEAVE_BALANCE_DTL      LD,\n" +
+////                    "leave_category lc\n" +
+////                    "WHERE EM.LBEM_ID = YD.LBYD_LBEM_ID\n" +
+////                    "AND YD.LBYD_ID = LD.LBD_LBYD_ID\n" +
+////                    "and ld.lbd_lc_id = lc.lc_id\n" +
+////                    "AND EM.LBEM_EMP_ID = "+emp_id+"\n" +
+////                    "AND TO_CHAR (YD.LBYD_YEAR, 'YYYY') = TO_CHAR (TO_DATE('"+ leaveDate +"'), 'YYYY')");
+//            ResultSet rs2 = stmt.executeQuery("SELECT EM.LBEM_EMP_ID, lc.lc_short_code, case when lc.lc_short_code = 'LP' then 0 else get_leave_balance(EM.LBEM_EMP_ID,'"+leaveDate+"', lc.lc_short_code) end balance,NVL(LD.LBD_CURRENT_QTY,0) + NVL(ld.lbd_opening_qty,0)\n" +
 //                    "FROM LEAVE_BALANCE_EMP_MST  EM,\n" +
 //                    "LEAVE_BALANCE_YEAR_DTL YD,\n" +
 //                    "LEAVE_BALANCE_DTL      LD,\n" +
@@ -1975,252 +2744,210 @@ public class Dashboard extends AppCompatActivity {
 //                    "and ld.lbd_lc_id = lc.lc_id\n" +
 //                    "AND EM.LBEM_EMP_ID = "+emp_id+"\n" +
 //                    "AND TO_CHAR (YD.LBYD_YEAR, 'YYYY') = TO_CHAR (TO_DATE('"+ leaveDate +"'), 'YYYY')");
+//
+//
+//            int j = 0;
+//            while(rs2.next()) {
+//
+//
+//                String data = rs2.getString(4);
+//                if (data != null) {
+//                    if (!data.equals("0")) {
+//                        balance.add(new BarEntry(j, Float.parseFloat(rs2.getString(3)),j));
+//                        earn.add(new BarEntry(j, Float.parseFloat(rs2.getString(4)),j));
+//                        shortCode.add(rs2.getString(2));
+//                        j++;
+//                    }
+//                }
+//
+//
+//            }
+//
+//            ResultSet resultSet2 = stmt.executeQuery("SELECT\n" +
+//                    "    emp_mst.emp_timeline_tracker_flag\n" +
+//                    "\n" +
+//                    "FROM\n" +
+//                    "         emp_mst\n" +
+//                    "\n" +
+//                    "WHERE\n" +
+//                    "    emp_mst.emp_id = "+emp_id+"");
+//            while (resultSet2.next()) {
+//                trackerAvailable = resultSet2.getInt(1);
+//            }
+//
+//            if (loginLog_check) {
+//                String userName = userInfoLists.get(0).getUserName();
+//                String userId = userInfoLists.get(0).getEmp_id();
+//
+//                if (userId != null) {
+//                    if (!userId.isEmpty()) {
+//                        System.out.println(userId);
+//                    } else {
+//                        userId = "0";
+//                    }
+//                } else {
+//                    userId = "0";
+//                }
+//
+//                sessionId = "";
+//
+//                ResultSet resultSet3 = stmt.executeQuery("SELECT SYS_CONTEXT ('USERENV', 'SESSIONID') --INTO P_IULL_SESSION_ID\n" +
+//                        "   FROM DUAL\n");
+//
+//                while (resultSet3.next()) {
+//                    System.out.println("SESSION ID: "+ resultSet3.getString(1));
+//                    sessionId = resultSet3.getString(1);
+//                }
+//
+//                resultSet3.close();
+//
+//                CallableStatement callableStatement1 = connection.prepareCall("{call USERLOGINDTL(?,?,?,?,?,?,?,?,?)}");
+//                callableStatement1.setString(1,userName);
+//                callableStatement1.setString(2, brand+" "+model);
+//                callableStatement1.setString(3,ipAddress);
+//                callableStatement1.setString(4,hostUserName);
+//                callableStatement1.setInt(5,Integer.parseInt(userId));
+//                callableStatement1.setInt(6,Integer.parseInt(sessionId));
+//                callableStatement1.setString(7,"1");
+//                callableStatement1.setString(8,osName);
+//                callableStatement1.setInt(9,3);
+//                callableStatement1.execute();
+//
+//                callableStatement1.close();
+//            }
+//
+//            ResultSet imageResult = stmt.executeQuery("SELECT EMP_IMAGE FROM EMP_MST WHERE EMP_ID = "+emp_id+"");
+//
+//            while (imageResult.next()) {
+//                Blob b = imageResult.getBlob(1);
+//                if (b == null) {
+//                    imageFound = false;
+//                }
+//                else {
+//                    imageFound = true;
+//                    byte[] barr =b.getBytes(1,(int)b.length());
+//                    selectedImage = BitmapFactory.decodeByteArray(barr,0,barr.length);
+//                }
+//            }
+//            imageResult.close();
+//            stmt.close();
+//
+//            connected = true;
+//
+//            connection.close();
+//
+//        }
+//        catch (Exception e) {
+//
+//            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
+//            Log.i("ERRRRR", e.getLocalizedMessage());
+//            e.printStackTrace();
+//        }
+//    }
 
-            ResultSet rs=stmt.executeQuery("SELECT EM.LBEM_EMP_ID, lc.lc_short_code, case when lc.lc_short_code = 'LP' then 0 else get_leave_balance(EM.LBEM_EMP_ID,'"+leaveDate+"', lc.lc_short_code) end balance,NVL(LD.LBD_CURRENT_QTY,0) + NVL(ld.lbd_opening_qty,0)\n" +
-                    "FROM LEAVE_BALANCE_EMP_MST  EM,\n" +
-                    "LEAVE_BALANCE_YEAR_DTL YD,\n" +
-                    "LEAVE_BALANCE_DTL      LD,\n" +
-                    "leave_category lc\n" +
-                    "WHERE EM.LBEM_ID = YD.LBYD_LBEM_ID\n" +
-                    "AND YD.LBYD_ID = LD.LBD_LBYD_ID\n" +
-                    "and ld.lbd_lc_id = lc.lc_id\n" +
-                    "AND EM.LBEM_EMP_ID = "+emp_id+"\n" +
-                    "AND TO_CHAR (YD.LBYD_YEAR, 'YYYY') = TO_CHAR (TO_DATE('"+ leaveDate +"'), 'YYYY')");
+    public void getAllData() {
+        connected = false;
+        conn = false;
 
+        salaryMonthLists = new ArrayList<>();
+        NoOfEmp = new ArrayList<>();
+        absent = "";
+        present = "";
+        leave = "";
+        holiday = "";
+        late = "";
+        early = "";
+        imageFound = false;
+        selectedImage = null;
+        checkEmpFlag = false;
 
-            int i = 0;
-            while(rs.next()) {
+        balance = new ArrayList<>();
+        earn = new ArrayList<>();
+        shortCode = new ArrayList<>();
 
+        String empFlagUrl = "http://103.56.208.123:8001/apex/ttrams/dashboard/checkEmpUpdated/"+emp_id+"";
+        String salaryDataUrl = "http://103.56.208.123:8001/apex/ttrams/dashboard/getSalaryAndMonth/"+emp_id+"/"+formattedDate+"";
+        String attendDataUrl = "http://103.56.208.123:8001/apex/ttrams/dashboard/getAttendanceData/"+beginDate+"/"+lastDate+"/"+emp_id+"";
+        String leaveDataUrl = "http://103.56.208.123:8001/apex/ttrams/dashboard/getLeaveData/"+emp_id+"/"+leaveDate+"";
+        String trackerFlagUrl = "http://103.56.208.123:8001/apex/ttrams/utility/getTrackerFlag/"+emp_id+"";
+        String loginLogUrl = "http://103.56.208.123:8001/apex/ttrams/dashboard/loginLog";
+        String userImageUrl = "http://103.56.208.123:8001/apex/ttrams/utility/getUserImage/"+emp_code+"";
 
-                String data = rs.getString(4);
-                String sc = rs.getString(2);
-                String bl = rs.getString(3);
-                if (data != null) {
-                    if (!data.equals("0")) {
+        RequestQueue requestQueue = Volley.newRequestQueue(Dashboard.this);
 
-                        balance.add(new BarEntry(i, Float.parseFloat(rs.getString(3)),i));
-                        earn.add(new BarEntry(i, Float.parseFloat(rs.getString(4)),i));
-                        shortCode.add(rs.getString(2));
-                        i++;
-                    }
+        StringRequest imageReq = new StringRequest(Request.Method.GET, userImageUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject userImageInfo = array.getJSONObject(i);
+                        String emp_image = userImageInfo.getString("emp_image");
+                        if (emp_image.equals("null") || emp_image.equals("") ) {
+                            System.out.println("NULL IMAGE");
+                            imageFound = false;
+                        }
+                        else {
+                            byte[] decodedString = Base64.decode(emp_image,Base64.DEFAULT);
+                            Bitmap bitmap = BitmapFactory.decodeByteArray(decodedString,0,decodedString.length);
 
-                }
-
-
-
-            }
-
-
-            connected = true;
-
-            connection.close();
-
-        }
-        catch (Exception e) {
-
-            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
-            Log.i("ERRRRR", e.getLocalizedMessage());
-            e.printStackTrace();
-        }
-    }
-
-    public void AllGraph() {
-        try {
-            this.connection = createConnection();
-            //    Toast.makeText(MainActivity.this, "Connected",Toast.LENGTH_SHORT).show();
-
-
-            salaryMonthLists = new ArrayList<>();
-
-            NoOfEmp = new ArrayList<>();
-            absent = "";
-            present = "";
-            leave = "";
-            holiday = "";
-            late = "";
-            early = "";
-            imageFound = false;
-            selectedImage = null;
-
-//            beginDate = "01-MAR-22";
-//            lastDate = "31-MAR-22";
-            //formattedDate = "30-JUL-21";
-
-            balance = new ArrayList<>();
-            earn = new ArrayList<>();
-            shortCode = new ArrayList<>();
-            Statement stmt = connection.createStatement();
-
-
-
-
-            ResultSet rs=stmt.executeQuery("SELECT TO_CHAR(SM_PMS_MONTH,'MON'),EMP_NAME, NET_SALARY\n" +
-                    "  FROM (SELECT SM.SM_PMS_MONTH,\n" +
-                    "               E.EMP_NAME,\n" +
-                    "               (  (  NVL (SD.SD_ATTD_BONUS_AMT, 0)\n" +
-                    "                   + NVL (SD.SD_GROSS_SAL, 0)\n" +
-                    "                   + (ROUND (\n" +
-                    "                         (NVL (SD.SD_OT_HR, 0) * NVL (SD.SD_OT_RATE, 0))))\n" +
-                    "                   + (  NVL (SD.SD_JOB_HABITATION, 0)\n" +
-                    "                      + NVL (SD.SD_JOB_UTILITIES, 0)\n" +
-                    "                      + NVL (SD.SD_JOB_HOUSE_ALLOWANCE, 0)\n" +
-                    "                      + NVL (SD.SD_JOB_ENTERTAINMENT, 0)\n" +
-                    "                      + NVL (SD.SD_COMMITTED_SALARY, 0)\n" +
-                    "                      + NVL (SD.SD_FIXED_OT_AMT, 0)\n" +
-                    "                      + NVL (SD.SD_FOOD_SUBSIDY_AMT, 0)\n" +
-                    "                      + NVL (SD.SD_FACTORY_ALLOWANCE_AMT, 0)\n" +
-                    "                      + NVL (SD.SD_HOLIDAY_AMT, 0)\n" +
-                    "                      + NVL (SD.SD_REFUND_OTH_PAYMENT_AMT, 0)\n" +
-                    "                      + NVL (SD.SD_PROFIT_SHARE_AMT, 0)\n" +
-                    "                      + NVL (SD.SD_PERFORMANCE_BONUS_AMT, 0)))\n" +
-                    "                - (  NVL (SD.SD_PF, 0)\n" +
-                    "                   + NVL (SD.SD_LWPAY_AMT, 0)\n" +
-                    "                   + NVL (SD.SD_ABSENT_AMT, 0)\n" +
-                    "                   + NVL (SD.SD_ADVANCE_DEDUCT, 0)\n" +
-                    "                   + NVL (SD.SD_SCH_ADVANCE_DEDUCT, 0)\n" +
-                    "                   + NVL (SD.SD_PF_LOAN_DEDUCT, 0)\n" +
-                    "                   + NVL (SD.SD_TAX, 0)\n" +
-                    "                   + NVL (SD.SD_LUNCH_DEDUCT, 0)\n" +
-                    "                   + NVL (SD.SD_STAMP, 0)\n" +
-                    "                   + NVL (SD.SD_OTH_DEDUCT, 0)\n" +
-                    "                   + NVL (SD.SD_MD_ADVANCE_DEDUCT, 0)))\n" +
-                    "                  NET_SALARY\n" +
-                    "          FROM SALARY_DTL    SD,\n" +
-                    "               SALARY_MST    SM,\n" +
-                    "               EMP_MST       E,\n" +
-                    "               (SELECT *\n" +
-                    "                  FROM EMP_JOB_HISTORY\n" +
-                    "                 WHERE JOB_ID IN (  SELECT MAX (JOB_ID)\n" +
-                    "                                      FROM EMP_JOB_HISTORY\n" +
-                    "                                  GROUP BY JOB_EMP_ID)) EJH,\n" +
-                    "               JOB_SETUP_MST JSM,\n" +
-                    "               JOB_SETUP_DTL JSD,\n" +
-                    "               DIVISION_MST  DM,\n" +
-                    "               DEPT_MST      DPT\n" +
-                    "         WHERE     SM.SM_ID = SD.SD_SM_ID\n" +
-                    "               AND SD.SD_EMP_ID = E.EMP_ID\n" +
-                    "               AND E.EMP_ID = EJH.JOB_EMP_ID\n" +
-                    "               AND EJH.JOB_JSD_ID = JSD.JSD_ID\n" +
-                    "               AND JSD.JSD_JSM_ID = JSM.JSM_ID\n" +
-                    "               AND JSM.JSM_DIVM_ID = DM.DIVM_ID\n" +
-                    "               AND JSM.JSM_DEPT_ID = DPT.DEPT_ID\n" +
-                    "               AND SD.SD_EMP_ID = "+emp_id+"\n" +
-                    "               AND SM.SM_PMS_MONTH <=\n" +
-                    "                      TRUNC (ADD_MONTHS ( (LAST_DAY ('"+formattedDate+"') + 1), -1))\n" +
-                    "order by SM.SM_PMS_MONTH desc)\n" +
-                    " WHERE ROWNUM <= 6");
-
-
-            int i = 0;
-            while(rs.next()) {
-
-                salaryMonthLists.add(new SalaryMonthList(rs.getString(1),rs.getString(3)));
-
-            }
-
-            ResultSet rs1=stmt.executeQuery("SELECT ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'A') ABSENT,\n" +
-                    "       (  ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'P')\n" +
-                    "        + ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'PW')\n" +
-                    "        + ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'PH')\n" +
-                    "        + ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'PL')\n" +
-                    "        + ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'PLH')\n" +
-                    "        + ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'PA')\n" +
-                    "        + ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'PLW'))\n" +
-                    "          PRESENT,\n" +
-                    "       (  ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'L')\n" +
-                    "        + ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'LW')\n" +
-                    "        + ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'LH'))\n" +
-                    "          LEAVE,\n" +
-                    "       ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'H') +\n" +
-                    "       ATTD_HOLIDAY_COUNT ("+emp_id+", '"+ lastDate +"', 'W') HOLIDAY_WEEKEND\n" +
-                    "  FROM DUAL");
-
-
-            while(rs1.next()) {
-
-                absent = rs1.getString(1);
-                present = rs1.getString(2);
-                leave = rs1.getString(3);
-                holiday = rs1.getString(4);
-
-
-            }
-
-            ResultSet resultSet = stmt.executeQuery("SELECT LATE_COUNT_NEW\n" +
-                    "("+emp_id+",\n" +
-                    " '"+beginDate+"',\n" +
-                    " '"+ lastDate +"')\n" +
-                    "  FROM DUAL");
-
-            while (resultSet.next()) {
-                late = resultSet.getString(1);
-            }
-
-            ResultSet resultSet1 = stmt.executeQuery("  SELECT GET_EARLY_COUNT \n" +
-                    "("+emp_id+",\n" +
-                    " '"+beginDate+"',\n" +
-                    " '"+ lastDate +"')\n" +
-                    "  FROM DUAL");
-
-            while (resultSet1.next()) {
-                early = resultSet1.getString(1);
-            }
-
-//            ResultSet rs2=stmt.executeQuery("SELECT EM.LBEM_EMP_ID, lc.lc_short_code, LD.LBD_BALANCE_QTY,LD.LBD_CURRENT_QTY\n" +
-//                    "FROM LEAVE_BALANCE_EMP_MST  EM,\n" +
-//                    "LEAVE_BALANCE_YEAR_DTL YD,\n" +
-//                    "LEAVE_BALANCE_DTL      LD,\n" +
-//                    "leave_category lc\n" +
-//                    "WHERE EM.LBEM_ID = YD.LBYD_LBEM_ID\n" +
-//                    "AND YD.LBYD_ID = LD.LBD_LBYD_ID\n" +
-//                    "and ld.lbd_lc_id = lc.lc_id\n" +
-//                    "AND EM.LBEM_EMP_ID = "+emp_id+"\n" +
-//                    "AND TO_CHAR (YD.LBYD_YEAR, 'YYYY') = TO_CHAR (TO_DATE('"+ leaveDate +"'), 'YYYY')");
-            ResultSet rs2 = stmt.executeQuery("SELECT EM.LBEM_EMP_ID, lc.lc_short_code, case when lc.lc_short_code = 'LP' then 0 else get_leave_balance(EM.LBEM_EMP_ID,'"+leaveDate+"', lc.lc_short_code) end balance,NVL(LD.LBD_CURRENT_QTY,0) + NVL(ld.lbd_opening_qty,0)\n" +
-                    "FROM LEAVE_BALANCE_EMP_MST  EM,\n" +
-                    "LEAVE_BALANCE_YEAR_DTL YD,\n" +
-                    "LEAVE_BALANCE_DTL      LD,\n" +
-                    "leave_category lc\n" +
-                    "WHERE EM.LBEM_ID = YD.LBYD_LBEM_ID\n" +
-                    "AND YD.LBYD_ID = LD.LBD_LBYD_ID\n" +
-                    "and ld.lbd_lc_id = lc.lc_id\n" +
-                    "AND EM.LBEM_EMP_ID = "+emp_id+"\n" +
-                    "AND TO_CHAR (YD.LBYD_YEAR, 'YYYY') = TO_CHAR (TO_DATE('"+ leaveDate +"'), 'YYYY')");
-
-
-            int j = 0;
-            while(rs2.next()) {
-
-
-                String data = rs2.getString(4);
-                if (data != null) {
-                    if (!data.equals("0")) {
-                        balance.add(new BarEntry(j, Float.parseFloat(rs2.getString(3)),j));
-                        earn.add(new BarEntry(j, Float.parseFloat(rs2.getString(4)),j));
-                        shortCode.add(rs2.getString(2));
-                        j++;
+                            if (bitmap != null) {
+                                imageFound = true;
+                                selectedImage = bitmap;
+                            }
+                            else {
+                                imageFound = false;
+                            }
+                        }
                     }
                 }
-
-
+                connected = true;
+                updateInterface();
             }
-
-            ResultSet resultSet2 = stmt.executeQuery("SELECT\n" +
-                    "    emp_mst.emp_timeline_tracker_flag\n" +
-                    "\n" +
-                    "FROM\n" +
-                    "         emp_mst\n" +
-                    "\n" +
-                    "WHERE\n" +
-                    "    emp_mst.emp_id = "+emp_id+"");
-            while (resultSet2.next()) {
-                trackerAvailable = resultSet2.getInt(1);
+            catch (JSONException e) {
+                connected = false;
+                e.printStackTrace();
+                updateInterface();
             }
+        }, error -> {
+            conn = false;
+            connected = false;
+            error.printStackTrace();
+            updateInterface();
+        });
 
-            if (loginLog_check) {
+        StringRequest loginLogReq = new StringRequest(Request.Method.POST, loginLogUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String string_out = jsonObject.getString("string_out");
+                if (string_out.equals("Successfully Created")) {
+                    requestQueue.add(imageReq);
+                }
+                else {
+                    connected = false;
+                    updateInterface();
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+                connected = false;
+                updateInterface();
+            }
+        }, error -> {
+            conn = false;
+            connected = false;
+            error.printStackTrace();
+            updateInterface();
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
                 String userName = userInfoLists.get(0).getUserName();
                 String userId = userInfoLists.get(0).getEmp_id();
-
                 if (userId != null) {
                     if (!userId.isEmpty()) {
                         System.out.println(userId);
@@ -2230,60 +2957,595 @@ public class Dashboard extends AppCompatActivity {
                 } else {
                     userId = "0";
                 }
-
-                sessionId = "";
-
-                ResultSet resultSet3 = stmt.executeQuery("SELECT SYS_CONTEXT ('USERENV', 'SESSIONID') --INTO P_IULL_SESSION_ID\n" +
-                        "   FROM DUAL\n");
-
-                while (resultSet3.next()) {
-                    System.out.println("SESSION ID: "+ resultSet3.getString(1));
-                    sessionId = resultSet3.getString(1);
-                }
-
-                resultSet3.close();
-
-                CallableStatement callableStatement1 = connection.prepareCall("{call USERLOGINDTL(?,?,?,?,?,?,?,?,?)}");
-                callableStatement1.setString(1,userName);
-                callableStatement1.setString(2, brand+" "+model);
-                callableStatement1.setString(3,ipAddress);
-                callableStatement1.setString(4,hostUserName);
-                callableStatement1.setInt(5,Integer.parseInt(userId));
-                callableStatement1.setInt(6,Integer.parseInt(sessionId));
-                callableStatement1.setString(7,"1");
-                callableStatement1.setString(8,osName);
-                callableStatement1.setInt(9,3);
-                callableStatement1.execute();
-
-                callableStatement1.close();
+                headers.put("P_IULL_USER_ID",userName);
+                headers.put("P_IULL_CLIENT_HOST_NAME",brand+" "+model);
+                headers.put("P_IULL_CLIENT_IP_ADDR",ipAddress);
+                headers.put("P_IULL_CLIENT_HOST_USER_NAME",hostUserName);
+                headers.put("P_IULL_SESSION_USER_ID",userId);
+                headers.put("P_IULL_OS_NAME",osName);
+                return headers;
             }
+        };
 
-            ResultSet imageResult = stmt.executeQuery("SELECT EMP_IMAGE FROM EMP_MST WHERE EMP_ID = "+emp_id+"");
-
-            while (imageResult.next()) {
-                Blob b = imageResult.getBlob(1);
-                if (b == null) {
-                    imageFound = false;
+        StringRequest trackerFlagReq = new StringRequest(Request.Method.GET, trackerFlagUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject trackerInfo = array.getJSONObject(i);
+                        trackerAvailable = trackerInfo.getInt("emp_timeline_tracker_flag");
+                    }
+                }
+                if (loginLog_check) {
+                    requestQueue.add(loginLogReq);
                 }
                 else {
-                    imageFound = true;
-                    byte[] barr =b.getBytes(1,(int)b.length());
-                    selectedImage = BitmapFactory.decodeByteArray(barr,0,barr.length);
+                    requestQueue.add(imageReq);
                 }
             }
-            imageResult.close();
-            stmt.close();
+            catch (JSONException e) {
+                connected = false;
+                e.printStackTrace();
+                updateInterface();
+            }
+        }, error -> {
+            conn = false;
+            connected = false;
+            error.printStackTrace();
+            updateInterface();
+        });
 
-            connected = true;
+        StringRequest leaveDataReq = new StringRequest(Request.Method.GET, leaveDataUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject leaveInfo = array.getJSONObject(i);
+//                        String lbem_emp_id = leaveInfo.getString("lbem_emp_id");
+                        String lc_short_code = leaveInfo.getString("lc_short_code");
+                        String balance_all = leaveInfo.getString("balance");
+                        String quantity = leaveInfo.getString("quantity");
+                        if (!quantity.equals("null") && !quantity.equals("NULL")) {
+                            if (!quantity.equals("0")) {
+                                balance.add(new BarEntry(i, Float.parseFloat(balance_all),i));
+                                earn.add(new BarEntry(i, Float.parseFloat(quantity),i));
+                                shortCode.add(lc_short_code);
+                            }
+                        }
+                    }
+                }
+                requestQueue.add(trackerFlagReq);
 
-            connection.close();
+            }
+            catch (JSONException e) {
+                connected = false;
+                e.printStackTrace();
+                updateInterface();
+            }
+        }, error -> {
+            conn = false;
+            connected = false;
+            error.printStackTrace();
+            updateInterface();
+        });
 
+        StringRequest attendDataReq = new StringRequest(Request.Method.GET, attendDataUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject attendanceInfo = array.getJSONObject(i);
+                        absent = attendanceInfo.getString("absent");
+                        present = attendanceInfo.getString("present");
+                        leave = attendanceInfo.getString("leave");
+                        holiday = attendanceInfo.getString("holiday_weekend");
+                        late = attendanceInfo.getString("late_count");
+                        early = attendanceInfo.getString("early_count");
+                    }
+                    requestQueue.add(leaveDataReq);
+                }
+                else {
+                    connected = false;
+                    updateInterface();
+                }
+            }
+            catch (JSONException e) {
+                connected = false;
+                e.printStackTrace();
+                updateInterface();
+            }
+        }, error -> {
+            conn = false;
+            connected = false;
+            error.printStackTrace();
+            updateInterface();
+        });
+
+        StringRequest salaryMonthReq = new StringRequest(Request.Method.GET, salaryDataUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject salaryMonthInfo = array.getJSONObject(i);
+                        String mon_name = salaryMonthInfo.getString("mon_name");
+                        String net_salary = salaryMonthInfo.getString("net_salary");
+                        salaryMonthLists.add(new SalaryMonthList(mon_name,net_salary));
+                    }
+                }
+                requestQueue.add(attendDataReq);
+            }
+            catch (JSONException e) {
+                connected = false;
+                e.printStackTrace();
+                updateInterface();
+            }
+        }, error -> {
+            conn = false;
+            connected = false;
+            error.printStackTrace();
+            updateInterface();
+        });
+
+        StringRequest empFlagCheckReq = new StringRequest(Request.Method.GET, empFlagUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject info = array.getJSONObject(i);
+
+                        String emp_flag = info.getString("emp_flag")
+                                .equals("null") ? "" : info.getString("emp_flag");
+
+                        System.out.println(emp_flag);
+                        checkEmpFlag = emp_flag.equals("0");
+                    }
+                }
+                System.out.println(checkEmpFlag);
+                if (checkEmpFlag) {
+                    requestQueue.add(salaryMonthReq);
+                }
+                else {
+                    connected = true;
+                    updateInterface();
+                }
+            }
+            catch (JSONException e) {
+                connected = false;
+                e.printStackTrace();
+                updateInterface();
+            }
+        }, error -> {
+            conn = false;
+            connected = false;
+            error.printStackTrace();
+            updateInterface();
+        });
+
+        requestQueue.add(empFlagCheckReq);
+    }
+
+    public void updateInterface() {
+        waitProgress.dismiss();
+        if (conn) {
+            if (connected) {
+                if (checkEmpFlag) {
+                    monthName = new ArrayList<>();
+                    salary = new ArrayList<>();
+                    salaryValue = new ArrayList<>();
+
+                    for (int i = 0; i < salaryMonthLists.size(); i++) {
+                        for (int j = 0; j < months.size(); j++) {
+                            if (months.get(j).getMonth().equals(salaryMonthLists.get(i).getMonth())) {
+                                months.get(j).setSalary(salaryMonthLists.get(i).getSalary());
+                            }
+                        }
+                    }
+
+                    for (int i = months.size()-1; i >= 0; i--) {
+
+                        monthName.add(months.get(i).getMonth());
+                        salary.add(months.get(i).getSalary());
+
+                    }
+
+                    System.out.println(monthName);
+                    System.out.println(salary);
+
+                    for (int i = 0; i < salary.size(); i++) {
+                        salaryValue.add(new BarEntry(i, Float.parseFloat(salary.get(i)),i));
+                    }
+
+                    BarDataSet bardataset = new BarDataSet(salaryValue, "Months");
+                    salaryChart.animateY(1000);
+
+                    BarData data1 = new BarData(bardataset);
+                    bardataset.setColors(ColorTemplate.VORDIPLOM_COLORS);
+
+                    bardataset.setBarBorderColor(Color.DKGRAY);
+                    bardataset.setValueTextSize(8);
+                    bardataset.setValueFormatter(new LargeValueFormatter());
+                    salaryChart.setData(data1);
+                    salaryChart.getXAxis().setValueFormatter(new MyAxisValueFormatter(monthName));
+                    salaryChart.getAxisLeft().setValueFormatter(new LargeValueFormatter());
+
+
+                    // Pie Chart for Attendance
+                    final int[] piecolors = new int[]{
+
+
+                            Color.rgb(116, 185, 255),
+                            Color.rgb(85, 239, 196),
+                            Color.rgb(162, 155, 254),
+                            Color.rgb(223, 230, 233),
+                            Color.rgb(255, 234, 167),
+
+                            Color.rgb(250, 177, 160),
+                            Color.rgb(129, 236, 236),
+                            Color.rgb(255, 118, 117),
+                            Color.rgb(253, 121, 168),
+                            Color.rgb(96, 163, 188)};
+
+
+                    if (absent != null) {
+                        if (!absent.isEmpty()) {
+                            if (!absent.equals("0")) {
+                                NoOfEmp.add(new PieEntry(Float.parseFloat(absent), "Absent", 0));
+                            }
+                        }
+                    }
+
+                    if (present != null) {
+                        if (!present.isEmpty()) {
+                            if (!present.equals("0")) {
+                                NoOfEmp.add(new PieEntry(Float.parseFloat(present),"Present", 1));
+                            }
+                        }
+                    }
+
+                    if (late != null) {
+                        if (!late.isEmpty()) {
+                            if (!late.equals("0")) {
+                                NoOfEmp.add(new PieEntry(Float.parseFloat(late),"Late", 2));
+
+                            }
+                        }
+                    }
+
+                    if (early != null) {
+                        if (!early.isEmpty()) {
+                            if (!early.equals("0")) {
+                                NoOfEmp.add(new PieEntry(Float.parseFloat(early),"Early", 3));
+                            }
+                        }
+                    }
+
+                    if (leave != null) {
+                        if (!leave.isEmpty()) {
+                            if (!leave.equals("0")) {
+                                NoOfEmp.add(new PieEntry(Float.parseFloat(leave),"Leave", 4));
+                            }
+                        }
+                    }
+
+                    if (holiday != null) {
+                        if (!holiday.isEmpty()) {
+                            if (!holiday.equals("0")) {
+                                NoOfEmp.add(new PieEntry(Float.parseFloat(holiday),"Holiday/Weekend", 5));
+                            }
+                        }
+                    }
+
+                    if (NoOfEmp.size() == 0) {
+                        NoOfEmp.add(new PieEntry(1,"No Data Found", 6));
+
+                    }
+
+                    PieDataSet dataSet = new PieDataSet(NoOfEmp, "");
+                    pieChart.animateXY(1000, 1000);
+                    pieChart.setEntryLabelColor(Color.TRANSPARENT);
+
+                    PieData data = new PieData(dataSet);
+                    dataSet.setValueFormatter(new ValueFormatter() {
+                        @Override
+                        public String getFormattedValue(float value) {
+                            return String.valueOf((int) Math.floor(value));
+                        }
+                    });
+                    String label = dataSet.getValues().get(0).getLabel();
+                    System.out.println(label);
+                    if (label.equals("No Data Found")) {
+                        dataSet.setValueTextColor(Color.TRANSPARENT);
+                    } else {
+                        dataSet.setValueTextColor(Color.BLACK);
+                    }
+                    dataSet.setHighlightEnabled(true);
+                    dataSet.setValueTextSize(12);
+
+                    int[] num = new int[NoOfEmp.size()];
+                    for (int i = 0; i < NoOfEmp.size(); i++) {
+                        int neki = (int) NoOfEmp.get(i).getData();
+                        num[i] = piecolors[neki];
+                    }
+
+                    dataSet.setColors(ColorTemplate.createColors(num));
+
+                    pieChart.setData(data);
+                    pieChart.invalidate();
+
+
+                    // Leave Multi Bar
+                    if (balance.size() == 0 || earn.size() == 0 || shortCode.size() == 0) {
+                        // do nothing
+                    } else {
+                        XAxis xAxis = leaveChart.getXAxis();
+                        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+                        xAxis.setDrawGridLines(false);
+                        xAxis.setCenterAxisLabels(true);
+                        xAxis.setAxisMinimum(0);
+                        xAxis.setAxisMaximum(balance.size());
+                        xAxis.setGranularity(1);
+
+
+                        BarDataSet set1 = new BarDataSet(earn, "Earned Leave");
+                        set1.setColor(ColorTemplate.VORDIPLOM_COLORS[3]);
+                        set1.setValueFormatter(new ValueFormatter() {
+                            @Override
+                            public String getFormattedValue(float value) {
+                                return String.valueOf((int) Math.floor(value));
+                            }
+                        });
+                        BarDataSet set2 = new BarDataSet(balance, "Leave Balance");
+                        set2.setValueFormatter(new ValueFormatter() {
+                            @Override
+                            public String getFormattedValue(float value) {
+                                return String.valueOf((int) Math.floor(value));
+                            }
+                        });
+                        set2.setColor(ColorTemplate.VORDIPLOM_COLORS[2]);
+
+                        float groupSpace = 0.04f;
+                        float barSpace = 0.02f; // x2 dataset
+                        float barWidth = 0.46f;
+
+                        BarData leavedata = new BarData(set1, set2);
+                        if (earn.size() > 5) {
+                            leavedata.setValueTextSize(8);
+                        }
+                        else if (earn.size() > 3){
+                            leavedata.setValueTextSize(10);
+                        }
+                        else {
+                            leavedata.setValueTextSize(12);
+                        }
+                        leavedata.setBarWidth(barWidth); // set the width of each bar
+                        leaveChart.animateY(1000);
+                        leaveChart.setData(leavedata);
+                        leaveChart.groupBars(0, groupSpace, barSpace); // perform the "explicit" grouping
+                        leaveChart.invalidate();
+
+                        xAxis.setValueFormatter(new ValueFormatter() {
+                            @Override
+                            public String getAxisLabel(float value, AxisBase axis) {
+                                if (value < 0 || value >= shortCode.size()) {
+                                    return null;
+                                } else {
+//                                System.out.println(value);
+//                                System.out.println(axis);
+//                                System.out.println(shortCode.get((int)value));
+                                    return (shortCode.get((int) value));
+                                }
+
+                            }
+                        });
+                    }
+
+
+                    if (trackerAvailable == 1) {
+                        sharedSchedule = getSharedPreferences(SCHEDULING_FILE, MODE_PRIVATE);
+                        boolean isNewLogin = sharedSchedule.getBoolean(TRIGGERING,false);
+
+                        // Triggering Schedule
+                        System.out.println("SCHEDULING TASK STARTED");
+                        SharedPreferences.Editor editor = sharedSchedule.edit();
+                        editor.remove(SCHEDULING_EMP_ID);
+                        editor.remove(TRIGGERING);
+
+                        editor.putString(SCHEDULING_EMP_ID,emp_id);
+                        editor.putBoolean(TRIGGERING, true);
+                        editor.apply();
+                        editor.commit();
+                        createNotificationChannel();
+
+                        Intent intent = new Intent(Dashboard.this, Uploader.class);
+                        PendingIntent pendingIntent = null;
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                            pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent,PendingIntent.FLAG_IMMUTABLE);
+                        }
+
+
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.set(Calendar.HOUR_OF_DAY, 0);
+                        calendar.set(Calendar.MINUTE, 5);
+                        calendar.set(Calendar.SECOND, 0);
+                        //calendar.set(Calendar.AM_PM, Calendar.PM);
+
+//                    Calendar calendar = Calendar.getInstance();
+//                    calendar.setTimeInMillis(System.currentTimeMillis());
+//                    calendar.set(Calendar.SECOND, 0);
+//                    calendar.set(Calendar.MINUTE, 5);
+//                    calendar.set(Calendar.HOUR, 0);
+//                    calendar.set(Calendar.AM_PM, Calendar.AM);
+//                    calendar.add(Calendar.DAY_OF_MONTH, 1);
+
+                        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis(),AlarmManager.INTERVAL_HALF_HOUR,pendingIntent);
+                    }
+
+                    if (imageFound) {
+                        Glide.with(Dashboard.this)
+                                .load(selectedImage)
+                                .fitCenter()
+                                .into(userImage);
+                    }
+                    else {
+                        userImage.setImageResource(R.drawable.profile);
+                    }
+                    conn = false;
+                    connected = false;
+                    checkEmpFlag = false;
+                }
+                else {
+                    MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(Dashboard.this)
+                            .setTitle("FORCED LOGOUT!")
+                            .setMessage("Some Important Data have been changed according to your profile. That's why you have been forced logout from application. To continue please login again.")
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    userInfoLists.clear();
+                                    userDesignations.clear();
+                                    userInfoLists = new ArrayList<>();
+                                    userDesignations = new ArrayList<>();
+                                    isApproved = 0;
+                                    isLeaveApproved = 0;
+
+                                    SharedPreferences.Editor editor1 = sharedPreferences.edit();
+                                    editor1.remove(USER_NAME);
+                                    editor1.remove(USER_F_NAME);
+                                    editor1.remove(USER_L_NAME);
+                                    editor1.remove(EMAIL);
+                                    editor1.remove(CONTACT);
+                                    editor1.remove(EMP_ID_LOGIN);
+
+                                    editor1.remove(JSM_CODE);
+                                    editor1.remove(JSM_NAME);
+                                    editor1.remove(JSD_ID_LOGIN);
+                                    editor1.remove(JSD_OBJECTIVE);
+                                    editor1.remove(DEPT_NAME);
+                                    editor1.remove(DIV_NAME);
+                                    editor1.remove(DESG_NAME);
+                                    editor1.remove(DESG_PRIORITY);
+                                    editor1.remove(JOINING_DATE);
+                                    editor1.remove(DIV_ID);
+                                    editor1.remove(LOGIN_TF);
+
+                                    editor1.remove(IS_ATT_APPROVED);
+                                    editor1.remove(IS_LEAVE_APPROVED);
+                                    editor1.remove(COMPANY);
+                                    editor1.remove(SOFTWARE);
+                                    editor1.remove(LIVE_FLAG);
+//                                    editor1.remove(DATABASE_NAME);
+                                    editor1.apply();
+                                    editor1.commit();
+
+                                    if (trackerAvailable == 1) {
+                                        SharedPreferences.Editor editor = sharedSchedule.edit();
+                                        editor.remove(SCHEDULING_EMP_ID);
+                                        editor.remove(TRIGGERING);
+                                        editor.apply();
+                                        editor.commit();
+
+                                        Intent intent1 = new Intent(Dashboard.this, Uploader.class);
+                                        PendingIntent pendingIntent = null;
+                                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                                            pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent1,PendingIntent.FLAG_IMMUTABLE);
+                                        }
+                                        alarmManager.cancel(pendingIntent);
+                                    }
+
+                                    Intent intent = new Intent(Dashboard.this, Login.class);
+                                    startActivity(intent);
+                                    finish();
+                                }
+                            });
+                    AlertDialog alert = dialogBuilder.create();
+                    alert.setCanceledOnTouchOutside(false);
+                    alert.setCancelable(false);
+                    alert.show();
+                }
+            }
+            else {
+                AlertDialog dialog = new AlertDialog.Builder(Dashboard.this)
+                        .setMessage("There is a network issue in the server. Please Try later")
+                        .setPositiveButton("Retry", null)
+                        .setNegativeButton("Cancel",null)
+                        .show();
+
+                dialog.setCancelable(false);
+                dialog.setCanceledOnTouchOutside(false);
+                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                positive.setOnClickListener(v -> {
+
+                    getAllData();
+                    dialog.dismiss();
+                });
+
+                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+                negative.setOnClickListener(v -> {
+                    if (loginLog_check) {
+                        userInfoLists.clear();
+                        userDesignations.clear();
+                        userInfoLists = new ArrayList<>();
+                        userDesignations = new ArrayList<>();
+                        isApproved = 0;
+                        isLeaveApproved = 0;
+                        dialog.dismiss();
+                        finish();
+                    } else {
+                        dialog.dismiss();
+                    }
+                });
+            }
         }
-        catch (Exception e) {
+        else {
+            AlertDialog dialog = new AlertDialog.Builder(Dashboard.this)
+                    .setMessage("Please Check Your Internet Connection")
+                    .setPositiveButton("Retry", null)
+                    .setNegativeButton("Cancel",null)
+                    .show();
 
-            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
-            Log.i("ERRRRR", e.getLocalizedMessage());
-            e.printStackTrace();
+            dialog.setCancelable(false);
+            dialog.setCanceledOnTouchOutside(false);
+            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            positive.setOnClickListener(v -> {
+
+                getAllData();
+                dialog.dismiss();
+            });
+
+            Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+            negative.setOnClickListener(v -> {
+                if (loginLog_check) {
+                    userInfoLists.clear();
+                    userDesignations.clear();
+                    userInfoLists = new ArrayList<>();
+                    userDesignations = new ArrayList<>();
+                    isApproved = 0;
+                    isLeaveApproved = 0;
+                    dialog.dismiss();
+                    finish();
+                } else {
+                    dialog.dismiss();
+                }
+            });
         }
     }
 }

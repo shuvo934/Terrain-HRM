@@ -5,31 +5,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
-import android.content.Context;
-import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.github.dewinjm.monthyearpicker.MonthFormat;
 import com.github.dewinjm.monthyearpicker.MonthYearPickerDialog;
 import com.github.dewinjm.monthyearpicker.MonthYearPickerDialogFragment;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -37,12 +29,13 @@ import java.util.Locale;
 
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
-import ttit.com.shuvo.ikglhrm.leaveAll.leaveStatus.LeaveStatus;
-import ttit.com.shuvo.ikglhrm.payRoll.paySlip.PaySlip;
 
 import static ttit.com.shuvo.ikglhrm.Login.userDesignations;
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
-import static ttit.com.shuvo.ikglhrm.OracleConnection.createConnection;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class AdvanceDetails extends AppCompatActivity {
 
@@ -90,11 +83,11 @@ public class AdvanceDetails extends AppCompatActivity {
     String selected_date = "";
 
     WaitProgress waitProgress = new WaitProgress();
-    private String message = null;
+//    private String message = null;
     private Boolean conn = false;
     private Boolean connected = false;
 
-    private Connection connection;
+//    private Connection connection;
 
     String adv_taken = "";
     String adv_paid = "";
@@ -290,7 +283,8 @@ public class AdvanceDetails extends AppCompatActivity {
 
                         showDate = selectMonth.getText().toString();
 
-                        new Check().execute();
+//                        new Check().execute();
+                        getAdvanceData();
                     }
                 });
 
@@ -323,7 +317,8 @@ public class AdvanceDetails extends AppCompatActivity {
         errorMsgMonth.setVisibility(View.GONE);
 
 
-        new Check().execute();
+//        new Check().execute();
+        getAdvanceData();
 
 
         close.setOnClickListener(new View.OnClickListener() {
@@ -358,68 +353,376 @@ public class AdvanceDetails extends AppCompatActivity {
 
     }
 
-    public boolean isConnected() {
-        boolean connected = false;
-        boolean isMobile = false;
-        try {
-            ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo nInfo = cm.getActiveNetworkInfo();
-            connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
-            return connected;
-        } catch (Exception e) {
-            Log.e("Connectivity Exception", e.getMessage());
-        }
-        return connected;
-    }
+//    public boolean isConnected() {
+//        boolean connected = false;
+//        boolean isMobile = false;
+//        try {
+//            ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+//            NetworkInfo nInfo = cm.getActiveNetworkInfo();
+//            connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
+//            return connected;
+//        } catch (Exception e) {
+//            Log.e("Connectivity Exception", e.getMessage());
+//        }
+//        return connected;
+//    }
+//
+//    public boolean isOnline() {
+//
+//        Runtime runtime = Runtime.getRuntime();
+//        try {
+//            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+//            int     exitValue = ipProcess.waitFor();
+//            return (exitValue == 0);
+//        }
+//        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
+//
+//        return false;
+//    }
+//
+//    public class Check extends AsyncTask<Void, Void, Void> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//
+//            waitProgress.show(getSupportFragmentManager(),"WaitBar");
+//            waitProgress.setCancelable(false);
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            if (isConnected() && isOnline()) {
+//
+//                AdvanceData();
+//                if (connected) {
+//                    conn = true;
+//                    message= "Internet Connected";
+//                }
+//
+//            } else {
+//                conn = false;
+//                message = "Not Connected";
+//            }
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//
+//            waitProgress.dismiss();
+//            if (conn) {
+//
+//                errorMsgMonth.setVisibility(View.GONE);
+//                reportCard.setVisibility(View.VISIBLE);
+//
+//                monthName.setText(selectMonth.getText().toString());
+//
+//                empName.setText(emp_name);
+//                id.setText(user_id);
+//                band.setText(ban);
+//                strDes.setText(str_DES);
+//                jobPosition.setText(job_pos);
+//
+//                advTaken.setText(adv_taken);
+//                advPaid.setText(adv_paid);
+//                scAdvPaid.setText(sc_adv_paid);
+//                totalPaid.setText(total_paid);
+//                scAdvAllTaken.setText(sc_adv_all_taken);
+//                scAdvAllPaid.setText(sc_adv_all_paid);
+//
+//                if (sc_adv_all_taken != null && sc_adv_all_paid != null) {
+//                    if (!sc_adv_all_taken.isEmpty() && !sc_adv_all_paid.isEmpty()) {
+//                        int taken = Integer.parseInt(sc_adv_all_taken);
+//                        int paid = Integer.parseInt(sc_adv_all_paid);
+//                        int payable = taken - paid;
+//                        scAdvAllPayable.setText(String.valueOf(payable));
+//                    } else {
+//                        scAdvAllPayable.setText("");
+//                    }
+//                } else {
+//                    scAdvAllPayable.setText("");
+//                }
+//
+//
+//
+//
+//
+//            }
+//            else {
+//                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+//                AlertDialog dialog = new AlertDialog.Builder(AdvanceDetails.this)
+//                        .setMessage("Please Check Your Internet Connection")
+//                        .setPositiveButton("Retry", null)
+//                        .setNegativeButton("Cancel",null)
+//                        .show();
+//
+//                dialog.setCancelable(false);
+//                dialog.setCanceledOnTouchOutside(false);
+//                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+//                positive.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//
+//                        new Check().execute();
+//                        dialog.dismiss();
+//                    }
+//                });
+//
+//                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+//                negative.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        dialog.dismiss();
+//                        finish();
+//                    }
+//                });
+//            }
+//        }
+//    }
+//
+//    public void AdvanceData() {
+//        try {
+//            this.connection = createConnection();
+//
+//            Statement stmt = connection.createStatement();
+//
+//             adv_taken = "";
+//             adv_paid = "";
+//             sc_adv_paid = "";
+//             total_paid = "";
+//             sc_adv_all_taken = "";
+//             sc_adv_all_paid = "";
+//             sc_adv_all_payable = "";
+//
+//
+//
+//            ResultSet resultSet = stmt.executeQuery("SELECT SA.SA_EMP_ID, SUM (SA.SA_AMT) MONTH_ADVANCE\n" +
+//                    "    FROM STAFF_ADVANCE SA\n" +
+//                    "   WHERE     SA.SA_EMP_ID = "+emp_id+"\n" +
+//                    "         AND TO_CHAR (SA.SA_DATE, 'mmrrrr') = TO_CHAR (TO_DATE('"+selected_date+"'), 'mmrrrr')\n" +
+//                    "GROUP BY SA.SA_EMP_ID");
+//
+//            while (resultSet.next()) {
+//
+//                adv_taken = resultSet.getString(2);
+//
+//
+//            }
+//
+//            ResultSet resultSet1 = stmt.executeQuery("SELECT SD.SD_EMP_ID, NVL (SD.SD_ADVANCE_DEDUCT, 0) MONTH_ADV_PAID,\n" +
+//                    "        NVL (SD.SD_SCH_ADVANCE_DEDUCT, 0)  MONTH_SCH_ADV_PAID,\n" +
+//                    "      NVL (SD.SD_ADVANCE_DEDUCT, 0) + NVL (SD.SD_SCH_ADVANCE_DEDUCT, 0) TOTAL_MONTH_PAID\n" +
+//                    "  FROM SALARY_MST SM, SALARY_DTL SD\n" +
+//                    " WHERE     SM.SM_ID = SD.SD_SM_ID\n" +
+//                    "       AND SD.SD_EMP_ID = "+emp_id+"\n" +
+//                    "       AND TO_CHAR (SM.SM_PMS_MONTH, 'mmrrrr') = TO_CHAR (TO_DATE('"+selected_date+"'), 'mmrrrr')");
+//
+//            while (resultSet1.next()) {
+//
+//                adv_paid = resultSet1.getString(2);
+//                sc_adv_paid = resultSet1.getString(3);
+//                total_paid = resultSet1.getString(4);
+//            }
+//
+//            ResultSet resultSet2 = stmt.executeQuery("SELECT SAM.SSAM_EMP_ID,\n" +
+//                    "       SUM(SAM.SSAM_AMT)        SCH_ADV_AMT\n"+
+//                    " --SAD.SSAD_DIDUCT_AMT MONTH_SCH_ADV\n"+
+//                    "  FROM STAFF_SCHEDULE_ADV_MST SAM, STAFF_SCHEDULE_ADV_DTL SAD\n" +
+//                    " WHERE     SAM.SSAM_ID = SAD.SSAD_SSAM_ID\n" +
+//                    "       AND TO_CHAR (SAD.SSAD_MONTH, 'mmrrrr') = TO_CHAR (TO_DATE('"+selected_date+"'), 'mmrrrr')\n" +
+//                    "       AND SAM.SSAM_EMP_ID = "+emp_id+"" +
+//                    "group by SAM.SSAM_EMP_ID");
+//
+//            while (resultSet2.next()) {
+//                sc_adv_all_taken = resultSet2.getString(2);
+//            }
+//
+//            ResultSet resultSet3 = stmt.executeQuery("SELECT NVL (SUM (SSAD_DIDUCT_AMT), 0) TOTAL_SCH_PAID\n" +
+//                    "  FROM STAFF_SCHEDULE_ADV_MST, STAFF_SCHEDULE_ADV_DTL\n" +
+//                    " WHERE     STAFF_SCHEDULE_ADV_MST.SSAM_ID =\n" +
+//                    "              STAFF_SCHEDULE_ADV_DTL.SSAD_SSAM_ID\n" +
+//                    "       AND TRUNC (STAFF_SCHEDULE_ADV_DTL.SSAD_MONTH) <=\n" +
+//                    "              TRUNC (ADD_MONTHS ( (LAST_DAY ('"+selected_date+"') + 1), -1))\n" +
+//                    "       AND ssam_id IN\n" +
+//                    "              (SELECT SAD.SSAD_SSAM_ID\n" +
+//                    "                 FROM STAFF_SCHEDULE_ADV_DTL SAD\n" +
+//                    "                WHERE TO_CHAR (SAD.SSAD_MONTH, 'mmrrrr') =\n" +
+//                    "                         TO_CHAR (TO_DATE('"+selected_date+"'), 'mmrrrr'))\n" +
+//                    "       AND ssad_paid_flag = 1\n" +
+//                    "       AND STAFF_SCHEDULE_ADV_MST.SSAM_EMP_ID = "+emp_id+"");
+//
+//            while (resultSet3.next()) {
+//                sc_adv_all_paid = resultSet3.getString(1);
+//            }
+//
+//
+//            connected = true;
+//
+//            connection.close();
+//
+//        }
+//        catch (Exception e) {
+//
+//            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
+//            Log.i("ERRRRR", e.getLocalizedMessage());
+//            e.printStackTrace();
+//        }
+//    }
 
-    public boolean isOnline() {
+    public void getAdvanceData() {
+        waitProgress.show(getSupportFragmentManager(),"WaitBar");
+        waitProgress.setCancelable(false);
+        conn = false;
+        connected = false;
 
-        Runtime runtime = Runtime.getRuntime();
-        try {
-            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
-            int     exitValue = ipProcess.waitFor();
-            return (exitValue == 0);
-        }
-        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
+        adv_taken = "";
+        adv_paid = "";
+        sc_adv_paid = "";
+        total_paid = "";
+        sc_adv_all_taken = "";
+        sc_adv_all_paid = "";
+        sc_adv_all_payable = "";
 
-        return false;
-    }
+        String advtakenUrl = "http://103.56.208.123:8001/apex/ttrams/advanceData/getAdvTaken/"+emp_id+"/"+selected_date+"";
+        String advPaidUrl = "http://103.56.208.123:8001/apex/ttrams/advanceData/getAdvancePaid/"+emp_id+"/"+selected_date+"";
+        String schAdvTakenUrl = "http://103.56.208.123:8001/apex/ttrams/advanceData/getSchAdvTaken/"+emp_id+"/"+selected_date+"";
+        String schAdvPaidUrl = "http://103.56.208.123:8001/apex/ttrams/advanceData/getSchAdvPaid/"+emp_id+"/"+selected_date+"";
 
-    public class Check extends AsyncTask<Void, Void, Void> {
+        RequestQueue requestQueue = Volley.newRequestQueue(AdvanceDetails.this);
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
+        StringRequest schAdvPaidReq = new StringRequest(Request.Method.GET, schAdvPaidUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject advInfo = array.getJSONObject(i);
 
-            waitProgress.show(getSupportFragmentManager(),"WaitBar");
-            waitProgress.setCancelable(false);
-        }
+                        sc_adv_all_paid = advInfo.getString("total_sch_paid")
+                                .equals("null") ? "" : advInfo.getString("total_sch_paid");
+                    }
+                }
+                connected = true;
+                updateLayout();
+            }
+            catch (JSONException e) {
+                e.printStackTrace();
+                connected = false;
+                updateLayout();
+            }
+        }, error -> {
+            error.printStackTrace();
+            conn = false;
+            connected = false;
+            updateLayout();
+        });
 
-        @Override
-        protected Void doInBackground(Void... voids) {
-            if (isConnected() && isOnline()) {
+        StringRequest schAdvTakReq = new StringRequest(Request.Method.GET, schAdvTakenUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject advInfo = array.getJSONObject(i);
 
-                AdvanceData();
-                if (connected) {
-                    conn = true;
-                    message= "Internet Connected";
+                        sc_adv_all_taken = advInfo.getString("sch_adv_amt")
+                                .equals("null") ? "" : advInfo.getString("sch_adv_amt");
+                    }
+                }
+                requestQueue.add(schAdvPaidReq);
+            }
+            catch (JSONException e) {
+                e.printStackTrace();
+                connected = false;
+                updateLayout();
+            }
+        }, error -> {
+            error.printStackTrace();
+            conn = false;
+            connected = false;
+            updateLayout();
+        });
+
+        StringRequest advPaidReq = new StringRequest(Request.Method.GET, advPaidUrl, response -> {
+           conn = true;
+           try {
+               JSONObject jsonObject = new JSONObject(response);
+               String items = jsonObject.getString("items");
+               String count = jsonObject.getString("count");
+               if (!count.equals("0")) {
+                   JSONArray array = new JSONArray(items);
+                   for (int i = 0; i < array.length(); i++) {
+                       JSONObject advInfo = array.getJSONObject(i);
+
+                       adv_paid = advInfo.getString("month_adv_paid")
+                               .equals("null") ? "" : advInfo.getString("month_adv_paid");
+                       sc_adv_paid = advInfo.getString("month_sch_adv_paid")
+                               .equals("null") ? "" : advInfo.getString("month_sch_adv_paid");
+                       total_paid = advInfo.getString("total_month_paid")
+                               .equals("null") ? "" : advInfo.getString("total_month_paid");
+
+                   }
+               }
+               requestQueue.add(schAdvTakReq);
+           }
+           catch (JSONException e) {
+               e.printStackTrace();
+               connected = false;
+               updateLayout();
+           }
+        }, error -> {
+            error.printStackTrace();
+            conn = false;
+            connected = false;
+            updateLayout();
+        });
+
+        StringRequest advtakReq = new StringRequest(Request.Method.GET, advtakenUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject advInfo = array.getJSONObject(i);
+
+                        adv_taken = advInfo.getString("month_advance")
+                                .equals("null") ? "" : advInfo.getString("month_advance");
+                    }
                 }
 
-            } else {
-                conn = false;
-                message = "Not Connected";
+                requestQueue.add(advPaidReq);
             }
+            catch (JSONException e) {
+                e.printStackTrace();
+                connected = false;
+                updateLayout();
+            }
+        }, error -> {
+            error.printStackTrace();
+            conn = false;
+            connected = false;
+            updateLayout();
+        });
 
-            return null;
-        }
+        requestQueue.add(advtakReq);
+    }
 
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-            waitProgress.dismiss();
-            if (conn) {
-
+    private void updateLayout() {
+        waitProgress.dismiss();
+        if (conn) {
+            if (connected) {
                 errorMsgMonth.setVisibility(View.GONE);
                 reportCard.setVisibility(View.VISIBLE);
 
@@ -450,15 +753,12 @@ public class AdvanceDetails extends AppCompatActivity {
                 } else {
                     scAdvAllPayable.setText("");
                 }
-
-
-
-
-
-            }else {
-                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+                conn = false;
+                connected = false;
+            }
+            else {
                 AlertDialog dialog = new AlertDialog.Builder(AdvanceDetails.this)
-                        .setMessage("Please Check Your Internet Connection")
+                        .setMessage("There is a network issue in the server. Please Try later.")
                         .setPositiveButton("Retry", null)
                         .setNegativeButton("Cancel",null)
                         .show();
@@ -466,113 +766,40 @@ public class AdvanceDetails extends AppCompatActivity {
                 dialog.setCancelable(false);
                 dialog.setCanceledOnTouchOutside(false);
                 Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                positive.setOnClickListener(v -> {
 
-                        new Check().execute();
-                        dialog.dismiss();
-                    }
+                    getAdvanceData();
+                    dialog.dismiss();
                 });
 
                 Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                        finish();
-                    }
+                negative.setOnClickListener(v -> {
+                    dialog.dismiss();
+                    finish();
                 });
             }
         }
-    }
+        else {
+            AlertDialog dialog = new AlertDialog.Builder(AdvanceDetails.this)
+                    .setMessage("Please Check Your Internet Connection")
+                    .setPositiveButton("Retry", null)
+                    .setNegativeButton("Cancel",null)
+                    .show();
 
-    public void AdvanceData() {
-        try {
-            this.connection = createConnection();
+            dialog.setCancelable(false);
+            dialog.setCanceledOnTouchOutside(false);
+            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            positive.setOnClickListener(v -> {
 
-            Statement stmt = connection.createStatement();
+                getAdvanceData();
+                dialog.dismiss();
+            });
 
-             adv_taken = "";
-             adv_paid = "";
-             sc_adv_paid = "";
-             total_paid = "";
-             sc_adv_all_taken = "";
-             sc_adv_all_paid = "";
-             sc_adv_all_payable = "";
-
-
-
-            ResultSet resultSet = stmt.executeQuery("SELECT SA.SA_EMP_ID, SUM (SA.SA_AMT) MONTH_ADVANCE\n" +
-                    "    FROM STAFF_ADVANCE SA\n" +
-                    "   WHERE     SA.SA_EMP_ID = "+emp_id+"\n" +
-                    "         AND TO_CHAR (SA.SA_DATE, 'mmrrrr') = TO_CHAR (TO_DATE('"+selected_date+"'), 'mmrrrr')\n" +
-                    "GROUP BY SA.SA_EMP_ID");
-
-            while (resultSet.next()) {
-
-                adv_taken = resultSet.getString(2);
-
-
-            }
-
-            ResultSet resultSet1 = stmt.executeQuery("SELECT SD.SD_EMP_ID, NVL (SD.SD_ADVANCE_DEDUCT, 0) MONTH_ADV_PAID,\n" +
-                    "        NVL (SD.SD_SCH_ADVANCE_DEDUCT, 0)  MONTH_SCH_ADV_PAID,\n" +
-                    "      NVL (SD.SD_ADVANCE_DEDUCT, 0) + NVL (SD.SD_SCH_ADVANCE_DEDUCT, 0) TOTAL_MONTH_PAID\n" +
-                    "  FROM SALARY_MST SM, SALARY_DTL SD\n" +
-                    " WHERE     SM.SM_ID = SD.SD_SM_ID\n" +
-                    "       AND SD.SD_EMP_ID = "+emp_id+"\n" +
-                    "       AND TO_CHAR (SM.SM_PMS_MONTH, 'mmrrrr') = TO_CHAR (TO_DATE('"+selected_date+"'), 'mmrrrr')");
-
-            while (resultSet1.next()) {
-
-                adv_paid = resultSet1.getString(2);
-                sc_adv_paid = resultSet1.getString(3);
-                total_paid = resultSet1.getString(4);
-            }
-
-            ResultSet resultSet2 = stmt.executeQuery("SELECT SAM.SSAM_EMP_ID,\n" +
-                    "       SUM(SAM.SSAM_AMT)        SCH_ADV_AMT\n"+
-                    " --SAD.SSAD_DIDUCT_AMT MONTH_SCH_ADV\n"+
-                    "  FROM STAFF_SCHEDULE_ADV_MST SAM, STAFF_SCHEDULE_ADV_DTL SAD\n" +
-                    " WHERE     SAM.SSAM_ID = SAD.SSAD_SSAM_ID\n" +
-                    "       AND TO_CHAR (SAD.SSAD_MONTH, 'mmrrrr') = TO_CHAR (TO_DATE('"+selected_date+"'), 'mmrrrr')\n" +
-                    "       AND SAM.SSAM_EMP_ID = "+emp_id+"" +
-                    "group by SAM.SSAM_EMP_ID");
-
-            while (resultSet2.next()) {
-                sc_adv_all_taken = resultSet2.getString(2);
-            }
-
-            ResultSet resultSet3 = stmt.executeQuery("SELECT NVL (SUM (SSAD_DIDUCT_AMT), 0) TOTAL_SCH_PAID\n" +
-                    "  FROM STAFF_SCHEDULE_ADV_MST, STAFF_SCHEDULE_ADV_DTL\n" +
-                    " WHERE     STAFF_SCHEDULE_ADV_MST.SSAM_ID =\n" +
-                    "              STAFF_SCHEDULE_ADV_DTL.SSAD_SSAM_ID\n" +
-                    "       AND TRUNC (STAFF_SCHEDULE_ADV_DTL.SSAD_MONTH) <=\n" +
-                    "              TRUNC (ADD_MONTHS ( (LAST_DAY ('"+selected_date+"') + 1), -1))\n" +
-                    "       AND ssam_id IN\n" +
-                    "              (SELECT SAD.SSAD_SSAM_ID\n" +
-                    "                 FROM STAFF_SCHEDULE_ADV_DTL SAD\n" +
-                    "                WHERE TO_CHAR (SAD.SSAD_MONTH, 'mmrrrr') =\n" +
-                    "                         TO_CHAR (TO_DATE('"+selected_date+"'), 'mmrrrr'))\n" +
-                    "       AND ssad_paid_flag = 1\n" +
-                    "       AND STAFF_SCHEDULE_ADV_MST.SSAM_EMP_ID = "+emp_id+"");
-
-            while (resultSet3.next()) {
-                sc_adv_all_paid = resultSet3.getString(1);
-            }
-
-
-            connected = true;
-
-            connection.close();
-
-        }
-        catch (Exception e) {
-
-            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
-            Log.i("ERRRRR", e.getLocalizedMessage());
-            e.printStackTrace();
+            Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+            negative.setOnClickListener(v -> {
+                dialog.dismiss();
+                finish();
+            });
         }
     }
 }

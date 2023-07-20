@@ -211,10 +211,10 @@ public class SelectApproveReq extends AppCompatDialogFragment implements SelectA
             System.out.println(id);
             System.out.println(darmID);
             System.out.println(darmEmp);
-            requestCode.setText(id);
             req_code = id;
             darm_id = darmID;
             darm_emp_id = darmEmp;
+            requestCode.setText(id);
             requestCode.setTextColor(Color.BLACK);
             fromAttApp = 0;
         } else if (fromLApp == 1) {
@@ -222,10 +222,10 @@ public class SelectApproveReq extends AppCompatDialogFragment implements SelectA
             System.out.println(id);
             System.out.println(darmID);
             System.out.println(darmEmp);
-            requestCodeLeave.setText(id);
             req_code_leave = id;
             la_id = darmID;
             la_emp_id = darmEmp;
+            requestCodeLeave.setText(id);
             requestCodeLeave.setTextColor(Color.BLACK);
             fromLApp = 0;
         }

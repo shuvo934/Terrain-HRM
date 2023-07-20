@@ -4,7 +4,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.app.DownloadManager;
@@ -26,6 +25,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.github.dewinjm.monthyearpicker.MonthFormat;
 import com.github.dewinjm.monthyearpicker.MonthYearPickerDialog;
 import com.github.dewinjm.monthyearpicker.MonthYearPickerDialogFragment;
@@ -34,15 +37,8 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.io.IOException;
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.sql.Types;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -50,14 +46,13 @@ import java.util.Locale;
 
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
-import ttit.com.shuvo.ikglhrm.attendance.report.AttenReportAdapter;
-import ttit.com.shuvo.ikglhrm.attendance.report.AttendanceReport;
-import ttit.com.shuvo.ikglhrm.attendance.status.StatusList;
 
 import static ttit.com.shuvo.ikglhrm.Login.userDesignations;
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
-import static ttit.com.shuvo.ikglhrm.OracleConnection.DEFAULT_USERNAME;
-import static ttit.com.shuvo.ikglhrm.OracleConnection.createConnection;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class LeaveStatus extends AppCompatActivity {
 
@@ -103,12 +98,12 @@ public class LeaveStatus extends AppCompatActivity {
     String URL = "";
 
     WaitProgress waitProgress = new WaitProgress();
-    private String message = null;
+//    private String message = null;
     private Boolean conn = false;
     private Boolean connected = false;
     private Boolean downConn = false;
 
-    private Connection connection;
+//    private Connection connection;
 
     ArrayList<String> leaveCode;
     ArrayList<String> consumptionValue;
@@ -326,7 +321,8 @@ public class LeaveStatus extends AppCompatActivity {
 
                         showDate = selectMonth.getText().toString();
 
-                        new Check().execute();
+//                        new Check().execute();
+                        getStatus();
                     }
                 });
 
@@ -383,7 +379,8 @@ public class LeaveStatus extends AppCompatActivity {
         statusReport.setVisibility(View.GONE);
 
 
-        new Check().execute();
+//        new Check().execute();
+        getStatus();
 
         close.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -554,41 +551,239 @@ public class LeaveStatus extends AppCompatActivity {
         }
     }
 
-    public class Check extends AsyncTask<Void, Void, Void> {
+//    public class Check extends AsyncTask<Void, Void, Void> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//
+//            waitProgress.show(getSupportFragmentManager(),"WaitBar");
+//            waitProgress.setCancelable(false);
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            if (isConnected() && isOnline()) {
+//
+//                StatusDetails();
+//                if (connected) {
+//                    conn = true;
+//                    message= "Internet Connected";
+//                }
+//
+//            } else {
+//                conn = false;
+//                message = "Not Connected";
+//            }
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//
+//            waitProgress.dismiss();
+//            if (conn) {
+//
+//                statusReport.setVisibility(View.VISIBLE);
+//                download.setVisibility(View.VISIBLE);
+//
+//                consumEL.setText(consumptionValue.get(0));
+//                consumCL.setText(consumptionValue.get(1));
+//                consumSL.setText(consumptionValue.get(2));
+//                consumML.setText(consumptionValue.get(3));
+//
+//                balanceEL.setText(balanceValue.get(0));
+//                balanceCL.setText(balanceValue.get(1));
+//                balanceSL.setText(balanceValue.get(2));
+//                balanceML.setText(balanceValue.get(3));
+//
+//                fromMonth.setText("'For Month-Year: "+ showDate+"'");
+//
+//
+//
+//            }
+//            else {
+//                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+//                AlertDialog dialog = new AlertDialog.Builder(LeaveStatus.this)
+//                        .setMessage("Please Check Your Internet Connection")
+//                        .setPositiveButton("Retry", null)
+//                        .setNegativeButton("Cancel",null)
+//                        .show();
+//
+//                dialog.setCancelable(false);
+//                dialog.setCanceledOnTouchOutside(false);
+//                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+//                positive.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//
+//                        new Check().execute();
+//                        dialog.dismiss();
+//                    }
+//                });
+//
+//                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+//                negative.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        dialog.dismiss();
+//                        finish();
+//                    }
+//                });
+//            }
+//        }
+//    }
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
+//    public void StatusDetails() {
+//        try {
+//            this.connection = createConnection();
+//            //    Toast.makeText(MainActivity.this, "Connected",Toast.LENGTH_SHORT).show();
+//
+//
+//            balanceValue = new ArrayList<>();
+//            consumptionValue = new ArrayList<>();
+//           // Statement stmt = connection.createStatement();
+//
+//            CallableStatement callableStatement = connection.prepareCall("begin ? := GET_LEAVE_BALANCE(?,?,?); end;");
+//            callableStatement.setInt(2, Integer.parseInt(emp_id));
+//            callableStatement.setString(3, selected_date);
+//            for (int i = 0; i < leaveCode.size(); i++) {
+//                callableStatement.setString(4,leaveCode.get(i));
+//                callableStatement.registerOutParameter(1, Types.INTEGER);
+//                callableStatement.execute();
+//                int ddd = callableStatement.getInt(1);
+//                System.out.println(ddd);
+//                balanceValue.add(String.valueOf(ddd));
+//            }
+//
+//            callableStatement.close();
+//
+//            CallableStatement callableStatement1 = connection.prepareCall("begin ? := GET_CONSUMED_LEAVE_BY_MONTH(?,?,?); end;");
+//            callableStatement1.setInt(2, Integer.parseInt(emp_id));
+//            callableStatement1.setString(3, selected_date);
+//            for (int i = 0; i < leaveCode.size(); i++) {
+//                callableStatement1.setString(4,leaveCode.get(i));
+//                callableStatement1.registerOutParameter(1, Types.INTEGER);
+//                callableStatement1.execute();
+//                int ddd = callableStatement1.getInt(1);
+//                System.out.println(ddd);
+//                consumptionValue.add(String.valueOf(ddd));
+//            }
+//
+//            callableStatement1.close();
+//
+//
+//            String criteria = "Month,Year :"+selected_month_full+", "+year_full+", Employee ID:"+user_id+"";
+//
+//            if (DEFAULT_USERNAME.equals("IKGL")) {
+//                URL = "http://103.56.208.123:7778/reports/rwservlet?hrsikgl+report=D:\\ibrahim_knit\\Reports\\EMP_LEAVE_CONS_BAL.rep+EMPID="+emp_id+"+P_DATE='"+selected_date+"'+CRITERIA='"+criteria+"'";
+//            }
+//            else if (DEFAULT_USERNAME.equals("TTRAMS")) {
+//                URL = "http://103.56.208.123:7778/reports/rwservlet?hrsttrams+report=D:\\TTIT_RAMS\\Reports\\EMP_LEAVE_CONS_BAL.rep+EMPID="+emp_id+"+P_DATE='"+selected_date+"'+CRITERIA='"+criteria+"'";
+//            }
+//
+//
+//            connected = true;
+//
+//            connection.close();
+//
+//        }
+//        catch (Exception e) {
+//
+//            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
+//            Log.i("ERRRRR", e.getLocalizedMessage());
+//            e.printStackTrace();
+//        }
+//    }
 
-            waitProgress.show(getSupportFragmentManager(),"WaitBar");
-            waitProgress.setCancelable(false);
-        }
+    public void getStatus() {
+        waitProgress.show(getSupportFragmentManager(),"WaitBar");
+        waitProgress.setCancelable(false);
+        conn = false;
+        connected = false;
 
-        @Override
-        protected Void doInBackground(Void... voids) {
-            if (isConnected() && isOnline()) {
+        balanceValue = new ArrayList<>();
+        consumptionValue = new ArrayList<>();
 
-                StatusDetails();
-                if (connected) {
-                    conn = true;
-                    message= "Internet Connected";
+        String blUrl = "http://103.56.208.123:8001/apex/ttrams/leave/getLeaveStatus_balance/"+emp_id+"/"+selected_date+"";
+        String consumUrl = "http://103.56.208.123:8001/apex/ttrams/leave/getLeaveStatus_consume/"+emp_id+"/"+selected_date+"";
+
+        RequestQueue requestQueue = Volley.newRequestQueue(LeaveStatus.this);
+
+        StringRequest consReq = new StringRequest(Request.Method.GET, consumUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject consInfo = array.getJSONObject(i);
+
+                        String val = consInfo.getString("leave_consumption");
+                        consumptionValue.add(val);
+                    }
                 }
 
-            } else {
-                conn = false;
-                message = "Not Connected";
+                String criteria = "Month,Year :"+selected_month_full+", "+year_full+", Employee ID:"+user_id+"";
+                URL = "http://103.56.208.123:7778/reports/rwservlet?hrsttrams+report=D:\\TTIT_RAMS\\Reports\\EMP_LEAVE_CONS_BAL.rep+EMPID="+emp_id+"+P_DATE='"+selected_date+"'+CRITERIA='"+criteria+"'";
+                connected = true;
+                updateLay();
             }
+            catch (JSONException e) {
+                e.printStackTrace();
+                connected = false;
+                updateLay();
+            }
+        }, error -> {
+            error.printStackTrace();
+            conn = false;
+            connected = false;
+            updateLay();
+        });
 
-            return null;
-        }
+        StringRequest blReq = new StringRequest(Request.Method.GET, blUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject blInfo = array.getJSONObject(i);
 
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
+                        String val = blInfo.getString("leave_balance");
 
-            waitProgress.dismiss();
-            if (conn) {
+                        balanceValue.add(val);
 
+                    }
+                }
+                requestQueue.add(consReq);
+            }
+            catch (JSONException e) {
+                e.printStackTrace();
+                connected = false;
+                updateLay();
+            }
+        }, error -> {
+           error.printStackTrace();
+           conn = false;
+           connected = false;
+           updateLay();
+        });
+
+        requestQueue.add(blReq);
+
+    }
+
+    private void updateLay() {
+        waitProgress.dismiss();
+        if (conn) {
+            if (connected) {
                 statusReport.setVisibility(View.VISIBLE);
                 download.setVisibility(View.VISIBLE);
 
@@ -603,13 +798,10 @@ public class LeaveStatus extends AppCompatActivity {
                 balanceML.setText(balanceValue.get(3));
 
                 fromMonth.setText("'For Month-Year: "+ showDate+"'");
-
-
-
-            }else {
-                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+            }
+            else {
                 AlertDialog dialog = new AlertDialog.Builder(LeaveStatus.this)
-                        .setMessage("Please Check Your Internet Connection")
+                        .setMessage("There is a network issue in the server. Please Try later.")
                         .setPositiveButton("Retry", null)
                         .setNegativeButton("Cancel",null)
                         .show();
@@ -617,86 +809,40 @@ public class LeaveStatus extends AppCompatActivity {
                 dialog.setCancelable(false);
                 dialog.setCanceledOnTouchOutside(false);
                 Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                positive.setOnClickListener(v -> {
 
-                        new Check().execute();
-                        dialog.dismiss();
-                    }
+                    getStatus();
+                    dialog.dismiss();
                 });
 
                 Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                        finish();
-                    }
+                negative.setOnClickListener(v -> {
+                    dialog.dismiss();
+                    finish();
                 });
             }
         }
-    }
+        else {
+            AlertDialog dialog = new AlertDialog.Builder(LeaveStatus.this)
+                    .setMessage("Please Check Your Internet Connection")
+                    .setPositiveButton("Retry", null)
+                    .setNegativeButton("Cancel",null)
+                    .show();
 
-    public void StatusDetails() {
-        try {
-            this.connection = createConnection();
-            //    Toast.makeText(MainActivity.this, "Connected",Toast.LENGTH_SHORT).show();
+            dialog.setCancelable(false);
+            dialog.setCanceledOnTouchOutside(false);
+            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            positive.setOnClickListener(v -> {
 
+                getStatus();
+                dialog.dismiss();
+            });
 
-            balanceValue = new ArrayList<>();
-            consumptionValue = new ArrayList<>();
-           // Statement stmt = connection.createStatement();
-
-            CallableStatement callableStatement = connection.prepareCall("begin ? := GET_LEAVE_BALANCE(?,?,?); end;");
-            callableStatement.setInt(2, Integer.parseInt(emp_id));
-            callableStatement.setString(3, selected_date);
-            for (int i = 0; i < leaveCode.size(); i++) {
-                callableStatement.setString(4,leaveCode.get(i));
-                callableStatement.registerOutParameter(1, Types.INTEGER);
-                callableStatement.execute();
-                int ddd = callableStatement.getInt(1);
-                System.out.println(ddd);
-                balanceValue.add(String.valueOf(ddd));
-            }
-
-            callableStatement.close();
-
-            CallableStatement callableStatement1 = connection.prepareCall("begin ? := GET_CONSUMED_LEAVE_BY_MONTH(?,?,?); end;");
-            callableStatement1.setInt(2, Integer.parseInt(emp_id));
-            callableStatement1.setString(3, selected_date);
-            for (int i = 0; i < leaveCode.size(); i++) {
-                callableStatement1.setString(4,leaveCode.get(i));
-                callableStatement1.registerOutParameter(1, Types.INTEGER);
-                callableStatement1.execute();
-                int ddd = callableStatement1.getInt(1);
-                System.out.println(ddd);
-                consumptionValue.add(String.valueOf(ddd));
-            }
-
-            callableStatement1.close();
-
-
-            String criteria = "Month,Year :"+selected_month_full+", "+year_full+", Employee ID:"+user_id+"";
-
-            if (DEFAULT_USERNAME.equals("IKGL")) {
-                URL = "http://103.56.208.123:7778/reports/rwservlet?hrsikgl+report=D:\\ibrahim_knit\\Reports\\EMP_LEAVE_CONS_BAL.rep+EMPID="+emp_id+"+P_DATE='"+selected_date+"'+CRITERIA='"+criteria+"'";
-            }
-            else if (DEFAULT_USERNAME.equals("TTRAMS")) {
-                URL = "http://103.56.208.123:7778/reports/rwservlet?hrsikgl+report=D:\\ttit_rams\\Reports\\EMP_LEAVE_CONS_BAL.rep+EMPID="+emp_id+"+P_DATE='"+selected_date+"'+CRITERIA='"+criteria+"'";
-            }
-
-
-            connected = true;
-
-            connection.close();
-
-        }
-        catch (Exception e) {
-
-            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
-            Log.i("ERRRRR", e.getLocalizedMessage());
-            e.printStackTrace();
+            Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+            negative.setOnClickListener(v -> {
+                dialog.dismiss();
+                finish();
+            });
         }
     }
 }

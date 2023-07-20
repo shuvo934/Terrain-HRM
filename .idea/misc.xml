@@ -20,7 +20,7 @@
         <entry key="app/src/main/res/layout/activity_attendance_status_details.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_attendance_update.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_attendance_update_all.xml" value="0.19701086956521738" />
-        <entry key="app/src/main/res/layout/activity_dashboard.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/activity_dashboard.xml" value="0.375" />
         <entry key="app/src/main/res/layout/activity_directory.xml" value="0.19701086956521738" />
         <entry key="app/src/main/res/layout/activity_directory_with_division.xml" value="0.165" />
         <entry key="app/src/main/res/layout/activity_e_m_p_transcript.xml" value="0.25" />
@@ -35,7 +35,7 @@
         <entry key="app/src/main/res/layout/activity_leave_status.xml" value="0.165" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/activity_main_menu.xml" value="0.165" />
+        <entry key="app/src/main/res/layout/activity_main_menu.xml" value="0.335" />
         <entry key="app/src/main/res/layout/activity_maps.xml" value="0.19701086956521738" />
         <entry key="app/src/main/res/layout/activity_pay_roll_info.xml" value="0.19701086956521738" />
         <entry key="app/src/main/res/layout/activity_pay_slip.xml" value="0.19701086956521738" />

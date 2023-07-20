@@ -1,26 +1,23 @@
 package ttit.com.shuvo.ikglhrm.payRoll;
 
+import static ttit.com.shuvo.ikglhrm.Login.CompanyName;
+import static ttit.com.shuvo.ikglhrm.Login.SoftwareName;
+import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import android.content.Intent;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
-
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.github.dewinjm.monthyearpicker.MonthFormat;
 import com.github.dewinjm.monthyearpicker.MonthYearPickerDialog;
 import com.github.dewinjm.monthyearpicker.MonthYearPickerDialogFragment;
@@ -34,31 +31,22 @@ import com.github.mikephil.charting.formatter.LargeValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
-import java.io.IOException;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.Locale;
 
-import ttit.com.shuvo.ikglhrm.EmployeeInfo.jobDesc.JobDescDetails;
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
-import ttit.com.shuvo.ikglhrm.attendance.report.AttendanceReport;
 import ttit.com.shuvo.ikglhrm.payRoll.advance.AdvanceDetails;
 import ttit.com.shuvo.ikglhrm.payRoll.paySlip.PaySlip;
-
-import static ttit.com.shuvo.ikglhrm.Login.CompanyName;
-import static ttit.com.shuvo.ikglhrm.Login.SoftwareName;
-import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
-import static ttit.com.shuvo.ikglhrm.OracleConnection.createConnection;
 
 public class PayRollInfo extends AppCompatActivity {
 
@@ -223,7 +211,8 @@ public class PayRollInfo extends AppCompatActivity {
         months.add(new SalaryMonthList(previousMonthYear,"0"));
         System.out.println(previousMonthYear);
 
-        new Check().execute();
+//        new Check().execute();
+        getSalaryGraph();
 
 
         paySlip.setOnClickListener(new View.OnClickListener() {
@@ -437,7 +426,8 @@ public class PayRollInfo extends AppCompatActivity {
 
 
 
-                        new Check().execute();
+//                        new Check().execute();
+                        getSalaryGraph();
                         chart.resetZoom();
                         chart.fitScreen();
                     }
@@ -461,68 +451,291 @@ public class PayRollInfo extends AppCompatActivity {
         }
     }
 
-    public boolean isConnected() {
-        boolean connected = false;
-        boolean isMobile = false;
-        try {
-            ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo nInfo = cm.getActiveNetworkInfo();
-            connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
-            return connected;
-        } catch (Exception e) {
-            Log.e("Connectivity Exception", e.getMessage());
-        }
-        return connected;
-    }
+//    public boolean isConnected() {
+//        boolean connected = false;
+//        boolean isMobile = false;
+//        try {
+//            ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+//            NetworkInfo nInfo = cm.getActiveNetworkInfo();
+//            connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
+//            return connected;
+//        } catch (Exception e) {
+//            Log.e("Connectivity Exception", e.getMessage());
+//        }
+//        return connected;
+//    }
+//
+//    public boolean isOnline() {
+//
+//        Runtime runtime = Runtime.getRuntime();
+//        try {
+//            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+//            int     exitValue = ipProcess.waitFor();
+//            return (exitValue == 0);
+//        }
+//        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
+//
+//        return false;
+//    }
 
-    public boolean isOnline() {
+//    public class Check extends AsyncTask<Void, Void, Void> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//
+//            waitProgress.show(getSupportFragmentManager(),"WaitBar");
+//            waitProgress.setCancelable(false);
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            if (isConnected() && isOnline()) {
+//
+//                SalaryGraph();
+//                if (connected) {
+//                    conn = true;
+//                    message= "Internet Connected";
+//                }
+//
+//            } else {
+//                conn = false;
+//                message = "Not Connected";
+//            }
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//
+//            waitProgress.dismiss();
+//            if (conn) {
+//
+//                monthName = new ArrayList<>();
+//                salary = new ArrayList<>();
+//                NoOfEmp = new ArrayList<>();
+//
+//                for (int i = 0; i < salaryMonthLists.size(); i++) {
+//                    for (int j = 0; j < months.size(); j++) {
+//                        String month = months.get(j).getMonth();
+//                        month = month.substring(0, month.length() -3);
+//                        if (month.equals(salaryMonthLists.get(i).getMonth())) {
+//                            months.get(j).setSalary(salaryMonthLists.get(i).getSalary());
+//                        }
+//                    }
+//                }
+//
+//                for (int i = months.size()-1; i >= 0; i--) {
+//
+//                    monthName.add(months.get(i).getMonth());
+//                    salary.add(months.get(i).getSalary());
+//
+//                }
+//
+//                System.out.println(monthName);
+//                System.out.println(salary);
+//
+//                for (int i = 0; i < salary.size(); i++) {
+//                    NoOfEmp.add(new BarEntry(i, Float.parseFloat(salary.get(i)),i));
+//                }
+//
+////                NoOfEmp.add(new BarEntry(0,900f, 0));
+////                NoOfEmp.add(new BarEntry(1,1000f, 1));
+////                NoOfEmp.add(new BarEntry(2,500f, 2));
+////                NoOfEmp.add(new BarEntry(3,1300f, 3));
+////                NoOfEmp.add(new BarEntry(4,1500f, 4));
+////                NoOfEmp.add(new BarEntry(5,2050f, 5));
+//
+//                BarDataSet bardataset = new BarDataSet(NoOfEmp, "Months");
+//                chart.animateY(1000);
+//
+//                BarData data1 = new BarData(bardataset);
+//                bardataset.setColors(ColorTemplate.VORDIPLOM_COLORS);
+//
+//                bardataset.setBarBorderColor(Color.DKGRAY);
+//                bardataset.setValueTextSize(11);
+//                chart.setData(data1);
+//
+//                chart.getXAxis().setValueFormatter(new MyAxisValueFormatter(monthName));
+//                chart.getAxisLeft().setValueFormatter(new LargeValueFormatter());
+//
+//
+//
+//
+//
+//            }
+//            else {
+//                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+//                AlertDialog dialog = new AlertDialog.Builder(PayRollInfo.this)
+//                        .setMessage("Please Check Your Internet Connection")
+//                        .setPositiveButton("Retry", null)
+//                        .setNegativeButton("Cancel",null)
+//                        .show();
+//
+//                dialog.setCancelable(false);
+//                dialog.setCanceledOnTouchOutside(false);
+//                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+//                positive.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//
+//                        new Check().execute();
+//                        dialog.dismiss();
+//                    }
+//                });
+//                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+//                negative.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        dialog.dismiss();
+//                        finish();
+//                    }
+//                });
+//            }
+//        }
+//    }
 
-        Runtime runtime = Runtime.getRuntime();
-        try {
-            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
-            int     exitValue = ipProcess.waitFor();
-            return (exitValue == 0);
-        }
-        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
+//    public void SalaryGraph() {
+//        try {
+//            this.connection = createConnection();
+//            //    Toast.makeText(MainActivity.this, "Connected",Toast.LENGTH_SHORT).show();
+//
+//
+//            salaryMonthLists = new ArrayList<>();
+//            Statement stmt = connection.createStatement();
+//
+//
+//
+//
+//            ResultSet rs=stmt.executeQuery("SELECT TO_CHAR(SM_PMS_MONTH,'MON'),EMP_NAME, NET_SALARY\n" +
+//                    "  FROM (SELECT SM.SM_PMS_MONTH,\n" +
+//                    "               E.EMP_NAME,\n" +
+//                    "               (  (  NVL (SD.SD_ATTD_BONUS_AMT, 0)\n" +
+//                    "                   + NVL (SD.SD_GROSS_SAL, 0)\n" +
+//                    "                   + (ROUND (\n" +
+//                    "                         (NVL (SD.SD_OT_HR, 0) * NVL (SD.SD_OT_RATE, 0))))\n" +
+//                    "                   + (  NVL (SD.SD_JOB_HABITATION, 0)\n" +
+//                    "                      + NVL (SD.SD_JOB_UTILITIES, 0)\n" +
+//                    "                      + NVL (SD.SD_JOB_HOUSE_ALLOWANCE, 0)\n" +
+//                    "                      + NVL (SD.SD_JOB_ENTERTAINMENT, 0)\n" +
+//                    "                      + NVL (SD.SD_COMMITTED_SALARY, 0)\n" +
+//                    "                      + NVL (SD.SD_FIXED_OT_AMT, 0)\n" +
+//                    "                      + NVL (SD.SD_FOOD_SUBSIDY_AMT, 0)\n" +
+//                    "                      + NVL (SD.SD_FACTORY_ALLOWANCE_AMT, 0)\n" +
+//                    "                      + NVL (SD.SD_HOLIDAY_AMT, 0)\n" +
+//                    "                      + NVL (SD.SD_REFUND_OTH_PAYMENT_AMT, 0)\n" +
+//                    "                      + NVL (SD.SD_PROFIT_SHARE_AMT, 0)\n" +
+//                    "                      + NVL (SD.SD_PERFORMANCE_BONUS_AMT, 0)))\n" +
+//                    "                - (  NVL (SD.SD_PF, 0)\n" +
+//                    "                   + NVL (SD.SD_LWPAY_AMT, 0)\n" +
+//                    "                   + NVL (SD.SD_ABSENT_AMT, 0)\n" +
+//                    "                   + NVL (SD.SD_ADVANCE_DEDUCT, 0)\n" +
+//                    "                   + NVL (SD.SD_SCH_ADVANCE_DEDUCT, 0)\n" +
+//                    "                   + NVL (SD.SD_PF_LOAN_DEDUCT, 0)\n" +
+//                    "                   + NVL (SD.SD_TAX, 0)\n" +
+//                    "                   + NVL (SD.SD_LUNCH_DEDUCT, 0)\n" +
+//                    "                   + NVL (SD.SD_STAMP, 0)\n" +
+//                    "                   + NVL (SD.SD_OTH_DEDUCT, 0)\n" +
+//                    "                   + NVL (SD.SD_MD_ADVANCE_DEDUCT, 0)))\n" +
+//                    "                  NET_SALARY\n" +
+//                    "          FROM SALARY_DTL    SD,\n" +
+//                    "               SALARY_MST    SM,\n" +
+//                    "               EMP_MST       E,\n" +
+//                    "               (SELECT *\n" +
+//                    "                  FROM EMP_JOB_HISTORY\n" +
+//                    "                 WHERE JOB_ID IN (  SELECT MAX (JOB_ID)\n" +
+//                    "                                      FROM EMP_JOB_HISTORY\n" +
+//                    "                                  GROUP BY JOB_EMP_ID)) EJH,\n" +
+//                    "               JOB_SETUP_MST JSM,\n" +
+//                    "               JOB_SETUP_DTL JSD,\n" +
+//                    "               DIVISION_MST  DM,\n" +
+//                    "               DEPT_MST      DPT\n" +
+//                    "         WHERE     SM.SM_ID = SD.SD_SM_ID\n" +
+//                    "               AND SD.SD_EMP_ID = E.EMP_ID\n" +
+//                    "               AND E.EMP_ID = EJH.JOB_EMP_ID\n" +
+//                    "               AND EJH.JOB_JSD_ID = JSD.JSD_ID\n" +
+//                    "               AND JSD.JSD_JSM_ID = JSM.JSM_ID\n" +
+//                    "               AND JSM.JSM_DIVM_ID = DM.DIVM_ID\n" +
+//                    "               AND JSM.JSM_DEPT_ID = DPT.DEPT_ID\n" +
+//                    "               AND SD.SD_EMP_ID = "+emp_id+"\n" +
+//                    "               AND SM.SM_PMS_MONTH <=\n" +
+//                    "                      TRUNC (ADD_MONTHS ( (LAST_DAY ('"+formattedDate+"') + 1), -1))\n" +
+//                    "order by SM.SM_PMS_MONTH desc)\n" +
+//                    " WHERE ROWNUM <= 6");
+//
+//
+//            int i = 0;
+//            while(rs.next()) {
+//
+//                salaryMonthLists.add(new SalaryMonthList(rs.getString(1),rs.getString(3)));
+//
+//            }
+//
+//
+//            connected = true;
+//
+//            connection.close();
+//
+//        }
+//        catch (Exception e) {
+//
+//            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
+//            Log.i("ERRRRR", e.getLocalizedMessage());
+//            e.printStackTrace();
+//        }
+//    }
 
-        return false;
-    }
+    public void getSalaryGraph() {
+        waitProgress.show(getSupportFragmentManager(),"WaitBar");
+        waitProgress.setCancelable(false);
+        connected = false;
+        conn = false;
 
-    public class Check extends AsyncTask<Void, Void, Void> {
+        salaryMonthLists = new ArrayList<>();
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
+        RequestQueue requestQueue = Volley.newRequestQueue(PayRollInfo.this);
 
-            waitProgress.show(getSupportFragmentManager(),"WaitBar");
-            waitProgress.setCancelable(false);
-        }
+        String salaryDataUrl = "http://103.56.208.123:8001/apex/ttrams/dashboard/getSalaryAndMonth/"+emp_id+"/"+formattedDate+"";
 
-        @Override
-        protected Void doInBackground(Void... voids) {
-            if (isConnected() && isOnline()) {
-
-                SalaryGraph();
-                if (connected) {
-                    conn = true;
-                    message= "Internet Connected";
+        StringRequest salaryMonthReq = new StringRequest(Request.Method.GET, salaryDataUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject salaryMonthInfo = array.getJSONObject(i);
+                        String mon_name = salaryMonthInfo.getString("mon_name");
+                        String net_salary = salaryMonthInfo.getString("net_salary");
+                        salaryMonthLists.add(new SalaryMonthList(mon_name,net_salary));
+                    }
                 }
-
-            } else {
-                conn = false;
-                message = "Not Connected";
+                connected = true;
+                updateSalaryGraph();
             }
+            catch (JSONException e) {
+                connected = false;
+                e.printStackTrace();
+                updateSalaryGraph();
+            }
+        }, error -> {
+            conn = false;
+            connected = false;
+            error.printStackTrace();
+            updateSalaryGraph();
+        });
 
-            return null;
-        }
+        requestQueue.add(salaryMonthReq);
+    }
 
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-            waitProgress.dismiss();
-            if (conn) {
-
+    private void updateSalaryGraph() {
+        waitProgress.dismiss();
+        if (conn) {
+            if (connected) {
                 monthName = new ArrayList<>();
                 salary = new ArrayList<>();
                 NoOfEmp = new ArrayList<>();
@@ -551,12 +764,6 @@ public class PayRollInfo extends AppCompatActivity {
                     NoOfEmp.add(new BarEntry(i, Float.parseFloat(salary.get(i)),i));
                 }
 
-//                NoOfEmp.add(new BarEntry(0,900f, 0));
-//                NoOfEmp.add(new BarEntry(1,1000f, 1));
-//                NoOfEmp.add(new BarEntry(2,500f, 2));
-//                NoOfEmp.add(new BarEntry(3,1300f, 3));
-//                NoOfEmp.add(new BarEntry(4,1500f, 4));
-//                NoOfEmp.add(new BarEntry(5,2050f, 5));
 
                 BarDataSet bardataset = new BarDataSet(NoOfEmp, "Months");
                 chart.animateY(1000);
@@ -570,15 +777,10 @@ public class PayRollInfo extends AppCompatActivity {
 
                 chart.getXAxis().setValueFormatter(new MyAxisValueFormatter(monthName));
                 chart.getAxisLeft().setValueFormatter(new LargeValueFormatter());
-
-
-
-
-
-            }else {
-                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+            }
+            else {
                 AlertDialog dialog = new AlertDialog.Builder(PayRollInfo.this)
-                        .setMessage("Please Check Your Internet Connection")
+                        .setMessage("There is a network issue in the server. Please Try later.")
                         .setPositiveButton("Retry", null)
                         .setNegativeButton("Cancel",null)
                         .show();
@@ -586,113 +788,38 @@ public class PayRollInfo extends AppCompatActivity {
                 dialog.setCancelable(false);
                 dialog.setCanceledOnTouchOutside(false);
                 Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                positive.setOnClickListener(v -> {
 
-                        new Check().execute();
-                        dialog.dismiss();
-                    }
+                    getSalaryGraph();
+                    dialog.dismiss();
                 });
                 Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                        finish();
-                    }
+                negative.setOnClickListener(v -> {
+                    dialog.dismiss();
+                    finish();
                 });
             }
         }
-    }
+        else {
+            AlertDialog dialog = new AlertDialog.Builder(PayRollInfo.this)
+                    .setMessage("Please Check Your Internet Connection")
+                    .setPositiveButton("Retry", null)
+                    .setNegativeButton("Cancel",null)
+                    .show();
 
-    public void SalaryGraph() {
-        try {
-            this.connection = createConnection();
-            //    Toast.makeText(MainActivity.this, "Connected",Toast.LENGTH_SHORT).show();
+            dialog.setCancelable(false);
+            dialog.setCanceledOnTouchOutside(false);
+            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            positive.setOnClickListener(v -> {
 
-
-            salaryMonthLists = new ArrayList<>();
-            Statement stmt = connection.createStatement();
-
-
-
-
-            ResultSet rs=stmt.executeQuery("SELECT TO_CHAR(SM_PMS_MONTH,'MON'),EMP_NAME, NET_SALARY\n" +
-                    "  FROM (SELECT SM.SM_PMS_MONTH,\n" +
-                    "               E.EMP_NAME,\n" +
-                    "               (  (  NVL (SD.SD_ATTD_BONUS_AMT, 0)\n" +
-                    "                   + NVL (SD.SD_GROSS_SAL, 0)\n" +
-                    "                   + (ROUND (\n" +
-                    "                         (NVL (SD.SD_OT_HR, 0) * NVL (SD.SD_OT_RATE, 0))))\n" +
-                    "                   + (  NVL (SD.SD_JOB_HABITATION, 0)\n" +
-                    "                      + NVL (SD.SD_JOB_UTILITIES, 0)\n" +
-                    "                      + NVL (SD.SD_JOB_HOUSE_ALLOWANCE, 0)\n" +
-                    "                      + NVL (SD.SD_JOB_ENTERTAINMENT, 0)\n" +
-                    "                      + NVL (SD.SD_COMMITTED_SALARY, 0)\n" +
-                    "                      + NVL (SD.SD_FIXED_OT_AMT, 0)\n" +
-                    "                      + NVL (SD.SD_FOOD_SUBSIDY_AMT, 0)\n" +
-                    "                      + NVL (SD.SD_FACTORY_ALLOWANCE_AMT, 0)\n" +
-                    "                      + NVL (SD.SD_HOLIDAY_AMT, 0)\n" +
-                    "                      + NVL (SD.SD_REFUND_OTH_PAYMENT_AMT, 0)\n" +
-                    "                      + NVL (SD.SD_PROFIT_SHARE_AMT, 0)\n" +
-                    "                      + NVL (SD.SD_PERFORMANCE_BONUS_AMT, 0)))\n" +
-                    "                - (  NVL (SD.SD_PF, 0)\n" +
-                    "                   + NVL (SD.SD_LWPAY_AMT, 0)\n" +
-                    "                   + NVL (SD.SD_ABSENT_AMT, 0)\n" +
-                    "                   + NVL (SD.SD_ADVANCE_DEDUCT, 0)\n" +
-                    "                   + NVL (SD.SD_SCH_ADVANCE_DEDUCT, 0)\n" +
-                    "                   + NVL (SD.SD_PF_LOAN_DEDUCT, 0)\n" +
-                    "                   + NVL (SD.SD_TAX, 0)\n" +
-                    "                   + NVL (SD.SD_LUNCH_DEDUCT, 0)\n" +
-                    "                   + NVL (SD.SD_STAMP, 0)\n" +
-                    "                   + NVL (SD.SD_OTH_DEDUCT, 0)\n" +
-                    "                   + NVL (SD.SD_MD_ADVANCE_DEDUCT, 0)))\n" +
-                    "                  NET_SALARY\n" +
-                    "          FROM SALARY_DTL    SD,\n" +
-                    "               SALARY_MST    SM,\n" +
-                    "               EMP_MST       E,\n" +
-                    "               (SELECT *\n" +
-                    "                  FROM EMP_JOB_HISTORY\n" +
-                    "                 WHERE JOB_ID IN (  SELECT MAX (JOB_ID)\n" +
-                    "                                      FROM EMP_JOB_HISTORY\n" +
-                    "                                  GROUP BY JOB_EMP_ID)) EJH,\n" +
-                    "               JOB_SETUP_MST JSM,\n" +
-                    "               JOB_SETUP_DTL JSD,\n" +
-                    "               DIVISION_MST  DM,\n" +
-                    "               DEPT_MST      DPT\n" +
-                    "         WHERE     SM.SM_ID = SD.SD_SM_ID\n" +
-                    "               AND SD.SD_EMP_ID = E.EMP_ID\n" +
-                    "               AND E.EMP_ID = EJH.JOB_EMP_ID\n" +
-                    "               AND EJH.JOB_JSD_ID = JSD.JSD_ID\n" +
-                    "               AND JSD.JSD_JSM_ID = JSM.JSM_ID\n" +
-                    "               AND JSM.JSM_DIVM_ID = DM.DIVM_ID\n" +
-                    "               AND JSM.JSM_DEPT_ID = DPT.DEPT_ID\n" +
-                    "               AND SD.SD_EMP_ID = "+emp_id+"\n" +
-                    "               AND SM.SM_PMS_MONTH <=\n" +
-                    "                      TRUNC (ADD_MONTHS ( (LAST_DAY ('"+formattedDate+"') + 1), -1))\n" +
-                    "order by SM.SM_PMS_MONTH desc)\n" +
-                    " WHERE ROWNUM <= 6");
-
-
-            int i = 0;
-            while(rs.next()) {
-
-                salaryMonthLists.add(new SalaryMonthList(rs.getString(1),rs.getString(3)));
-
-            }
-
-
-            connected = true;
-
-            connection.close();
-
-        }
-        catch (Exception e) {
-
-            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
-            Log.i("ERRRRR", e.getLocalizedMessage());
-            e.printStackTrace();
+                getSalaryGraph();
+                dialog.dismiss();
+            });
+            Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+            negative.setOnClickListener(v -> {
+                dialog.dismiss();
+                finish();
+            });
         }
     }
 }

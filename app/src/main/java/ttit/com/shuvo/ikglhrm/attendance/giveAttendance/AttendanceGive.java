@@ -11,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.res.ResourcesCompat;
-import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -24,7 +23,6 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.location.Address;
 import android.location.Geocoder;
@@ -34,18 +32,21 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Looper;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.DigitalClock;
 import android.widget.ImageView;
 import android.widget.TextClock;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -64,44 +65,33 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+
 import java.io.IOException;
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.sql.Timestamp;
-import java.sql.Types;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
-import ttit.com.shuvo.ikglhrm.attendance.report.AttendanceReport;
-import ttit.com.shuvo.ikglhrm.attendance.trackService.GPXFileWriter;
 import ttit.com.shuvo.ikglhrm.attendance.trackService.Service;
-import ttit.com.shuvo.ikglhrm.leaveAll.leaveApprove.LeaveApprove;
 
 import static ttit.com.shuvo.ikglhrm.Login.SoftwareName;
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
-import static ttit.com.shuvo.ikglhrm.OracleConnection.createConnection;
 import static ttit.com.shuvo.ikglhrm.attendance.Attendance.live_tracking_flag;
 import static ttit.com.shuvo.ikglhrm.attendance.Attendance.tracking_flag;
-import static ttit.com.shuvo.ikglhrm.attendance.trackService.Service.length_multi;
-import static ttit.com.shuvo.ikglhrm.attendance.trackService.Service.locationLists;
-import static ttit.com.shuvo.ikglhrm.attendance.trackService.Service.trk;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
@@ -129,7 +119,7 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
     private String message = null;
     private Boolean conn = false;
     private Boolean connected = false;
-    private Connection connection;
+//    private Connection connection;
     Timestamp ts;
 
     TextView software;
@@ -530,7 +520,8 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
             }
         });
 
-        new LocationGet().execute();
+//        new LocationGet().execute();
+        getOfficeLocation();
     }
 
     @Override
@@ -785,9 +776,10 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
             if (conn) {
                 conn = false;
 
-
-                new Check().execute();
-            } else {
+//                new Check().execute();
+                giveAttendance();
+            }
+            else {
                 waitProgress.dismiss();
                 AlertDialog dialog = new AlertDialog.Builder(AttendanceGive.this)
                         .setMessage("Please Check Your Internet Connection")
@@ -819,38 +811,299 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
         }
     }
 
-    public class Check extends AsyncTask<Void, Void, Void> {
+//    public class Check extends AsyncTask<Void, Void, Void> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            if (isConnected() && isOnline()) {
+//
+//                AttendanceClicked();
+//                if (connected) {
+//                    conn = true;
+//                    message= "Internet Connected";
+//                }
+//
+//            } else {
+//                conn = false;
+//                message = "Not Connected";
+//            }
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//
+//            waitProgress.dismiss();
+//            if (conn) {
+//                System.out.println("Ekhane Ashbe 3rd");
+//                checkInTime.setVisibility(View.VISIBLE);
+//
+//                String ss = "Your last recorded time : "+timeToShow;
+//                checkInTime.setText(ss);
+//
+//                SharedPreferences.Editor editor = preferences.edit();
+//                editor.remove(timeKey);
+//                editor.putString(timeKey,ss);
+//                editor.apply();
+//                editor.commit();
+//                String puncher = "";
+//                if (address.isEmpty()) {
+//
+//                    address = "No Address found for ("+lat+", "+lon+")";
+//                    puncher = "Punched at "+ timeToShow + " in ("+address+")";
+//                }
+//                else {
+//                    puncher = "Punched at "+ timeToShow + " in "+address;
+//                }
+//                currLoc.setText(puncher);
+//                currLoc.setVisibility(View.VISIBLE);
+//
+//                if (tracking_flag == 1) {
+//                    if (isMyServiceRunning(Service.class)) {
+//                        System.out.println("Service Stopped");
+//
+//                        stopService();
+//                        nameOfCheckIN.setText("PUNCH & START TRACKER");
+//                    } else {
+//                        System.out.println("Service Started");
+//
+//                        startService();
+//                        nameOfCheckIN.setText("PUNCH & STOP TRACKER");
+//                    }
+//                }
+//
+//
+//                AlertDialog.Builder builder = new AlertDialog.Builder(AttendanceGive.this);
+//                builder
+//                        .setMessage("Your Attendance is Recorded!")
+//                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                dialog.dismiss();
+//
+//                            }
+//                        });
+//
+//                AlertDialog alert = builder.create();
+//                alert.show();
+//
+//                conn = false;
+//                connected = false;
+//
+//
+//            }
+//            else {
+//                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+//                AlertDialog dialog = new AlertDialog.Builder(AttendanceGive.this)
+//                        .setMessage("Please Check Your Internet Connection")
+//                        .setPositiveButton("Retry", null)
+//                        .setNegativeButton("Cancel",null)
+//                        .show();
+//
+//                dialog.setCancelable(false);
+//                dialog.setCanceledOnTouchOutside(false);
+//                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+//                positive.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//
+//                        new CheckAddress().execute();
+//                        dialog.dismiss();
+//                    }
+//                });
+//                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+//                negative.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        dialog.dismiss();
+//
+//                    }
+//                });
+//            }
+//        }
+//    }
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
+//    public class LocationGet extends AsyncTask<Void, Void, Void> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//            waitProgress.show(getSupportFragmentManager(),"WaitBar");
+//            waitProgress.setCancelable(false);
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            if (isConnected() && isOnline()) {
+//                GettingOfficeLocation();
+//                if (connected) {
+//                    conn = true;
+//                    message= "Internet Connected";
+//                }
+//
+//            } else {
+//                conn = false;
+//                message = "Not Connected";
+//            }
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//
+//            waitProgress.dismiss();
+//            if (conn) {
+////                LatLng c_latLng = new LatLng(0,0);
+////                if (officeLatitude != null && officeLongitude != null) {
+////                    if (!officeLatitude.isEmpty() && !officeLongitude.isEmpty()) {
+////                        c_latLng = new LatLng(Double.parseDouble(officeLatitude),Double.parseDouble(officeLongitude));
+////                    }
+////                }
+////                MarkerOptions markerOptions = new MarkerOptions();
+////                markerOptions.position(c_latLng);
+////
+////                mMap.addMarker(markerOptions);
+////
+////                CircleOptions circleOptions = new CircleOptions();
+////                circleOptions.center(c_latLng);
+////                circleOptions.strokeWidth(4);
+////                circleOptions.strokeColor(Color.parseColor("#d95206"));
+////                circleOptions.fillColor(Color.argb(30,242,165,21));
+////                circleOptions.radius(40);
+////                mMap.addCircle(circleOptions);
+//                enableGPS();
+//
+//                conn = false;
+//                connected = false;
+//
+//
+//            }
+//            else {
+//                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+//                AlertDialog dialog = new AlertDialog.Builder(AttendanceGive.this)
+//                        .setMessage("Please Check Your Internet Connection")
+//                        .setPositiveButton("Retry", null)
+//                        .setNegativeButton("Cancel",null)
+//                        .show();
+//
+//                dialog.setCancelable(false);
+//                dialog.setCanceledOnTouchOutside(false);
+//                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+//                positive.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//
+//                        new LocationGet().execute();
+//                        dialog.dismiss();
+//                    }
+//                });
+//                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+//                negative.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        dialog.dismiss();
+//                        finish();
+//                    }
+//                });
+//            }
+//        }
+//    }
 
-        }
+//    public void AttendanceClicked() {
+//        try {
+//            this.connection = createConnection();
+//            conn = false;
+//            connected = false;
+//
+//            Statement stmt = connection.createStatement();
+//
+//            CallableStatement callableStatement = connection.prepareCall("begin SET_EMP_ATTENDANCE(?,?,?,?,?,?); end;");
+//            callableStatement.setInt(1, Integer.parseInt(emp_id));
+//            callableStatement.setTimestamp(2, ts);
+//            callableStatement.setString(3,machineCode);
+//            callableStatement.setString(4,lat);
+//            callableStatement.setString(5,lon);
+//            callableStatement.setString(6,address);
+//
+//            callableStatement.execute();
+//
+//            callableStatement.close();
+//
+//            connected = true;
+//            connection.close();
+//
+//        }
+//        catch (Exception e) {
+//
+//            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
+//            Log.i("ERRRRR", e.getLocalizedMessage());
+//            e.printStackTrace();
+//        }
+//    }
 
-        @Override
-        protected Void doInBackground(Void... voids) {
-            if (isConnected() && isOnline()) {
+    public void giveAttendance() {
+        conn = false;
+        connected = false;
 
-                AttendanceClicked();
-                if (connected) {
-                    conn = true;
-                    message= "Internet Connected";
+        String attendaceUrl = "http://103.56.208.123:8001/apex/ttrams/attendance/giveAttendance";
+
+        RequestQueue requestQueue = Volley.newRequestQueue(AttendanceGive.this);
+
+        StringRequest attReq = new StringRequest(Request.Method.POST, attendaceUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String string_out = jsonObject.getString("string_out");
+                if (string_out.equals("Successfully Created")) {
+                    connected = true;
                 }
-
-            } else {
-                conn = false;
-                message = "Not Connected";
+                else {
+                    System.out.println(string_out);
+                    connected = false;
+                }
+                updateLayout();
             }
+            catch (JSONException e) {
+                e.printStackTrace();
+                connected = false;
+                updateLayout();
+            }
+        }, error -> {
+            error.printStackTrace();
+            conn = false;
+            connected = false;
+            updateLayout();
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("P_EMP_ID",emp_id);
+                headers.put("P_PUNCH_TIME",ts.toString());
+                headers.put("P_MACHINE_CODE",machineCode);
+                headers.put("P_LATITUDE",lat);
+                headers.put("P_LONGITUDE",lon);
+                headers.put("P_ADDRESS",address);
+                return  headers;
+            }
+        };
 
-            return null;
-        }
+        requestQueue.add(attReq);
+    }
 
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-            waitProgress.dismiss();
-            if (conn) {
+    private  void updateLayout() {
+        waitProgress.dismiss();
+        if (conn) {
+            if (connected) {
                 System.out.println("Ekhane Ashbe 3rd");
                 checkInTime.setVisibility(View.VISIBLE);
 
@@ -905,12 +1158,10 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
 
                 conn = false;
                 connected = false;
-
-
-            }else {
-                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+            }
+            else {
                 AlertDialog dialog = new AlertDialog.Builder(AttendanceGive.this)
-                        .setMessage("Please Check Your Internet Connection")
+                        .setMessage("There is a network issue in the server. Please Try later.")
                         .setPositiveButton("Retry", null)
                         .setNegativeButton("Cancel",null)
                         .show();
@@ -936,68 +1187,122 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
                 });
             }
         }
+        else {
+            AlertDialog dialog = new AlertDialog.Builder(AttendanceGive.this)
+                    .setMessage("Please Check Your Internet Connection")
+                    .setPositiveButton("Retry", null)
+                    .setNegativeButton("Cancel",null)
+                    .show();
+
+            dialog.setCancelable(false);
+            dialog.setCanceledOnTouchOutside(false);
+            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            positive.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    new CheckAddress().execute();
+                    dialog.dismiss();
+                }
+            });
+            Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+            negative.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+        }
     }
 
-    public class LocationGet extends AsyncTask<Void, Void, Void> {
+//    public void GettingOfficeLocation() {
+//        try {
+//            this.connection = createConnection();
+//            connected = false;
+//
+//            Statement stmt = connection.createStatement();
+//
+//            ResultSet resultSet = stmt.executeQuery("Select COA_LATITUDE, COA_LONGITUDE, COA_COVERAGE \n" +
+//                    "FROM\n" +
+//                    "COMPANY_OFFICE_ADDRESS, EMP_JOB_HISTORY \n" +
+//                    "WHERE \n" +
+//                    "COMPANY_OFFICE_ADDRESS.COA_ID = EMP_JOB_HISTORY.JOB_PRI_COA_ID\n" +
+//                    "AND EMP_JOB_HISTORY.JOB_EMP_ID = "+emp_id+"");
+//
+//            while (resultSet.next()) {
+//                officeLatitude = resultSet.getString(1);
+//                officeLongitude = resultSet.getString(2);
+//                coverage = resultSet.getString(3);
+//            }
+//            resultSet.close();
+//
+//            connected = true;
+//            connection.close();
+//
+//        }
+//        catch (Exception e) {
+//
+//            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
+//            Log.i("ERRRRR", e.getLocalizedMessage());
+//            e.printStackTrace();
+//        }
+//    }
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            waitProgress.show(getSupportFragmentManager(),"WaitBar");
-            waitProgress.setCancelable(false);
-        }
+    public void getOfficeLocation() {
+        waitProgress.show(getSupportFragmentManager(),"WaitBar");
+        waitProgress.setCancelable(false);
+        conn = false;
+        connected = false;
 
-        @Override
-        protected Void doInBackground(Void... voids) {
-            if (isConnected() && isOnline()) {
-                GettingOfficeLocation();
-                if (connected) {
-                    conn = true;
-                    message= "Internet Connected";
+        String offLocationUrl = "http://103.56.208.123:8001/apex/ttrams/attendance/getOffLatLong/"+emp_id+"";
+
+        RequestQueue requestQueue = Volley.newRequestQueue(AttendanceGive.this);
+
+        StringRequest offLocReq = new StringRequest(Request.Method.GET, offLocationUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject offLocInfo = array.getJSONObject(i);
+                        officeLatitude = offLocInfo.getString("coa_latitude").equals("null") ? null : offLocInfo.getString("coa_latitude");
+                        officeLongitude = offLocInfo.getString("coa_longitude").equals("null") ? null : offLocInfo.getString("coa_longitude");
+                        coverage = offLocInfo.getString("coa_coverage").equals("null") ? null : offLocInfo.getString("coa_coverage");
+                    }
                 }
-
-            } else {
-                conn = false;
-                message = "Not Connected";
+                connected = true;
+                updateInfo();
             }
+            catch (JSONException e) {
+                e.printStackTrace();
+                connected = false;
+                updateInfo();
+            }
+        }, error -> {
+            error.printStackTrace();
+            conn = false;
+            connected = false;
+            updateInfo();
+        });
 
-            return null;
-        }
+        requestQueue.add(offLocReq);
+    }
 
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-            waitProgress.dismiss();
-            if (conn) {
-//                LatLng c_latLng = new LatLng(0,0);
-//                if (officeLatitude != null && officeLongitude != null) {
-//                    if (!officeLatitude.isEmpty() && !officeLongitude.isEmpty()) {
-//                        c_latLng = new LatLng(Double.parseDouble(officeLatitude),Double.parseDouble(officeLongitude));
-//                    }
-//                }
-//                MarkerOptions markerOptions = new MarkerOptions();
-//                markerOptions.position(c_latLng);
-//
-//                mMap.addMarker(markerOptions);
-//
-//                CircleOptions circleOptions = new CircleOptions();
-//                circleOptions.center(c_latLng);
-//                circleOptions.strokeWidth(4);
-//                circleOptions.strokeColor(Color.parseColor("#d95206"));
-//                circleOptions.fillColor(Color.argb(30,242,165,21));
-//                circleOptions.radius(40);
-//                mMap.addCircle(circleOptions);
+    private void updateInfo() {
+        waitProgress.dismiss();
+        if (conn) {
+            if (connected) {
                 enableGPS();
 
                 conn = false;
                 connected = false;
-
-
-            }else {
-                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+            }
+            else {
                 AlertDialog dialog = new AlertDialog.Builder(AttendanceGive.this)
-                        .setMessage("Please Check Your Internet Connection")
+                        .setMessage("There is a network issue in the server. Please Try later.")
                         .setPositiveButton("Retry", null)
                         .setNegativeButton("Cancel",null)
                         .show();
@@ -1009,7 +1314,7 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
                     @Override
                     public void onClick(View v) {
 
-                        new LocationGet().execute();
+                        getOfficeLocation();
                         dialog.dismiss();
                     }
                 });
@@ -1023,70 +1328,32 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
                 });
             }
         }
-    }
+        else {
+            AlertDialog dialog = new AlertDialog.Builder(AttendanceGive.this)
+                    .setMessage("Please Check Your Internet Connection")
+                    .setPositiveButton("Retry", null)
+                    .setNegativeButton("Cancel",null)
+                    .show();
 
-    public void AttendanceClicked() {
-        try {
-            this.connection = createConnection();
-            conn = false;
-            connected = false;
+            dialog.setCancelable(false);
+            dialog.setCanceledOnTouchOutside(false);
+            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            positive.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
-            Statement stmt = connection.createStatement();
-
-            CallableStatement callableStatement = connection.prepareCall("begin SET_EMP_ATTENDANCE(?,?,?,?,?,?); end;");
-            callableStatement.setInt(1, Integer.parseInt(emp_id));
-            callableStatement.setTimestamp(2, ts);
-            callableStatement.setString(3,machineCode);
-            callableStatement.setString(4,lat);
-            callableStatement.setString(5,lon);
-            callableStatement.setString(6,address);
-
-            callableStatement.execute();
-
-            callableStatement.close();
-
-            connected = true;
-            connection.close();
-
-        }
-        catch (Exception e) {
-
-            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
-            Log.i("ERRRRR", e.getLocalizedMessage());
-            e.printStackTrace();
-        }
-    }
-
-    public void GettingOfficeLocation() {
-        try {
-            this.connection = createConnection();
-            connected = false;
-
-            Statement stmt = connection.createStatement();
-
-            ResultSet resultSet = stmt.executeQuery("Select COA_LATITUDE, COA_LONGITUDE, COA_COVERAGE \n" +
-                    "FROM\n" +
-                    "COMPANY_OFFICE_ADDRESS, EMP_JOB_HISTORY \n" +
-                    "WHERE \n" +
-                    "COMPANY_OFFICE_ADDRESS.COA_ID = EMP_JOB_HISTORY.JOB_PRI_COA_ID\n" +
-                    "AND EMP_JOB_HISTORY.JOB_EMP_ID = "+emp_id+"");
-
-            while (resultSet.next()) {
-                officeLatitude = resultSet.getString(1);
-                officeLongitude = resultSet.getString(2);
-                coverage = resultSet.getString(3);
-            }
-            resultSet.close();
-
-            connected = true;
-            connection.close();
-
-        }
-        catch (Exception e) {
-
-            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
-            Log.i("ERRRRR", e.getLocalizedMessage());
-            e.printStackTrace();
+                    getOfficeLocation();
+                    dialog.dismiss();
+                }
+            });
+            Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+            negative.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                    finish();
+                }
+            });
         }
     }
 }

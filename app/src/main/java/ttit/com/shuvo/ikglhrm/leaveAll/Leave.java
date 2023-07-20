@@ -3,24 +3,16 @@ package ttit.com.shuvo.ikglhrm.leaveAll;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.github.dewinjm.monthyearpicker.MonthFormat;
 import com.github.dewinjm.monthyearpicker.MonthYearPickerDialog;
 import com.github.dewinjm.monthyearpicker.MonthYearPickerDialogFragment;
@@ -34,13 +26,8 @@ import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -48,7 +35,6 @@ import java.util.Locale;
 
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
-import ttit.com.shuvo.ikglhrm.attendance.report.AttendanceReport;
 import ttit.com.shuvo.ikglhrm.leaveAll.leaveApplication.AllLeaveApplication;
 import ttit.com.shuvo.ikglhrm.leaveAll.leaveBalance.LeaveBalance;
 import ttit.com.shuvo.ikglhrm.leaveAll.leaveStatus.LeaveStatus;
@@ -56,7 +42,10 @@ import ttit.com.shuvo.ikglhrm.leaveAll.leaveStatus.LeaveStatus;
 import static ttit.com.shuvo.ikglhrm.Login.CompanyName;
 import static ttit.com.shuvo.ikglhrm.Login.SoftwareName;
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
-import static ttit.com.shuvo.ikglhrm.OracleConnection.createConnection;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Leave extends AppCompatActivity {
 
@@ -73,11 +62,11 @@ public class Leave extends AppCompatActivity {
     TextView refresh;
 
     WaitProgress waitProgress = new WaitProgress();
-    private String message = null;
+//    private String message = null;
     private Boolean conn = false;
     private Boolean connected = false;
 
-    private Connection connection;
+//    private Connection connection;
 
     String emp_id = "";
     String leaveDate = "";
@@ -272,7 +261,8 @@ public class Leave extends AppCompatActivity {
 //        pieChart.setData(data);
 //        pieChart.invalidate();
 
-        new Check().execute();
+//        new Check().execute();
+        getLeaveGraph();
 
 
         refresh.setOnClickListener(new View.OnClickListener() {
@@ -426,7 +416,8 @@ public class Leave extends AppCompatActivity {
 
 
 
-                        new Check().execute();
+//                        new Check().execute();
+                        getLeaveGraph();
                     }
                 });
 
@@ -434,118 +425,344 @@ public class Leave extends AppCompatActivity {
         });
     }
 
-    public boolean isConnected() {
-        boolean connected = false;
-        boolean isMobile = false;
-        try {
-            ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-            @SuppressLint("MissingPermission") NetworkInfo nInfo = cm.getActiveNetworkInfo();
-            connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
-            return connected;
-        } catch (Exception e) {
-            Log.e("Connectivity Exception", e.getMessage());
-        }
-        return connected;
-    }
-
-    public boolean isOnline() {
-
-        Runtime runtime = Runtime.getRuntime();
-        try {
-            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
-            int     exitValue = ipProcess.waitFor();
-            return (exitValue == 0);
-        }
-        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
-
-        return false;
-    }
-
-    public class Check extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            waitProgress.show(getSupportFragmentManager(),"WaitBar");
-            waitProgress.setCancelable(false);
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            if (isConnected() && isOnline()) {
-
-                LeaveBalanceGraph();
-                if (connected) {
-                    conn = true;
-                    message= "Internet Connected";
-                }
-
-            } else {
-                conn = false;
-                message = "Not Connected";
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-            waitProgress.dismiss();
-            if (conn) {
-
-
-//                final int[] piecolors = new int[]{
+//    public boolean isConnected() {
+//        boolean connected = false;
+//        boolean isMobile = false;
+//        try {
+//            ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+//            @SuppressLint("MissingPermission") NetworkInfo nInfo = cm.getActiveNetworkInfo();
+//            connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
+//            return connected;
+//        } catch (Exception e) {
+//            Log.e("Connectivity Exception", e.getMessage());
+//        }
+//        return connected;
+//    }
 //
-//                        Color.rgb(85, 239, 196),
-//                        Color.rgb(116, 185, 255),
-//                        Color.rgb(162, 155, 254),
-//                        Color.rgb(223, 230, 233),
-//                        Color.rgb(255, 234, 167),
-//                        Color.rgb(129, 236, 236),
-//                        Color.rgb(250, 177, 160),
-//                        Color.rgb(255, 118, 117),
-//                        Color.rgb(253, 121, 168),
-//                        Color.rgb(96, 163, 188)};
-//                int j = 0;
+//    public boolean isOnline() {
 //
+//        Runtime runtime = Runtime.getRuntime();
+//        try {
+//            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+//            int     exitValue = ipProcess.waitFor();
+//            return (exitValue == 0);
+//        }
+//        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
 //
-//                for (int i = 0; i < dataValue.size(); i++) {
-//                    String datt = dataValue.get(i).getMonth();
-//                    if (!datt.equals("0")) {
-//                        System.out.println(datt);
+//        return false;
+//    }
 //
-//                        NoOfEmp.add(new PieEntry(Float.parseFloat(datt),dataValue.get(i).getSalary(),j));
-//                        j++;
-//                    }
+//    public class Check extends AsyncTask<Void, Void, Void> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//
+//            waitProgress.show(getSupportFragmentManager(),"WaitBar");
+//            waitProgress.setCancelable(false);
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            if (isConnected() && isOnline()) {
+//
+//                LeaveBalanceGraph();
+//                if (connected) {
+//                    conn = true;
+//                    message= "Internet Connected";
 //                }
-//                PieDataSet dataSet = new PieDataSet(NoOfEmp, "");
-//                pieChart.animateXY(1500, 1500);
-//                //pieChart.setExtraRightOffset(50);
+//
+//            } else {
+//                conn = false;
+//                message = "Not Connected";
+//            }
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//
+//            waitProgress.dismiss();
+//            if (conn) {
+//
+//
+////                final int[] piecolors = new int[]{
+////
+////                        Color.rgb(85, 239, 196),
+////                        Color.rgb(116, 185, 255),
+////                        Color.rgb(162, 155, 254),
+////                        Color.rgb(223, 230, 233),
+////                        Color.rgb(255, 234, 167),
+////                        Color.rgb(129, 236, 236),
+////                        Color.rgb(250, 177, 160),
+////                        Color.rgb(255, 118, 117),
+////                        Color.rgb(253, 121, 168),
+////                        Color.rgb(96, 163, 188)};
+////                int j = 0;
+////
+////
+////                for (int i = 0; i < dataValue.size(); i++) {
+////                    String datt = dataValue.get(i).getMonth();
+////                    if (!datt.equals("0")) {
+////                        System.out.println(datt);
+////
+////                        NoOfEmp.add(new PieEntry(Float.parseFloat(datt),dataValue.get(i).getSalary(),j));
+////                        j++;
+////                    }
+////                }
+////                PieDataSet dataSet = new PieDataSet(NoOfEmp, "");
+////                pieChart.animateXY(1500, 1500);
+////                //pieChart.setExtraRightOffset(50);
+////
+////
+////
+////                PieData data = new PieData(dataSet);
+//////                dataSet.setValueFormatter(new PercentFormatter(pieChart));
+////                dataSet.setValueFormatter(new ValueFormatter() {
+////                    @Override
+////                    public String getFormattedValue(float value) {
+////                        return String.valueOf((int) Math.floor(value));
+////                    }
+////                });
+////                dataSet.setHighlightEnabled(true);
+////                dataSet.setValueTextSize(12);
+////                dataSet.setValueTextColor(Color.BLACK);
+////                dataSet.setColors(ColorTemplate.createColors(piecolors));
+////
+////
+//////                pieChart.setUsePercentValues(true);
+////
+////                pieChart.setData(data);
+////                pieChart.invalidate();
+//
+//                if (balance.size() == 0 || earn.size() == 0 || shortCode.size() == 0) {
+//                    // do nothing
+//                } else {
+//                    XAxis xAxis = chart.getXAxis();
+//                    xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+//                    xAxis.setDrawGridLines(false);
+//                    xAxis.setCenterAxisLabels(true);
+//                    xAxis.setAxisMinimum(0);
+//                    xAxis.setAxisMaximum(balance.size());
+//                    xAxis.setGranularity(1);
+//
+//
+//                    BarDataSet set1 = new BarDataSet(earn, "Earned Leave");
+//                    set1.setColor(ColorTemplate.VORDIPLOM_COLORS[3]);
+//                    set1.setValueFormatter(new ValueFormatter() {
+//                        @Override
+//                        public String getFormattedValue(float value) {
+//                            return String.valueOf((int) Math.floor(value));
+//                        }
+//                    });
+//                    BarDataSet set2 = new BarDataSet(balance, "Leave Balance");
+//                    set2.setValueFormatter(new ValueFormatter() {
+//                        @Override
+//                        public String getFormattedValue(float value) {
+//                            return String.valueOf((int) Math.floor(value));
+//                        }
+//                    });
+//                    set2.setColor(ColorTemplate.VORDIPLOM_COLORS[2]);
+//
+//                    float groupSpace = 0.04f;
+//                    float barSpace = 0.02f; // x2 dataset
+//                    float barWidth = 0.46f;
+//
+//                    BarData data = new BarData(set1, set2);
+//                    data.setValueTextSize(12);
+//                    data.setBarWidth(barWidth); // set the width of each bar
+//                    chart.animateY(1000);
+//                    chart.setData(data);
+//                    chart.groupBars(0, groupSpace, barSpace); // perform the "explicit" grouping
+//                    chart.invalidate();
+//
+//                    xAxis.setValueFormatter(new ValueFormatter() {
+//                        @Override
+//                        public String getAxisLabel(float value, AxisBase axis) {
+//                            if (value < 0 || value >= shortCode.size()) {
+//                                return null;
+//                            } else {
+////                                System.out.println(value);
+////                                System.out.println(axis);
+////                                System.out.println(shortCode.get((int)value));
+//                                return (shortCode.get((int) value));
+//                            }
+//
+//                        }
+//                    });
+//
+//                }
 //
 //
 //
-//                PieData data = new PieData(dataSet);
-////                dataSet.setValueFormatter(new PercentFormatter(pieChart));
-//                dataSet.setValueFormatter(new ValueFormatter() {
+//            }
+//            else {
+//                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+//                AlertDialog dialog = new AlertDialog.Builder(Leave.this)
+//                        .setMessage("Please Check Your Internet Connection")
+//                        .setPositiveButton("Retry", null)
+//                        .setNegativeButton("Cancel", null)
+//                        .show();
+//
+//                dialog.setCancelable(false);
+//                dialog.setCanceledOnTouchOutside(false);
+//                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+//                positive.setOnClickListener(new View.OnClickListener() {
 //                    @Override
-//                    public String getFormattedValue(float value) {
-//                        return String.valueOf((int) Math.floor(value));
+//                    public void onClick(View v) {
+//
+//                        new Check().execute();
+//                        dialog.dismiss();
 //                    }
 //                });
-//                dataSet.setHighlightEnabled(true);
-//                dataSet.setValueTextSize(12);
-//                dataSet.setValueTextColor(Color.BLACK);
-//                dataSet.setColors(ColorTemplate.createColors(piecolors));
 //
+//                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+//                negative.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
 //
-////                pieChart.setUsePercentValues(true);
+//                        dialog.dismiss();
+//                        finish();
 //
-//                pieChart.setData(data);
-//                pieChart.invalidate();
+//                    }
+//                });
+//            }
+//        }
+//    }
 
+//    public void LeaveBalanceGraph() {
+//        try {
+//            this.connection = createConnection();
+//            //    Toast.makeText(MainActivity.this, "Connected",Toast.LENGTH_SHORT).show();
+//
+//
+////            NoOfEmp = new ArrayList<>();
+////            dataValue = new ArrayList<>();
+//
+//            balance = new ArrayList<>();
+//            earn = new ArrayList<>();
+//            shortCode = new ArrayList<>();
+//            Statement stmt = connection.createStatement();
+//
+//
+//
+//
+////            ResultSet rs=stmt.executeQuery("SELECT EM.LBEM_EMP_ID, lc.lc_short_code, LD.LBD_BALANCE_QTY,LD.LBD_CURRENT_QTY\n" +
+////                    "FROM LEAVE_BALANCE_EMP_MST  EM,\n" +
+////                    "LEAVE_BALANCE_YEAR_DTL YD,\n" +
+////                    "LEAVE_BALANCE_DTL      LD,\n" +
+////                    "leave_category lc\n" +
+////                    "WHERE EM.LBEM_ID = YD.LBYD_LBEM_ID\n" +
+////                    "AND YD.LBYD_ID = LD.LBD_LBYD_ID\n" +
+////                    "and ld.lbd_lc_id = lc.lc_id\n" +
+////                    "AND EM.LBEM_EMP_ID = "+emp_id+"\n" +
+////                    "AND TO_CHAR (YD.LBYD_YEAR, 'YYYY') = TO_CHAR (TO_DATE('"+ leaveDate +"'), 'YYYY')");
+//
+//            ResultSet rs=stmt.executeQuery("SELECT EM.LBEM_EMP_ID, lc.lc_short_code, case when lc.lc_short_code = 'LP' then 0 else get_leave_balance(EM.LBEM_EMP_ID,'"+leaveDate+"', lc.lc_short_code) end balance,NVL(LD.LBD_CURRENT_QTY,0) + NVL(ld.lbd_opening_qty,0)\n" +
+//                    "FROM LEAVE_BALANCE_EMP_MST  EM,\n" +
+//                    "LEAVE_BALANCE_YEAR_DTL YD,\n" +
+//                    "LEAVE_BALANCE_DTL      LD,\n" +
+//                    "leave_category lc\n" +
+//                    "WHERE EM.LBEM_ID = YD.LBYD_LBEM_ID\n" +
+//                    "AND YD.LBYD_ID = LD.LBD_LBYD_ID\n" +
+//                    "and ld.lbd_lc_id = lc.lc_id\n" +
+//                    "AND EM.LBEM_EMP_ID = "+emp_id+"\n" +
+//                    "AND TO_CHAR (YD.LBYD_YEAR, 'YYYY') = TO_CHAR (TO_DATE('"+ leaveDate +"'), 'YYYY')");
+//
+//
+//            int i = 0;
+//            while(rs.next()) {
+//
+//
+//                String data = rs.getString(4);
+//                if (data != null) {
+//                    if (!data.equals("0")) {
+//                        balance.add(new BarEntry(i, Float.parseFloat(rs.getString(3)),i));
+//                        earn.add(new BarEntry(i, Float.parseFloat(rs.getString(4)),i));
+//                        shortCode.add(rs.getString(2));
+//                        i++;
+//                    }
+//                }
+//
+//
+//
+//            }
+//
+//
+//            connected = true;
+//
+//            connection.close();
+//
+//        }
+//        catch (Exception e) {
+//
+//            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
+//            Log.i("ERRRRR", e.getLocalizedMessage());
+//            e.printStackTrace();
+//        }
+//    }
+
+    public void getLeaveGraph() {
+        waitProgress.show(getSupportFragmentManager(),"WaitBar");
+        waitProgress.setCancelable(false);
+        connected = false;
+        conn = false;
+
+        balance = new ArrayList<>();
+        earn = new ArrayList<>();
+        shortCode = new ArrayList<>();
+
+        String leaveDataUrl = "http://103.56.208.123:8001/apex/ttrams/dashboard/getLeaveData/"+emp_id+"/"+leaveDate+"";
+
+        RequestQueue requestQueue = Volley.newRequestQueue(Leave.this);
+
+        StringRequest leaveDataReq = new StringRequest(Request.Method.GET, leaveDataUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject leaveInfo = array.getJSONObject(i);
+//                        String lbem_emp_id = leaveInfo.getString("lbem_emp_id");
+                        String lc_short_code = leaveInfo.getString("lc_short_code");
+                        String balance_all = leaveInfo.getString("balance");
+                        String quantity = leaveInfo.getString("quantity");
+                        if (!quantity.equals("null") && !quantity.equals("NULL")) {
+                            if (!quantity.equals("0")) {
+                                balance.add(new BarEntry(i, Float.parseFloat(balance_all),i));
+                                earn.add(new BarEntry(i, Float.parseFloat(quantity),i));
+                                shortCode.add(lc_short_code);
+                            }
+                        }
+                    }
+                }
+                connected = true;
+                updateLeaveGraph();
+            }
+            catch (JSONException e) {
+                connected = false;
+                e.printStackTrace();
+                updateLeaveGraph();
+            }
+        }, error -> {
+            conn = false;
+            connected = false;
+            error.printStackTrace();
+            updateLeaveGraph();
+        });
+
+        requestQueue.add(leaveDataReq);
+    }
+
+    private void updateLeaveGraph() {
+        waitProgress.dismiss();
+        if (conn) {
+            if (connected) {
                 if (balance.size() == 0 || earn.size() == 0 || shortCode.size() == 0) {
                     // do nothing
                 } else {
@@ -603,13 +820,10 @@ public class Leave extends AppCompatActivity {
                     });
 
                 }
-
-
-
-            }else {
-                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+            }
+            else {
                 AlertDialog dialog = new AlertDialog.Builder(Leave.this)
-                        .setMessage("Please Check Your Internet Connection")
+                        .setMessage("There is a network issue in the server. Please Try later.")
                         .setPositiveButton("Retry", null)
                         .setNegativeButton("Cancel", null)
                         .show();
@@ -617,98 +831,38 @@ public class Leave extends AppCompatActivity {
                 dialog.setCancelable(false);
                 dialog.setCanceledOnTouchOutside(false);
                 Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        new Check().execute();
-                        dialog.dismiss();
-                    }
+                positive.setOnClickListener(v -> {
+                    getLeaveGraph();
+                    dialog.dismiss();
                 });
 
                 Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        dialog.dismiss();
-                        finish();
-
-                    }
+                negative.setOnClickListener(v -> {
+                    dialog.dismiss();
+                    finish();
                 });
             }
         }
-    }
+        else {
+            AlertDialog dialog = new AlertDialog.Builder(Leave.this)
+                    .setMessage("Please Check Your Internet Connection")
+                    .setPositiveButton("Retry", null)
+                    .setNegativeButton("Cancel", null)
+                    .show();
 
-    public void LeaveBalanceGraph() {
-        try {
-            this.connection = createConnection();
-            //    Toast.makeText(MainActivity.this, "Connected",Toast.LENGTH_SHORT).show();
+            dialog.setCancelable(false);
+            dialog.setCanceledOnTouchOutside(false);
+            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            positive.setOnClickListener(v -> {
+                getLeaveGraph();
+                dialog.dismiss();
+            });
 
-
-//            NoOfEmp = new ArrayList<>();
-//            dataValue = new ArrayList<>();
-
-            balance = new ArrayList<>();
-            earn = new ArrayList<>();
-            shortCode = new ArrayList<>();
-            Statement stmt = connection.createStatement();
-
-
-
-
-//            ResultSet rs=stmt.executeQuery("SELECT EM.LBEM_EMP_ID, lc.lc_short_code, LD.LBD_BALANCE_QTY,LD.LBD_CURRENT_QTY\n" +
-//                    "FROM LEAVE_BALANCE_EMP_MST  EM,\n" +
-//                    "LEAVE_BALANCE_YEAR_DTL YD,\n" +
-//                    "LEAVE_BALANCE_DTL      LD,\n" +
-//                    "leave_category lc\n" +
-//                    "WHERE EM.LBEM_ID = YD.LBYD_LBEM_ID\n" +
-//                    "AND YD.LBYD_ID = LD.LBD_LBYD_ID\n" +
-//                    "and ld.lbd_lc_id = lc.lc_id\n" +
-//                    "AND EM.LBEM_EMP_ID = "+emp_id+"\n" +
-//                    "AND TO_CHAR (YD.LBYD_YEAR, 'YYYY') = TO_CHAR (TO_DATE('"+ leaveDate +"'), 'YYYY')");
-
-            ResultSet rs=stmt.executeQuery("SELECT EM.LBEM_EMP_ID, lc.lc_short_code, case when lc.lc_short_code = 'LP' then 0 else get_leave_balance(EM.LBEM_EMP_ID,'"+leaveDate+"', lc.lc_short_code) end balance,NVL(LD.LBD_CURRENT_QTY,0) + NVL(ld.lbd_opening_qty,0)\n" +
-                    "FROM LEAVE_BALANCE_EMP_MST  EM,\n" +
-                    "LEAVE_BALANCE_YEAR_DTL YD,\n" +
-                    "LEAVE_BALANCE_DTL      LD,\n" +
-                    "leave_category lc\n" +
-                    "WHERE EM.LBEM_ID = YD.LBYD_LBEM_ID\n" +
-                    "AND YD.LBYD_ID = LD.LBD_LBYD_ID\n" +
-                    "and ld.lbd_lc_id = lc.lc_id\n" +
-                    "AND EM.LBEM_EMP_ID = "+emp_id+"\n" +
-                    "AND TO_CHAR (YD.LBYD_YEAR, 'YYYY') = TO_CHAR (TO_DATE('"+ leaveDate +"'), 'YYYY')");
-
-
-            int i = 0;
-            while(rs.next()) {
-
-
-                String data = rs.getString(4);
-                if (data != null) {
-                    if (!data.equals("0")) {
-                        balance.add(new BarEntry(i, Float.parseFloat(rs.getString(3)),i));
-                        earn.add(new BarEntry(i, Float.parseFloat(rs.getString(4)),i));
-                        shortCode.add(rs.getString(2));
-                        i++;
-                    }
-                }
-
-
-
-            }
-
-
-            connected = true;
-
-            connection.close();
-
-        }
-        catch (Exception e) {
-
-            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
-            Log.i("ERRRRR", e.getLocalizedMessage());
-            e.printStackTrace();
+            Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+            negative.setOnClickListener(v -> {
+                dialog.dismiss();
+                finish();
+            });
         }
     }
 }

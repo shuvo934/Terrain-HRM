@@ -10,16 +10,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -33,7 +27,6 @@ import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.attendance.Attendance;
 import ttit.com.shuvo.ikglhrm.attendance.trackService.Service;
 import ttit.com.shuvo.ikglhrm.dashboard.Dashboard;
-import ttit.com.shuvo.ikglhrm.directoryBook.Directory;
 import ttit.com.shuvo.ikglhrm.directoryBook.DirectoryWithDivision;
 import ttit.com.shuvo.ikglhrm.leaveAll.Leave;
 import ttit.com.shuvo.ikglhrm.payRoll.PayRollInfo;
@@ -101,7 +94,7 @@ public class MainMenu extends AppCompatActivity {
     public static final String COMPANY = "COMPANY";
     public static final String SOFTWARE = "SOFTWARE";
     public static final String LIVE_FLAG = "LIVE_FLAG";
-    public static final String DATABASE_NAME = "DATABASE_NAME";
+//    public static final String DATABASE_NAME = "DATABASE_NAME";
     TextView welcomeText;
 
 //    @Override
@@ -331,7 +324,7 @@ public class MainMenu extends AppCompatActivity {
                                     editor1.remove(COMPANY);
                                     editor1.remove(SOFTWARE);
                                     editor1.remove(LIVE_FLAG);
-                                    editor1.remove(DATABASE_NAME);
+//                                    editor1.remove(DATABASE_NAME);
                                     editor1.apply();
                                     editor1.commit();
 

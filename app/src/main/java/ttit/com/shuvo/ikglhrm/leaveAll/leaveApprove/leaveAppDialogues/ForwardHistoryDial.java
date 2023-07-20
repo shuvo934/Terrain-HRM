@@ -15,10 +15,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import ttit.com.shuvo.ikglhrm.R;
-import ttit.com.shuvo.ikglhrm.attendance.reqUpdate.AttendanceReqUpdate;
-import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.ShowShiftAdapter;
-
-import static ttit.com.shuvo.ikglhrm.attendance.update.AttendanceUpdate.showShiftNumber;
 import static ttit.com.shuvo.ikglhrm.leaveAll.leaveApprove.LeaveApprove.forwardHistoryLists;
 
 

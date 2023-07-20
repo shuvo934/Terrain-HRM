@@ -1,30 +1,30 @@
 package ttit.com.shuvo.ikglhrm;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
+//import androidx.activity.result.ActivityResult;
+//import androidx.activity.result.ActivityResultCallback;
+//import androidx.activity.result.ActivityResultLauncher;
+//import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
+//import androidx.annotation.Nullable;
+//import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
-import android.app.Activity;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.DialogInterface;
+//import android.app.Activity;
+//import android.content.ComponentName;
+//import android.content.Context;
+//import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.net.Uri;
+//import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.PowerManager;
-import android.provider.Settings;
+//import android.os.PowerManager;
+//import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     TextView permissionMsg;
     private final Handler mHandler = new Handler();
     private final int FINE_LOCATION_ACCESS_REQUEST_CODE = 10001;
-    private final int MY_IGNORE_OPTIMIZATION_REQUEST = 101010;
+//    private final int MY_IGNORE_OPTIMIZATION_REQUEST = 101010;
 
     SharedPreferences sharedPreferences;
     boolean loginfile = false;
@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String LOGIN_ACTIVITY_FILE = "LOGIN_ACTIVITY_FILE";
     public static final String LOGIN_TF = "TRUE_FALSE";
 
-    PowerManager pm = null;
+//    PowerManager pm = null;
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         permissionMsg = findViewById(R.id.permission_not_granted_msg);
 
         System.out.println(loginfile);
-        pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
+//        pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
 
 
         enableUserLocation();
@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
                     Manifest.permission.READ_EXTERNAL_STORAGE,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.CALL_PHONE,
-                    Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+//                    Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
             };
 
             for (String str : permission) {
@@ -160,10 +160,11 @@ public class MainActivity extends AppCompatActivity {
 
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
                     ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED &&
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS) == PackageManager.PERMISSION_GRANTED) {
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED /*&&
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS) == PackageManager.PERMISSION_GRANTED*/) {
 //                PermissionsAll();
-                DozeMode();
+//                DozeMode();
+                goToActivityMap();
             }
 //            if (ActivityCompat.checkSelfPermission(MainActivity.this,
 //                    Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
@@ -180,47 +181,47 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    public void DozeMode() {
-        boolean isIgnoringBatteryOptimizations = false;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            isIgnoringBatteryOptimizations = pm.isIgnoringBatteryOptimizations(getPackageName());
-            if(!isIgnoringBatteryOptimizations){
-                Intent intent = new Intent();
-                intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
-                intent.setData(Uri.parse("package:" + getPackageName()));
-                startActivityForResult(intent, MY_IGNORE_OPTIMIZATION_REQUEST);
-            } else {
-                goToActivityMap();
-            }
-        }
+//    public void DozeMode() {
+//        boolean isIgnoringBatteryOptimizations = false;
+//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+//            isIgnoringBatteryOptimizations = pm.isIgnoringBatteryOptimizations(getPackageName());
+//            if(!isIgnoringBatteryOptimizations){
+//                Intent intent = new Intent();
+//                intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+//                intent.setData(Uri.parse("package:" + getPackageName()));
+//                startActivityForResult(intent, MY_IGNORE_OPTIMIZATION_REQUEST);
+//            } else {
+//                goToActivityMap();
+//            }
+//        }
+//
+//    }
 
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == MY_IGNORE_OPTIMIZATION_REQUEST) {
-
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-
-                boolean isIgnoringBatteryOptimizations = pm.isIgnoringBatteryOptimizations(getPackageName());
-                if(isIgnoringBatteryOptimizations){
-                    // Ignoring battery optimization
-
-                    goToActivityMap();
-
-                    System.out.println("IGNORED");
-                }else{
-                    // Not ignoring battery optimization
-
-                    System.out.println("NOT IGNORED");
-                    permissionMsg.setText("Please Allow this Permission for Using This App");
-                }
-            }
-
-
-        }
-    }
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (requestCode == MY_IGNORE_OPTIMIZATION_REQUEST) {
+//
+//            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+//
+//                boolean isIgnoringBatteryOptimizations = pm.isIgnoringBatteryOptimizations(getPackageName());
+//                if(isIgnoringBatteryOptimizations){
+//                    // Ignoring battery optimization
+//
+//                    goToActivityMap();
+//
+//                    System.out.println("IGNORED");
+//                }else{
+//                    // Not ignoring battery optimization
+//
+//                    System.out.println("NOT IGNORED");
+//                    permissionMsg.setText("Please Allow this Permission for Using This App");
+//                }
+//            }
+//
+//
+//        }
+//    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -259,8 +260,8 @@ public class MainActivity extends AppCompatActivity {
 
                 if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED &&
                         ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED &&
-                        ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED &&
-                        ActivityCompat.checkSelfPermission(this, Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED /*&&
+                        ActivityCompat.checkSelfPermission(this, Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS) != PackageManager.PERMISSION_GRANTED*/) {
                     // TODO: Consider calling
                     //    ActivityCompat#requestPermissions
                     // here to request the missing permissions, and then overriding
@@ -277,7 +278,8 @@ public class MainActivity extends AppCompatActivity {
                 // Permission is granted. Continue the action or workflow
 //                     in your app.
 //                PermissionsAll();
-                DozeMode();
+//                DozeMode();
+                goToActivityMap();
             }
                 else {
                 permissionMsg.setText("Please Allow this Permission for Using This App");

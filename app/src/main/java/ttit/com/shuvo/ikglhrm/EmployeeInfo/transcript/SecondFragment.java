@@ -1,43 +1,36 @@
 package ttit.com.shuvo.ikglhrm.EmployeeInfo.transcript;
 
+import static java.nio.charset.StandardCharsets.ISO_8859_1;
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
 
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
 
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
-import static ttit.com.shuvo.ikglhrm.OracleConnection.createConnection;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 ///**
 // * A simple {@link Fragment} subclass.
@@ -117,12 +110,12 @@ public class SecondFragment extends Fragment {
     ArrayAdapter<String> taxAdapter;
 
     WaitProgress waitProgress = new WaitProgress();
-    private String message = null;
+//    private String message = null;
     private Boolean conn = false;
-    private Boolean infoConnected = false;
+//    private Boolean infoConnected = false;
     private Boolean connected = false;
 
-    private Connection connection;
+//    private Connection connection;
 
     String emp_id = "";
 
@@ -357,137 +350,734 @@ public class SecondFragment extends Fragment {
 //        taxAdapter.setDropDownViewResource(R.layout.item_country);
 //        taxBearer.setAdapter(taxAdapter);
 
-        new Check().execute();
+//        new Check().execute();
+        getTranscriptTwoData();
 
         return view;
     }
 
-    public boolean isConnected() {
-        boolean connected = false;
-        boolean isMobile = false;
-        try {
-            ConnectivityManager cm = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo nInfo = cm.getActiveNetworkInfo();
-            connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
-            return connected;
-        } catch (Exception e) {
-            Log.e("Connectivity Exception", e.getMessage());
-        }
-        return connected;
-    }
+//    public boolean isConnected() {
+//        boolean connected = false;
+//        boolean isMobile = false;
+//        try {
+//            ConnectivityManager cm = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+//            NetworkInfo nInfo = cm.getActiveNetworkInfo();
+//            connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
+//            return connected;
+//        } catch (Exception e) {
+//            Log.e("Connectivity Exception", e.getMessage());
+//        }
+//        return connected;
+//    }
+//
+//    public boolean isOnline() {
+//
+//        Runtime runtime = Runtime.getRuntime();
+//        try {
+//            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+//            int     exitValue = ipProcess.waitFor();
+//            return (exitValue == 0);
+//        }
+//        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
+//
+//        return false;
+//    }
+//
+//    public class Check extends AsyncTask<Void, Void, Void> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//
+//            waitProgress.show(requireActivity().getSupportFragmentManager(),"WaitBar");
+//            waitProgress.setCancelable(false);
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            if (isConnected() && isOnline()) {
+//
+//                DataQuery();
+//                if (connected) {
+//                    conn = true;
+//                    message= "Internet Connected";
+//                }
+//
+//            } else {
+//                conn = false;
+//                message = "Not Connected";
+//            }
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//
+//            waitProgress.dismiss();
+//            if (conn) {
+//
+//                if (secondPageData.size() != 0) {
+//                    for (int i = 0 ; i < secondPageData.size(); i++) {
+//
+////                    final String OLD_FORMAT = "yyyy-MM-dd";
+////                    final String NEW_FORMAT = "dd-MMM-yyyy";
+////                    SimpleDateFormat sdf = new SimpleDateFormat(OLD_FORMAT, Locale.getDefault());
+////                    String oldDateString;
+////                    String newDateString;
+////                    Date d = null;
+//                        String dateC = secondPageData.get(i).getExpectedDate();
+//                        if (dateC != null) {
+////                        dateC = dateC.substring(0, 10);
+////                        oldDateString = dateC;
+////                        try {
+////                            d = sdf.parse(oldDateString);
+////                        } catch (ParseException e) {
+////                            e.printStackTrace();
+////                        }
+////                        sdf.applyPattern(NEW_FORMAT);
+////                        //sdf.applyPattern(NEW_FORMAT);
+////                        newDateString = sdf.format(d);
+//                            expecJoin.setText(dateC);
+//                        } else {
+//                            expecJoin.setText("");
+//                        }
+//
+//
+//
+//                        String datt = secondPageData.get(i).getActualDate();
+//                        if (datt != null) {
+////                        datt = datt.substring(0, 10);
+////                        oldDateString = datt;
+////                        sdf.applyPattern(OLD_FORMAT);
+////
+////                        try {
+////                            d = sdf.parse(oldDateString);
+////                        } catch (ParseException e) {
+////                            e.printStackTrace();
+////                        }
+////                        sdf.applyPattern(NEW_FORMAT);
+////                        newDateString = sdf.format(d);
+//
+//                            actuJoin.setText(datt);
+//                        } else {
+//                            actuJoin.setText("");
+//                        }
+//
+//
+//                        String aptdat = secondPageData.get(i).getCalculationDate();
+//
+//                        if (aptdat != null) {
+////                        aptdat = aptdat.substring(0, 10);
+////                        oldDateString = aptdat;
+////                        sdf.applyPattern(OLD_FORMAT);
+////
+////
+////                        try {
+////                            d = sdf.parse(oldDateString);
+////                        } catch (ParseException e) {
+////                            e.printStackTrace();
+////                        }
+////                        sdf.applyPattern(NEW_FORMAT);
+////                        newDateString = sdf.format(d);
+//
+//                            calcJoin.setText(aptdat);
+//                        } else {
+//                            calcJoin.setText("");
+//                        }
+//
+//                        String procompdat = secondPageData.get(i).getProba_comp();
+//
+//                        if (procompdat != null) {
+////                        procompdat = procompdat.substring(0, 10);
+////                        oldDateString = procompdat;
+////                        sdf.applyPattern(OLD_FORMAT);
+////
+////
+////                        try {
+////                            d = sdf.parse(oldDateString);
+////                        } catch (ParseException e) {
+////                            e.printStackTrace();
+////                        }
+////                        sdf.applyPattern(NEW_FORMAT);
+////                        newDateString = sdf.format(d);
+//
+//                            probaComp.setText(procompdat);
+//                        } else {
+//                            probaComp.setText("");
+//                        }
+//
+//
+//                        String woreffedat = secondPageData.get(i).getWork_per_date();
+//
+//                        if (woreffedat != null) {
+////                        woreffedat = woreffedat.substring(0, 10);
+////                        oldDateString = woreffedat;
+////                        sdf.applyPattern(OLD_FORMAT);
+////
+////
+////                        try {
+////                            d = sdf.parse(oldDateString);
+////                        } catch (ParseException e) {
+////                            e.printStackTrace();
+////                        }
+////                        sdf.applyPattern(NEW_FORMAT);
+////                        newDateString = sdf.format(d);
+//
+//                            workPeEdDate.setText(woreffedat);
+//                        } else {
+//                            workPeEdDate.setText("");
+//                        }
+//
+//                        String workPEEEComDa = secondPageData.get(i).getWork_per_comp();
+//
+//                        if (workPEEEComDa != null) {
+////                        workPEEEComDa = workPEEEComDa.substring(0, 10);
+////                        oldDateString = workPEEEComDa;
+////                        sdf.applyPattern(OLD_FORMAT);
+////
+////
+////                        try {
+////                            d = sdf.parse(oldDateString);
+////                        } catch (ParseException e) {
+////                            e.printStackTrace();
+////                        }
+////                        sdf.applyPattern(NEW_FORMAT);
+////                        newDateString = sdf.format(d);
+//
+//                            workPeComp.setText(workPEEEComDa);
+//                        } else {
+//                            workPeComp.setText("");
+//                        }
+//
+//                        String quitdAt = secondPageData.get(i).getQuit();
+//
+//                        if (quitdAt != null) {
+////                        quitdAt = quitdAt.substring(0, 10);
+////                        oldDateString = quitdAt;
+////                        sdf.applyPattern(OLD_FORMAT);
+////
+////
+////                        try {
+////                            d = sdf.parse(oldDateString);
+////                        } catch (ParseException e) {
+////                            e.printStackTrace();
+////                        }
+////                        sdf.applyPattern(NEW_FORMAT);
+////                        newDateString = sdf.format(d);
+//
+//                            quitDate.setText(quitdAt);
+//                        } else {
+//                            quitDate.setText("");
+//                        }
+//
+//                        if (secondPageData.get(i).getAppointmentType() != null) {
+//                            appoinType.setText(secondPageData.get(i).getAppointmentType());
+//                        }
+//                        if (secondPageData.get(i).getRevisionType() != null) {
+//                            revisoinType.setText(secondPageData.get(i).getRevisionType());
+//                        }
+//                        if (secondPageData.get(i).getSer_status() != null) {
+//                            serviceStatus.setText(secondPageData.get(i).getSer_status());
+//                        }
+//                        if (secondPageData.get(i).getDesc() != null) {
+//                            description.setText(secondPageData.get(i).getDesc());
+//                        }
+//                        if (secondPageData.get(i).getProba_per() != null) {
+//                            probaPeriod.setText(secondPageData.get(i).getProba_per());
+//                        }
+//                        if (secondPageData.get(i).getWork_per_period() != null) {
+//                            workPePeriod.setText(secondPageData.get(i).getWork_per_period());
+//                        }
+//                        if (secondPageData.get(i).getShift() != null) {
+//                            shiftAlloc.setText(secondPageData.get(i).getShift());
+//                        }
+//
+//
+//                        if (secondPageData.get(i).getSalary_pack() != null) {
+//                            salaryPac.setText(secondPageData.get(i).getSalary_pack());
+//                        }
+//                        if (secondPageData.get(i).getIncre_amnt() != null) {
+//                            increAmnt.setText(secondPageData.get(i).getIncre_amnt());
+//                        }
+//                        if (secondPageData.get(i).getDecr_amnt() != null) {
+//                            decreAmnt.setText(secondPageData.get(i).getDecr_amnt());
+//                        }
+//                        if (secondPageData.get(i).getGross_sal() != null) {
+//                            grossSalary.setText(secondPageData.get(i).getGross_sal());
+//                        }
+//                        if (secondPageData.get(i).getCash_sal() != null) {
+//                            cashSalary.setText(secondPageData.get(i).getCash_sal());
+//                        }
+//                        if (secondPageData.get(i).getBasic_sal() != null) {
+//                            basicSalary.setText(secondPageData.get(i).getBasic_sal());
+//                        }
+//                        if (secondPageData.get(i).getHouse_rent() != null) {
+//                            houseRent.setText(secondPageData.get(i).getHouse_rent());
+//                        }
+//                        if (secondPageData.get(i).getMed_allow() != null) {
+//                            medicalAllow.setText(secondPageData.get(i).getMed_allow());
+//                        }
+//                        if (secondPageData.get(i).getConv_allow() != null) {
+//                            conveyaAllow.setText(secondPageData.get(i).getConv_allow());
+//                        }
+//                        if (secondPageData.get(i).getHabitation() != null) {
+//                            habitation.setText(secondPageData.get(i).getHabitation());
+//                        }
+//                        if (secondPageData.get(i).getUtilti() != null) {
+//                            utilty.setText(secondPageData.get(i).getUtilti());
+//                        }
+//                        if (secondPageData.get(i).getHoiuse_allow() != null) {
+//                            houseAllow.setText(secondPageData.get(i).getHoiuse_allow());
+//                        }
+//                        if (secondPageData.get(i).getEntertain() != null) {
+//                            entertain.setText(secondPageData.get(i).getEntertain());
+//                        }
+//                        if (secondPageData.get(i).getFact_allow() != null) {
+//                            factoryAllow.setText(secondPageData.get(i).getFact_allow());
+//                        }
+//
+//
+//                        if (secondPageData.get(i).getComm_sal() != null) {
+//                            committedSalary.setText(secondPageData.get(i).getComm_sal());
+//                        }
+//                        if (secondPageData.get(i).getFes_bon_type() != null) {
+////                            fesTypeBonus.setSelection(Integer.parseInt(secondPageData.get(i).getFes_bon_type()));
+//                            fesTypeBonus.setText(fesBonus.get(Integer.parseInt(secondPageData.get(i).getFes_bon_type())));
+//                        }
+//                        if (secondPageData.get(i).getMobile_bill() != null) {
+//                            mobileBill.setText(secondPageData.get(i).getMobile_bill());
+//                        }
+//                        if (secondPageData.get(i).getAdd_allow() != null) {
+//                            additinAllow.setText(secondPageData.get(i).getAdd_allow());
+//                        }
+//                        if (secondPageData.get(i).getFixed_ot() != null) {
+//                            fixedOt.setText(secondPageData.get(i).getFixed_ot());
+//                        }
+//                        if (secondPageData.get(i).getFood_sub_type() != null) {
+////                            foodSubsidyType.setSelection(Integer.parseInt(secondPageData.get(i).getFood_sub_type()));
+//                            foodSubsidyType.setText(foodsubsidy.get(Integer.parseInt(secondPageData.get(i).getFood_sub_type())));
+//                        }
+//                        if (secondPageData.get(i).getFood_sub() != null) {
+//                            foodSubsidy.setText(secondPageData.get(i).getFood_sub());
+//                        }
+//                        if (secondPageData.get(i).getOthers_allow_detl() != null) {
+//                            otherAlloDetl.setText(secondPageData.get(i).getOthers_allow_detl());
+//                        }
+//                        if (secondPageData.get(i).getOver_allow_app() != null) {
+//                            overtimeAllowApp.setText(secondPageData.get(i).getOver_allow_app());
+//                        }
+//                        if (secondPageData.get(i).getOver_rate() != null) {
+//                            overtimeRate.setText(secondPageData.get(i).getOver_rate());
+//                        }
+//                        if (secondPageData.get(i).getPro_fund_type() != null) {
+//                            providentFundType.setText(secondPageData.get(i).getPro_fund_type());
+//                        }
+//                        if (secondPageData.get(i).getPro_fund() != null) {
+//                            providentFund.setText(secondPageData.get(i).getPro_fund());
+//                        }
+//                        if (secondPageData.get(i).getOt_cal_per() != null) {
+//                            otCalPeriod.setText(secondPageData.get(i).getOt_cal_per());
+//                        }
+//
+//
+//
+//                        if (secondPageData.get(i).getTax_bearer() != null) {
+////                            taxBearer.setSelection(Integer.parseInt(secondPageData.get(i).getTax_bearer()));
+//                            taxBearer.setText(taxBear.get(Integer.parseInt(secondPageData.get(i).getTax_bearer())));
+//                        }
+//                        if (secondPageData.get(i).getTax_deduc() != null) {
+//                            taxDeduc.setText(secondPageData.get(i).getTax_deduc());
+//                        }
+//                        if (secondPageData.get(i).getSitting() != null) {
+//                            sitting.setText(secondPageData.get(i).getSitting());
+//                        }
+//                        if (secondPageData.get(i).getLunch() != null) {
+//                            lunchStatus.setText(secondPageData.get(i).getLunch());
+//                        }
+//                        if (secondPageData.get(i).getTransport() != null) {
+//                            transport.setText(secondPageData.get(i).getTransport());
+//                        }
+//                        if (secondPageData.get(i).getPabx_off() != null) {
+//                            pabx_office.setText(secondPageData.get(i).getPabx_off());
+//                        }
+//                        if (secondPageData.get(i).getPabx_fact() != null) {
+//                            pabx_factory.setText(secondPageData.get(i).getPabx_fact());
+//                        }
+//
+//                    }
+//                }
+//
+//                conn = false;
+//                connected = false;
+//
+//
+//
+//            }
+//            else {
+//                Toast.makeText(getContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+//                AlertDialog dialog = new AlertDialog.Builder(getContext())
+//                        .setMessage("Please Check Your Internet Connection")
+//                        .setPositiveButton("Retry", null)
+//                        .setNegativeButton("Cancel", null)
+//                        .show();
+//
+//                dialog.setCancelable(false);
+//                dialog.setCanceledOnTouchOutside(false);
+//                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+//                positive.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//
+//                        new Check().execute();
+//                        dialog.dismiss();
+//                    }
+//                });
+//
+//                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+//                negative.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        ((Activity)mContext).finish();
+//                    }
+//                });
+//            }
+//        }
+//    }
+//
+//    public void DataQuery() {
+//
+//        try {
+//            this.connection = createConnection();
+//            //    Toast.makeText(MainActivity.this, "Connected",Toast.LENGTH_SHORT).show();
+//
+//            secondPageData = new ArrayList<>();
+//
+//            Statement stmt = connection.createStatement();
+//
+//            ResultSet rs=stmt.executeQuery("SELECT TO_CHAR(TO_DATE(JOB_EXP_DATE),'DD-MON-YYYY') JOB_EXP_DATE, TO_CHAR(TO_DATE(JOB_ACTUAL_DATE),'DD-MON-YYYY') JOB_ACTUAL_DATE, TO_CHAR(TO_DATE(JOB_CALCULATION_DATE),'DD-MON-YYYY') JOB_CALCULATION_DATE, JOB_RECRUIT_TYPE, JOB_INCREMENT_FLAG, JOB_STATUS,\n" +
+//                    "JOB_STATUS_DETAILS, JOB_PROBATION_PERIOD, TO_CHAR(TO_DATE(JOB_PROBATION_DATE),'DD-MON-YYYY') JOB_PROBATION_DATE, TO_CHAR(TO_DATE(JOB_WORK_PE_DATE),'DD-MON-YYYY') JOB_WORK_PE_DATE, JOB_WORK_P_PERIOD,\n" +
+//                    "TO_CHAR(TO_DATE(JOB_WORK_P_COM_DATE),'DD-MON-YYYY') JOB_WORK_P_COM_DATE, TO_CHAR(TO_DATE(JOB_QUIT_DATE),'DD-MON-YYYY') JOB_QUIT_DATE, JOB_SHIFT, \n" +
+//                    "(SELECT SBSM_NAME FROM SALARY_BREAKDOWN_SETUP_MST WHERE SBSM_ID = JOB_SBSM_ID) as Package,\n" +
+//                    "JOB_INCREMENT_AMT, JOB_DECREMENT_AMT, JOB_GROSS_SAL, JOB_CASH_AMT, JOB_BASIC, JOB_HR,\n" +
+//                    "JOB_MD, JOB_CONVEYANCE, JOB_HABITATION, JOB_UTILITIES, JOB_HOUSE_ALLOWANCE, JOB_ENTERTAINMENT, JOB_FACTORY_ALLOWANCE_AMT,\n" +
+//                    "JOB_COMMITTED_SALARY, JOB_FESTIVAL_BONUS_FLAG, JOB_MOBILE_BILL, JOB_OTH_ALL, JOB_FIXED_OT, JOB_FOOD_SUBSIDY_FLAG,\n" +
+//                    "JOB_FOOD_SUBSIDY, JOB_OTH_ALL_DTL, JOB_OVERTIME_AVAIL_FLAG, JOB_OT_AMT, JOB_PF_TYPE, JOB_PF, JOB_OT_CAL_PERIOD,\n" +
+//                    "JOB_TAX_FLAG, JOB_TAX, JOB_SITTING, JOB_LUNCH_STATUS, JOB_TRANSPORT, JOB_PABX_CORPORATE, JOB_PABX_FACTORY\n" +
+//                    "FROM EMP_JOB_HISTORY\n" +
+//                    "WHERE JOB_ID = (SELECT MAX(JOB_ID) FROM EMP_JOB_HISTORY WHERE JOB_EMP_ID = "+emp_id+")");
+//
+//
+//            while(rs.next()) {
+//
+//                secondPageData.add(new SecondPageData(rs.getString(1),rs.getString(2),rs.getString(3),
+//                        rs.getString(4), rs.getString(5),rs.getString(6),rs.getString(7),
+//                        rs.getString(8),rs.getString(9),rs.getString(10),rs.getString(11),
+//                        rs.getString(12),rs.getString(13),rs.getString(14),rs.getString(15),
+//                        rs.getString(16),rs.getString(17),rs.getString(18),rs.getString(19),
+//                        rs.getString(20),rs.getString(21),rs.getString(22),rs.getString(23),
+//                        rs.getString(24),rs.getString(25),rs.getString(26),rs.getString(27),
+//                        rs.getString(28),rs.getString(29),rs.getString(30),rs.getString(31),
+//                        rs.getString(32),rs.getString(33),rs.getString(34),rs.getString(35),
+//                        rs.getString(36),rs.getString(37),rs.getString(38),rs.getString(39),
+//                        rs.getString(40),rs.getString(41),rs.getString(42),rs.getString(43),
+//                        rs.getString(44),rs.getString(45),rs.getString(46),rs.getString(47),
+//                        rs.getString(48)));
+//
+//            }
+//
+//
+//            connected = true;
+//
+//            connection.close();
+//
+//        }
+//        catch (Exception e) {
+//
+//            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
+//            Log.i("ERRRRR", e.getLocalizedMessage());
+//            e.printStackTrace();
+//        }
+//
+//    }
 
-    public boolean isOnline() {
+    public void getTranscriptTwoData() {
+        waitProgress.show(requireActivity().getSupportFragmentManager(),"WaitBar");
+        waitProgress.setCancelable(false);
+        conn = false;
+        connected = false;
 
-        Runtime runtime = Runtime.getRuntime();
-        try {
-            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
-            int     exitValue = ipProcess.waitFor();
-            return (exitValue == 0);
-        }
-        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
+        secondPageData = new ArrayList<>();
 
-        return false;
-    }
+        String secondPageUrl = "http://103.56.208.123:8001/apex/ttrams/emp_information/getTranscriptSecondPageData/"+emp_id+"";
 
-    public class Check extends AsyncTask<Void, Void, Void> {
+        RequestQueue requestQueue = Volley.newRequestQueue(mContext);
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
+        StringRequest secondDataReq = new StringRequest(Request.Method.GET, secondPageUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject empTranscriptSecond = array.getJSONObject(i);
 
-            waitProgress.show(requireActivity().getSupportFragmentManager(),"WaitBar");
-            waitProgress.setCancelable(false);
-        }
+                        String job_exp_date = empTranscriptSecond.getString("job_exp_date")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_exp_date");
+                        job_exp_date = transformText(job_exp_date);
 
-        @Override
-        protected Void doInBackground(Void... voids) {
-            if (isConnected() && isOnline()) {
+                        String job_actual_date = empTranscriptSecond.getString("job_actual_date")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_actual_date");
+                        job_actual_date = transformText(job_actual_date);
 
-                DataQuery();
-                if (connected) {
-                    conn = true;
-                    message= "Internet Connected";
+                        String job_calculation_date = empTranscriptSecond.getString("job_calculation_date")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_calculation_date");
+                        job_calculation_date = transformText(job_calculation_date);
+
+                        String job_recruit_type = empTranscriptSecond.getString("job_recruit_type")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_recruit_type");
+                        job_recruit_type = transformText(job_recruit_type);
+
+                        String job_increment_flag = empTranscriptSecond.getString("job_increment_flag")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_increment_flag");
+                        job_increment_flag = transformText(job_increment_flag);
+
+                        String job_status = empTranscriptSecond.getString("job_status")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_status");
+                        job_status = transformText(job_status);
+
+                        String job_status_details = empTranscriptSecond.getString("job_status_details")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_status_details");
+                        job_status_details = transformText(job_status_details);
+
+                        String job_probation_period = empTranscriptSecond.getString("job_probation_period")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_probation_period");
+                        job_probation_period = transformText(job_probation_period);
+
+                        String job_probation_date = empTranscriptSecond.getString("job_probation_date")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_probation_date");
+                        job_probation_date = transformText(job_probation_date);
+
+                        String job_work_pe_date = empTranscriptSecond.getString("job_work_pe_date")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_work_pe_date");
+                        job_work_pe_date = transformText(job_work_pe_date);
+
+                        String job_work_p_period = empTranscriptSecond.getString("job_work_p_period")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_work_p_period");
+                        job_work_p_period = transformText(job_work_p_period);
+
+                        String job_work_p_com_date = empTranscriptSecond.getString("job_work_p_com_date")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_work_p_com_date");
+                        job_work_p_com_date = transformText(job_work_p_com_date);
+
+                        String job_quit_date = empTranscriptSecond.getString("job_quit_date")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_quit_date");
+                        job_quit_date = transformText(job_quit_date);
+
+                        String job_shift = empTranscriptSecond.getString("job_shift")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_shift");
+                        job_shift = transformText(job_shift);
+
+                        String package_for_emp = empTranscriptSecond.getString("package_for_emp")
+                                .equals("null") ? "" : empTranscriptSecond.getString("package_for_emp");
+                        package_for_emp = transformText(package_for_emp);
+
+                        String job_increment_amt = empTranscriptSecond.getString("job_increment_amt")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_increment_amt");
+                        job_increment_amt = transformText(job_increment_amt);
+
+                        String job_decrement_amt = empTranscriptSecond.getString("job_decrement_amt")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_decrement_amt");
+                        job_decrement_amt = transformText(job_decrement_amt);
+
+                        String job_gross_sal = empTranscriptSecond.getString("job_gross_sal")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_gross_sal");
+                        job_gross_sal = transformText(job_gross_sal);
+
+                        String job_cash_amt = empTranscriptSecond.getString("job_cash_amt")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_cash_amt");
+                        job_cash_amt = transformText(job_cash_amt);
+
+                        String job_basic = empTranscriptSecond.getString("job_basic")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_basic");
+                        job_basic = transformText(job_basic);
+
+                        String job_hr = empTranscriptSecond.getString("job_hr")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_hr");
+                        job_hr = transformText(job_hr);
+
+                        String job_md = empTranscriptSecond.getString("job_md")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_md");
+                        job_md = transformText(job_md);
+
+                        String job_conveyance = empTranscriptSecond.getString("job_conveyance")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_conveyance");
+                        job_conveyance = transformText(job_conveyance);
+
+                        String job_habitation = empTranscriptSecond.getString("job_habitation")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_habitation");
+                        job_habitation = transformText(job_habitation);
+
+                        String job_utilities = empTranscriptSecond.getString("job_utilities")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_utilities");
+                        job_utilities = transformText(job_utilities);
+
+                        String job_house_allowance = empTranscriptSecond.getString("job_house_allowance")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_house_allowance");
+                        job_house_allowance = transformText(job_house_allowance);
+
+                        String job_entertainment = empTranscriptSecond.getString("job_entertainment")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_entertainment");
+                        job_entertainment = transformText(job_entertainment);
+
+                        String job_factory_allowance_amt = empTranscriptSecond.getString("job_factory_allowance_amt")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_factory_allowance_amt");
+                        job_factory_allowance_amt = transformText(job_factory_allowance_amt);
+
+                        String job_committed_salary = empTranscriptSecond.getString("job_committed_salary")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_committed_salary");
+                        job_committed_salary = transformText(job_committed_salary);
+
+                        String job_festival_bonus_flag = empTranscriptSecond.getString("job_festival_bonus_flag")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_festival_bonus_flag");
+                        job_festival_bonus_flag = transformText(job_festival_bonus_flag);
+
+                        String job_mobile_bill = empTranscriptSecond.getString("job_mobile_bill")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_mobile_bill");
+                        job_mobile_bill = transformText(job_mobile_bill);
+
+                        String job_oth_all = empTranscriptSecond.getString("job_oth_all")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_oth_all");
+                        job_oth_all = transformText(job_oth_all);
+
+                        String job_fixed_ot = empTranscriptSecond.getString("job_fixed_ot")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_fixed_ot");
+                        job_fixed_ot = transformText(job_fixed_ot);
+
+                        String job_food_subsidy_flag = empTranscriptSecond.getString("job_food_subsidy_flag")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_food_subsidy_flag");
+                        job_food_subsidy_flag = transformText(job_food_subsidy_flag);
+
+                        String job_food_subsidy = empTranscriptSecond.getString("job_food_subsidy")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_food_subsidy");
+                        job_food_subsidy = transformText(job_food_subsidy);
+
+                        String job_oth_all_dtl = empTranscriptSecond.getString("job_oth_all_dtl")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_oth_all_dtl");
+                        job_oth_all_dtl = transformText(job_oth_all_dtl);
+
+                        String job_overtime_avail_flag = empTranscriptSecond.getString("job_overtime_avail_flag")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_overtime_avail_flag");
+                        job_overtime_avail_flag = transformText(job_overtime_avail_flag);
+
+                        String job_ot_amt = empTranscriptSecond.getString("job_ot_amt")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_ot_amt");
+                        job_ot_amt = transformText(job_ot_amt);
+
+                        String job_pf_type = empTranscriptSecond.getString("job_pf_type")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_pf_type");
+                        job_pf_type = transformText(job_pf_type);
+
+                        String job_pf = empTranscriptSecond.getString("job_pf")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_pf");
+                        job_pf = transformText(job_pf);
+
+                        String job_ot_cal_period = empTranscriptSecond.getString("job_ot_cal_period")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_ot_cal_period");
+                        job_ot_cal_period = transformText(job_ot_cal_period);
+
+                        String job_tax_flag = empTranscriptSecond.getString("job_tax_flag")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_tax_flag");
+                        job_tax_flag = transformText(job_tax_flag);
+
+                        String job_tax = empTranscriptSecond.getString("job_tax")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_tax");
+                        job_tax = transformText(job_tax);
+
+                        String job_sitting = empTranscriptSecond.getString("job_sitting")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_sitting");
+                        job_sitting = transformText(job_sitting);
+
+                        String job_lunch_status = empTranscriptSecond.getString("job_lunch_status")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_lunch_status");
+                        job_lunch_status = transformText(job_lunch_status);
+
+                        String job_transport = empTranscriptSecond.getString("job_transport")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_transport");
+                        job_transport = transformText(job_transport);
+
+                        String job_pabx_corporate = empTranscriptSecond.getString("job_pabx_corporate")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_pabx_corporate");
+                        job_pabx_corporate = transformText(job_pabx_corporate);
+
+                        String job_pabx_factory = empTranscriptSecond.getString("job_pabx_factory")
+                                .equals("null") ? "" : empTranscriptSecond.getString("job_pabx_factory");
+                        job_pabx_factory = transformText(job_pabx_factory);
+
+                        secondPageData.add(new SecondPageData(job_exp_date,job_actual_date,job_calculation_date,
+                                job_recruit_type, job_increment_flag,job_status,job_status_details,
+                                job_probation_period,job_probation_date,job_work_pe_date,job_work_p_period,
+                                job_work_p_com_date,job_quit_date,job_shift,package_for_emp,
+                                job_increment_amt,job_decrement_amt,job_gross_sal,job_cash_amt,
+                                job_basic,job_hr,job_md,job_conveyance,
+                                job_habitation,job_utilities,job_house_allowance,job_entertainment,
+                                job_factory_allowance_amt,job_committed_salary,job_festival_bonus_flag,job_mobile_bill,
+                                job_oth_all,job_fixed_ot,job_food_subsidy_flag,job_food_subsidy,
+                                job_oth_all_dtl,job_overtime_avail_flag,job_ot_amt,job_pf_type,
+                                job_pf,job_ot_cal_period,job_tax_flag,job_tax,
+                                job_sitting,job_lunch_status,job_transport,job_pabx_corporate,
+                                job_pabx_factory));
+
+                    }
+                    connected = true;
                 }
-
-            } else {
-                conn = false;
-                message = "Not Connected";
+                else {
+                    connected = false;
+                }
+                updateLayout();
             }
+            catch (JSONException e) {
+                connected = false;
+                e.printStackTrace();
+                updateLayout();
+            }
+        }, error -> {
+            conn = false;
+            connected = false;
+            error.printStackTrace();
+            updateLayout();
+        });
 
-            return null;
-        }
+        requestQueue.add(secondDataReq);
+    }
 
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-            waitProgress.dismiss();
-            if (conn) {
-
+    private void updateLayout() {
+        waitProgress.dismiss();
+        if (conn) {
+            if (connected) {
                 if (secondPageData.size() != 0) {
                     for (int i = 0 ; i < secondPageData.size(); i++) {
 
-//                    final String OLD_FORMAT = "yyyy-MM-dd";
-//                    final String NEW_FORMAT = "dd-MMM-yyyy";
-//                    SimpleDateFormat sdf = new SimpleDateFormat(OLD_FORMAT, Locale.getDefault());
-//                    String oldDateString;
-//                    String newDateString;
-//                    Date d = null;
                         String dateC = secondPageData.get(i).getExpectedDate();
                         if (dateC != null) {
-//                        dateC = dateC.substring(0, 10);
-//                        oldDateString = dateC;
-//                        try {
-//                            d = sdf.parse(oldDateString);
-//                        } catch (ParseException e) {
-//                            e.printStackTrace();
-//                        }
-//                        sdf.applyPattern(NEW_FORMAT);
-//                        //sdf.applyPattern(NEW_FORMAT);
-//                        newDateString = sdf.format(d);
                             expecJoin.setText(dateC);
                         } else {
                             expecJoin.setText("");
                         }
 
-
-
                         String datt = secondPageData.get(i).getActualDate();
                         if (datt != null) {
-//                        datt = datt.substring(0, 10);
-//                        oldDateString = datt;
-//                        sdf.applyPattern(OLD_FORMAT);
-//
-//                        try {
-//                            d = sdf.parse(oldDateString);
-//                        } catch (ParseException e) {
-//                            e.printStackTrace();
-//                        }
-//                        sdf.applyPattern(NEW_FORMAT);
-//                        newDateString = sdf.format(d);
-
                             actuJoin.setText(datt);
                         } else {
                             actuJoin.setText("");
                         }
 
-
                         String aptdat = secondPageData.get(i).getCalculationDate();
 
                         if (aptdat != null) {
-//                        aptdat = aptdat.substring(0, 10);
-//                        oldDateString = aptdat;
-//                        sdf.applyPattern(OLD_FORMAT);
-//
-//
-//                        try {
-//                            d = sdf.parse(oldDateString);
-//                        } catch (ParseException e) {
-//                            e.printStackTrace();
-//                        }
-//                        sdf.applyPattern(NEW_FORMAT);
-//                        newDateString = sdf.format(d);
-
                             calcJoin.setText(aptdat);
                         } else {
                             calcJoin.setText("");
@@ -496,41 +1086,14 @@ public class SecondFragment extends Fragment {
                         String procompdat = secondPageData.get(i).getProba_comp();
 
                         if (procompdat != null) {
-//                        procompdat = procompdat.substring(0, 10);
-//                        oldDateString = procompdat;
-//                        sdf.applyPattern(OLD_FORMAT);
-//
-//
-//                        try {
-//                            d = sdf.parse(oldDateString);
-//                        } catch (ParseException e) {
-//                            e.printStackTrace();
-//                        }
-//                        sdf.applyPattern(NEW_FORMAT);
-//                        newDateString = sdf.format(d);
-
                             probaComp.setText(procompdat);
                         } else {
                             probaComp.setText("");
                         }
 
-
                         String woreffedat = secondPageData.get(i).getWork_per_date();
 
                         if (woreffedat != null) {
-//                        woreffedat = woreffedat.substring(0, 10);
-//                        oldDateString = woreffedat;
-//                        sdf.applyPattern(OLD_FORMAT);
-//
-//
-//                        try {
-//                            d = sdf.parse(oldDateString);
-//                        } catch (ParseException e) {
-//                            e.printStackTrace();
-//                        }
-//                        sdf.applyPattern(NEW_FORMAT);
-//                        newDateString = sdf.format(d);
-
                             workPeEdDate.setText(woreffedat);
                         } else {
                             workPeEdDate.setText("");
@@ -539,19 +1102,6 @@ public class SecondFragment extends Fragment {
                         String workPEEEComDa = secondPageData.get(i).getWork_per_comp();
 
                         if (workPEEEComDa != null) {
-//                        workPEEEComDa = workPEEEComDa.substring(0, 10);
-//                        oldDateString = workPEEEComDa;
-//                        sdf.applyPattern(OLD_FORMAT);
-//
-//
-//                        try {
-//                            d = sdf.parse(oldDateString);
-//                        } catch (ParseException e) {
-//                            e.printStackTrace();
-//                        }
-//                        sdf.applyPattern(NEW_FORMAT);
-//                        newDateString = sdf.format(d);
-
                             workPeComp.setText(workPEEEComDa);
                         } else {
                             workPeComp.setText("");
@@ -560,19 +1110,6 @@ public class SecondFragment extends Fragment {
                         String quitdAt = secondPageData.get(i).getQuit();
 
                         if (quitdAt != null) {
-//                        quitdAt = quitdAt.substring(0, 10);
-//                        oldDateString = quitdAt;
-//                        sdf.applyPattern(OLD_FORMAT);
-//
-//
-//                        try {
-//                            d = sdf.parse(oldDateString);
-//                        } catch (ParseException e) {
-//                            e.printStackTrace();
-//                        }
-//                        sdf.applyPattern(NEW_FORMAT);
-//                        newDateString = sdf.format(d);
-
                             quitDate.setText(quitdAt);
                         } else {
                             quitDate.setText("");
@@ -711,19 +1248,15 @@ public class SecondFragment extends Fragment {
                         if (secondPageData.get(i).getPabx_fact() != null) {
                             pabx_factory.setText(secondPageData.get(i).getPabx_fact());
                         }
-
                     }
                 }
 
                 conn = false;
                 connected = false;
-
-
-
-            }else {
-                Toast.makeText(getContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+            }
+            else {
                 AlertDialog dialog = new AlertDialog.Builder(getContext())
-                        .setMessage("Please Check Your Internet Connection")
+                        .setMessage("There is a network issue in the server. Please Try later")
                         .setPositiveButton("Retry", null)
                         .setNegativeButton("Cancel", null)
                         .show();
@@ -731,79 +1264,46 @@ public class SecondFragment extends Fragment {
                 dialog.setCancelable(false);
                 dialog.setCanceledOnTouchOutside(false);
                 Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                positive.setOnClickListener(v -> {
 
-                        new Check().execute();
-                        dialog.dismiss();
-                    }
+                    getTranscriptTwoData();
+                    dialog.dismiss();
                 });
 
                 Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ((Activity)mContext).finish();
-                    }
+                negative.setOnClickListener(v -> {
+                    ((Activity)mContext).finish();
+                    dialog.dismiss();
                 });
             }
         }
+        else {
+            AlertDialog dialog = new AlertDialog.Builder(getContext())
+                    .setMessage("Please Check Your Internet Connection")
+                    .setPositiveButton("Retry", null)
+                    .setNegativeButton("Cancel", null)
+                    .show();
+
+            dialog.setCancelable(false);
+            dialog.setCanceledOnTouchOutside(false);
+            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            positive.setOnClickListener(v -> {
+
+                getTranscriptTwoData();
+                dialog.dismiss();
+            });
+
+            Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+            negative.setOnClickListener(v -> {
+                ((Activity)mContext).finish();
+                dialog.dismiss();
+            });
+        }
     }
 
-    public void DataQuery() {
-
-        try {
-            this.connection = createConnection();
-            //    Toast.makeText(MainActivity.this, "Connected",Toast.LENGTH_SHORT).show();
-
-            secondPageData = new ArrayList<>();
-
-            Statement stmt = connection.createStatement();
-
-            ResultSet rs=stmt.executeQuery("SELECT TO_CHAR(TO_DATE(JOB_EXP_DATE),'DD-MON-YYYY') JOB_EXP_DATE, TO_CHAR(TO_DATE(JOB_ACTUAL_DATE),'DD-MON-YYYY') JOB_ACTUAL_DATE, TO_CHAR(TO_DATE(JOB_CALCULATION_DATE),'DD-MON-YYYY') JOB_CALCULATION_DATE, JOB_RECRUIT_TYPE, JOB_INCREMENT_FLAG, JOB_STATUS,\n" +
-                    "JOB_STATUS_DETAILS, JOB_PROBATION_PERIOD, TO_CHAR(TO_DATE(JOB_PROBATION_DATE),'DD-MON-YYYY') JOB_PROBATION_DATE, TO_CHAR(TO_DATE(JOB_WORK_PE_DATE),'DD-MON-YYYY') JOB_WORK_PE_DATE, JOB_WORK_P_PERIOD,\n" +
-                    "TO_CHAR(TO_DATE(JOB_WORK_P_COM_DATE),'DD-MON-YYYY') JOB_WORK_P_COM_DATE, TO_CHAR(TO_DATE(JOB_QUIT_DATE),'DD-MON-YYYY') JOB_QUIT_DATE, JOB_SHIFT, \n" +
-                    "(SELECT SBSM_NAME FROM SALARY_BREAKDOWN_SETUP_MST WHERE SBSM_ID = JOB_SBSM_ID) as Package,\n" +
-                    "JOB_INCREMENT_AMT, JOB_DECREMENT_AMT, JOB_GROSS_SAL, JOB_CASH_AMT, JOB_BASIC, JOB_HR,\n" +
-                    "JOB_MD, JOB_CONVEYANCE, JOB_HABITATION, JOB_UTILITIES, JOB_HOUSE_ALLOWANCE, JOB_ENTERTAINMENT, JOB_FACTORY_ALLOWANCE_AMT,\n" +
-                    "JOB_COMMITTED_SALARY, JOB_FESTIVAL_BONUS_FLAG, JOB_MOBILE_BILL, JOB_OTH_ALL, JOB_FIXED_OT, JOB_FOOD_SUBSIDY_FLAG,\n" +
-                    "JOB_FOOD_SUBSIDY, JOB_OTH_ALL_DTL, JOB_OVERTIME_AVAIL_FLAG, JOB_OT_AMT, JOB_PF_TYPE, JOB_PF, JOB_OT_CAL_PERIOD,\n" +
-                    "JOB_TAX_FLAG, JOB_TAX, JOB_SITTING, JOB_LUNCH_STATUS, JOB_TRANSPORT, JOB_PABX_CORPORATE, JOB_PABX_FACTORY\n" +
-                    "FROM EMP_JOB_HISTORY\n" +
-                    "WHERE JOB_ID = (SELECT MAX(JOB_ID) FROM EMP_JOB_HISTORY WHERE JOB_EMP_ID = "+emp_id+")");
-
-
-            while(rs.next()) {
-
-                secondPageData.add(new SecondPageData(rs.getString(1),rs.getString(2),rs.getString(3),
-                        rs.getString(4), rs.getString(5),rs.getString(6),rs.getString(7),
-                        rs.getString(8),rs.getString(9),rs.getString(10),rs.getString(11),
-                        rs.getString(12),rs.getString(13),rs.getString(14),rs.getString(15),
-                        rs.getString(16),rs.getString(17),rs.getString(18),rs.getString(19),
-                        rs.getString(20),rs.getString(21),rs.getString(22),rs.getString(23),
-                        rs.getString(24),rs.getString(25),rs.getString(26),rs.getString(27),
-                        rs.getString(28),rs.getString(29),rs.getString(30),rs.getString(31),
-                        rs.getString(32),rs.getString(33),rs.getString(34),rs.getString(35),
-                        rs.getString(36),rs.getString(37),rs.getString(38),rs.getString(39),
-                        rs.getString(40),rs.getString(41),rs.getString(42),rs.getString(43),
-                        rs.getString(44),rs.getString(45),rs.getString(46),rs.getString(47),
-                        rs.getString(48)));
-
-            }
-
-
-            connected = true;
-
-            connection.close();
-
-        }
-        catch (Exception e) {
-
-            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
-            Log.i("ERRRRR", e.getLocalizedMessage());
-            e.printStackTrace();
-        }
-
+    //    --------------------------Transforming Bangla Text-----------------------------
+    private String transformText(String text) {
+        byte[] bytes = text.getBytes(ISO_8859_1);
+        return new String(bytes, UTF_8);
     }
 }

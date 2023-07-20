@@ -4,18 +4,16 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.AsyncTask;
+
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
+
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,29 +24,24 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.material.textfield.TextInputEditText;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
-import ttit.com.shuvo.ikglhrm.attendance.reqUpdate.AttendanceReqUpdate;
-import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.SelectAllAdapter;
-import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.SelectAllList;
-import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.ShowAttendance;
-import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.ShowShiftAdapter;
-import ttit.com.shuvo.ikglhrm.leaveAll.LeaveApplication;
-
-import static ttit.com.shuvo.ikglhrm.OracleConnection.createConnection;
-import static ttit.com.shuvo.ikglhrm.attendance.update.AttendanceUpdate.dialogText;
 import static ttit.com.shuvo.ikglhrm.payRoll.paySlip.PaySlip.errorMsgMonth;
 import static ttit.com.shuvo.ikglhrm.payRoll.paySlip.PaySlip.selectMonth;
 import static ttit.com.shuvo.ikglhrm.payRoll.paySlip.PaySlip.selectMonthLay;
 import static ttit.com.shuvo.ikglhrm.payRoll.paySlip.PaySlip.select_month_id;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MonthSelectDialogue extends AppCompatDialogFragment implements MonthSelectAdapter.ClickedItem {
 
@@ -67,11 +60,11 @@ public class MonthSelectDialogue extends AppCompatDialogFragment implements Mont
 
 
     WaitProgress waitProgress = new WaitProgress();
-    private String message = null;
+//    private String message = null;
     private Boolean conn = false;
     private Boolean connected = false;
 
-    private Connection connection;
+//    private Connection connection;
     AppCompatActivity activity;
 
     Context mContext;
@@ -104,7 +97,8 @@ public class MonthSelectDialogue extends AppCompatDialogFragment implements Mont
 
 
 
-        new Check().execute();
+//        new Check().execute();
+        getMonths();
 
         builder.setView(view);
         dialog = builder.create();
@@ -175,77 +169,210 @@ public class MonthSelectDialogue extends AppCompatDialogFragment implements Mont
         System.out.println(id);
 
         select_month_id = id;
-        selectMonth.setText(name);
         errorMsgMonth.setVisibility(View.GONE);
         selectMonthLay.setHint("Month:");
+        selectMonth.setText(name);
         dialog.dismiss();
     }
 
-    public boolean isConnected() {
-        boolean connected = false;
-        boolean isMobile = false;
-        try {
-            ConnectivityManager cm = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo nInfo = cm.getActiveNetworkInfo();
-            connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
-            isMobile = nInfo.getType() == ConnectivityManager.TYPE_MOBILE;
-            return connected;
-        } catch (Exception e) {
-            Log.e("Connectivity Exception", e.getMessage());
-        }
-        return connected;
-    }
+//    public boolean isConnected() {
+//        boolean connected = false;
+//        boolean isMobile = false;
+//        try {
+//            ConnectivityManager cm = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+//            NetworkInfo nInfo = cm.getActiveNetworkInfo();
+//            connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
+//            isMobile = nInfo.getType() == ConnectivityManager.TYPE_MOBILE;
+//            return connected;
+//        } catch (Exception e) {
+//            Log.e("Connectivity Exception", e.getMessage());
+//        }
+//        return connected;
+//    }
+//
+//    public boolean isOnline() {
+//
+//        Runtime runtime = Runtime.getRuntime();
+//        try {
+//            //Process ipProcess = runtime.exec("/system/bin/ping -c 1 192.168.1.5");
+//            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+//            int     exitValue = ipProcess.waitFor();
+//            return (exitValue == 0);
+//        }
+//        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
+//
+//        return false;
+//    }
+//
+//
+//
+//    public class Check extends AsyncTask<Void, Void, Void> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//
+//            waitProgress.show(activity.getSupportFragmentManager(),"WaitBar");
+//            waitProgress.setCancelable(false);
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            if (isConnected() && isOnline()) {
+//                MonthShow();
+//                if (connected) {
+//                    conn = true;
+//                    message= "Internet Connected";
+//                }
+//
+//            } else {
+//                conn = false;
+//                message = "Not Connected";
+//            }
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//
+//            waitProgress.dismiss();
+//            if (conn) {
+//
+//                if (lists.size() == 0) {
+//                    noMonthMsg.setVisibility(View.VISIBLE);
+//                }
+//                else {
+//                    noMonthMsg.setVisibility(View.GONE);
+//                }
+//                monthSelectAdapter = new MonthSelectAdapter(lists,getContext(), MonthSelectDialogue.this);
+//                recyclerView.setAdapter(monthSelectAdapter);
+//
+//
+//            }
+//            else {
+//                Toast.makeText(getContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+//                AlertDialog dialog = new AlertDialog.Builder(getContext())
+//                        .setMessage("Please Check Your Internet Connection")
+//                        .setPositiveButton("Retry", null)
+//                        .setNegativeButton("Cancel",null)
+//                        .show();
+//
+//                dialog.setCancelable(false);
+//                dialog.setCanceledOnTouchOutside(false);
+//                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+//                positive.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//
+//                        new Check().execute();
+//                        dialog.dismiss();
+//                    }
+//                });
+//                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+//                negative.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        dialog.dismiss();
+//                        ((Activity)mContext).finish();
+//                    }
+//                });
+//
+//            }
+//        }
+//    }
+//
+//    public void MonthShow() {
+//
+//        try {
+//            this.connection = createConnection();
+//
+//            Statement stmt = connection.createStatement();
+//            lists = new ArrayList<>();
+//
+//            ResultSet rs=stmt.executeQuery("SELECT TO_CHAR(PAYROLL_MONTH_SETUP.PMS_MONTH,'fmMon-RRRR') MONTH_NAME, TO_CHAR(PAYROLL_MONTH_SETUP.PMS_MONTH,'DD-MON-YY') MONTH_ID,\n" +
+//                    "TO_CHAR(PAYROLL_MONTH_SETUP.PMS_STD_DATE,'DD-MON-YY') MONTH_START,TO_CHAR(PAYROLL_MONTH_SETUP.PMS_END_DATE,'DD-MON-YY') MONTH_END\n" +
+//                    "FROM PAYROLL_MONTH_SETUP\n" +
+//                    "ORDER BY PAYROLL_MONTH_SETUP.PMS_MONTH DESC");
+//
+//
+//
+//            while(rs.next()) {
+//
+//                lists.add(new MonthSelectList(rs.getString(1),rs.getString(2),rs.getString(3),rs.getString(4)));
+//
+//            }
+//            connected = true;
+//
+//            connection.close();
+//
+//        }
+//        catch (Exception e) {
+//
+//            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
+//            Log.i("ERRRRR", e.getLocalizedMessage());
+//            e.printStackTrace();
+//        }
+//
+//    }
 
-    public boolean isOnline() {
+    public void getMonths() {
+        waitProgress.show(activity.getSupportFragmentManager(),"WaitBar");
+        waitProgress.setCancelable(false);
+        conn = false;
+        connected = false;
+        lists = new ArrayList<>();
 
-        Runtime runtime = Runtime.getRuntime();
-        try {
-            //Process ipProcess = runtime.exec("/system/bin/ping -c 1 192.168.1.5");
-            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
-            int     exitValue = ipProcess.waitFor();
-            return (exitValue == 0);
-        }
-        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
+        String url = "http://103.56.208.123:8001/apex/ttrams/paySlip/getPayMonths";
 
-        return false;
-    }
+        RequestQueue requestQueue = Volley.newRequestQueue(mContext);
 
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject monthInfo = array.getJSONObject(i);
 
+                        String month_name = monthInfo.getString("month_name")
+                                .equals("null") ? "" : monthInfo.getString("month_name");
+                        String month_id = monthInfo.getString("month_id")
+                                .equals("null") ? "" : monthInfo.getString("month_id");
+                        String month_start = monthInfo.getString("month_start")
+                                .equals("null") ? "" : monthInfo.getString("month_start");
+                        String month_end = monthInfo.getString("month_end")
+                                .equals("null") ? "" : monthInfo.getString("month_end");
 
-    public class Check extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            waitProgress.show(activity.getSupportFragmentManager(),"WaitBar");
-            waitProgress.setCancelable(false);
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            if (isConnected() && isOnline()) {
-                MonthShow();
-                if (connected) {
-                    conn = true;
-                    message= "Internet Connected";
+                        lists.add(new MonthSelectList(month_name,month_id,month_start,month_end));
+                    }
                 }
-
-            } else {
-                conn = false;
-                message = "Not Connected";
+                connected = true;
+                updateDial();
             }
+            catch (JSONException e) {
+                e.printStackTrace();
+                connected = false;
+                updateDial();
+            }
+        }, error -> {
+           error.printStackTrace();
+           conn = false;
+           connected = false;
+           updateDial();
+        });
 
-            return null;
-        }
+        requestQueue.add(stringRequest);
+    }
 
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-            waitProgress.dismiss();
-            if (conn) {
-
+    private void updateDial() {
+        waitProgress.dismiss();
+        if (conn) {
+            if (connected) {
                 if (lists.size() == 0) {
                     noMonthMsg.setVisibility(View.VISIBLE);
                 }
@@ -254,12 +381,10 @@ public class MonthSelectDialogue extends AppCompatDialogFragment implements Mont
                 }
                 monthSelectAdapter = new MonthSelectAdapter(lists,getContext(), MonthSelectDialogue.this);
                 recyclerView.setAdapter(monthSelectAdapter);
-
-
-            }else {
-                Toast.makeText(getContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+            }
+            else {
                 AlertDialog dialog = new AlertDialog.Builder(getContext())
-                        .setMessage("Please Check Your Internet Connection")
+                        .setMessage("There is a network issue in the server. Please Try later.")
                         .setPositiveButton("Retry", null)
                         .setNegativeButton("Cancel",null)
                         .show();
@@ -267,59 +392,40 @@ public class MonthSelectDialogue extends AppCompatDialogFragment implements Mont
                 dialog.setCancelable(false);
                 dialog.setCanceledOnTouchOutside(false);
                 Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                positive.setOnClickListener(v -> {
 
-                        new Check().execute();
-                        dialog.dismiss();
-                    }
+                    getMonths();
+                    dialog.dismiss();
                 });
                 Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                        ((Activity)mContext).finish();
-                    }
+                negative.setOnClickListener(v -> {
+                    dialog.dismiss();
+                    ((Activity)mContext).finish();
                 });
-
             }
         }
-    }
+        else {
+            AlertDialog dialog = new AlertDialog.Builder(getContext())
+                    .setMessage("Please Check Your Internet Connection")
+                    .setPositiveButton("Retry", null)
+                    .setNegativeButton("Cancel",null)
+                    .show();
 
-    public void MonthShow() {
+            dialog.setCancelable(false);
+            dialog.setCanceledOnTouchOutside(false);
+            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            positive.setOnClickListener(v -> {
 
-        try {
-            this.connection = createConnection();
-
-            Statement stmt = connection.createStatement();
-            lists = new ArrayList<>();
-
-            ResultSet rs=stmt.executeQuery("SELECT TO_CHAR(PAYROLL_MONTH_SETUP.PMS_MONTH,'fmMon-RRRR') MONTH_NAME, TO_CHAR(PAYROLL_MONTH_SETUP.PMS_MONTH,'DD-MON-YY') MONTH_ID,\n" +
-                    "TO_CHAR(PAYROLL_MONTH_SETUP.PMS_STD_DATE,'DD-MON-YY') MONTH_START,TO_CHAR(PAYROLL_MONTH_SETUP.PMS_END_DATE,'DD-MON-YY') MONTH_END\n" +
-                    "FROM PAYROLL_MONTH_SETUP\n" +
-                    "ORDER BY PAYROLL_MONTH_SETUP.PMS_MONTH DESC");
-
-
-
-            while(rs.next()) {
-
-                lists.add(new MonthSelectList(rs.getString(1),rs.getString(2),rs.getString(3),rs.getString(4)));
-
-            }
-            connected = true;
-
-            connection.close();
+                getMonths();
+                dialog.dismiss();
+            });
+            Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+            negative.setOnClickListener(v -> {
+                dialog.dismiss();
+                ((Activity)mContext).finish();
+            });
 
         }
-        catch (Exception e) {
-
-            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
-            Log.i("ERRRRR", e.getLocalizedMessage());
-            e.printStackTrace();
-        }
-
     }
 
 }

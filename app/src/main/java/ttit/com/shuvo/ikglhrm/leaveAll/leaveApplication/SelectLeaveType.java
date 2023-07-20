@@ -23,16 +23,6 @@ import com.google.android.material.textfield.TextInputEditText;
 import java.util.ArrayList;
 
 import ttit.com.shuvo.ikglhrm.R;
-import ttit.com.shuvo.ikglhrm.attendance.reqUpdate.AttendanceReqUpdate;
-import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.SelectAllAdapter;
-import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.SelectAllList;
-
-import static ttit.com.shuvo.ikglhrm.attendance.update.AttendanceUpdate.dialogText;
-import static ttit.com.shuvo.ikglhrm.attendance.update.AttendanceUpdate.errorShift;
-import static ttit.com.shuvo.ikglhrm.attendance.update.AttendanceUpdate.selected_shift_id;
-import static ttit.com.shuvo.ikglhrm.attendance.update.AttendanceUpdate.selected_shift_name;
-import static ttit.com.shuvo.ikglhrm.attendance.update.AttendanceUpdate.shiftTestEdit;
-import static ttit.com.shuvo.ikglhrm.attendance.update.AttendanceUpdate.showShoftTime;
 import static ttit.com.shuvo.ikglhrm.leaveAll.LeaveApplication.errorReason;
 import static ttit.com.shuvo.ikglhrm.leaveAll.LeaveApplication.isOtherReason;
 import static ttit.com.shuvo.ikglhrm.leaveAll.LeaveApplication.leaveType;

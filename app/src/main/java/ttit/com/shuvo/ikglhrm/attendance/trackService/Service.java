@@ -32,7 +32,6 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONException;
@@ -56,7 +55,6 @@ import java.util.Map;
 import ttit.com.shuvo.ikglhrm.MainActivity;
 import ttit.com.shuvo.ikglhrm.R;
 
-import static ttit.com.shuvo.ikglhrm.OracleConnection.DEFAULT_USERNAME;
 import static ttit.com.shuvo.ikglhrm.attendance.trackService.DistanceCalculator.CalculationByDistance;
 import static ttit.com.shuvo.ikglhrm.attendance.trackService.Notification.CHANNEL_ID;
 
@@ -88,17 +86,17 @@ public class Service extends android.app.Service {
 //    String url =
 
 
-    String getUrl() {
-        if (DEFAULT_USERNAME.equals("IKGL")) {
-            return "http://103.56.208.123:8001/apex/tracker/rest-v4/loctrackerv4/";
-        }
-        else if (DEFAULT_USERNAME.equals("TTRAMS")) {
-            return "http://103.56.208.123:8001/apex/ttrams/tracker/update_loc";
-        }
-        else {
-            return "";
-        }
-    }
+//    String getUrl() {
+//        if (DEFAULT_USERNAME.equals("IKGL")) {
+//            return "http://103.56.208.123:8001/apex/tracker/rest-v4/loctrackerv4/";
+//        }
+//        else if (DEFAULT_USERNAME.equals("TTRAMS")) {
+//            return "http://103.56.208.123:8001/apex/ttrams/tracker/update_loc";
+//        }
+//        else {
+//            return "";
+//        }
+//    }
 
 
     SharedPreferences sharedPreferences;
@@ -258,7 +256,8 @@ public class Service extends android.app.Service {
 
     public void UpdateLocation(String lat, String lon, String speed, String adds, String acc, String bear) {
 
-        String url = getUrl();
+//        String url = getUrl();
+        String url = "http://103.56.208.123:8001/apex/ttrams/tracker/update_loc";
         System.out.println("URL: "+url);
         RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
 

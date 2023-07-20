@@ -5,46 +5,39 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.material.textfield.TextInputEditText;
-
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
 
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
-import ttit.com.shuvo.ikglhrm.attendance.status.statusDetail.AttendanceStatusDetails;
-import ttit.com.shuvo.ikglhrm.leaveAll.leaveApplication.leaveApplicatinStatus.LeaveApplicationStatus;
 
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
-import static ttit.com.shuvo.ikglhrm.OracleConnection.createConnection;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class LeaveAppStatusDetails extends AppCompatActivity {
 
     WaitProgress waitProgress = new WaitProgress();
-    private String message = null;
+//    private String message = null;
     private Boolean conn = false;
     private Boolean connected = false;
 
-    private Connection connection;
+//    private Connection connection;
 
     String emp_id = "";
 
@@ -198,7 +191,8 @@ public class LeaveAppStatusDetails extends AppCompatActivity {
         DateTO.setText(to_date);
         totalLeave.setText(total_leave);
 
-        new Check().execute();
+//        new Check().execute();
+        getStatusDetails();
 
 
 
@@ -213,69 +207,219 @@ public class LeaveAppStatusDetails extends AppCompatActivity {
 
     }
 
-    public boolean isConnected() {
-        boolean connected = false;
-        boolean isMobile = false;
-        try {
-            ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo nInfo = cm.getActiveNetworkInfo();
-            connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
-            return connected;
-        } catch (Exception e) {
-            Log.e("Connectivity Exception", e.getMessage());
-        }
-        return connected;
-    }
+//    public boolean isConnected() {
+//        boolean connected = false;
+//        boolean isMobile = false;
+//        try {
+//            ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+//            NetworkInfo nInfo = cm.getActiveNetworkInfo();
+//            connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
+//            return connected;
+//        } catch (Exception e) {
+//            Log.e("Connectivity Exception", e.getMessage());
+//        }
+//        return connected;
+//    }
+//
+//    public boolean isOnline() {
+//
+//        Runtime runtime = Runtime.getRuntime();
+//        try {
+//            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+//            int     exitValue = ipProcess.waitFor();
+//            return (exitValue == 0);
+//        }
+//        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
+//
+//        return false;
+//    }
+//
+//    public class Check extends AsyncTask<Void, Void, Void> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//
+//            waitProgress.show(getSupportFragmentManager(),"WaitBar");
+//            waitProgress.setCancelable(false);
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            if (isConnected() && isOnline()) {
+//
+//                StatusDetails();
+//                if (connected) {
+//                    conn = true;
+//                    message= "Internet Connected";
+//                }
+//
+//            } else {
+//                conn = false;
+//                connected = false;
+//                message = "Not Connected";
+//            }
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//
+//            waitProgress.dismiss();
+//            if (conn) {
+//
+//                apptype.setText(app_type);
+//                appDate.setText(app_date);
+//                leaveDuration.setText(leave_dur);
+//                reason.setText(reasonDesc);
+//                address.setText(leaveAddress);
+//                backUp.setText(backupEmployeee);
+//
+//                if (comments == null) {
+//                    comm.setText("");
+//                } else {
+//                    comm.setText(comments);
+//                }
+//
+//            }
+//            else {
+//                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+//                AlertDialog dialog = new AlertDialog.Builder(LeaveAppStatusDetails.this)
+//                        .setMessage("Please Check Your Internet Connection")
+//                        .setPositiveButton("Retry", null)
+//                        .setNegativeButton("Cancel",null)
+//                        .show();
+//
+//                dialog.setCancelable(false);
+//                dialog.setCanceledOnTouchOutside(false);
+//                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+//                positive.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//
+//                        new Check().execute();
+//                        dialog.dismiss();
+//                    }
+//                });
+//                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+//                negative.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        dialog.dismiss();
+//                        finish();
+//                    }
+//                });
+//            }
+//        }
+//    }
 
-    public boolean isOnline() {
+//    public void StatusDetails() {
+//        try {
+//            this.connection = createConnection();
+//            //    Toast.makeText(MainActivity.this, "Connected",Toast.LENGTH_SHORT).show();
+//
+//
+//            Statement stmt = connection.createStatement();
+//
+//
+//
+//
+//            ResultSet rs=stmt.executeQuery("Select LA_APPLICATION_TYPE, TO_CHAR(LEAVE_APPLICATION.LA_DATE,'DD-MON-YY') LA_DATE,\n" +
+//                    "CASE WHEN LA_LEAVE_TYPE = 0 then 'Full Day' when LA_LEAVE_TYPE = 1 then 'First Half' else 'Second Half' end leave_duration, \n" +
+//                    "LA_REASON,LA_ADD_DURING_LEAVE,\n" +
+//                    "(Select EMP_NAME FROM EMP_MST WHERE EMP_ID = LA_WORK_BCK_EMP_ID ) as BACKUP,LA_COMMENTS\n" +
+//                    "From  LEAVE_APPLICATION\n" +
+//                    "WHERE LA_APP_CODE = '"+leave_code+"'");
+//
+//
+//
+//            while(rs.next()) {
+//
+//                app_type = rs.getString(1);
+//                app_date = rs.getString(2);
+//                leave_dur = rs.getString(3);
+//                reasonDesc = rs.getString(4);
+//                leaveAddress = rs.getString(5);
+//                backupEmployeee = rs.getString(6);
+//                comments = rs.getString(7);
+//
+//            }
+//
+//
+//            connected = true;
+//
+//            connection.close();
+//
+//        }
+//        catch (Exception e) {
+//
+//            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
+//            Log.i("ERRRRR", e.getLocalizedMessage());
+//            e.printStackTrace();
+//        }
+//    }
 
-        Runtime runtime = Runtime.getRuntime();
-        try {
-            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
-            int     exitValue = ipProcess.waitFor();
-            return (exitValue == 0);
-        }
-        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
+    public void getStatusDetails() {
+        waitProgress.show(getSupportFragmentManager(),"WaitBar");
+        waitProgress.setCancelable(false);
+        conn = false;
+        connected = false;
 
-        return false;
-    }
+        String url = "http://103.56.208.123:8001/apex/ttrams/leaveRequest/leaveReqStatDetails?leave_code="+leave_code+"";
 
-    public class Check extends AsyncTask<Void, Void, Void> {
+        RequestQueue requestQueue = Volley.newRequestQueue(LeaveAppStatusDetails.this);
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject leaveStasDetailsInfo = array.getJSONObject(i);
 
-            waitProgress.show(getSupportFragmentManager(),"WaitBar");
-            waitProgress.setCancelable(false);
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            if (isConnected() && isOnline()) {
-
-                StatusDetails();
-                if (connected) {
-                    conn = true;
-                    message= "Internet Connected";
+                        app_type = leaveStasDetailsInfo.getString("la_application_type")
+                                .equals("null") ? "" : leaveStasDetailsInfo.getString("la_application_type");
+                        app_date = leaveStasDetailsInfo.getString("la_date")
+                                .equals("null") ? "" : leaveStasDetailsInfo.getString("la_date");
+                        leave_dur = leaveStasDetailsInfo.getString("leave_duration")
+                                .equals("null") ? "" : leaveStasDetailsInfo.getString("leave_duration");
+                        reasonDesc = leaveStasDetailsInfo.getString("la_reason")
+                                .equals("null") ? "" : leaveStasDetailsInfo.getString("la_reason");
+                        leaveAddress = leaveStasDetailsInfo.getString("la_add_during_leave")
+                                .equals("null") ? "" : leaveStasDetailsInfo.getString("la_add_during_leave");
+                        backupEmployeee = leaveStasDetailsInfo.getString("backup")
+                                .equals("null") ? "" : leaveStasDetailsInfo.getString("backup");
+                        comments = leaveStasDetailsInfo.getString("la_comments")
+                                .equals("null") ? "" : leaveStasDetailsInfo.getString("la_comments");
+                    }
                 }
-
-            } else {
-                conn = false;
-                connected = false;
-                message = "Not Connected";
+                connected = true;
+                updateLay();
             }
+            catch (JSONException e) {
+                e.printStackTrace();
+                connected = false;
+                updateLay();
+            }
+        }, error -> {
+            error.printStackTrace();
+            conn = false;
+            connected = false;
+            updateLay();
+        });
 
-            return null;
-        }
+        requestQueue.add(stringRequest);
+    }
 
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-            waitProgress.dismiss();
-            if (conn) {
-
+    private void updateLay() {
+        waitProgress.dismiss();
+        if (conn) {
+            if (connected) {
                 apptype.setText(app_type);
                 appDate.setText(app_date);
                 leaveDuration.setText(leave_dur);
@@ -288,11 +432,10 @@ public class LeaveAppStatusDetails extends AppCompatActivity {
                 } else {
                     comm.setText(comments);
                 }
-
-            }else {
-                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+            }
+            else {
                 AlertDialog dialog = new AlertDialog.Builder(LeaveAppStatusDetails.this)
-                        .setMessage("Please Check Your Internet Connection")
+                        .setMessage("There is a network issue in the server. Please Try later.")
                         .setPositiveButton("Retry", null)
                         .setNegativeButton("Cancel",null)
                         .show();
@@ -300,69 +443,38 @@ public class LeaveAppStatusDetails extends AppCompatActivity {
                 dialog.setCancelable(false);
                 dialog.setCanceledOnTouchOutside(false);
                 Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                positive.setOnClickListener(v -> {
 
-                        new Check().execute();
-                        dialog.dismiss();
-                    }
+                    getStatusDetails();
+                    dialog.dismiss();
                 });
                 Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                        finish();
-                    }
+                negative.setOnClickListener(v -> {
+                    dialog.dismiss();
+                    finish();
                 });
             }
         }
-    }
+        else {
+            AlertDialog dialog = new AlertDialog.Builder(LeaveAppStatusDetails.this)
+                    .setMessage("Please Check Your Internet Connection")
+                    .setPositiveButton("Retry", null)
+                    .setNegativeButton("Cancel",null)
+                    .show();
 
-    public void StatusDetails() {
-        try {
-            this.connection = createConnection();
-            //    Toast.makeText(MainActivity.this, "Connected",Toast.LENGTH_SHORT).show();
+            dialog.setCancelable(false);
+            dialog.setCanceledOnTouchOutside(false);
+            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            positive.setOnClickListener(v -> {
 
-
-            Statement stmt = connection.createStatement();
-
-
-
-
-            ResultSet rs=stmt.executeQuery("Select LA_APPLICATION_TYPE, TO_CHAR(LEAVE_APPLICATION.LA_DATE,'DD-MON-YY') LA_DATE,\n" +
-                    "CASE WHEN LA_LEAVE_TYPE = 0 then 'Full Day' when LA_LEAVE_TYPE = 1 then 'First Half' else 'Second Half' end leave_duration, \n" +
-                    "LA_REASON,LA_ADD_DURING_LEAVE,\n" +
-                    "(Select EMP_NAME FROM EMP_MST WHERE EMP_ID = LA_WORK_BCK_EMP_ID ) as BACKUP,LA_COMMENTS\n" +
-                    "From  LEAVE_APPLICATION\n" +
-                    "WHERE LA_APP_CODE = '"+leave_code+"'");
-
-
-
-            while(rs.next()) {
-
-                app_type = rs.getString(1);
-                app_date = rs.getString(2);
-                leave_dur = rs.getString(3);
-                reasonDesc = rs.getString(4);
-                leaveAddress = rs.getString(5);
-                backupEmployeee = rs.getString(6);
-                comments = rs.getString(7);
-
-            }
-
-
-            connected = true;
-
-            connection.close();
-
-        }
-        catch (Exception e) {
-
-            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
-            Log.i("ERRRRR", e.getLocalizedMessage());
-            e.printStackTrace();
+                getStatusDetails();
+                dialog.dismiss();
+            });
+            Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+            negative.setOnClickListener(v -> {
+                dialog.dismiss();
+                finish();
+            });
         }
     }
 }

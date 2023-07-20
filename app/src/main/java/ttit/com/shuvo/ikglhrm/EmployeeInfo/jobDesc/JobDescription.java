@@ -1,5 +1,8 @@
 package ttit.com.shuvo.ikglhrm.EmployeeInfo.jobDesc;
 
+import static java.nio.charset.StandardCharsets.ISO_8859_1;
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -7,40 +10,27 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import org.w3c.dom.Text;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
-
-import ttit.com.shuvo.ikglhrm.EmployeeInfo.personal.EMPInformation;
-import ttit.com.shuvo.ikglhrm.EmployeeInfo.personal.PersonalData;
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
-import ttit.com.shuvo.ikglhrm.attendance.report.AttendanceReport;
 
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
-import static ttit.com.shuvo.ikglhrm.OracleConnection.createConnection;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 
 public class JobDescription extends AppCompatActivity {
 
@@ -53,12 +43,12 @@ public class JobDescription extends AppCompatActivity {
     public static ArrayList<JobDescDetails> jobDescDetails;
 
     WaitProgress waitProgress = new WaitProgress();
-    private String message = null;
+//    private String message = null;
     private Boolean conn = false;
-    private Boolean infoConnected = false;
+//    private Boolean infoConnected = false;
     private Boolean connected = false;
 
-    private Connection connection;
+//    private Connection connection;
 
     String emp_id = "";
 
@@ -113,7 +103,8 @@ public class JobDescription extends AppCompatActivity {
 
         jobDescDetails = new ArrayList<>();
 
-        new Check().execute();
+//        new Check().execute();
+        getJobDescription();
 
         job_list.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
@@ -132,68 +123,204 @@ public class JobDescription extends AppCompatActivity {
 
     }
 
-    public boolean isConnected() {
-        boolean connected = false;
-        boolean isMobile = false;
-        try {
-            ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo nInfo = cm.getActiveNetworkInfo();
-            connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
-            return connected;
-        } catch (Exception e) {
-            Log.e("Connectivity Exception", e.getMessage());
-        }
-        return connected;
-    }
+//    public boolean isConnected() {
+//        boolean connected = false;
+//        boolean isMobile = false;
+//        try {
+//            ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+//            NetworkInfo nInfo = cm.getActiveNetworkInfo();
+//            connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
+//            return connected;
+//        } catch (Exception e) {
+//            Log.e("Connectivity Exception", e.getMessage());
+//        }
+//        return connected;
+//    }
+//
+//    public boolean isOnline() {
+//
+//        Runtime runtime = Runtime.getRuntime();
+//        try {
+//            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+//            int     exitValue = ipProcess.waitFor();
+//            return (exitValue == 0);
+//        }
+//        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
+//
+//        return false;
+//    }
 
-    public boolean isOnline() {
+//    public class Check extends AsyncTask<Void, Void, Void> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//
+//            waitProgress.show(getSupportFragmentManager(),"WaitBar");
+//            waitProgress.setCancelable(false);
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            if (isConnected() && isOnline()) {
+//
+//                JobDetails();
+//                if (connected) {
+//                    conn = true;
+//                    message= "Internet Connected";
+//                }
+//
+//            } else {
+//                conn = false;
+//                message = "Not Connected";
+//            }
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//
+//            waitProgress.dismiss();
+//            if (conn) {
+//
+//                jobAdapter = new JobAdapter(jobDescDetails, JobDescription.this);
+//                job_list.setAdapter(jobAdapter);
+//                if (jobDescDetails.size() == 0) {
+//                    no_job.setVisibility(View.VISIBLE);
+//                    job_list.setVisibility(View.GONE);
+//                } else {
+//                    no_job.setVisibility(View.GONE);
+//                    job_list.setVisibility(View.VISIBLE);
+//                }
+//
+//                conn = false;
+//                connected = false;
+//
+//
+//
+//            }
+//            else {
+//                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+//                AlertDialog dialog = new AlertDialog.Builder(JobDescription.this)
+//                        .setMessage("Please Check Your Internet Connection")
+//                        .setPositiveButton("Retry", null)
+//                        .setNegativeButton("Cancel",null)
+//                        .show();
+//
+//                dialog.setCancelable(false);
+//                dialog.setCanceledOnTouchOutside(false);
+//                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+//                positive.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//
+//                        new Check().execute();
+//                        dialog.dismiss();
+//                    }
+//                });
+//                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+//                negative.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//
+//                        dialog.dismiss();
+//                        finish();
+//                    }
+//                });
+//            }
+//        }
+//    }
 
-        Runtime runtime = Runtime.getRuntime();
-        try {
-            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
-            int     exitValue = ipProcess.waitFor();
-            return (exitValue == 0);
-        }
-        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
+//    public void JobDetails() {
+//        try {
+//            this.connection = createConnection();
+//            //    Toast.makeText(MainActivity.this, "Connected",Toast.LENGTH_SHORT).show();
+//
+//
+//            jobDescDetails = new ArrayList<>();
+//            Statement stmt = connection.createStatement();
+//
+//
+//
+//
+//            ResultSet rs=stmt.executeQuery("SELECT EJD_JSDD_NAME FROM EMP_JOB_DESCRIPTION WHERE EJD_EMP_ID ="+emp_id+"");
+//
+//
+//            int i = 0;
+//            while(rs.next()) {
+//
+//                i++;
+//                jobDescDetails.add(new JobDescDetails(String.valueOf(i),rs.getString(1)));
+//
+//            }
+//
+//
+//            connected = true;
+//
+//            connection.close();
+//
+//        }
+//        catch (Exception e) {
+//
+//            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
+//            Log.i("ERRRRR", e.getLocalizedMessage());
+//            e.printStackTrace();
+//        }
+//    }
 
-        return false;
-    }
+    public void getJobDescription() {
+        waitProgress.show(getSupportFragmentManager(),"WaitBar");
+        waitProgress.setCancelable(false);
+        connected = false;
+        conn = false;
 
-    public class Check extends AsyncTask<Void, Void, Void> {
+        jobDescDetails = new ArrayList<>();
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
+        String jobDescUrl = "http://103.56.208.123:8001/apex/ttrams/emp_information/getJobDescription/"+emp_id+"";
 
-            waitProgress.show(getSupportFragmentManager(),"WaitBar");
-            waitProgress.setCancelable(false);
-        }
+        RequestQueue requestQueue = Volley.newRequestQueue(JobDescription.this);
 
-        @Override
-        protected Void doInBackground(Void... voids) {
-            if (isConnected() && isOnline()) {
-
-                JobDetails();
-                if (connected) {
-                    conn = true;
-                    message= "Internet Connected";
+        StringRequest jobDescReq = new StringRequest(Request.Method.GET, jobDescUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    int j = 0;
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject jobDescInfo = array.getJSONObject(i);
+                        String ejd_jsdd_name = jobDescInfo.getString("ejd_jsdd_name");
+                        ejd_jsdd_name = transformText(ejd_jsdd_name);
+                        j++;
+                        jobDescDetails.add(new JobDescDetails(String.valueOf(j),ejd_jsdd_name));
+                    }
                 }
-
-            } else {
-                conn = false;
-                message = "Not Connected";
+                connected = true;
+                updateLayout();
             }
+            catch (JSONException e) {
+                connected = false;
+                e.printStackTrace();
+                updateLayout();
+            }
+        },error -> {
+            conn = false;
+            connected = false;
+            error.printStackTrace();
+            updateLayout();
+        });
 
-            return null;
-        }
+        requestQueue.add(jobDescReq);
+    }
 
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-            waitProgress.dismiss();
-            if (conn) {
-
+    private void updateLayout() {
+        waitProgress.dismiss();
+        if (conn) {
+            if (connected) {
                 jobAdapter = new JobAdapter(jobDescDetails, JobDescription.this);
                 job_list.setAdapter(jobAdapter);
                 if (jobDescDetails.size() == 0) {
@@ -203,16 +330,12 @@ public class JobDescription extends AppCompatActivity {
                     no_job.setVisibility(View.GONE);
                     job_list.setVisibility(View.VISIBLE);
                 }
-
                 conn = false;
                 connected = false;
-
-
-
-            }else {
-                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+            }
+            else {
                 AlertDialog dialog = new AlertDialog.Builder(JobDescription.this)
-                        .setMessage("Please Check Your Internet Connection")
+                        .setMessage("There is a network issue in the server. Please Try later")
                         .setPositiveButton("Retry", null)
                         .setNegativeButton("Cancel",null)
                         .show();
@@ -220,62 +343,47 @@ public class JobDescription extends AppCompatActivity {
                 dialog.setCancelable(false);
                 dialog.setCanceledOnTouchOutside(false);
                 Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                positive.setOnClickListener(v -> {
 
-                        new Check().execute();
-                        dialog.dismiss();
-                    }
+                    getJobDescription();
+                    dialog.dismiss();
                 });
                 Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                negative.setOnClickListener(v -> {
 
-                        dialog.dismiss();
-                        finish();
-                    }
+                    dialog.dismiss();
+                    finish();
                 });
             }
+        }
+        else {
+            AlertDialog dialog = new AlertDialog.Builder(JobDescription.this)
+                    .setMessage("Please Check Your Internet Connection")
+                    .setPositiveButton("Retry", null)
+                    .setNegativeButton("Cancel",null)
+                    .show();
+
+            dialog.setCancelable(false);
+            dialog.setCanceledOnTouchOutside(false);
+            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            positive.setOnClickListener(v -> {
+
+                getJobDescription();
+                dialog.dismiss();
+            });
+            Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+            negative.setOnClickListener(v -> {
+
+                dialog.dismiss();
+                finish();
+            });
         }
     }
 
-    public void JobDetails() {
-        try {
-            this.connection = createConnection();
-            //    Toast.makeText(MainActivity.this, "Connected",Toast.LENGTH_SHORT).show();
-
-
-            jobDescDetails = new ArrayList<>();
-            Statement stmt = connection.createStatement();
-
-
-
-
-            ResultSet rs=stmt.executeQuery("SELECT EJD_JSDD_NAME FROM EMP_JOB_DESCRIPTION WHERE EJD_EMP_ID ="+emp_id+"");
-
-
-            int i = 0;
-            while(rs.next()) {
-
-                i++;
-                jobDescDetails.add(new JobDescDetails(String.valueOf(i),rs.getString(1)));
-
-            }
-
-
-            connected = true;
-
-            connection.close();
-
-        }
-        catch (Exception e) {
-
-            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
-            Log.i("ERRRRR", e.getLocalizedMessage());
-            e.printStackTrace();
-        }
+    //    --------------------------Transforming Bangla Text-----------------------------
+    private String transformText(String text) {
+        byte[] bytes = text.getBytes(ISO_8859_1);
+        return new String(bytes, UTF_8);
     }
 
 }

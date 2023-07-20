@@ -69,14 +69,14 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.Dire
 
         String no = itemList.getNo();
 
-        if (no.equals("1")) {
+        /*if (no.equals("1")) {
             for (int i = 0; i < Directory.allPhoneLists.size(); i++) {
                 if (id.equals(Directory.allPhoneLists.get(i).getP_emp_id())) {
                     newArray.add(new PhoneList(Directory.allPhoneLists.get(i).getP_emp_id(),Directory.allPhoneLists.get(i).getPhone()));
                 }
             }
         }
-        else if (no.equals("2")) {
+        else*/ if (no.equals("2")) {
             if(DirectoryWithDivision.allPhoneLists.size() != 0) {
                 for (int i = 0; i < DirectoryWithDivision.allPhoneLists.size(); i++) {
                     if (id.equals(DirectoryWithDivision.allPhoneLists.get(i).getP_emp_id())) {

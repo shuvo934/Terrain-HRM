@@ -1,73 +1,72 @@
 package ttit.com.shuvo.ikglhrm.attendance.reqUpdate;
 
-import androidx.appcompat.app.AlertDialog;
+//import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
-import android.content.Context;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.AsyncTask;
+//import android.app.DatePickerDialog;
+//import android.app.TimePickerDialog;
+//import android.content.Context;
+//import android.content.res.ColorStateList;
+//import android.graphics.Color;
+//import android.net.ConnectivityManager;
+//import android.net.NetworkInfo;
+//import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
-import android.view.Gravity;
+//import android.text.Editable;
+//import android.text.TextWatcher;
+//import android.util.Log;
+//import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
+//import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.LinearLayout;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.TimePicker;
-import android.widget.Toast;
-
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
-
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
-
-import javax.crypto.Mac;
+//import android.widget.AdapterView;
+//import android.widget.ArrayAdapter;
+//import android.widget.Button;
+//import android.widget.DatePicker;
+//import android.widget.LinearLayout;
+//import android.widget.Spinner;
+//import android.widget.TextView;
+//import android.widget.TimePicker;
+//import android.widget.Toast;
+//
+//import com.google.android.material.textfield.TextInputEditText;
+//import com.google.android.material.textfield.TextInputLayout;
+//
+//import java.io.IOException;
+//import java.sql.Connection;
+//import java.sql.ResultSet;
+//import java.sql.Statement;
+//import java.text.ParseException;
+//import java.text.SimpleDateFormat;
+//import java.util.ArrayList;
+//import java.util.Calendar;
+//import java.util.Date;
+//import java.util.Locale;
+//
+//import javax.crypto.Mac;
 
 import ttit.com.shuvo.ikglhrm.R;
-import ttit.com.shuvo.ikglhrm.WaitProgress;
-import ttit.com.shuvo.ikglhrm.attendance.reqUpdate.dialogueFromReq.SelectReqList;
-import ttit.com.shuvo.ikglhrm.attendance.reqUpdate.dialogueFromReq.SelectRequest;
-import ttit.com.shuvo.ikglhrm.attendance.update.AttendanceReqType;
-import ttit.com.shuvo.ikglhrm.attendance.update.AttendanceUpdate;
-import ttit.com.shuvo.ikglhrm.attendance.update.LocUpdateList;
-import ttit.com.shuvo.ikglhrm.attendance.update.ReasonList;
-import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.DialogueText;
-import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.SelectAll;
-import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.SelectAllList;
-import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.ShowAttendance;
-import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.ShowShift;
-
-import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
-import static ttit.com.shuvo.ikglhrm.OracleConnection.createConnection;
+//import ttit.com.shuvo.ikglhrm.WaitProgress;
+//import ttit.com.shuvo.ikglhrm.attendance.reqUpdate.dialogueFromReq.SelectReqList;
+//import ttit.com.shuvo.ikglhrm.attendance.reqUpdate.dialogueFromReq.SelectRequest;
+//import ttit.com.shuvo.ikglhrm.attendance.update.AttendanceReqType;
+//import ttit.com.shuvo.ikglhrm.attendance.update.AttendanceUpdate;
+//import ttit.com.shuvo.ikglhrm.attendance.update.LocUpdateList;
+//import ttit.com.shuvo.ikglhrm.attendance.update.ReasonList;
+//import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.DialogueText;
+//import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.SelectAll;
+//import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.SelectAllList;
+//import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.ShowAttendance;
+//import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.ShowShift;
+//
+//import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
 
 public class AttendanceReqUpdate extends AppCompatActivity {
 
 
-    public static int dialogText_update = 0;
+    /*public static int dialogText_update = 0;
     public static int showAttendanceNumberUpdate = 0;
     public static int showShiftNumberUpdate = 0;
 
@@ -249,7 +248,7 @@ public class AttendanceReqUpdate extends AppCompatActivity {
 //                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
 //                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
 //    }
-
+*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -271,7 +270,7 @@ public class AttendanceReqUpdate extends AppCompatActivity {
         setContentView(R.layout.activity_attendance_req_update);
 
 
-        darm_id = "";
+        /*darm_id = "";
 
         selected_shift_id_update = "";
         selected_approver_id_update = "";
@@ -980,7 +979,7 @@ public class AttendanceReqUpdate extends AppCompatActivity {
                 showAttendanceNumberUpdate = 2;
                 dateToShowUpdate = dateUpdated.getText().toString();
                 if (!dateToShowUpdate.isEmpty()) {
-                    ShowAttendance showAttendance = new ShowAttendance();
+                    ShowAttendance showAttendance = new ShowAttendance(AttendanceReqUpdate.this);
                     showAttendance.show(getSupportFragmentManager(),"Attendance");
                 }
 
@@ -992,7 +991,7 @@ public class AttendanceReqUpdate extends AppCompatActivity {
             public void onClick(View v) {
                 showShiftNumberUpdate = 2;
                 shift_osm_id_update = selected_shift_id_update;
-                ShowShift showShift = new ShowShift();
+                ShowShift showShift = new ShowShift(AttendanceReqUpdate.this);
                 showShift.show(getSupportFragmentManager(),"Shift");
             }
         });
@@ -1111,271 +1110,271 @@ public class AttendanceReqUpdate extends AppCompatActivity {
 
             }
         });
-
+*/
     }
 
 
     // -----------------------------------------------------------------------------------------------------------------
 
 
-    @Override
-    public void onBackPressed() {
-        selected_shift_id_update = "";
-        selected_approver_id_update = "";
-        darm_id = "";
-        finish();
-    }
-
-    public boolean isConnected() {
-        boolean connected = false;
-        boolean isMobile = false;
-        try {
-            ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo nInfo = cm.getActiveNetworkInfo();
-            connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
-            return connected;
-        } catch (Exception e) {
-            Log.e("Connectivity Exception", e.getMessage());
-        }
-        return connected;
-    }
-
-    public boolean isOnline() {
-
-        Runtime runtime = Runtime.getRuntime();
-        try {
-            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
-            int     exitValue = ipProcess.waitFor();
-            return (exitValue == 0);
-        }
-        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
-
-        return false;
-    }
-
-    public class Check extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            waitProgress.show(getSupportFragmentManager(),"WaitBar");
-            waitProgress.setCancelable(false);
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            if (isConnected() && isOnline()) {
-
-                UpdateInfo();
-                if (connected) {
-                    conn = true;
-                    message= "Internet Connected";
-                }
-
-            } else {
-                conn = false;
-                message = "Not Connected";
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-            waitProgress.dismiss();
-            if (conn) {
-
-                if (locUpdateListsUpdate.size() != 0) {
-                    for (int i = 0; i < locUpdateListsUpdate.size(); i++) {
-                        onlyLocationListsUpdate.add(locUpdateListsUpdate.get(i).getLocation());
-                    }
-                }
-                locUpdateAdapterUpdate.notifyDataSetChanged();
-
-//                if (shiftUpdateLists.size() != 0) {
-//                    for (int i = 0; i < shiftUpdateLists.size(); i++) {
-//                        onlyShiftName.add(shiftUpdateLists.get(i).getShift_name());
+//    @Override
+//    public void onBackPressed() {
+//        selected_shift_id_update = "";
+//        selected_approver_id_update = "";
+//        darm_id = "";
+//        finish();
+//    }
+//
+//    public boolean isConnected() {
+//        boolean connected = false;
+//        boolean isMobile = false;
+//        try {
+//            ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+//            NetworkInfo nInfo = cm.getActiveNetworkInfo();
+//            connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
+//            return connected;
+//        } catch (Exception e) {
+//            Log.e("Connectivity Exception", e.getMessage());
+//        }
+//        return connected;
+//    }
+//
+//    public boolean isOnline() {
+//
+//        Runtime runtime = Runtime.getRuntime();
+//        try {
+//            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+//            int     exitValue = ipProcess.waitFor();
+//            return (exitValue == 0);
+//        }
+//        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
+//
+//        return false;
+//    }
+//
+//    public class Check extends AsyncTask<Void, Void, Void> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//
+//            waitProgress.show(getSupportFragmentManager(),"WaitBar");
+//            waitProgress.setCancelable(false);
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            if (isConnected() && isOnline()) {
+//
+//                UpdateInfo();
+//                if (connected) {
+//                    conn = true;
+//                    message= "Internet Connected";
+//                }
+//
+//            } else {
+//                conn = false;
+//                message = "Not Connected";
+//            }
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//
+//            waitProgress.dismiss();
+//            if (conn) {
+//
+//                if (locUpdateListsUpdate.size() != 0) {
+//                    for (int i = 0; i < locUpdateListsUpdate.size(); i++) {
+//                        onlyLocationListsUpdate.add(locUpdateListsUpdate.get(i).getLocation());
 //                    }
 //                }
-//                shiftUpdateAdapter.notifyDataSetChanged();
-
-//                if (selectedApproverList.size() != 0) {
-//                    for (int i = 0 ; i < selectedApproverList.size(); i++) {
-//                        approverNameList.add(selectedApproverList.get(i).getApprover_emp_name());
+//                locUpdateAdapterUpdate.notifyDataSetChanged();
+//
+////                if (shiftUpdateLists.size() != 0) {
+////                    for (int i = 0; i < shiftUpdateLists.size(); i++) {
+////                        onlyShiftName.add(shiftUpdateLists.get(i).getShift_name());
+////                    }
+////                }
+////                shiftUpdateAdapter.notifyDataSetChanged();
+//
+////                if (selectedApproverList.size() != 0) {
+////                    for (int i = 0 ; i < selectedApproverList.size(); i++) {
+////                        approverNameList.add(selectedApproverList.get(i).getApprover_emp_name());
+////                    }
+////                }
+////                approverAdapter.notifyDataSetChanged();
+//
+//            }else {
+//                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+//                AlertDialog dialog = new AlertDialog.Builder(AttendanceReqUpdate.this)
+//                        .setMessage("Please Check Your Internet Connection")
+//                        .setPositiveButton("Retry", null)
+//                        .show();
+//
+//                dialog.setCancelable(false);
+//                dialog.setCanceledOnTouchOutside(false);
+//                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+//                positive.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//
+//                        new Check().execute();
+//                        dialog.dismiss();
+//                    }
+//                });
+//            }
+//        }
+//    }
+//
+//    public class GatherData extends AsyncTask<Void, Void, Void> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//
+//            waitProgress3.show(getSupportFragmentManager(),"WaitBar");
+//            waitProgress3.setCancelable(false);
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            if (isConnected() && isOnline()) {
+//
+//                GettingData();
+//                if (gathered) {
+//                    gatherConnn = true;
+//                    message= "Internet Connected";
+//                }
+//
+//            } else {
+//                gatherConnn = false;
+//                message = "Not Connected";
+//            }
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//
+//            waitProgress3.dismiss();
+//            if (gatherConnn) {
+//
+//                int index = 0;
+//                for (int i = 0; i < reqListUpdate.size(); i++) {
+//                    if (from__selected_request.equals(reqListUpdate.get(i))) {
+//                        selected_request = reqListUpdate.get(i);
+//                        index = reqListUpdate.indexOf(selected_request);
 //                    }
 //                }
-//                approverAdapter.notifyDataSetChanged();
-
-            }else {
-                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
-                AlertDialog dialog = new AlertDialog.Builder(AttendanceReqUpdate.this)
-                        .setMessage("Please Check Your Internet Connection")
-                        .setPositiveButton("Retry", null)
-                        .show();
-
-                dialog.setCancelable(false);
-                dialog.setCanceledOnTouchOutside(false);
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        new Check().execute();
-                        dialog.dismiss();
-                    }
-                });
-            }
-        }
-    }
-
-    public class GatherData extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            waitProgress3.show(getSupportFragmentManager(),"WaitBar");
-            waitProgress3.setCancelable(false);
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            if (isConnected() && isOnline()) {
-
-                GettingData();
-                if (gathered) {
-                    gatherConnn = true;
-                    message= "Internet Connected";
-                }
-
-            } else {
-                gatherConnn = false;
-                message = "Not Connected";
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-            waitProgress3.dismiss();
-            if (gatherConnn) {
-
-                int index = 0;
-                for (int i = 0; i < reqListUpdate.size(); i++) {
-                    if (from__selected_request.equals(reqListUpdate.get(i))) {
-                        selected_request = reqListUpdate.get(i);
-                        index = reqListUpdate.indexOf(selected_request);
-                    }
-                }
-                reqType.setSelection(index);
-
-                for (int i = 0; i < attendanceReqTypesUpdate.size(); i++) {
-                    if (form_selected_attendance_type.equals(attendanceReqTypesUpdate.get(i).getAttendance_req())) {
-                        selected_attendance_type = attendanceReqTypesUpdate.get(i).getAttendance_req_details();
-                        for (int j = 0; j < attenTypeListUpdate.size(); j++) {
-                            if (selected_attendance_type.equals(attenTypeListUpdate.get(j))) {
-                                index = attenTypeListUpdate.indexOf(selected_attendance_type);
-                            }
-
-                        }
-                       selected_attendance_type = form_selected_attendance_type;
-                    }
-                }
-
-                attenType.setSelection(index);
-
-                //new ReasonInfo().execute();
-                if (from_update_date != null) {
-                    dateUpdated.setText(from_update_date);
-                    dateUpdateLayUpdate.setHint("Update Date");
-                }
-                if (from_arrival_time != null) {
-                    arrivalTimeUpdated.setText(from_arrival_time);
-                    inTimeLay.setHint("In Time");
-                    arriClear.setVisibility(View.VISIBLE);
-                }
-                if (from_depart_time != null) {
-                    departTimeUpdated.setText(from_depart_time);
-                    outTimeLay.setHint("Out Time");
-                    deptClear.setVisibility(View.VISIBLE);
-                }
-
-                for (int i = 0; i < locUpdateListsUpdate.size(); i++) {
-                    if (from_selected_loc_id.equals(locUpdateListsUpdate.get(i).getLocID())) {
-                        String location = locUpdateListsUpdate.get(i).getLocation();
-                        for (int j = 0; j < onlyLocationListsUpdate.size(); j++) {
-                            if (location.equals(onlyLocationListsUpdate.get(j))) {
-                                index = onlyLocationListsUpdate.indexOf(location);
-                            }
-                        }
-                    }
-                }
-
-                locUpdate.setSelection(index);
-
-                selected_loc_id = from_selected_loc_id;
-                //new MachineInfo().execute();
-
-                String shiftName = "";
-                for (int i = 0; i < allShiftDetailsUpdate.size(); i++) {
-                    if (from_selected_shift_id.equals(allShiftDetailsUpdate.get(i).getId())) {
-                        shiftName = allShiftDetailsUpdate.get(i).getFirst();
-                    }
-                }
-                shiftTestEditUpdate.setText(shiftName);
-                shiftTestEditUpdate.setTextColor(Color.BLACK);
-                selected_shift_id_update = from_selected_shift_id;
-
-                if (from_reason_desc != null) {
-                    reasonDescUpdate.setText(from_reason_desc);
-                }
-
-                if (from_add_during_cause != null) {
-                    addressStationUpdate.setText(from_add_during_cause);
-                }
-
-                String approver = "";
-                for (int i = 0; i < allSelectedApproverUpdate.size(); i++) {
-                    if (from_selected_approver_id.equals(allSelectedApproverUpdate.get(i).getId())) {
-                        approver = allSelectedApproverUpdate.get(i).getFirst();
-                    }
-                }
-                approverTestEditUpdate.setText(approver);
-                approverTestEditUpdate.setTextColor(Color.BLACK);
-                selected_approver_id_update = from_selected_approver_id;
-                todayDate.setText(from_app_date);
-
-                //new GettingDataSecond().execute();
-
-
-
-            }else {
-                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
-                AlertDialog dialog = new AlertDialog.Builder(AttendanceReqUpdate.this)
-                        .setMessage("Please Check Your Internet Connection")
-                        .setPositiveButton("Retry", null)
-                        .show();
-
-                dialog.setCancelable(false);
-                dialog.setCanceledOnTouchOutside(false);
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        new GatherData().execute();
-                        dialog.dismiss();
-                    }
-                });
-            }
-        }
-    }
+//                reqType.setSelection(index);
+//
+//                for (int i = 0; i < attendanceReqTypesUpdate.size(); i++) {
+//                    if (form_selected_attendance_type.equals(attendanceReqTypesUpdate.get(i).getAttendance_req())) {
+//                        selected_attendance_type = attendanceReqTypesUpdate.get(i).getAttendance_req_details();
+//                        for (int j = 0; j < attenTypeListUpdate.size(); j++) {
+//                            if (selected_attendance_type.equals(attenTypeListUpdate.get(j))) {
+//                                index = attenTypeListUpdate.indexOf(selected_attendance_type);
+//                            }
+//
+//                        }
+//                       selected_attendance_type = form_selected_attendance_type;
+//                    }
+//                }
+//
+//                attenType.setSelection(index);
+//
+//                //new ReasonInfo().execute();
+//                if (from_update_date != null) {
+//                    dateUpdated.setText(from_update_date);
+//                    dateUpdateLayUpdate.setHint("Update Date");
+//                }
+//                if (from_arrival_time != null) {
+//                    arrivalTimeUpdated.setText(from_arrival_time);
+//                    inTimeLay.setHint("In Time");
+//                    arriClear.setVisibility(View.VISIBLE);
+//                }
+//                if (from_depart_time != null) {
+//                    departTimeUpdated.setText(from_depart_time);
+//                    outTimeLay.setHint("Out Time");
+//                    deptClear.setVisibility(View.VISIBLE);
+//                }
+//
+//                for (int i = 0; i < locUpdateListsUpdate.size(); i++) {
+//                    if (from_selected_loc_id.equals(locUpdateListsUpdate.get(i).getLocID())) {
+//                        String location = locUpdateListsUpdate.get(i).getLocation();
+//                        for (int j = 0; j < onlyLocationListsUpdate.size(); j++) {
+//                            if (location.equals(onlyLocationListsUpdate.get(j))) {
+//                                index = onlyLocationListsUpdate.indexOf(location);
+//                            }
+//                        }
+//                    }
+//                }
+//
+//                locUpdate.setSelection(index);
+//
+//                selected_loc_id = from_selected_loc_id;
+//                //new MachineInfo().execute();
+//
+//                String shiftName = "";
+//                for (int i = 0; i < allShiftDetailsUpdate.size(); i++) {
+//                    if (from_selected_shift_id.equals(allShiftDetailsUpdate.get(i).getId())) {
+//                        shiftName = allShiftDetailsUpdate.get(i).getFirst();
+//                    }
+//                }
+//                shiftTestEditUpdate.setText(shiftName);
+//                shiftTestEditUpdate.setTextColor(Color.BLACK);
+//                selected_shift_id_update = from_selected_shift_id;
+//
+//                if (from_reason_desc != null) {
+//                    reasonDescUpdate.setText(from_reason_desc);
+//                }
+//
+//                if (from_add_during_cause != null) {
+//                    addressStationUpdate.setText(from_add_during_cause);
+//                }
+//
+//                String approver = "";
+//                for (int i = 0; i < allSelectedApproverUpdate.size(); i++) {
+//                    if (from_selected_approver_id.equals(allSelectedApproverUpdate.get(i).getId())) {
+//                        approver = allSelectedApproverUpdate.get(i).getFirst();
+//                    }
+//                }
+//                approverTestEditUpdate.setText(approver);
+//                approverTestEditUpdate.setTextColor(Color.BLACK);
+//                selected_approver_id_update = from_selected_approver_id;
+//                todayDate.setText(from_app_date);
+//
+//                //new GettingDataSecond().execute();
+//
+//
+//
+//            }else {
+//                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+//                AlertDialog dialog = new AlertDialog.Builder(AttendanceReqUpdate.this)
+//                        .setMessage("Please Check Your Internet Connection")
+//                        .setPositiveButton("Retry", null)
+//                        .show();
+//
+//                dialog.setCancelable(false);
+//                dialog.setCanceledOnTouchOutside(false);
+//                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+//                positive.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//
+//                        new GatherData().execute();
+//                        dialog.dismiss();
+//                    }
+//                });
+//            }
+//        }
+//    }
 
 //    public class GettingDataSecond extends AsyncTask<Void, Void, Void> {
 //
@@ -1470,859 +1469,859 @@ public class AttendanceReqUpdate extends AppCompatActivity {
 //        }
 //    }
 
-    public class MachineInfo extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            waitProgress1.show(getSupportFragmentManager(),"WaitBar");
-            waitProgress1.setCancelable(false);
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            if (isConnected() && isOnline()) {
-
-                MachineData(selected_loc_id);
-                if (machineCon) {
-                    machineConnn = true;
-                    message= "Internet Connected";
-                }
-
-            } else {
-                machineConnn = false;
-                message = "Not Connected";
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-            waitProgress1.dismiss();
-            if (machineConnn) {
-
-                if (!machineCode.isEmpty() && !machineType.isEmpty()) {
-                    machCode.setText(machineCode);
-                    machType.setText(machineType);
-                }
-
-            }else {
-                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
-                AlertDialog dialog = new AlertDialog.Builder(AttendanceReqUpdate.this)
-                        .setMessage("Please Check Your Internet Connection")
-                        .setPositiveButton("Retry", null)
-                        .show();
-
-                dialog.setCancelable(false);
-                dialog.setCanceledOnTouchOutside(false);
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        new MachineInfo().execute();
-                        dialog.dismiss();
-                    }
-                });
-            }
-        }
-    }
-
-    public class ReasonInfo extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            waitProgress2.show(getSupportFragmentManager(),"WaitBar");
-            waitProgress2.setCancelable(false);
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            if (isConnected() && isOnline()) {
-
-                ReasonData(selected_attendance_type);
-                if (reasonCon) {
-                    reasonConnnn = true;
-                    message= "Internet Connected";
-                }
-
-            } else {
-                reasonConnnn = false;
-                message = "Not Connected";
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-            waitProgress2.dismiss();
-            if (reasonConnnn) {
-
-                reasonNameUpdate = new ArrayList<>();
-                reasonNameUpdate.add("Select");
-
-
-                if (reasonListsUpdate.size() != 0) {
-                    for (int i = 0; i < reasonListsUpdate.size(); i++) {
-                        reasonNameUpdate.add(reasonListsUpdate.get(i).getReason_name());
-                        reasonAdapterUpdate.setNotifyOnChange(true);
-                        System.out.println(reasonListsUpdate.get(i).getReason_name());
-                    }
-                }
-
-                reasonAdapterUpdate.clear();
-                reasonAdapterUpdate.addAll(reasonNameUpdate);
-                reasonAdapterUpdate.notifyDataSetChanged();
-                reasonType.setSelection(0);
-
-                if (reasonExecuted) {
-                    int index = 0;
-                    for (int i = 0; i < reasonListsUpdate.size(); i++) {
-                        if (from_selected_aurrm_id.equals(reasonListsUpdate.get(i).getReason_id())) {
-                            String reason = reasonListsUpdate.get(i).getReason_name();
-                            for (int j = 0; j < reasonNameUpdate.size(); j++) {
-                                if (reason.equals(reasonNameUpdate.get(j))) {
-                                    index = reasonNameUpdate.indexOf(reason);
-                                }
-                            }
-                        }
-                    }
-                    reasonType.setSelection(index);
-                    selected_reason_id = from_selected_aurrm_id;
-                }
-                reasonExecuted = false;
-
-            }else {
-                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
-                AlertDialog dialog = new AlertDialog.Builder(AttendanceReqUpdate.this)
-                        .setMessage("Please Check Your Internet Connection")
-                        .setPositiveButton("Retry", null)
-                        .show();
-
-                dialog.setCancelable(false);
-                dialog.setCanceledOnTouchOutside(false);
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        new ReasonInfo().execute();
-                        dialog.dismiss();
-                    }
-                });
-            }
-        }
-    }
-
-    public class UpdateCheck extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            waitProgress.show(getSupportFragmentManager(),"WaitBar");
-            waitProgress.setCancelable(false);
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            if (isConnected() && isOnline()) {
-
-                InsertReq();
-                if (insertCon) {
-                    insertConnn = true;
-                    System.out.println("INSERTED");
-                    message= "Internet Connected";
-                }
-
-            } else {
-                insertConnn = false;
-                message = "Not Connected";
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-            waitProgress.dismiss();
-            if (insertConnn) {
-                selected_shift_id_update = "";
-                selected_approver_id_update = "";
-                darm_id = "";
-                System.out.println("INSERTED");
-
-                AlertDialog dialog = new AlertDialog.Builder(AttendanceReqUpdate.this)
-                        .setMessage("Request Updated Successfully")
-                        .setPositiveButton("OK", null)
-                        .show();
-
-                dialog.setCancelable(false);
-                dialog.setCanceledOnTouchOutside(false);
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        dialog.dismiss();
-                        finish();
-                    }
-                });
-
-            }else {
-                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
-                AlertDialog dialog = new AlertDialog.Builder(AttendanceReqUpdate.this)
-                        .setMessage("Please Check Your Internet Connection")
-                        .setPositiveButton("Retry", null)
-                        .show();
-
-                dialog.setCancelable(false);
-                dialog.setCanceledOnTouchOutside(false);
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        new UpdateCheck().execute();
-                        dialog.dismiss();
-                    }
-                });
-            }
-        }
-    }
-
-    public void UpdateInfo() {
-        try {
-            this.connection = createConnection();
-
-            locUpdateListsUpdate = new ArrayList<>();
-            allShiftDetailsUpdate = new ArrayList<>();
-
-            allApproverDivisionUpdate = new ArrayList<>();
-            allApproverWithoutDivUpdate = new ArrayList<>();
-            allApproverEmpUpdate = new ArrayList<>();
-            allSelectedApproverUpdate = new ArrayList<>();
-
-            selectReqLists = new ArrayList<>();
-
-
-
-            //shiftUpdateLists = new ArrayList<>();
-//            approverEmployee = new ArrayList<>();
-//            approverDivision = new ArrayList<>();
-//            approverWithoutDivision = new ArrayList<>();
-
-            //selectAllLists = new ArrayList<>();
-
-            //selectedApproverList = new ArrayList<>();
-
-            Statement stmt = connection.createStatement();
-
-            ResultSet newResult = stmt.executeQuery("SELECT daily_atten_req_mst.darm_id,\n" +
-                    " DAILY_ATTEN_REQ_MST.DARM_APP_CODE, \n" +
-                    "  TO_CHAR(DAILY_ATTEN_REQ_MST.DARM_UPDATE_DATE,'DD-MON-YY') DARM_UPDATE_DATE,  \n" +
-                    "    TO_CHAR(DAILY_ATTEN_REQ_MST.DARM_REQ_ARRIVAL_TIME,'HH:MI:SS AM') ARRIVAL_TIME,\n" +
-                    "    TO_CHAR(DAILY_ATTEN_REQ_MST.DARM_REQ_DEPART_TIME,'HH:MI:SS AM') DEPARTURE_TIME,\n" +
-                    "    TO_CHAR(DAILY_ATTEN_REQ_MST.DARM_DATE,'DD-MON-YY') DARM_DATE\n" +
-                    "    FROM DAILY_ATTEN_REQ_MST, EMP_MST, DIVISION_MST\n" +
-                    "WHERE NVL(DAILY_ATTEN_REQ_MST.DARM_APPROVED, 0) = 0\n" +
-                    " AND (EMP_MST.EMP_ID = DAILY_ATTEN_REQ_MST.DARM_EMP_ID)\n" +
-                    " AND (DIVISION_MST.DIVM_ID = DAILY_ATTEN_REQ_MST.DARM_DIVM_ID)\n" +
-                    " AND (DAILY_ATTEN_REQ_MST.DARM_ENTRY_USER = '"+user_id+"')\n" +
-                    " Order by 1 desc");
-
-            while (newResult.next()) {
-                selectReqLists.add(new SelectReqList(newResult.getString(1),newResult.getString(2),newResult.getString(3),newResult.getString(4),newResult.getString(5),newResult.getString(6)));
-            }
-
-
-            ResultSet rs=stmt.executeQuery("SELECT DISTINCT COMPANY_OFFICE_ADDRESS.COA_ID, \n" +
-                    "COMPANY_OFFICE_ADDRESS.COA_NAME \n" +
-                    "FROM COMPANY_OFFICE_ADDRESS,ATTENDANCE_MECHINE_SETUP \n" +
-                    "WHERE ATTENDANCE_MECHINE_SETUP.AMS_COA_ID=COMPANY_OFFICE_ADDRESS.COA_ID\n" +
-                    "AND COMPANY_OFFICE_ADDRESS.COA_USE_TYPE_FLAG=0\n" +
-                    "ORDER BY 1");
-
-            while(rs.next())  {
-                locUpdateListsUpdate.add(new LocUpdateList(rs.getString(1),rs.getString(2)));
-            }
-
-            ResultSet resultSet = stmt.executeQuery("SELECT  OFFICE_SHIFT_MST.OSM_ID, OFFICE_SHIFT_MST.OSM_NAME,\n" +
-                    "TO_CHAR(OFFICE_SHIFT_MST.OSM_START_TIME, 'HH:MI AM') START_TIME, \n" +
-                    "TO_CHAR(OFFICE_SHIFT_MST.OSM_LATE_AFTER, 'HH:MI AM') LATE_AFTER, \n" +
-                    "TO_CHAR(OFFICE_SHIFT_MST.OSM_END_TIME, 'HH:MI AM') END_TIME\n" +
-                    "FROM OFFICE_SHIFT_MST \n" +
-                    "ORDER BY OFFICE_SHIFT_MST.OSM_ID");
-
-            while (resultSet.next()) {
-                //shiftUpdateLists.add(new ShiftUpdateList(resultSet.getString(1),resultSet.getString(2)));
-                allShiftDetailsUpdate.add(new SelectAllList(resultSet.getString(1),resultSet.getString(2),resultSet.getString(3),resultSet.getString(4),resultSet.getString(5)));
-            }
-
-
-            // Employee Information
-            ResultSet emp = stmt.executeQuery("SELECT DISTINCT \n" +
-                    " JOB_SETUP_MST.JSM_ID, \n" +
-                    "EMP_JOB_HISTORY.JOB_CALLING_TITLE, \n" +
-                    "dept_mst.dept_id, division_mst.divm_id\n" +
-                    "FROM EMP_MST, JOB_SETUP_DTL, JOB_SETUP_MST, DEPT_MST, DIVISION_MST, EMP_JOB_HISTORY, DESIG_MST, COMPANY_OFFICE_ADDRESS, COMPANY_OFFICE_ADDRESS COMPANY_OFFICE_ADDRESS_A1\n" +
-                    "WHERE EMP_MST.EMP_ID = "+emp_id+"\n" +
-                    "  AND ((JOB_SETUP_DTL.JSD_JSM_ID = JOB_SETUP_MST.JSM_ID)\n" +
-                    " AND (JOB_SETUP_MST.JSM_DEPT_ID = DEPT_MST.DEPT_ID)\n" +
-                    " AND (JOB_SETUP_MST.JSM_DIVM_ID = DIVISION_MST.DIVM_ID)\n" +
-                    " AND (JOB_SETUP_MST.JSM_DESIG_ID = DESIG_MST.DESIG_ID)\n" +
-                    " AND (EMP_JOB_HISTORY.JOB_PRI_COA_ID = COMPANY_OFFICE_ADDRESS.COA_ID)\n" +
-                    " AND (JOB_SETUP_DTL.JSD_ID = EMP_MST.EMP_JSD_ID)\n" +
-                    " AND (EMP_JOB_HISTORY.JOB_ID = EMP_MST.EMP_JOB_ID)\n" +
-                    " AND (COMPANY_OFFICE_ADDRESS_A1.COA_ID(+) = EMP_JOB_HISTORY.JOB_SEC_COA_ID))");
-
-            while (emp.next()) {
-                selected_jsm_id = emp.getString(1);
-                calling_title = emp.getString(2);
-                selected_dept_id = emp.getString(3);
-                selected_divm_id = emp.getString(4);
-            }
-
-            // Approver Division
-            ResultSet rs1 = stmt.executeQuery("SELECT EMP_MST.EMP_ID,EMP_MST.EMP_NAME,EMP_JOB_HISTORY.JOB_CALLING_TITLE,JOB_SETUP_MST.JSM_NAME,DIVISION_MST.DIVM_NAME \n" +
-                    "    FROM EMP_MST, EMP_JOB_HISTORY,  JOB_SETUP_DTL, JOB_SETUP_MST, DESIG_MST,DIVISION_MST\n" +
-                    "    WHERE JOB_SETUP_MST.JSM_DIVM_ID=(SELECT JOB_SETUP_MST.JSM_DIVM_ID\n" +
-                    "                                    FROM EMP_MST, EMP_JOB_HISTORY,  JOB_SETUP_DTL, JOB_SETUP_MST, DESIG_MST\n" +
-                    "                                    WHERE EMP_MST.EMP_ID="+emp_id+"\n" +
-                    "                                    AND (JOB_SETUP_DTL.JSD_JSM_ID = JOB_SETUP_MST.JSM_ID)\n" +
-                    "                                    AND (JOB_SETUP_MST.JSM_DESIG_ID = DESIG_MST.DESIG_ID)\n" +
-                    "                                    AND (EMP_JOB_HISTORY.JOB_ID = EMP_MST.EMP_JOB_ID)\n" +
-                    "                                    AND (JOB_SETUP_DTL.JSD_ID = EMP_JOB_HISTORY.JOB_JSD_ID))\n" +
-                    "    AND EMP_JOB_HISTORY.JOB_STATUS NOT IN('Closed','Suspended')\n" +
-                    "    AND (JOB_SETUP_DTL.JSD_JSM_ID = JOB_SETUP_MST.JSM_ID)\n" +
-                    "    AND (JOB_SETUP_MST.JSM_DESIG_ID = DESIG_MST.DESIG_ID)\n" +
-                    "    AND (EMP_JOB_HISTORY.JOB_ID = EMP_MST.EMP_JOB_ID)\n" +
-                    "    AND (JOB_SETUP_DTL.JSD_ID = EMP_JOB_HISTORY.JOB_JSD_ID)\n" +
-                    "    AND EMP_JOB_HISTORY.JOB_EMAIL IS NOT NULL\n" +
-                    "    AND JOB_SETUP_MST.JSM_DIVM_ID=DIVISION_MST.DIVM_ID\n" +
-                    "    AND DESIG_MST.DESIG_PRIORITY IN (SELECT DISTINCT REGEXP_SUBSTR(LAH_APPROVAL_BAND,'[^,]+', 1, LEVEL) \n" +
-                    "                                      FROM (SELECT LAH_APPROVAL_BAND\n" +
-                    "                                      FROM LEAVE_APPROVAL_HIERARCHY\n" +
-                    "                                      WHERE LAH_BAND_NO=( SELECT DESIG_MST.DESIG_PRIORITY\n" +
-                    "                                                          FROM EMP_MST, EMP_JOB_HISTORY,  JOB_SETUP_DTL, JOB_SETUP_MST, DESIG_MST\n" +
-                    "                                                          WHERE EMP_MST.EMP_ID="+emp_id+"\n" +
-                    "                                                          AND (JOB_SETUP_DTL.JSD_JSM_ID = JOB_SETUP_MST.JSM_ID)\n" +
-                    "                                                          AND (JOB_SETUP_MST.JSM_DESIG_ID = DESIG_MST.DESIG_ID)\n" +
-                    "                                                          AND (EMP_JOB_HISTORY.JOB_ID = EMP_MST.EMP_JOB_ID)\n" +
-                    "                                                          AND (JOB_SETUP_DTL.JSD_ID = EMP_JOB_HISTORY.JOB_JSD_ID)))\n" +
-                    "                                      connect by regexp_substr(LAH_APPROVAL_BAND, '[^,]+', 1, level) is not null)\n" +
-                    "UNION\n" +
-                    "SELECT EMP_MST.EMP_ID,EMP_MST.EMP_NAME,EMP_JOB_HISTORY.JOB_CALLING_TITLE,JOB_SETUP_MST.JSM_NAME,DIVISION_MST.DIVM_NAME \n" +
-                    "    FROM EMP_MST, EMP_JOB_HISTORY,  JOB_SETUP_DTL, JOB_SETUP_MST, DESIG_MST,DIVISION_MST\n" +
-                    "    WHERE EMP_MST.EMP_CODE = null--:PARAMETERP_CHAIRMAN\n" +
-                    "    AND (JOB_SETUP_DTL.JSD_JSM_ID = JOB_SETUP_MST.JSM_ID)\n" +
-                    "    AND (JOB_SETUP_MST.JSM_DESIG_ID = DESIG_MST.DESIG_ID)\n" +
-                    "    AND (EMP_JOB_HISTORY.JOB_ID = EMP_MST.EMP_JOB_ID)\n" +
-                    "    AND (JOB_SETUP_DTL.JSD_ID = EMP_JOB_HISTORY.JOB_JSD_ID)\n" +
-                    "    AND EMP_JOB_HISTORY.JOB_EMAIL IS NOT NULL\n" +
-                    "    AND JOB_SETUP_MST.JSM_DIVM_ID=DIVISION_MST.DIVM_ID\n" +
-                    "UNION\n" +
-                    "SELECT EMP_MST.EMP_ID,EMP_MST.EMP_NAME,EMP_JOB_HISTORY.JOB_CALLING_TITLE,JOB_SETUP_MST.JSM_NAME,DIVISION_MST.DIVM_NAME \n" +
-                    "    FROM EMP_MST, EMP_JOB_HISTORY,  JOB_SETUP_DTL, JOB_SETUP_MST, DESIG_MST,DIVISION_MST\n" +
-                    "   WHERE EMP_JOB_HISTORY.JOB_STATUS NOT IN('Closed','Suspended')\n" +
-                    "    AND (JOB_SETUP_DTL.JSD_JSM_ID = JOB_SETUP_MST.JSM_ID)\n" +
-                    "    AND (JOB_SETUP_MST.JSM_DESIG_ID = DESIG_MST.DESIG_ID)\n" +
-                    "    AND (EMP_JOB_HISTORY.JOB_ID = EMP_MST.EMP_JOB_ID)\n" +
-                    "    AND (JOB_SETUP_DTL.JSD_ID = EMP_JOB_HISTORY.JOB_JSD_ID)\n" +
-                    "    AND EMP_JOB_HISTORY.JOB_EMAIL IS NOT NULL\n" +
-                    "    AND JOB_SETUP_MST.JSM_DIVM_ID=DIVISION_MST.DIVM_ID\n" +
-                    "    AND EMP_MST.EMP_CODE      IN\n" +
-                    "                                  (SELECT DISTINCT REGEXP_SUBSTR(LAH_SP_APPROVAL_CODE, '[^,]+', 1, Level)\n" +
-                    "                                  FROM\n" +
-                    "                                    (SELECT LEAVE_APPROVAL_HIERARCHY.LAH_APPROVAL_BAND,\n" +
-                    "                                      LEAVE_APPROVAL_HIERARCHY.LAH_SP_APPROVAL_CODE\n" +
-                    "                                    FROM LEAVE_APPROVAL_HIERARCHY\n" +
-                    "                                    WHERE LEAVE_APPROVAL_HIERARCHY.LAH_BAND_NO =\n" +
-                    "                                                                              (SELECT DESIG_MST.DESIG_PRIORITY\n" +
-                    "                                                                              FROM EMP_MST,\n" +
-                    "                                                                                EMP_JOB_HISTORY,\n" +
-                    "                                                                                JOB_SETUP_DTL,\n" +
-                    "                                                                                JOB_SETUP_MST,\n" +
-                    "                                                                                DESIG_MST\n" +
-                    "                                                                              WHERE (JOB_SETUP_DTL.JSD_JSM_ID = JOB_SETUP_MST.JSM_ID)\n" +
-                    "                                                                              AND (JOB_SETUP_MST.JSM_DESIG_ID = DESIG_MST.DESIG_ID)\n" +
-                    "                                                                              AND (EMP_JOB_HISTORY.JOB_ID     = EMP_MST.EMP_JOB_ID)\n" +
-                    "                                                                              AND (JOB_SETUP_DTL.JSD_ID       = EMP_JOB_HISTORY.JOB_JSD_ID)\n" +
-                    "                                                                              AND EMP_MST.EMP_ID              = "+emp_id+"\n" +
-                    "                                                                              )\n" +
-                    "                                    )\n" +
-                    "                                    CONNECT BY regexp_substr(LAH_SP_APPROVAL_CODE, '[^,]+', 1, Level) IS NOT NULL\n" +
-                    "                                  )");
-
-            while (rs1.next()) {
-
-                //approverDivision.add(new ApproverList(rs1.getString(1),rs1.getString(2)+",\n("+rs1.getString(4)+", "+rs1.getString(5)+")"));
-                allApproverDivisionUpdate.add(new SelectAllList(rs1.getString(1),rs1.getString(2),rs1.getString(3),rs1.getString(4),rs1.getString(5)));
-
-
-            }
-
-            // Approver without Division
-            ResultSet rs2 = stmt.executeQuery("SELECT EMP_MST.EMP_ID,EMP_MST.EMP_NAME,EMP_JOB_HISTORY.JOB_CALLING_TITLE,JOB_SETUP_MST.JSM_NAME,DIVISION_MST.DIVM_NAME \n" +
-                    "    FROM EMP_MST, EMP_JOB_HISTORY,  JOB_SETUP_DTL, JOB_SETUP_MST, DESIG_MST,DIVISION_MST\n" +
-                    "    WHERE EMP_JOB_HISTORY.JOB_STATUS NOT IN('Closed','Suspended')\n" +
-                    "    AND (JOB_SETUP_DTL.JSD_JSM_ID = JOB_SETUP_MST.JSM_ID)\n" +
-                    "    AND (JOB_SETUP_MST.JSM_DESIG_ID = DESIG_MST.DESIG_ID)\n" +
-                    "    AND (EMP_JOB_HISTORY.JOB_ID = EMP_MST.EMP_JOB_ID)\n" +
-                    "    AND (JOB_SETUP_DTL.JSD_ID = EMP_JOB_HISTORY.JOB_JSD_ID)\n" +
-                    "    AND EMP_JOB_HISTORY.JOB_EMAIL IS NOT NULL\n" +
-                    "    AND JOB_SETUP_MST.JSM_DIVM_ID=DIVISION_MST.DIVM_ID\n" +
-                    "    AND DESIG_MST.DESIG_PRIORITY IN (SELECT DISTINCT REGEXP_SUBSTR(LAH_APPROVAL_BAND,'[^,]+', 1, LEVEL) \n" +
-                    "                                      FROM (SELECT LAH_APPROVAL_BAND\n" +
-                    "                                      FROM LEAVE_APPROVAL_HIERARCHY\n" +
-                    "                                      WHERE LAH_BAND_NO=( SELECT DESIG_MST.DESIG_PRIORITY\n" +
-                    "                                                          FROM EMP_MST, EMP_JOB_HISTORY,  JOB_SETUP_DTL, JOB_SETUP_MST, DESIG_MST\n" +
-                    "                                                          WHERE EMP_MST.EMP_ID="+emp_id+"\n" +
-                    "                                                          AND (JOB_SETUP_DTL.JSD_JSM_ID = JOB_SETUP_MST.JSM_ID)\n" +
-                    "                                                          AND (JOB_SETUP_MST.JSM_DESIG_ID = DESIG_MST.DESIG_ID)\n" +
-                    "                                                          AND (EMP_JOB_HISTORY.JOB_ID = EMP_MST.EMP_JOB_ID)\n" +
-                    "                                                          AND (JOB_SETUP_DTL.JSD_ID = EMP_JOB_HISTORY.JOB_JSD_ID)))\n" +
-                    "                                      CONNECT BY REGEXP_SUBSTR(LAH_APPROVAL_BAND, '[^,]+', 1, LEVEL) IS NOT NULL)\n" +
-                    "UNION\n" +
-                    "SELECT EMP_MST.EMP_ID,EMP_MST.EMP_NAME,EMP_JOB_HISTORY.JOB_CALLING_TITLE,JOB_SETUP_MST.JSM_NAME,DIVISION_MST.DIVM_NAME \n" +
-                    "    FROM EMP_MST, EMP_JOB_HISTORY,  JOB_SETUP_DTL, JOB_SETUP_MST, DESIG_MST,DIVISION_MST\n" +
-                    "   WHERE EMP_JOB_HISTORY.JOB_STATUS NOT IN('Closed','Suspended')\n" +
-                    "    AND (JOB_SETUP_DTL.JSD_JSM_ID = JOB_SETUP_MST.JSM_ID)\n" +
-                    "    AND (JOB_SETUP_MST.JSM_DESIG_ID = DESIG_MST.DESIG_ID)\n" +
-                    "    AND (EMP_JOB_HISTORY.JOB_ID = EMP_MST.EMP_JOB_ID)\n" +
-                    "    AND (JOB_SETUP_DTL.JSD_ID = EMP_JOB_HISTORY.JOB_JSD_ID)\n" +
-                    "    AND EMP_JOB_HISTORY.JOB_EMAIL IS NOT NULL\n" +
-                    "    AND JOB_SETUP_MST.JSM_DIVM_ID=DIVISION_MST.DIVM_ID\n" +
-                    "    AND EMP_MST.EMP_CODE      IN\n" +
-                    "                                  (SELECT DISTINCT REGEXP_SUBSTR(LAH_SP_APPROVAL_CODE, '[^,]+', 1, Level)\n" +
-                    "                                  FROM\n" +
-                    "                                    (SELECT LEAVE_APPROVAL_HIERARCHY.LAH_APPROVAL_BAND,\n" +
-                    "                                      LEAVE_APPROVAL_HIERARCHY.LAH_SP_APPROVAL_CODE\n" +
-                    "                                    FROM LEAVE_APPROVAL_HIERARCHY\n" +
-                    "                                    WHERE LEAVE_APPROVAL_HIERARCHY.LAH_BAND_NO =\n" +
-                    "                                                                              (SELECT DESIG_MST.DESIG_PRIORITY\n" +
-                    "                                                                              FROM EMP_MST,\n" +
-                    "                                                                                EMP_JOB_HISTORY,\n" +
-                    "                                                                                JOB_SETUP_DTL,\n" +
-                    "                                                                                JOB_SETUP_MST,\n" +
-                    "                                                                                DESIG_MST\n" +
-                    "                                                                              WHERE (JOB_SETUP_DTL.JSD_JSM_ID = JOB_SETUP_MST.JSM_ID)\n" +
-                    "                                                                              AND (JOB_SETUP_MST.JSM_DESIG_ID = DESIG_MST.DESIG_ID)\n" +
-                    "                                                                              AND (EMP_JOB_HISTORY.JOB_ID     = EMP_MST.EMP_JOB_ID)\n" +
-                    "                                                                              AND (JOB_SETUP_DTL.JSD_ID       = EMP_JOB_HISTORY.JOB_JSD_ID)\n" +
-                    "                                                                              AND EMP_MST.EMP_ID              = "+emp_id+"\n" +
-                    "                                                                              )\n" +
-                    "                                    )\n" +
-                    "                                    CONNECT BY regexp_substr(LAH_SP_APPROVAL_CODE, '[^,]+', 1, Level) IS NOT NULL\n" +
-                    "                                  )");
-
-
-            while (rs2.next()) {
-
-                //approverWithoutDivision.add(new ApproverList(rs2.getString(1),rs2.getString(2)+",\n("+rs2.getString(4)+", "+rs2.getString(5)+")"));
-                allApproverWithoutDivUpdate.add(new SelectAllList(rs2.getString(1),rs2.getString(2),rs2.getString(3),rs2.getString(4),rs2.getString(5)));
-
-
-            }
-
-            // Approver Employee
-            ResultSet rs3 = stmt.executeQuery("SELECT EMP_MST.EMP_ID,EMP_MST.EMP_NAME,EMP_JOB_HISTORY.JOB_CALLING_TITLE,JOB_SETUP_MST.JSM_NAME,DIVISION_MST.DIVM_NAME \n" +
-                    "      FROM EMP_MST, EMP_JOB_HISTORY,JOB_SETUP_DTL, JOB_SETUP_MST, DESIG_MST,DIVISION_MST\n" +
-                    "      WHERE (JOB_SETUP_DTL.JSD_JSM_ID = JOB_SETUP_MST.JSM_ID)\n" +
-                    "      AND (JOB_SETUP_MST.JSM_DESIG_ID = DESIG_MST.DESIG_ID)\n" +
-                    "      AND (EMP_JOB_HISTORY.JOB_ID = EMP_MST.EMP_JOB_ID)\n" +
-                    "      AND (JOB_SETUP_DTL.JSD_ID = EMP_JOB_HISTORY.JOB_JSD_ID)\n" +
-                    "      AND EMP_JOB_HISTORY.JOB_EMAIL IS NOT NULL\n" +
-                    "      AND JOB_SETUP_MST.JSM_DIVM_ID=DIVISION_MST.DIVM_ID\n" +
-                    "      AND EMP_MST.EMP_CODE IN (SELECT DISTINCT REGEXP_SUBSTR(LAH_SP_APPROVAL_CODE,'[^,]+', 1, LEVEL) \n" +
-                    "                                        FROM (SELECT LAH_SP_APPROVAL_CODE\n" +
-                    "                                        FROM LEAVE_APPROVAL_HIERARCHY\n" +
-                    "                                        WHERE LAH_BAND_NO=( SELECT DESIG_MST.DESIG_PRIORITY\n" +
-                    "                                                          FROM EMP_MST, EMP_JOB_HISTORY,  JOB_SETUP_DTL, JOB_SETUP_MST, DESIG_MST\n" +
-                    "                                                          WHERE EMP_MST.EMP_ID="+emp_id+"\n" +
-                    "                                                          AND (JOB_SETUP_DTL.JSD_JSM_ID = JOB_SETUP_MST.JSM_ID)\n" +
-                    "                                                          AND (JOB_SETUP_MST.JSM_DESIG_ID = DESIG_MST.DESIG_ID)\n" +
-                    "                                                          AND (EMP_JOB_HISTORY.JOB_ID = EMP_MST.EMP_JOB_ID)\n" +
-                    "                                                          AND (JOB_SETUP_DTL.JSD_ID = EMP_JOB_HISTORY.JOB_JSD_ID)))\n" +
-                    "                                        CONNECT BY REGEXP_SUBSTR(LAH_SP_APPROVAL_CODE, '[^,]+', 1, LEVEL) IS NOT NULL)  ");
-
-            while (rs3.next()) {
-
-                //approverEmployee.add(new ApproverList(rs3.getString(1),rs3.getString(2)+",\n("+rs3.getString(4)+",\n"+rs3.getString(5)+")"));
-                allApproverEmpUpdate.add(new SelectAllList(rs3.getString(1),rs3.getString(2),rs3.getString(3),rs3.getString(4),rs3.getString(5)));
-
-            }
-
-            ResultSet approver1 = stmt.executeQuery("  SELECT DESIG_MST.DESIG_PRIORITY,JOB_SETUP_MST.JSM_DIVM_ID\n" +
-                    "  --INTO V_DESIG_PRIORITY,V_JSM_DIVM_ID\n" +
-                    "  FROM EMP_MST, EMP_JOB_HISTORY,  JOB_SETUP_DTL, JOB_SETUP_MST, DESIG_MST\n" +
-                    "  WHERE EMP_MST.EMP_ID="+emp_id+"\n" +
-                    "  AND (JOB_SETUP_DTL.JSD_JSM_ID = JOB_SETUP_MST.JSM_ID)\n" +
-                    "  AND (JOB_SETUP_MST.JSM_DESIG_ID = DESIG_MST.DESIG_ID)\n" +
-                    "  AND (EMP_JOB_HISTORY.JOB_ID = EMP_MST.EMP_JOB_ID)\n" +
-                    "  AND (JOB_SETUP_DTL.JSD_ID = EMP_JOB_HISTORY.JOB_JSD_ID)");
-            while (approver1.next()) {
-                desig_priority = approver1.getString(1);
-                divm_id = approver1.getString(2);
-            }
-            System.out.println("Found App1");
-
-            if (!desig_priority.isEmpty()) {
-
-                ResultSet approver2 = stmt.executeQuery("SELECT LAH_APPROVAL_BAND --INTO V_APPROVAL_BAND\n" +
-                        "    FROM LEAVE_APPROVAL_HIERARCHY\n" +
-                        "    WHERE LAH_BAND_NO="+desig_priority+"");
-
-                while (approver2.next()) {
-                    approval_band = approver2.getString(1);
-                }
-                System.out.println("Found App2");
-
-                if (!approval_band.isEmpty()) {
-
-                    ResultSet approver3 = stmt.executeQuery(" SELECT COUNT(1) --INTO V_COUNT_APPROVAL_EMP   -- return minimum 1 if at least exist  otherwise return 0\n" +
-                            "    FROM EMP_MST, EMP_JOB_HISTORY,  JOB_SETUP_DTL, JOB_SETUP_MST, DESIG_MST\n" +
-                            "    WHERE JOB_SETUP_MST.JSM_DIVM_ID="+divm_id+"\n" +
-                            "    AND EMP_JOB_HISTORY.JOB_STATUS NOT IN('Closed','Suspended')\n" +
-                            "    AND (JOB_SETUP_DTL.JSD_JSM_ID = JOB_SETUP_MST.JSM_ID)\n" +
-                            "    AND (JOB_SETUP_MST.JSM_DESIG_ID = DESIG_MST.DESIG_ID)\n" +
-                            "    AND (EMP_JOB_HISTORY.JOB_ID = EMP_MST.EMP_JOB_ID)\n" +
-                            "    AND (JOB_SETUP_DTL.JSD_ID = EMP_JOB_HISTORY.JOB_JSD_ID)\n" +
-                            "    AND EMP_JOB_HISTORY.JOB_EMAIL IS NOT NULL\n" +
-                            "    AND DESIG_MST.DESIG_PRIORITY IN (SELECT DISTINCT REGEXP_SUBSTR(LAH_APPROVAL_BAND,'[^,]+', 1, LEVEL) \n" +
-                            "                                      FROM (SELECT LAH_APPROVAL_BAND\n" +
-                            "                                      FROM LEAVE_APPROVAL_HIERARCHY\n" +
-                            "                                      WHERE LAH_BAND_NO="+desig_priority+")\n" +
-                            "                                      connect by regexp_substr(LAH_APPROVAL_BAND, '[^,]+', 1, level) is not null)  ");
-
-                    while (approver3.next()) {
-                        count_approv_emp = Integer.parseInt(approver3.getString(1));
-                    }
-                    System.out.println("Found App3");
-
-                    if (count_approv_emp <= 0) {
-
-                        ResultSet approver4 = stmt.executeQuery("SELECT COUNT(1) --INTO V_COUNT_APPROVAL_EMP   -- return minimum 1 if at least exist  otherwise return 0\n" +
-                                "      FROM EMP_MST, EMP_JOB_HISTORY\n" +
-                                "      WHERE (EMP_JOB_HISTORY.JOB_ID = EMP_MST.EMP_JOB_ID)\n" +
-                                "      AND EMP_JOB_HISTORY.JOB_EMAIL IS NOT NULL\n" +
-                                "      AND EMP_MST.EMP_CODE IN (SELECT DISTINCT REGEXP_SUBSTR(LAH_SP_APPROVAL_CODE,'[^,]+', 1, LEVEL) \n" +
-                                "                                        FROM (SELECT LAH_SP_APPROVAL_CODE\n" +
-                                "                                        FROM LEAVE_APPROVAL_HIERARCHY\n" +
-                                "                                        WHERE LAH_BAND_NO="+desig_priority+")\n" +
-                                "                                        CONNECT BY REGEXP_SUBSTR(LAH_SP_APPROVAL_CODE, '[^,]+', 1, LEVEL) IS NOT NULL)");
-
-                        while (approver4.next()) {
-                            count_approv_emp = Integer.parseInt(approver4.getString(1));
-                        }
-                        System.out.println("Found App4");
-
-                        if (count_approv_emp <= 0) {
-                            //selectedApproverList = approverWithoutDivision;
-                            allSelectedApproverUpdate = allApproverWithoutDivUpdate;
-                        } else {
-                            // selectedApproverList = approverEmployee;
-                            allSelectedApproverUpdate = allApproverEmpUpdate;
-                        }
-                    } else {
-                        //selectedApproverList = approverDivision;
-                        allSelectedApproverUpdate = allApproverDivisionUpdate;
-                    }
-
-                }
-
-            }
-
-
-
-
-
-
-            connected = true;
-
-            connection.close();
-
-        }
-        catch (Exception e) {
-
-            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
-            Log.i("ERRRRR", e.getLocalizedMessage());
-            e.printStackTrace();
-        }
-    }
-
-    public void GettingData() {
-        try {
-            this.connection = createConnection();
-
-            Statement stmt = connection.createStatement();
-
-
-
-
-            ResultSet rs=stmt.executeQuery(" Select DARM_APPLICATION_TYPE,DARM_REQ_TYPE,DARM_AURRM_ID," +
-                    "TO_CHAR(DAILY_ATTEN_REQ_MST.DARM_UPDATE_DATE,'DD-MON-YY') DARM_UPDATE_DATE," +
-                    "TO_CHAR(DAILY_ATTEN_REQ_MST.DARM_REQ_ARRIVAL_TIME,'HH:MIAM') ARRIVAL_TIME,\n" +
-                    "TO_CHAR(DAILY_ATTEN_REQ_MST.DARM_REQ_DEPART_TIME,'HH:MIAM') DEPARTURE_TIME," +
-                    "DARM_REQ_LOCATION_ID,DARM_REQ_OSM_ID," +
-                    "DARM_REASON,DARM_ADD_DURING_CAUSE,DARM_APPLIED_TO_ID," +
-                    "TO_CHAR(DAILY_ATTEN_REQ_MST.DARM_DATE,'DD-MON-YYYY') DARM_DATE " +
-                    "From DAILY_ATTEN_REQ_MST " +
-                    "WHERE DARM_ID = "+darm_id+"");
-
-
-
-            while(rs.next())  {
-                from__selected_request = rs.getString(1);
-                form_selected_attendance_type = rs.getString(2);
-                from_selected_aurrm_id = rs.getString(3);
-                from_update_date = rs.getString(4);
-                from_arrival_time = rs.getString(5);
-                from_depart_time = rs.getString(6);
-                from_selected_loc_id = rs.getString(7);
-                from_selected_shift_id = rs.getString(8);
-                from_reason_desc = rs.getString(9);
-                from_add_during_cause = rs.getString(10);
-                from_selected_approver_id = rs.getString(11);
-                from_app_date = rs.getString(12);
-
-            }
-
-            System.out.println(from__selected_request);
-            System.out.println(form_selected_attendance_type);
-            System.out.println(from_selected_aurrm_id);
-            System.out.println(from_update_date);
-            System.out.println(from_arrival_time);
-            System.out.println(from_depart_time);
-            System.out.println(from_selected_loc_id);
-            System.out.println(from_selected_shift_id);
-            System.out.println(from_reason_desc);
-            System.out.println(from_add_during_cause);
-            System.out.println(from_selected_approver_id);
-
-
-
-
-            locationExecuted = true;
-
-            reasonExecuted = true;
-
-            gathered = true;
-
-            connection.close();
-
-        }
-        catch (Exception e) {
-
-            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
-            Log.i("ERRRRR", e.getLocalizedMessage());
-            e.printStackTrace();
-        }
-    }
-
-    public void MachineData(String id) {
-        try {
-            this.connection = createConnection();
-
-            Statement stmt = connection.createStatement();
-
-
-            ResultSet rs=stmt.executeQuery("SELECT AMS_MECHINE_CODE, AMS_ATTENDANCE_TYPE\n" +
-                    "\t\tFROM ATTENDANCE_MECHINE_SETUP\n" +
-                    "\t\tWHERE AMS_ID = (SELECT MAX(AMS_ID)\n" +
-                    "\t\t\t\t\t\t\t\t\t\tFROM ATTENDANCE_MECHINE_SETUP\n" +
-                    "\t\t\t\t\t\t\t\t\t\tWHERE AMS_COA_ID = "+id+")");
-
-
-
-            while(rs.next())  {
-                machineCode = rs.getString(1);
-                machineType = rs.getString(2);
-            }
-
-
-            machineCon = true;
-
-            connection.close();
-
-        }
-        catch (Exception e) {
-
-            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
-            Log.i("ERRRRR", e.getLocalizedMessage());
-            e.printStackTrace();
-        }
-    }
-
-    public void ReasonData(String reason) {
-        try {
-            this.connection = createConnection();
-
-            Statement stmt = connection.createStatement();
-
-            reasonListsUpdate = new ArrayList<>();
-
-
-            ResultSet rs=stmt.executeQuery(" SELECT ATTD_UP_REQ_REASON_MST.AURRM_ID,\n" +
-                    "  ATTD_UP_REQ_REASON_MST.AURRM_NAME\n" +
-                    "  FROM ATTD_UP_REQ_REASON_MST\n" +
-                    "WHERE ATTD_UP_REQ_REASON_MST.AURRM_REQ_TYPE= '"+reason+"'\n" +
-                    "ORDER BY ATTD_UP_REQ_REASON_MST.AURRM_NAME");
-
-
-
-            while(rs.next())  {
-                reasonListsUpdate.add(new ReasonList(rs.getString(1),rs.getString(2)));
-            }
-
-
-            reasonCon = true;
-
-            connection.close();
-
-        }
-        catch (Exception e) {
-
-            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
-            Log.i("ERRRRR", e.getLocalizedMessage());
-            e.printStackTrace();
-        }
-    }
-
-
-    public void InsertReq() {
-        try {
-            this.connection = createConnection();
-
-            Statement stmt = connection.createStatement();
-
-                            System.out.println("DARM_ID: " + darm_id);
-                            System.out.println("EMP ID: "+ emp_id);
-                            System.out.println("REASON DESC: "+ selected_reason_desc);
-                            System.out.println("Address Station: "+ selected_address_station);
-                            System.out.println("Updated Date: "+ selected_update_date);
-                            System.out.println("Now Date: "+ now_date);
-                            System.out.println("Dept ID: "+ selected_dept_id);
-                            System.out.println("Divm ID: "+ selected_divm_id);
-                            System.out.println("JSM ID: "+ selected_jsm_id);
-                            System.out.println("Calling Title: " + calling_title);
-                            System.out.println("Request: "+ selected_request);
-                            System.out.println("App Code: "+ app_code);
-                            System.out.println("APP CODE ID: "+ app_code_id);
-                            System.out.println("Approver ID: "+ selected_approver_id_update);
-                            System.out.println("Attendance Type: " + selected_attendance_type);
-                            System.out.println("Depart Time: "+ depart_time);
-                            System.out.println("Arrival Time: " + arrival_time);
-                            System.out.println("Loc ID: "+ selected_loc_id);
-                            System.out.println("Shift: "+ selected_shift_id_update);
-                            System.out.println("Reason ID: "+ selected_reason_id);
-
-                            if (arrival_time.isEmpty() && !depart_time.isEmpty()) {
-                                System.out.println("INSERTED TEST1");
-                                stmt.executeUpdate("UPDATE DAILY_ATTEN_REQ_MST\n" +
-                                        "   SET DARM_EMP_ID = "+emp_id+",\n" +
-                                        "       DARM_REASON = '"+selected_reason_desc+"',\n" +
-                                        "       DARM_ADD_DURING_CAUSE = '"+selected_address_station+"',\n" +
-                                        "       DARM_UPDATE_DATE = TO_DATE('"+selected_update_date+"', 'DD-MON-YY'),\n" +
-                                        "       DARM_DEPT_ID = "+selected_dept_id+",\n" +
-                                        "       DARM_DIVM_ID = "+selected_divm_id+",\n" +
-                                        "       DARM_APPROVED = 0,\n" +
-                                        "       DARM_JSM_ID = "+selected_jsm_id+",\n" +
-                                        "       DARM_CALLING_TITLE = '"+calling_title+"',\n" +
-                                        "       DARM_ENTRY_USER = '"+user_id+"',\n" +
-                                        "       DARM_APPLICATION_TYPE = '"+selected_request+"',\n" +
-                                        "       DARM_APPLIED_TO_ID = "+selected_approver_id_update+",\n" +
-                                        "       DARM_REQ_TYPE = '"+selected_attendance_type+"',\n" +
-                                        "       DARM_REQ_ARRIVAL_TIME = NULL,\n" +
-                                        "       DARM_REQ_DEPART_TIME = TO_DATE('"+selected_update_date+" "+depart_time+"', 'DD-MON-YY HH12:MIPM'),\n" +
-                                        "       DARM_REQ_LOCATION_ID = "+selected_loc_id+",\n" +
-                                        "       DARM_REQ_OSM_ID = "+selected_shift_id_update+",\n" +
-                                        "       DARM_AURRM_ID = "+selected_reason_id+",\n" +
-                                        "       DARM_UPDATE_APPLICATION_FLAG = 1,\n" +
-                                        "       DARM_MODIFIED_BY = '"+user_id+"'\n" +
-                                        " WHERE DARM_ID = "+darm_id+"");
-
-                            }
-                            else if (depart_time.isEmpty() && !arrival_time.isEmpty()) {
-                                System.out.println("INSERTED TEST2");
-
-                                stmt.executeUpdate("UPDATE DAILY_ATTEN_REQ_MST\n" +
-                                        "   SET DARM_EMP_ID = "+emp_id+",\n" +
-                                        "       DARM_REASON = '"+selected_reason_desc+"',\n" +
-                                        "       DARM_ADD_DURING_CAUSE = '"+selected_address_station+"',\n" +
-                                        "       DARM_UPDATE_DATE = TO_DATE('"+selected_update_date+"', 'DD-MON-YY'),\n" +
-                                        "       DARM_DEPT_ID = "+selected_dept_id+",\n" +
-                                        "       DARM_DIVM_ID = "+selected_divm_id+",\n" +
-                                        "       DARM_APPROVED = 0,\n" +
-                                        "       DARM_JSM_ID = "+selected_jsm_id+",\n" +
-                                        "       DARM_CALLING_TITLE = '"+calling_title+"',\n" +
-                                        "       DARM_ENTRY_USER = '"+user_id+"',\n" +
-                                        "       DARM_APPLICATION_TYPE = '"+selected_request+"',\n" +
-                                        "       DARM_APPLIED_TO_ID = "+selected_approver_id_update+",\n" +
-                                        "       DARM_REQ_TYPE = '"+selected_attendance_type+"',\n" +
-                                        "       DARM_REQ_ARRIVAL_TIME = TO_DATE('"+selected_update_date+" "+arrival_time+"', 'DD-MON-YY HH12:MIPM'),\n" +
-                                        "       DARM_REQ_DEPART_TIME = NULL,\n" +
-                                        "       DARM_REQ_LOCATION_ID = "+selected_loc_id+",\n" +
-                                        "       DARM_REQ_OSM_ID = "+selected_shift_id_update+",\n" +
-                                        "       DARM_AURRM_ID = "+selected_reason_id+",\n" +
-                                        "       DARM_UPDATE_APPLICATION_FLAG = 1,\n" +
-                                        "       DARM_MODIFIED_BY = '"+user_id+"'\n" +
-                                        " WHERE DARM_ID = "+darm_id+"");
-
-
-                            }
-                            else {
-                                System.out.println("INSERTED TEST3");
-
-                                stmt.executeUpdate("UPDATE DAILY_ATTEN_REQ_MST\n" +
-                                        "   SET DARM_EMP_ID = "+emp_id+",\n" +
-                                        "       DARM_REASON = '"+selected_reason_desc+"',\n" +
-                                        "       DARM_ADD_DURING_CAUSE = '"+selected_address_station+"',\n" +
-                                        "       DARM_UPDATE_DATE = TO_DATE('"+selected_update_date+"', 'DD-MON-YY'),\n" +
-                                        "       DARM_DEPT_ID = "+selected_dept_id+",\n" +
-                                        "       DARM_DIVM_ID = "+selected_divm_id+",\n" +
-                                        "       DARM_APPROVED = 0,\n" +
-                                        "       DARM_JSM_ID = "+selected_jsm_id+",\n" +
-                                        "       DARM_CALLING_TITLE = '"+calling_title+"',\n" +
-                                        "       DARM_ENTRY_USER = '"+user_id+"',\n" +
-                                        "       DARM_APPLICATION_TYPE = '"+selected_request+"',\n" +
-                                        "       DARM_APPLIED_TO_ID = "+selected_approver_id_update+",\n" +
-                                        "       DARM_REQ_TYPE = '"+selected_attendance_type+"',\n" +
-                                        "       DARM_REQ_ARRIVAL_TIME = TO_DATE('"+selected_update_date+" "+arrival_time+"', 'DD-MON-YY HH12:MIPM'),\n" +
-                                        "       DARM_REQ_DEPART_TIME = TO_DATE('"+selected_update_date+" "+depart_time+"', 'DD-MON-YY HH12:MIPM'),\n" +
-                                        "       DARM_REQ_LOCATION_ID = "+selected_loc_id+",\n" +
-                                        "       DARM_REQ_OSM_ID = "+selected_shift_id_update+",\n" +
-                                        "       DARM_AURRM_ID = "+selected_reason_id+",\n" +
-                                        "       DARM_UPDATE_APPLICATION_FLAG = 1,\n" +
-                                        "       DARM_MODIFIED_BY = '"+user_id+"'\n" +
-                                        " WHERE DARM_ID = "+darm_id+"");
-
-                            }
-
-
-            insertCon = true;
-
-            connection.close();
-
-        }
-        catch (Exception e) {
-
-            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
-            Log.i("ERRRRR", e.getLocalizedMessage());
-            e.printStackTrace();
-        }
-    }
+//    public class MachineInfo extends AsyncTask<Void, Void, Void> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//
+//            waitProgress1.show(getSupportFragmentManager(),"WaitBar");
+//            waitProgress1.setCancelable(false);
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            if (isConnected() && isOnline()) {
+//
+//                MachineData(selected_loc_id);
+//                if (machineCon) {
+//                    machineConnn = true;
+//                    message= "Internet Connected";
+//                }
+//
+//            } else {
+//                machineConnn = false;
+//                message = "Not Connected";
+//            }
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//
+//            waitProgress1.dismiss();
+//            if (machineConnn) {
+//
+//                if (!machineCode.isEmpty() && !machineType.isEmpty()) {
+//                    machCode.setText(machineCode);
+//                    machType.setText(machineType);
+//                }
+//
+//            }else {
+//                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+//                AlertDialog dialog = new AlertDialog.Builder(AttendanceReqUpdate.this)
+//                        .setMessage("Please Check Your Internet Connection")
+//                        .setPositiveButton("Retry", null)
+//                        .show();
+//
+//                dialog.setCancelable(false);
+//                dialog.setCanceledOnTouchOutside(false);
+//                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+//                positive.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//
+//                        new MachineInfo().execute();
+//                        dialog.dismiss();
+//                    }
+//                });
+//            }
+//        }
+//    }
+//
+//    public class ReasonInfo extends AsyncTask<Void, Void, Void> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//
+//            waitProgress2.show(getSupportFragmentManager(),"WaitBar");
+//            waitProgress2.setCancelable(false);
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            if (isConnected() && isOnline()) {
+//
+//                ReasonData(selected_attendance_type);
+//                if (reasonCon) {
+//                    reasonConnnn = true;
+//                    message= "Internet Connected";
+//                }
+//
+//            } else {
+//                reasonConnnn = false;
+//                message = "Not Connected";
+//            }
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//
+//            waitProgress2.dismiss();
+//            if (reasonConnnn) {
+//
+//                reasonNameUpdate = new ArrayList<>();
+//                reasonNameUpdate.add("Select");
+//
+//
+//                if (reasonListsUpdate.size() != 0) {
+//                    for (int i = 0; i < reasonListsUpdate.size(); i++) {
+//                        reasonNameUpdate.add(reasonListsUpdate.get(i).getReason_name());
+//                        reasonAdapterUpdate.setNotifyOnChange(true);
+//                        System.out.println(reasonListsUpdate.get(i).getReason_name());
+//                    }
+//                }
+//
+//                reasonAdapterUpdate.clear();
+//                reasonAdapterUpdate.addAll(reasonNameUpdate);
+//                reasonAdapterUpdate.notifyDataSetChanged();
+//                reasonType.setSelection(0);
+//
+//                if (reasonExecuted) {
+//                    int index = 0;
+//                    for (int i = 0; i < reasonListsUpdate.size(); i++) {
+//                        if (from_selected_aurrm_id.equals(reasonListsUpdate.get(i).getReason_id())) {
+//                            String reason = reasonListsUpdate.get(i).getReason_name();
+//                            for (int j = 0; j < reasonNameUpdate.size(); j++) {
+//                                if (reason.equals(reasonNameUpdate.get(j))) {
+//                                    index = reasonNameUpdate.indexOf(reason);
+//                                }
+//                            }
+//                        }
+//                    }
+//                    reasonType.setSelection(index);
+//                    selected_reason_id = from_selected_aurrm_id;
+//                }
+//                reasonExecuted = false;
+//
+//            }else {
+//                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+//                AlertDialog dialog = new AlertDialog.Builder(AttendanceReqUpdate.this)
+//                        .setMessage("Please Check Your Internet Connection")
+//                        .setPositiveButton("Retry", null)
+//                        .show();
+//
+//                dialog.setCancelable(false);
+//                dialog.setCanceledOnTouchOutside(false);
+//                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+//                positive.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//
+//                        new ReasonInfo().execute();
+//                        dialog.dismiss();
+//                    }
+//                });
+//            }
+//        }
+//    }
+//
+//    public class UpdateCheck extends AsyncTask<Void, Void, Void> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//
+//            waitProgress.show(getSupportFragmentManager(),"WaitBar");
+//            waitProgress.setCancelable(false);
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            if (isConnected() && isOnline()) {
+//
+//                InsertReq();
+//                if (insertCon) {
+//                    insertConnn = true;
+//                    System.out.println("INSERTED");
+//                    message= "Internet Connected";
+//                }
+//
+//            } else {
+//                insertConnn = false;
+//                message = "Not Connected";
+//            }
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//
+//            waitProgress.dismiss();
+//            if (insertConnn) {
+//                selected_shift_id_update = "";
+//                selected_approver_id_update = "";
+//                darm_id = "";
+//                System.out.println("INSERTED");
+//
+//                AlertDialog dialog = new AlertDialog.Builder(AttendanceReqUpdate.this)
+//                        .setMessage("Request Updated Successfully")
+//                        .setPositiveButton("OK", null)
+//                        .show();
+//
+//                dialog.setCancelable(false);
+//                dialog.setCanceledOnTouchOutside(false);
+//                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+//                positive.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//
+//                        dialog.dismiss();
+//                        finish();
+//                    }
+//                });
+//
+//            }else {
+//                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+//                AlertDialog dialog = new AlertDialog.Builder(AttendanceReqUpdate.this)
+//                        .setMessage("Please Check Your Internet Connection")
+//                        .setPositiveButton("Retry", null)
+//                        .show();
+//
+//                dialog.setCancelable(false);
+//                dialog.setCanceledOnTouchOutside(false);
+//                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+//                positive.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//
+//                        new UpdateCheck().execute();
+//                        dialog.dismiss();
+//                    }
+//                });
+//            }
+//        }
+//    }
+//
+//    public void UpdateInfo() {
+//        try {
+//            this.connection = createConnection();
+//
+//            locUpdateListsUpdate = new ArrayList<>();
+//            allShiftDetailsUpdate = new ArrayList<>();
+//
+//            allApproverDivisionUpdate = new ArrayList<>();
+//            allApproverWithoutDivUpdate = new ArrayList<>();
+//            allApproverEmpUpdate = new ArrayList<>();
+//            allSelectedApproverUpdate = new ArrayList<>();
+//
+//            selectReqLists = new ArrayList<>();
+//
+//
+//
+//            //shiftUpdateLists = new ArrayList<>();
+////            approverEmployee = new ArrayList<>();
+////            approverDivision = new ArrayList<>();
+////            approverWithoutDivision = new ArrayList<>();
+//
+//            //selectAllLists = new ArrayList<>();
+//
+//            //selectedApproverList = new ArrayList<>();
+//
+//            Statement stmt = connection.createStatement();
+//
+//            ResultSet newResult = stmt.executeQuery("SELECT daily_atten_req_mst.darm_id,\n" +
+//                    " DAILY_ATTEN_REQ_MST.DARM_APP_CODE, \n" +
+//                    "  TO_CHAR(DAILY_ATTEN_REQ_MST.DARM_UPDATE_DATE,'DD-MON-YY') DARM_UPDATE_DATE,  \n" +
+//                    "    TO_CHAR(DAILY_ATTEN_REQ_MST.DARM_REQ_ARRIVAL_TIME,'HH:MI:SS AM') ARRIVAL_TIME,\n" +
+//                    "    TO_CHAR(DAILY_ATTEN_REQ_MST.DARM_REQ_DEPART_TIME,'HH:MI:SS AM') DEPARTURE_TIME,\n" +
+//                    "    TO_CHAR(DAILY_ATTEN_REQ_MST.DARM_DATE,'DD-MON-YY') DARM_DATE\n" +
+//                    "    FROM DAILY_ATTEN_REQ_MST, EMP_MST, DIVISION_MST\n" +
+//                    "WHERE NVL(DAILY_ATTEN_REQ_MST.DARM_APPROVED, 0) = 0\n" +
+//                    " AND (EMP_MST.EMP_ID = DAILY_ATTEN_REQ_MST.DARM_EMP_ID)\n" +
+//                    " AND (DIVISION_MST.DIVM_ID = DAILY_ATTEN_REQ_MST.DARM_DIVM_ID)\n" +
+//                    " AND (DAILY_ATTEN_REQ_MST.DARM_ENTRY_USER = '"+user_id+"')\n" +
+//                    " Order by 1 desc");
+//
+//            while (newResult.next()) {
+//                selectReqLists.add(new SelectReqList(newResult.getString(1),newResult.getString(2),newResult.getString(3),newResult.getString(4),newResult.getString(5),newResult.getString(6)));
+//            }
+//
+//
+//            ResultSet rs=stmt.executeQuery("SELECT DISTINCT COMPANY_OFFICE_ADDRESS.COA_ID, \n" +
+//                    "COMPANY_OFFICE_ADDRESS.COA_NAME \n" +
+//                    "FROM COMPANY_OFFICE_ADDRESS,ATTENDANCE_MECHINE_SETUP \n" +
+//                    "WHERE ATTENDANCE_MECHINE_SETUP.AMS_COA_ID=COMPANY_OFFICE_ADDRESS.COA_ID\n" +
+//                    "AND COMPANY_OFFICE_ADDRESS.COA_USE_TYPE_FLAG=0\n" +
+//                    "ORDER BY 1");
+//
+//            while(rs.next())  {
+//                locUpdateListsUpdate.add(new LocUpdateList(rs.getString(1),rs.getString(2)));
+//            }
+//
+//            ResultSet resultSet = stmt.executeQuery("SELECT  OFFICE_SHIFT_MST.OSM_ID, OFFICE_SHIFT_MST.OSM_NAME,\n" +
+//                    "TO_CHAR(OFFICE_SHIFT_MST.OSM_START_TIME, 'HH:MI AM') START_TIME, \n" +
+//                    "TO_CHAR(OFFICE_SHIFT_MST.OSM_LATE_AFTER, 'HH:MI AM') LATE_AFTER, \n" +
+//                    "TO_CHAR(OFFICE_SHIFT_MST.OSM_END_TIME, 'HH:MI AM') END_TIME\n" +
+//                    "FROM OFFICE_SHIFT_MST \n" +
+//                    "ORDER BY OFFICE_SHIFT_MST.OSM_ID");
+//
+//            while (resultSet.next()) {
+//                //shiftUpdateLists.add(new ShiftUpdateList(resultSet.getString(1),resultSet.getString(2)));
+//                allShiftDetailsUpdate.add(new SelectAllList(resultSet.getString(1),resultSet.getString(2),resultSet.getString(3),resultSet.getString(4),resultSet.getString(5)));
+//            }
+//
+//
+//            // Employee Information
+//            ResultSet emp = stmt.executeQuery("SELECT DISTINCT \n" +
+//                    " JOB_SETUP_MST.JSM_ID, \n" +
+//                    "EMP_JOB_HISTORY.JOB_CALLING_TITLE, \n" +
+//                    "dept_mst.dept_id, division_mst.divm_id\n" +
+//                    "FROM EMP_MST, JOB_SETUP_DTL, JOB_SETUP_MST, DEPT_MST, DIVISION_MST, EMP_JOB_HISTORY, DESIG_MST, COMPANY_OFFICE_ADDRESS, COMPANY_OFFICE_ADDRESS COMPANY_OFFICE_ADDRESS_A1\n" +
+//                    "WHERE EMP_MST.EMP_ID = "+emp_id+"\n" +
+//                    "  AND ((JOB_SETUP_DTL.JSD_JSM_ID = JOB_SETUP_MST.JSM_ID)\n" +
+//                    " AND (JOB_SETUP_MST.JSM_DEPT_ID = DEPT_MST.DEPT_ID)\n" +
+//                    " AND (JOB_SETUP_MST.JSM_DIVM_ID = DIVISION_MST.DIVM_ID)\n" +
+//                    " AND (JOB_SETUP_MST.JSM_DESIG_ID = DESIG_MST.DESIG_ID)\n" +
+//                    " AND (EMP_JOB_HISTORY.JOB_PRI_COA_ID = COMPANY_OFFICE_ADDRESS.COA_ID)\n" +
+//                    " AND (JOB_SETUP_DTL.JSD_ID = EMP_MST.EMP_JSD_ID)\n" +
+//                    " AND (EMP_JOB_HISTORY.JOB_ID = EMP_MST.EMP_JOB_ID)\n" +
+//                    " AND (COMPANY_OFFICE_ADDRESS_A1.COA_ID(+) = EMP_JOB_HISTORY.JOB_SEC_COA_ID))");
+//
+//            while (emp.next()) {
+//                selected_jsm_id = emp.getString(1);
+//                calling_title = emp.getString(2);
+//                selected_dept_id = emp.getString(3);
+//                selected_divm_id = emp.getString(4);
+//            }
+//
+//            // Approver Division
+//            ResultSet rs1 = stmt.executeQuery("SELECT EMP_MST.EMP_ID,EMP_MST.EMP_NAME,EMP_JOB_HISTORY.JOB_CALLING_TITLE,JOB_SETUP_MST.JSM_NAME,DIVISION_MST.DIVM_NAME \n" +
+//                    "    FROM EMP_MST, EMP_JOB_HISTORY,  JOB_SETUP_DTL, JOB_SETUP_MST, DESIG_MST,DIVISION_MST\n" +
+//                    "    WHERE JOB_SETUP_MST.JSM_DIVM_ID=(SELECT JOB_SETUP_MST.JSM_DIVM_ID\n" +
+//                    "                                    FROM EMP_MST, EMP_JOB_HISTORY,  JOB_SETUP_DTL, JOB_SETUP_MST, DESIG_MST\n" +
+//                    "                                    WHERE EMP_MST.EMP_ID="+emp_id+"\n" +
+//                    "                                    AND (JOB_SETUP_DTL.JSD_JSM_ID = JOB_SETUP_MST.JSM_ID)\n" +
+//                    "                                    AND (JOB_SETUP_MST.JSM_DESIG_ID = DESIG_MST.DESIG_ID)\n" +
+//                    "                                    AND (EMP_JOB_HISTORY.JOB_ID = EMP_MST.EMP_JOB_ID)\n" +
+//                    "                                    AND (JOB_SETUP_DTL.JSD_ID = EMP_JOB_HISTORY.JOB_JSD_ID))\n" +
+//                    "    AND EMP_JOB_HISTORY.JOB_STATUS NOT IN('Closed','Suspended')\n" +
+//                    "    AND (JOB_SETUP_DTL.JSD_JSM_ID = JOB_SETUP_MST.JSM_ID)\n" +
+//                    "    AND (JOB_SETUP_MST.JSM_DESIG_ID = DESIG_MST.DESIG_ID)\n" +
+//                    "    AND (EMP_JOB_HISTORY.JOB_ID = EMP_MST.EMP_JOB_ID)\n" +
+//                    "    AND (JOB_SETUP_DTL.JSD_ID = EMP_JOB_HISTORY.JOB_JSD_ID)\n" +
+//                    "    AND EMP_JOB_HISTORY.JOB_EMAIL IS NOT NULL\n" +
+//                    "    AND JOB_SETUP_MST.JSM_DIVM_ID=DIVISION_MST.DIVM_ID\n" +
+//                    "    AND DESIG_MST.DESIG_PRIORITY IN (SELECT DISTINCT REGEXP_SUBSTR(LAH_APPROVAL_BAND,'[^,]+', 1, LEVEL) \n" +
+//                    "                                      FROM (SELECT LAH_APPROVAL_BAND\n" +
+//                    "                                      FROM LEAVE_APPROVAL_HIERARCHY\n" +
+//                    "                                      WHERE LAH_BAND_NO=( SELECT DESIG_MST.DESIG_PRIORITY\n" +
+//                    "                                                          FROM EMP_MST, EMP_JOB_HISTORY,  JOB_SETUP_DTL, JOB_SETUP_MST, DESIG_MST\n" +
+//                    "                                                          WHERE EMP_MST.EMP_ID="+emp_id+"\n" +
+//                    "                                                          AND (JOB_SETUP_DTL.JSD_JSM_ID = JOB_SETUP_MST.JSM_ID)\n" +
+//                    "                                                          AND (JOB_SETUP_MST.JSM_DESIG_ID = DESIG_MST.DESIG_ID)\n" +
+//                    "                                                          AND (EMP_JOB_HISTORY.JOB_ID = EMP_MST.EMP_JOB_ID)\n" +
+//                    "                                                          AND (JOB_SETUP_DTL.JSD_ID = EMP_JOB_HISTORY.JOB_JSD_ID)))\n" +
+//                    "                                      connect by regexp_substr(LAH_APPROVAL_BAND, '[^,]+', 1, level) is not null)\n" +
+//                    "UNION\n" +
+//                    "SELECT EMP_MST.EMP_ID,EMP_MST.EMP_NAME,EMP_JOB_HISTORY.JOB_CALLING_TITLE,JOB_SETUP_MST.JSM_NAME,DIVISION_MST.DIVM_NAME \n" +
+//                    "    FROM EMP_MST, EMP_JOB_HISTORY,  JOB_SETUP_DTL, JOB_SETUP_MST, DESIG_MST,DIVISION_MST\n" +
+//                    "    WHERE EMP_MST.EMP_CODE = null--:PARAMETERP_CHAIRMAN\n" +
+//                    "    AND (JOB_SETUP_DTL.JSD_JSM_ID = JOB_SETUP_MST.JSM_ID)\n" +
+//                    "    AND (JOB_SETUP_MST.JSM_DESIG_ID = DESIG_MST.DESIG_ID)\n" +
+//                    "    AND (EMP_JOB_HISTORY.JOB_ID = EMP_MST.EMP_JOB_ID)\n" +
+//                    "    AND (JOB_SETUP_DTL.JSD_ID = EMP_JOB_HISTORY.JOB_JSD_ID)\n" +
+//                    "    AND EMP_JOB_HISTORY.JOB_EMAIL IS NOT NULL\n" +
+//                    "    AND JOB_SETUP_MST.JSM_DIVM_ID=DIVISION_MST.DIVM_ID\n" +
+//                    "UNION\n" +
+//                    "SELECT EMP_MST.EMP_ID,EMP_MST.EMP_NAME,EMP_JOB_HISTORY.JOB_CALLING_TITLE,JOB_SETUP_MST.JSM_NAME,DIVISION_MST.DIVM_NAME \n" +
+//                    "    FROM EMP_MST, EMP_JOB_HISTORY,  JOB_SETUP_DTL, JOB_SETUP_MST, DESIG_MST,DIVISION_MST\n" +
+//                    "   WHERE EMP_JOB_HISTORY.JOB_STATUS NOT IN('Closed','Suspended')\n" +
+//                    "    AND (JOB_SETUP_DTL.JSD_JSM_ID = JOB_SETUP_MST.JSM_ID)\n" +
+//                    "    AND (JOB_SETUP_MST.JSM_DESIG_ID = DESIG_MST.DESIG_ID)\n" +
+//                    "    AND (EMP_JOB_HISTORY.JOB_ID = EMP_MST.EMP_JOB_ID)\n" +
+//                    "    AND (JOB_SETUP_DTL.JSD_ID = EMP_JOB_HISTORY.JOB_JSD_ID)\n" +
+//                    "    AND EMP_JOB_HISTORY.JOB_EMAIL IS NOT NULL\n" +
+//                    "    AND JOB_SETUP_MST.JSM_DIVM_ID=DIVISION_MST.DIVM_ID\n" +
+//                    "    AND EMP_MST.EMP_CODE      IN\n" +
+//                    "                                  (SELECT DISTINCT REGEXP_SUBSTR(LAH_SP_APPROVAL_CODE, '[^,]+', 1, Level)\n" +
+//                    "                                  FROM\n" +
+//                    "                                    (SELECT LEAVE_APPROVAL_HIERARCHY.LAH_APPROVAL_BAND,\n" +
+//                    "                                      LEAVE_APPROVAL_HIERARCHY.LAH_SP_APPROVAL_CODE\n" +
+//                    "                                    FROM LEAVE_APPROVAL_HIERARCHY\n" +
+//                    "                                    WHERE LEAVE_APPROVAL_HIERARCHY.LAH_BAND_NO =\n" +
+//                    "                                                                              (SELECT DESIG_MST.DESIG_PRIORITY\n" +
+//                    "                                                                              FROM EMP_MST,\n" +
+//                    "                                                                                EMP_JOB_HISTORY,\n" +
+//                    "                                                                                JOB_SETUP_DTL,\n" +
+//                    "                                                                                JOB_SETUP_MST,\n" +
+//                    "                                                                                DESIG_MST\n" +
+//                    "                                                                              WHERE (JOB_SETUP_DTL.JSD_JSM_ID = JOB_SETUP_MST.JSM_ID)\n" +
+//                    "                                                                              AND (JOB_SETUP_MST.JSM_DESIG_ID = DESIG_MST.DESIG_ID)\n" +
+//                    "                                                                              AND (EMP_JOB_HISTORY.JOB_ID     = EMP_MST.EMP_JOB_ID)\n" +
+//                    "                                                                              AND (JOB_SETUP_DTL.JSD_ID       = EMP_JOB_HISTORY.JOB_JSD_ID)\n" +
+//                    "                                                                              AND EMP_MST.EMP_ID              = "+emp_id+"\n" +
+//                    "                                                                              )\n" +
+//                    "                                    )\n" +
+//                    "                                    CONNECT BY regexp_substr(LAH_SP_APPROVAL_CODE, '[^,]+', 1, Level) IS NOT NULL\n" +
+//                    "                                  )");
+//
+//            while (rs1.next()) {
+//
+//                //approverDivision.add(new ApproverList(rs1.getString(1),rs1.getString(2)+",\n("+rs1.getString(4)+", "+rs1.getString(5)+")"));
+//                allApproverDivisionUpdate.add(new SelectAllList(rs1.getString(1),rs1.getString(2),rs1.getString(3),rs1.getString(4),rs1.getString(5)));
+//
+//
+//            }
+//
+//            // Approver without Division
+//            ResultSet rs2 = stmt.executeQuery("SELECT EMP_MST.EMP_ID,EMP_MST.EMP_NAME,EMP_JOB_HISTORY.JOB_CALLING_TITLE,JOB_SETUP_MST.JSM_NAME,DIVISION_MST.DIVM_NAME \n" +
+//                    "    FROM EMP_MST, EMP_JOB_HISTORY,  JOB_SETUP_DTL, JOB_SETUP_MST, DESIG_MST,DIVISION_MST\n" +
+//                    "    WHERE EMP_JOB_HISTORY.JOB_STATUS NOT IN('Closed','Suspended')\n" +
+//                    "    AND (JOB_SETUP_DTL.JSD_JSM_ID = JOB_SETUP_MST.JSM_ID)\n" +
+//                    "    AND (JOB_SETUP_MST.JSM_DESIG_ID = DESIG_MST.DESIG_ID)\n" +
+//                    "    AND (EMP_JOB_HISTORY.JOB_ID = EMP_MST.EMP_JOB_ID)\n" +
+//                    "    AND (JOB_SETUP_DTL.JSD_ID = EMP_JOB_HISTORY.JOB_JSD_ID)\n" +
+//                    "    AND EMP_JOB_HISTORY.JOB_EMAIL IS NOT NULL\n" +
+//                    "    AND JOB_SETUP_MST.JSM_DIVM_ID=DIVISION_MST.DIVM_ID\n" +
+//                    "    AND DESIG_MST.DESIG_PRIORITY IN (SELECT DISTINCT REGEXP_SUBSTR(LAH_APPROVAL_BAND,'[^,]+', 1, LEVEL) \n" +
+//                    "                                      FROM (SELECT LAH_APPROVAL_BAND\n" +
+//                    "                                      FROM LEAVE_APPROVAL_HIERARCHY\n" +
+//                    "                                      WHERE LAH_BAND_NO=( SELECT DESIG_MST.DESIG_PRIORITY\n" +
+//                    "                                                          FROM EMP_MST, EMP_JOB_HISTORY,  JOB_SETUP_DTL, JOB_SETUP_MST, DESIG_MST\n" +
+//                    "                                                          WHERE EMP_MST.EMP_ID="+emp_id+"\n" +
+//                    "                                                          AND (JOB_SETUP_DTL.JSD_JSM_ID = JOB_SETUP_MST.JSM_ID)\n" +
+//                    "                                                          AND (JOB_SETUP_MST.JSM_DESIG_ID = DESIG_MST.DESIG_ID)\n" +
+//                    "                                                          AND (EMP_JOB_HISTORY.JOB_ID = EMP_MST.EMP_JOB_ID)\n" +
+//                    "                                                          AND (JOB_SETUP_DTL.JSD_ID = EMP_JOB_HISTORY.JOB_JSD_ID)))\n" +
+//                    "                                      CONNECT BY REGEXP_SUBSTR(LAH_APPROVAL_BAND, '[^,]+', 1, LEVEL) IS NOT NULL)\n" +
+//                    "UNION\n" +
+//                    "SELECT EMP_MST.EMP_ID,EMP_MST.EMP_NAME,EMP_JOB_HISTORY.JOB_CALLING_TITLE,JOB_SETUP_MST.JSM_NAME,DIVISION_MST.DIVM_NAME \n" +
+//                    "    FROM EMP_MST, EMP_JOB_HISTORY,  JOB_SETUP_DTL, JOB_SETUP_MST, DESIG_MST,DIVISION_MST\n" +
+//                    "   WHERE EMP_JOB_HISTORY.JOB_STATUS NOT IN('Closed','Suspended')\n" +
+//                    "    AND (JOB_SETUP_DTL.JSD_JSM_ID = JOB_SETUP_MST.JSM_ID)\n" +
+//                    "    AND (JOB_SETUP_MST.JSM_DESIG_ID = DESIG_MST.DESIG_ID)\n" +
+//                    "    AND (EMP_JOB_HISTORY.JOB_ID = EMP_MST.EMP_JOB_ID)\n" +
+//                    "    AND (JOB_SETUP_DTL.JSD_ID = EMP_JOB_HISTORY.JOB_JSD_ID)\n" +
+//                    "    AND EMP_JOB_HISTORY.JOB_EMAIL IS NOT NULL\n" +
+//                    "    AND JOB_SETUP_MST.JSM_DIVM_ID=DIVISION_MST.DIVM_ID\n" +
+//                    "    AND EMP_MST.EMP_CODE      IN\n" +
+//                    "                                  (SELECT DISTINCT REGEXP_SUBSTR(LAH_SP_APPROVAL_CODE, '[^,]+', 1, Level)\n" +
+//                    "                                  FROM\n" +
+//                    "                                    (SELECT LEAVE_APPROVAL_HIERARCHY.LAH_APPROVAL_BAND,\n" +
+//                    "                                      LEAVE_APPROVAL_HIERARCHY.LAH_SP_APPROVAL_CODE\n" +
+//                    "                                    FROM LEAVE_APPROVAL_HIERARCHY\n" +
+//                    "                                    WHERE LEAVE_APPROVAL_HIERARCHY.LAH_BAND_NO =\n" +
+//                    "                                                                              (SELECT DESIG_MST.DESIG_PRIORITY\n" +
+//                    "                                                                              FROM EMP_MST,\n" +
+//                    "                                                                                EMP_JOB_HISTORY,\n" +
+//                    "                                                                                JOB_SETUP_DTL,\n" +
+//                    "                                                                                JOB_SETUP_MST,\n" +
+//                    "                                                                                DESIG_MST\n" +
+//                    "                                                                              WHERE (JOB_SETUP_DTL.JSD_JSM_ID = JOB_SETUP_MST.JSM_ID)\n" +
+//                    "                                                                              AND (JOB_SETUP_MST.JSM_DESIG_ID = DESIG_MST.DESIG_ID)\n" +
+//                    "                                                                              AND (EMP_JOB_HISTORY.JOB_ID     = EMP_MST.EMP_JOB_ID)\n" +
+//                    "                                                                              AND (JOB_SETUP_DTL.JSD_ID       = EMP_JOB_HISTORY.JOB_JSD_ID)\n" +
+//                    "                                                                              AND EMP_MST.EMP_ID              = "+emp_id+"\n" +
+//                    "                                                                              )\n" +
+//                    "                                    )\n" +
+//                    "                                    CONNECT BY regexp_substr(LAH_SP_APPROVAL_CODE, '[^,]+', 1, Level) IS NOT NULL\n" +
+//                    "                                  )");
+//
+//
+//            while (rs2.next()) {
+//
+//                //approverWithoutDivision.add(new ApproverList(rs2.getString(1),rs2.getString(2)+",\n("+rs2.getString(4)+", "+rs2.getString(5)+")"));
+//                allApproverWithoutDivUpdate.add(new SelectAllList(rs2.getString(1),rs2.getString(2),rs2.getString(3),rs2.getString(4),rs2.getString(5)));
+//
+//
+//            }
+//
+//            // Approver Employee
+//            ResultSet rs3 = stmt.executeQuery("SELECT EMP_MST.EMP_ID,EMP_MST.EMP_NAME,EMP_JOB_HISTORY.JOB_CALLING_TITLE,JOB_SETUP_MST.JSM_NAME,DIVISION_MST.DIVM_NAME \n" +
+//                    "      FROM EMP_MST, EMP_JOB_HISTORY,JOB_SETUP_DTL, JOB_SETUP_MST, DESIG_MST,DIVISION_MST\n" +
+//                    "      WHERE (JOB_SETUP_DTL.JSD_JSM_ID = JOB_SETUP_MST.JSM_ID)\n" +
+//                    "      AND (JOB_SETUP_MST.JSM_DESIG_ID = DESIG_MST.DESIG_ID)\n" +
+//                    "      AND (EMP_JOB_HISTORY.JOB_ID = EMP_MST.EMP_JOB_ID)\n" +
+//                    "      AND (JOB_SETUP_DTL.JSD_ID = EMP_JOB_HISTORY.JOB_JSD_ID)\n" +
+//                    "      AND EMP_JOB_HISTORY.JOB_EMAIL IS NOT NULL\n" +
+//                    "      AND JOB_SETUP_MST.JSM_DIVM_ID=DIVISION_MST.DIVM_ID\n" +
+//                    "      AND EMP_MST.EMP_CODE IN (SELECT DISTINCT REGEXP_SUBSTR(LAH_SP_APPROVAL_CODE,'[^,]+', 1, LEVEL) \n" +
+//                    "                                        FROM (SELECT LAH_SP_APPROVAL_CODE\n" +
+//                    "                                        FROM LEAVE_APPROVAL_HIERARCHY\n" +
+//                    "                                        WHERE LAH_BAND_NO=( SELECT DESIG_MST.DESIG_PRIORITY\n" +
+//                    "                                                          FROM EMP_MST, EMP_JOB_HISTORY,  JOB_SETUP_DTL, JOB_SETUP_MST, DESIG_MST\n" +
+//                    "                                                          WHERE EMP_MST.EMP_ID="+emp_id+"\n" +
+//                    "                                                          AND (JOB_SETUP_DTL.JSD_JSM_ID = JOB_SETUP_MST.JSM_ID)\n" +
+//                    "                                                          AND (JOB_SETUP_MST.JSM_DESIG_ID = DESIG_MST.DESIG_ID)\n" +
+//                    "                                                          AND (EMP_JOB_HISTORY.JOB_ID = EMP_MST.EMP_JOB_ID)\n" +
+//                    "                                                          AND (JOB_SETUP_DTL.JSD_ID = EMP_JOB_HISTORY.JOB_JSD_ID)))\n" +
+//                    "                                        CONNECT BY REGEXP_SUBSTR(LAH_SP_APPROVAL_CODE, '[^,]+', 1, LEVEL) IS NOT NULL)  ");
+//
+//            while (rs3.next()) {
+//
+//                //approverEmployee.add(new ApproverList(rs3.getString(1),rs3.getString(2)+",\n("+rs3.getString(4)+",\n"+rs3.getString(5)+")"));
+//                allApproverEmpUpdate.add(new SelectAllList(rs3.getString(1),rs3.getString(2),rs3.getString(3),rs3.getString(4),rs3.getString(5)));
+//
+//            }
+//
+//            ResultSet approver1 = stmt.executeQuery("  SELECT DESIG_MST.DESIG_PRIORITY,JOB_SETUP_MST.JSM_DIVM_ID\n" +
+//                    "  --INTO V_DESIG_PRIORITY,V_JSM_DIVM_ID\n" +
+//                    "  FROM EMP_MST, EMP_JOB_HISTORY,  JOB_SETUP_DTL, JOB_SETUP_MST, DESIG_MST\n" +
+//                    "  WHERE EMP_MST.EMP_ID="+emp_id+"\n" +
+//                    "  AND (JOB_SETUP_DTL.JSD_JSM_ID = JOB_SETUP_MST.JSM_ID)\n" +
+//                    "  AND (JOB_SETUP_MST.JSM_DESIG_ID = DESIG_MST.DESIG_ID)\n" +
+//                    "  AND (EMP_JOB_HISTORY.JOB_ID = EMP_MST.EMP_JOB_ID)\n" +
+//                    "  AND (JOB_SETUP_DTL.JSD_ID = EMP_JOB_HISTORY.JOB_JSD_ID)");
+//            while (approver1.next()) {
+//                desig_priority = approver1.getString(1);
+//                divm_id = approver1.getString(2);
+//            }
+//            System.out.println("Found App1");
+//
+//            if (!desig_priority.isEmpty()) {
+//
+//                ResultSet approver2 = stmt.executeQuery("SELECT LAH_APPROVAL_BAND --INTO V_APPROVAL_BAND\n" +
+//                        "    FROM LEAVE_APPROVAL_HIERARCHY\n" +
+//                        "    WHERE LAH_BAND_NO="+desig_priority+"");
+//
+//                while (approver2.next()) {
+//                    approval_band = approver2.getString(1);
+//                }
+//                System.out.println("Found App2");
+//
+//                if (!approval_band.isEmpty()) {
+//
+//                    ResultSet approver3 = stmt.executeQuery(" SELECT COUNT(1) --INTO V_COUNT_APPROVAL_EMP   -- return minimum 1 if at least exist  otherwise return 0\n" +
+//                            "    FROM EMP_MST, EMP_JOB_HISTORY,  JOB_SETUP_DTL, JOB_SETUP_MST, DESIG_MST\n" +
+//                            "    WHERE JOB_SETUP_MST.JSM_DIVM_ID="+divm_id+"\n" +
+//                            "    AND EMP_JOB_HISTORY.JOB_STATUS NOT IN('Closed','Suspended')\n" +
+//                            "    AND (JOB_SETUP_DTL.JSD_JSM_ID = JOB_SETUP_MST.JSM_ID)\n" +
+//                            "    AND (JOB_SETUP_MST.JSM_DESIG_ID = DESIG_MST.DESIG_ID)\n" +
+//                            "    AND (EMP_JOB_HISTORY.JOB_ID = EMP_MST.EMP_JOB_ID)\n" +
+//                            "    AND (JOB_SETUP_DTL.JSD_ID = EMP_JOB_HISTORY.JOB_JSD_ID)\n" +
+//                            "    AND EMP_JOB_HISTORY.JOB_EMAIL IS NOT NULL\n" +
+//                            "    AND DESIG_MST.DESIG_PRIORITY IN (SELECT DISTINCT REGEXP_SUBSTR(LAH_APPROVAL_BAND,'[^,]+', 1, LEVEL) \n" +
+//                            "                                      FROM (SELECT LAH_APPROVAL_BAND\n" +
+//                            "                                      FROM LEAVE_APPROVAL_HIERARCHY\n" +
+//                            "                                      WHERE LAH_BAND_NO="+desig_priority+")\n" +
+//                            "                                      connect by regexp_substr(LAH_APPROVAL_BAND, '[^,]+', 1, level) is not null)  ");
+//
+//                    while (approver3.next()) {
+//                        count_approv_emp = Integer.parseInt(approver3.getString(1));
+//                    }
+//                    System.out.println("Found App3");
+//
+//                    if (count_approv_emp <= 0) {
+//
+//                        ResultSet approver4 = stmt.executeQuery("SELECT COUNT(1) --INTO V_COUNT_APPROVAL_EMP   -- return minimum 1 if at least exist  otherwise return 0\n" +
+//                                "      FROM EMP_MST, EMP_JOB_HISTORY\n" +
+//                                "      WHERE (EMP_JOB_HISTORY.JOB_ID = EMP_MST.EMP_JOB_ID)\n" +
+//                                "      AND EMP_JOB_HISTORY.JOB_EMAIL IS NOT NULL\n" +
+//                                "      AND EMP_MST.EMP_CODE IN (SELECT DISTINCT REGEXP_SUBSTR(LAH_SP_APPROVAL_CODE,'[^,]+', 1, LEVEL) \n" +
+//                                "                                        FROM (SELECT LAH_SP_APPROVAL_CODE\n" +
+//                                "                                        FROM LEAVE_APPROVAL_HIERARCHY\n" +
+//                                "                                        WHERE LAH_BAND_NO="+desig_priority+")\n" +
+//                                "                                        CONNECT BY REGEXP_SUBSTR(LAH_SP_APPROVAL_CODE, '[^,]+', 1, LEVEL) IS NOT NULL)");
+//
+//                        while (approver4.next()) {
+//                            count_approv_emp = Integer.parseInt(approver4.getString(1));
+//                        }
+//                        System.out.println("Found App4");
+//
+//                        if (count_approv_emp <= 0) {
+//                            //selectedApproverList = approverWithoutDivision;
+//                            allSelectedApproverUpdate = allApproverWithoutDivUpdate;
+//                        } else {
+//                            // selectedApproverList = approverEmployee;
+//                            allSelectedApproverUpdate = allApproverEmpUpdate;
+//                        }
+//                    } else {
+//                        //selectedApproverList = approverDivision;
+//                        allSelectedApproverUpdate = allApproverDivisionUpdate;
+//                    }
+//
+//                }
+//
+//            }
+//
+//
+//
+//
+//
+//
+//            connected = true;
+//
+//            connection.close();
+//
+//        }
+//        catch (Exception e) {
+//
+//            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
+//            Log.i("ERRRRR", e.getLocalizedMessage());
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    public void GettingData() {
+//        try {
+//            this.connection = createConnection();
+//
+//            Statement stmt = connection.createStatement();
+//
+//
+//
+//
+//            ResultSet rs=stmt.executeQuery(" Select DARM_APPLICATION_TYPE,DARM_REQ_TYPE,DARM_AURRM_ID," +
+//                    "TO_CHAR(DAILY_ATTEN_REQ_MST.DARM_UPDATE_DATE,'DD-MON-YY') DARM_UPDATE_DATE," +
+//                    "TO_CHAR(DAILY_ATTEN_REQ_MST.DARM_REQ_ARRIVAL_TIME,'HH:MIAM') ARRIVAL_TIME,\n" +
+//                    "TO_CHAR(DAILY_ATTEN_REQ_MST.DARM_REQ_DEPART_TIME,'HH:MIAM') DEPARTURE_TIME," +
+//                    "DARM_REQ_LOCATION_ID,DARM_REQ_OSM_ID," +
+//                    "DARM_REASON,DARM_ADD_DURING_CAUSE,DARM_APPLIED_TO_ID," +
+//                    "TO_CHAR(DAILY_ATTEN_REQ_MST.DARM_DATE,'DD-MON-YYYY') DARM_DATE " +
+//                    "From DAILY_ATTEN_REQ_MST " +
+//                    "WHERE DARM_ID = "+darm_id+"");
+//
+//
+//
+//            while(rs.next())  {
+//                from__selected_request = rs.getString(1);
+//                form_selected_attendance_type = rs.getString(2);
+//                from_selected_aurrm_id = rs.getString(3);
+//                from_update_date = rs.getString(4);
+//                from_arrival_time = rs.getString(5);
+//                from_depart_time = rs.getString(6);
+//                from_selected_loc_id = rs.getString(7);
+//                from_selected_shift_id = rs.getString(8);
+//                from_reason_desc = rs.getString(9);
+//                from_add_during_cause = rs.getString(10);
+//                from_selected_approver_id = rs.getString(11);
+//                from_app_date = rs.getString(12);
+//
+//            }
+//
+//            System.out.println(from__selected_request);
+//            System.out.println(form_selected_attendance_type);
+//            System.out.println(from_selected_aurrm_id);
+//            System.out.println(from_update_date);
+//            System.out.println(from_arrival_time);
+//            System.out.println(from_depart_time);
+//            System.out.println(from_selected_loc_id);
+//            System.out.println(from_selected_shift_id);
+//            System.out.println(from_reason_desc);
+//            System.out.println(from_add_during_cause);
+//            System.out.println(from_selected_approver_id);
+//
+//
+//
+//
+//            locationExecuted = true;
+//
+//            reasonExecuted = true;
+//
+//            gathered = true;
+//
+//            connection.close();
+//
+//        }
+//        catch (Exception e) {
+//
+//            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
+//            Log.i("ERRRRR", e.getLocalizedMessage());
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    public void MachineData(String id) {
+//        try {
+//            this.connection = createConnection();
+//
+//            Statement stmt = connection.createStatement();
+//
+//
+//            ResultSet rs=stmt.executeQuery("SELECT AMS_MECHINE_CODE, AMS_ATTENDANCE_TYPE\n" +
+//                    "\t\tFROM ATTENDANCE_MECHINE_SETUP\n" +
+//                    "\t\tWHERE AMS_ID = (SELECT MAX(AMS_ID)\n" +
+//                    "\t\t\t\t\t\t\t\t\t\tFROM ATTENDANCE_MECHINE_SETUP\n" +
+//                    "\t\t\t\t\t\t\t\t\t\tWHERE AMS_COA_ID = "+id+")");
+//
+//
+//
+//            while(rs.next())  {
+//                machineCode = rs.getString(1);
+//                machineType = rs.getString(2);
+//            }
+//
+//
+//            machineCon = true;
+//
+//            connection.close();
+//
+//        }
+//        catch (Exception e) {
+//
+//            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
+//            Log.i("ERRRRR", e.getLocalizedMessage());
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    public void ReasonData(String reason) {
+//        try {
+//            this.connection = createConnection();
+//
+//            Statement stmt = connection.createStatement();
+//
+//            reasonListsUpdate = new ArrayList<>();
+//
+//
+//            ResultSet rs=stmt.executeQuery(" SELECT ATTD_UP_REQ_REASON_MST.AURRM_ID,\n" +
+//                    "  ATTD_UP_REQ_REASON_MST.AURRM_NAME\n" +
+//                    "  FROM ATTD_UP_REQ_REASON_MST\n" +
+//                    "WHERE ATTD_UP_REQ_REASON_MST.AURRM_REQ_TYPE= '"+reason+"'\n" +
+//                    "ORDER BY ATTD_UP_REQ_REASON_MST.AURRM_NAME");
+//
+//
+//
+//            while(rs.next())  {
+//                reasonListsUpdate.add(new ReasonList(rs.getString(1),rs.getString(2)));
+//            }
+//
+//
+//            reasonCon = true;
+//
+//            connection.close();
+//
+//        }
+//        catch (Exception e) {
+//
+//            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
+//            Log.i("ERRRRR", e.getLocalizedMessage());
+//            e.printStackTrace();
+//        }
+//    }
+//
+//
+//    public void InsertReq() {
+//        try {
+//            this.connection = createConnection();
+//
+//            Statement stmt = connection.createStatement();
+//
+//                            System.out.println("DARM_ID: " + darm_id);
+//                            System.out.println("EMP ID: "+ emp_id);
+//                            System.out.println("REASON DESC: "+ selected_reason_desc);
+//                            System.out.println("Address Station: "+ selected_address_station);
+//                            System.out.println("Updated Date: "+ selected_update_date);
+//                            System.out.println("Now Date: "+ now_date);
+//                            System.out.println("Dept ID: "+ selected_dept_id);
+//                            System.out.println("Divm ID: "+ selected_divm_id);
+//                            System.out.println("JSM ID: "+ selected_jsm_id);
+//                            System.out.println("Calling Title: " + calling_title);
+//                            System.out.println("Request: "+ selected_request);
+//                            System.out.println("App Code: "+ app_code);
+//                            System.out.println("APP CODE ID: "+ app_code_id);
+//                            System.out.println("Approver ID: "+ selected_approver_id_update);
+//                            System.out.println("Attendance Type: " + selected_attendance_type);
+//                            System.out.println("Depart Time: "+ depart_time);
+//                            System.out.println("Arrival Time: " + arrival_time);
+//                            System.out.println("Loc ID: "+ selected_loc_id);
+//                            System.out.println("Shift: "+ selected_shift_id_update);
+//                            System.out.println("Reason ID: "+ selected_reason_id);
+//
+//                            if (arrival_time.isEmpty() && !depart_time.isEmpty()) {
+//                                System.out.println("INSERTED TEST1");
+//                                stmt.executeUpdate("UPDATE DAILY_ATTEN_REQ_MST\n" +
+//                                        "   SET DARM_EMP_ID = "+emp_id+",\n" +
+//                                        "       DARM_REASON = '"+selected_reason_desc+"',\n" +
+//                                        "       DARM_ADD_DURING_CAUSE = '"+selected_address_station+"',\n" +
+//                                        "       DARM_UPDATE_DATE = TO_DATE('"+selected_update_date+"', 'DD-MON-YY'),\n" +
+//                                        "       DARM_DEPT_ID = "+selected_dept_id+",\n" +
+//                                        "       DARM_DIVM_ID = "+selected_divm_id+",\n" +
+//                                        "       DARM_APPROVED = 0,\n" +
+//                                        "       DARM_JSM_ID = "+selected_jsm_id+",\n" +
+//                                        "       DARM_CALLING_TITLE = '"+calling_title+"',\n" +
+//                                        "       DARM_ENTRY_USER = '"+user_id+"',\n" +
+//                                        "       DARM_APPLICATION_TYPE = '"+selected_request+"',\n" +
+//                                        "       DARM_APPLIED_TO_ID = "+selected_approver_id_update+",\n" +
+//                                        "       DARM_REQ_TYPE = '"+selected_attendance_type+"',\n" +
+//                                        "       DARM_REQ_ARRIVAL_TIME = NULL,\n" +
+//                                        "       DARM_REQ_DEPART_TIME = TO_DATE('"+selected_update_date+" "+depart_time+"', 'DD-MON-YY HH12:MIPM'),\n" +
+//                                        "       DARM_REQ_LOCATION_ID = "+selected_loc_id+",\n" +
+//                                        "       DARM_REQ_OSM_ID = "+selected_shift_id_update+",\n" +
+//                                        "       DARM_AURRM_ID = "+selected_reason_id+",\n" +
+//                                        "       DARM_UPDATE_APPLICATION_FLAG = 1,\n" +
+//                                        "       DARM_MODIFIED_BY = '"+user_id+"'\n" +
+//                                        " WHERE DARM_ID = "+darm_id+"");
+//
+//                            }
+//                            else if (depart_time.isEmpty() && !arrival_time.isEmpty()) {
+//                                System.out.println("INSERTED TEST2");
+//
+//                                stmt.executeUpdate("UPDATE DAILY_ATTEN_REQ_MST\n" +
+//                                        "   SET DARM_EMP_ID = "+emp_id+",\n" +
+//                                        "       DARM_REASON = '"+selected_reason_desc+"',\n" +
+//                                        "       DARM_ADD_DURING_CAUSE = '"+selected_address_station+"',\n" +
+//                                        "       DARM_UPDATE_DATE = TO_DATE('"+selected_update_date+"', 'DD-MON-YY'),\n" +
+//                                        "       DARM_DEPT_ID = "+selected_dept_id+",\n" +
+//                                        "       DARM_DIVM_ID = "+selected_divm_id+",\n" +
+//                                        "       DARM_APPROVED = 0,\n" +
+//                                        "       DARM_JSM_ID = "+selected_jsm_id+",\n" +
+//                                        "       DARM_CALLING_TITLE = '"+calling_title+"',\n" +
+//                                        "       DARM_ENTRY_USER = '"+user_id+"',\n" +
+//                                        "       DARM_APPLICATION_TYPE = '"+selected_request+"',\n" +
+//                                        "       DARM_APPLIED_TO_ID = "+selected_approver_id_update+",\n" +
+//                                        "       DARM_REQ_TYPE = '"+selected_attendance_type+"',\n" +
+//                                        "       DARM_REQ_ARRIVAL_TIME = TO_DATE('"+selected_update_date+" "+arrival_time+"', 'DD-MON-YY HH12:MIPM'),\n" +
+//                                        "       DARM_REQ_DEPART_TIME = NULL,\n" +
+//                                        "       DARM_REQ_LOCATION_ID = "+selected_loc_id+",\n" +
+//                                        "       DARM_REQ_OSM_ID = "+selected_shift_id_update+",\n" +
+//                                        "       DARM_AURRM_ID = "+selected_reason_id+",\n" +
+//                                        "       DARM_UPDATE_APPLICATION_FLAG = 1,\n" +
+//                                        "       DARM_MODIFIED_BY = '"+user_id+"'\n" +
+//                                        " WHERE DARM_ID = "+darm_id+"");
+//
+//
+//                            }
+//                            else {
+//                                System.out.println("INSERTED TEST3");
+//
+//                                stmt.executeUpdate("UPDATE DAILY_ATTEN_REQ_MST\n" +
+//                                        "   SET DARM_EMP_ID = "+emp_id+",\n" +
+//                                        "       DARM_REASON = '"+selected_reason_desc+"',\n" +
+//                                        "       DARM_ADD_DURING_CAUSE = '"+selected_address_station+"',\n" +
+//                                        "       DARM_UPDATE_DATE = TO_DATE('"+selected_update_date+"', 'DD-MON-YY'),\n" +
+//                                        "       DARM_DEPT_ID = "+selected_dept_id+",\n" +
+//                                        "       DARM_DIVM_ID = "+selected_divm_id+",\n" +
+//                                        "       DARM_APPROVED = 0,\n" +
+//                                        "       DARM_JSM_ID = "+selected_jsm_id+",\n" +
+//                                        "       DARM_CALLING_TITLE = '"+calling_title+"',\n" +
+//                                        "       DARM_ENTRY_USER = '"+user_id+"',\n" +
+//                                        "       DARM_APPLICATION_TYPE = '"+selected_request+"',\n" +
+//                                        "       DARM_APPLIED_TO_ID = "+selected_approver_id_update+",\n" +
+//                                        "       DARM_REQ_TYPE = '"+selected_attendance_type+"',\n" +
+//                                        "       DARM_REQ_ARRIVAL_TIME = TO_DATE('"+selected_update_date+" "+arrival_time+"', 'DD-MON-YY HH12:MIPM'),\n" +
+//                                        "       DARM_REQ_DEPART_TIME = TO_DATE('"+selected_update_date+" "+depart_time+"', 'DD-MON-YY HH12:MIPM'),\n" +
+//                                        "       DARM_REQ_LOCATION_ID = "+selected_loc_id+",\n" +
+//                                        "       DARM_REQ_OSM_ID = "+selected_shift_id_update+",\n" +
+//                                        "       DARM_AURRM_ID = "+selected_reason_id+",\n" +
+//                                        "       DARM_UPDATE_APPLICATION_FLAG = 1,\n" +
+//                                        "       DARM_MODIFIED_BY = '"+user_id+"'\n" +
+//                                        " WHERE DARM_ID = "+darm_id+"");
+//
+//                            }
+//
+//
+//            insertCon = true;
+//
+//            connection.close();
+//
+//        }
+//        catch (Exception e) {
+//
+//            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
+//            Log.i("ERRRRR", e.getLocalizedMessage());
+//            e.printStackTrace();
+//        }
+//    }
 
 
 }

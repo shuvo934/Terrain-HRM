@@ -4,24 +4,18 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -42,11 +36,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Blob;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -56,9 +45,7 @@ import java.util.Locale;
 
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
-import ttit.com.shuvo.ikglhrm.attendance.report.AttendanceReport;
 
-import static ttit.com.shuvo.ikglhrm.OracleConnection.createConnection;
 import static ttit.com.shuvo.ikglhrm.attendance.report.AttenReportAdapter.blobFromAdapter;
 
 public class TimeLineActivity extends AppCompatActivity implements OnMapReadyCallback, LocationAdapter.ClickedItem{
@@ -71,15 +58,15 @@ public class TimeLineActivity extends AppCompatActivity implements OnMapReadyCal
     RecyclerView.LayoutManager layoutManager;
 
     WaitProgress waitProgress = new WaitProgress();
-    private String message = null;
-    private Boolean conn = false;
-    private Boolean infoConnected = false;
+//    private String message = null;
+//    private Boolean conn = false;
+//    private Boolean infoConnected = false;
     private Boolean connected = false;
 
     ArrayList<LocationNameArray> locationNameArrays;
     ArrayList<PolyLindata> polyLindata;
     ArrayList<MarkerData> markerData;
-    private Connection connection;
+//    private Connection connection;
     String elr_id = "";
 
     String downloadFile = "Downloaded_GPX.gpx";
@@ -180,7 +167,8 @@ public class TimeLineActivity extends AppCompatActivity implements OnMapReadyCal
 //            Toast.makeText(getApplicationContext(), "No Record Found", Toast.LENGTH_SHORT).show();
 //        }
 
-        new Check().execute();
+//        new Check().execute();
+        getMapData();
 
 
 
@@ -504,159 +492,248 @@ public class TimeLineActivity extends AppCompatActivity implements OnMapReadyCal
         }
     }
 
-    public boolean isConnected () {
-        boolean connected = false;
-        boolean isMobile = false;
+//    public boolean isConnected () {
+//        boolean connected = false;
+//        boolean isMobile = false;
+//        try {
+//            ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+//            NetworkInfo nInfo = cm.getActiveNetworkInfo();
+//            connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
+//            return connected;
+//        } catch (Exception e) {
+//            Log.e("Connectivity Exception", e.getMessage());
+//        }
+//        return connected;
+//    }
+//
+//    public boolean isOnline () {
+//
+//        Runtime runtime = Runtime.getRuntime();
+//        try {
+//            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+//            int exitValue = ipProcess.waitFor();
+//            return (exitValue == 0);
+//        } catch (IOException | InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return false;
+//    }
+
+//    public class Check extends AsyncTask<Void, Void, Void> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//
+//            waitProgress.show(getSupportFragmentManager(), "WaitBar");
+//            waitProgress.setCancelable(false);
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            if (isConnected() && isOnline()) {
+//
+//                GetData();
+//                if (connected) {
+//                    conn = true;
+//                    message = "Internet Connected";
+//                }
+//
+//
+//            } else {
+//                conn = false;
+//                message = "Not Connected";
+//            }
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//
+//            waitProgress.dismiss();
+//            if (conn) {
+//
+//                conn = false;
+//                connected = false;
+//
+//                System.out.println("GPX File Created");
+//
+//                if (blobNotNull) {
+//                    GpxInMap();
+//                } else {
+//                    locationAdapter = new LocationAdapter(locationNameArrays, TimeLineActivity.this,TimeLineActivity.this);
+//                    locationView.setAdapter(locationAdapter);
+//                    Toast.makeText(getApplicationContext(), "No Record Found", Toast.LENGTH_SHORT).show();
+//                }
+//
+//                blobNotNull = false;
+//
+//
+//
+//
+//            }
+//            else {
+//                wptList = new ArrayList<>();
+//                multiGpxList = new ArrayList<>();
+//                locationNameArrays = new ArrayList<>();
+//                polyLindata = new ArrayList<>();
+//                markerData = new ArrayList<>();
+//
+//                locationAdapter = new LocationAdapter(locationNameArrays, TimeLineActivity.this,TimeLineActivity.this);
+//                locationView.setAdapter(locationAdapter);
+//
+//                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+//                AlertDialog dialog = new AlertDialog.Builder(TimeLineActivity.this)
+//                        .setMessage("Internet not Connected")
+//                        .setPositiveButton("Retry", null)
+//                        .setNegativeButton("Cancel",null)
+//                        .show();
+//
+//
+//                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+//                positive.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//
+//                        new Check().execute();
+//                        dialog.dismiss();
+//                    }
+//                });
+//
+//                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+//                negative.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        dialog.dismiss();
+//                    }
+//                });
+//            }
+//        }
+//    }
+
+//    public void GetData() {
+//
+//        try {
+//            this.connection = createConnection();
+//            PreparedStatement ps = connection.prepareStatement("Select ELR_FILE_NAME, ELR_FILETYPE , ELR_LOCATION_FILE from EMP_LOCATION_RECORD  where ELR_ID = "+elr_id+"");
+//
+//            ResultSet resultSet = ps.executeQuery();
+//            while (resultSet.next()) {
+//                Blob b = resultSet.getBlob(3);
+//                String fileName = resultSet.getString(1)+resultSet.getString(2);
+//
+//                if (b != null && b.length() != 0) {
+//                    System.out.println("BLOB paise");
+//                    File myExternalFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),downloadFile);
+//
+//                    InputStream r = b.getBinaryStream();
+//                    FileWriter fw=new FileWriter(myExternalFile);
+//                    int i;
+//                    while((i=r.read())!=-1)
+//                        fw.write((char)i);
+//                    fw.close();
+//                    blobNotNull = true;
+//                } else {
+//                    System.out.println("BLOB pai nai");
+//                    blobNotNull = false;
+//                }
+//
+//            }
+//            connected = true;
+//            connection.close();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//    }
+
+    public void getMapData() {
+        waitProgress.show(getSupportFragmentManager(), "WaitBar");
+        waitProgress.setCancelable(false);
+        connected = false;
+
         try {
-            ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo nInfo = cm.getActiveNetworkInfo();
-            connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
-            return connected;
-        } catch (Exception e) {
-            Log.e("Connectivity Exception", e.getMessage());
-        }
-        return connected;
-    }
+            if (blobFromAdapter != null && blobFromAdapter.length() != 0) {
+                System.out.println("BLOB paise");
+                File myExternalFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),downloadFile);
 
-    public boolean isOnline () {
-
-        Runtime runtime = Runtime.getRuntime();
-        try {
-            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
-            int exitValue = ipProcess.waitFor();
-            return (exitValue == 0);
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        return false;
-    }
-
-    public class Check extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            waitProgress.show(getSupportFragmentManager(), "WaitBar");
-            waitProgress.setCancelable(false);
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            if (isConnected() && isOnline()) {
-
-                GetData();
-                if (connected) {
-                    conn = true;
-                    message = "Internet Connected";
-                }
-
-
+                InputStream r = blobFromAdapter.getBinaryStream();
+                FileWriter fw=new FileWriter(myExternalFile);
+                int i;
+                while((i=r.read())!=-1)
+                    fw.write((char)i);
+                fw.close();
+                blobNotNull = true;
             } else {
-                conn = false;
-                message = "Not Connected";
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-            waitProgress.dismiss();
-            if (conn) {
-
-                conn = false;
-                connected = false;
-
-                System.out.println("GPX File Created");
-
-                if (blobNotNull) {
-                    GpxInMap();
-                } else {
-                    locationAdapter = new LocationAdapter(locationNameArrays, TimeLineActivity.this,TimeLineActivity.this);
-                    locationView.setAdapter(locationAdapter);
-                    Toast.makeText(getApplicationContext(), "No Record Found", Toast.LENGTH_SHORT).show();
-                }
-
+                System.out.println("BLOB pai nai");
                 blobNotNull = false;
-
-
-
-
-            } else {
-                wptList = new ArrayList<>();
-                multiGpxList = new ArrayList<>();
-                locationNameArrays = new ArrayList<>();
-                polyLindata = new ArrayList<>();
-                markerData = new ArrayList<>();
-
-                locationAdapter = new LocationAdapter(locationNameArrays, TimeLineActivity.this,TimeLineActivity.this);
-                locationView.setAdapter(locationAdapter);
-
-                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
-                AlertDialog dialog = new AlertDialog.Builder(TimeLineActivity.this)
-                        .setMessage("Internet not Connected")
-                        .setPositiveButton("Retry", null)
-                        .setNegativeButton("Cancel",null)
-                        .show();
-
-
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        new Check().execute();
-                        dialog.dismiss();
-                    }
-                });
-
-                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
-            }
-        }
-    }
-    public void GetData() {
-
-        try {
-            this.connection = createConnection();
-            PreparedStatement ps = connection.prepareStatement("Select ELR_FILE_NAME, ELR_FILETYPE , ELR_LOCATION_FILE from EMP_LOCATION_RECORD  where ELR_ID = "+elr_id+"");
-
-            ResultSet resultSet = ps.executeQuery();
-            while (resultSet.next()) {
-                Blob b = resultSet.getBlob(3);
-                String fileName = resultSet.getString(1)+resultSet.getString(2);
-
-                if (b != null && b.length() != 0) {
-                    System.out.println("BLOB paise");
-                    File myExternalFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),downloadFile);
-
-                    InputStream r = b.getBinaryStream();
-                    FileWriter fw=new FileWriter(myExternalFile);
-                    int i;
-                    while((i=r.read())!=-1)
-                        fw.write((char)i);
-                    fw.close();
-                    blobNotNull = true;
-                } else {
-                    System.out.println("BLOB pai nai");
-                    blobNotNull = false;
-                }
-
             }
             connected = true;
-            connection.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+            updateMap();
         }
+        catch (Exception e) {
+            e.printStackTrace();
+            connected = false;
+            updateMap();
+        }
+    }
 
+    public void updateMap() {
+        waitProgress.dismiss();
+        if (connected) {
+            connected = false;
+
+            System.out.println("GPX File Created");
+
+            if (blobNotNull) {
+                GpxInMap();
+            } else {
+                locationAdapter = new LocationAdapter(locationNameArrays, TimeLineActivity.this,TimeLineActivity.this);
+                locationView.setAdapter(locationAdapter);
+                Toast.makeText(getApplicationContext(), "No Record Found", Toast.LENGTH_SHORT).show();
+            }
+
+            blobNotNull = false;
+
+        }
+        else {
+            wptList = new ArrayList<>();
+            multiGpxList = new ArrayList<>();
+            locationNameArrays = new ArrayList<>();
+            polyLindata = new ArrayList<>();
+            markerData = new ArrayList<>();
+
+            locationAdapter = new LocationAdapter(locationNameArrays, TimeLineActivity.this,TimeLineActivity.this);
+            locationView.setAdapter(locationAdapter);
+
+//            Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+            AlertDialog dialog = new AlertDialog.Builder(TimeLineActivity.this)
+                    .setMessage("Failed to Retrieve Data From File.")
+                    .setPositiveButton("Retry", null)
+                    .setNegativeButton("Cancel",null)
+                    .show();
+
+
+            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            positive.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    getMapData();
+                    dialog.dismiss();
+                }
+            });
+
+            Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+            negative.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+        }
     }
 }

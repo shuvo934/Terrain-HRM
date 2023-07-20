@@ -5,50 +5,40 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.AsyncTask;
-import android.os.Build;
+
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.material.textfield.TextInputEditText;
-
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.ArrayList;
-
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
-import ttit.com.shuvo.ikglhrm.attendance.status.AttendanceStatus;
-import ttit.com.shuvo.ikglhrm.attendance.status.StatusAdapter;
-import ttit.com.shuvo.ikglhrm.attendance.status.StatusList;
-import ttit.com.shuvo.ikglhrm.attendance.update.AttendanceUpdate;
 
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
-import static ttit.com.shuvo.ikglhrm.OracleConnection.createConnection;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class AttendanceStatusDetails extends AppCompatActivity {
 
     WaitProgress waitProgress = new WaitProgress();
-    private String message = null;
+//    private String message = null;
     private Boolean conn = false;
-    private Boolean infoConnected = false;
+//    private Boolean infoConnected = false;
     private Boolean connected = false;
 
-    private Connection connection;
+//    private Connection connection;
 
     String emp_id = "";
 
@@ -234,8 +224,8 @@ public class AttendanceStatusDetails extends AppCompatActivity {
 //            approver.setText(apprrroovveerr);
 //        }
 
-        new Check().execute();
-
+//        new Check().execute();
+        getAttendanceStatusDetails();
 
 
         close.setOnClickListener(new View.OnClickListener() {
@@ -247,68 +237,321 @@ public class AttendanceStatusDetails extends AppCompatActivity {
 
     }
 
-    public boolean isConnected() {
-        boolean connected = false;
-        boolean isMobile = false;
-        try {
-            ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo nInfo = cm.getActiveNetworkInfo();
-            connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
-            return connected;
-        } catch (Exception e) {
-            Log.e("Connectivity Exception", e.getMessage());
-        }
-        return connected;
-    }
+//    public boolean isConnected() {
+//        boolean connected = false;
+//        boolean isMobile = false;
+//        try {
+//            ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+//            NetworkInfo nInfo = cm.getActiveNetworkInfo();
+//            connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
+//            return connected;
+//        } catch (Exception e) {
+//            Log.e("Connectivity Exception", e.getMessage());
+//        }
+//        return connected;
+//    }
+//
+//    public boolean isOnline() {
+//
+//        Runtime runtime = Runtime.getRuntime();
+//        try {
+//            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+//            int     exitValue = ipProcess.waitFor();
+//            return (exitValue == 0);
+//        }
+//        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
+//
+//        return false;
+//    }
+//    public class Check extends AsyncTask<Void, Void, Void> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//
+//            waitProgress.show(getSupportFragmentManager(),"WaitBar");
+//            waitProgress.setCancelable(false);
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            if (isConnected() && isOnline()) {
+//
+//                StatusDetails();
+//                if (connected) {
+//                    conn = true;
+//                    message= "Internet Connected";
+//                }
+//
+//            } else {
+//                conn = false;
+//                connected = false;
+//                message = "Not Connected";
+//            }
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//
+//            waitProgress.dismiss();
+//            if (conn) {
+//
+//                reqType.setText(request_type);
+//                attType.setText(application_type);
+//                locUpdate.setText(locotion_updated);
+//                machCode.setText(machineCode);
+//                machType.setText(machineType);
+//                shift.setText(shiftName);
+//                reason.setText(reasonName);
+//                reasonDesc.setText(reasonDescription);
+//                if (addressOut == null) {
+//                    address.setText("No Address Given");
+//                } else {
+//                    address.setText(addressOut);
+//                }
+//
+//                if (comments == null) {
+//                    comm.setText("");
+//                } else {
+//                    comm.setText(comments);
+//                }
+//
+//                forwarder.setText(forwardTo);
+//                appDate.setText(dateNow);
+//
+//
+//
+//            }
+//            else {
+//                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+//                AlertDialog dialog = new AlertDialog.Builder(AttendanceStatusDetails.this)
+//                        .setMessage("Please Check Your Internet Connection")
+//                        .setPositiveButton("Retry", null)
+//                        .setNegativeButton("Cancel",null)
+//                        .show();
+//
+//                dialog.setCancelable(false);
+//                dialog.setCanceledOnTouchOutside(false);
+//                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+//                positive.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//
+//                        new Check().execute();
+//                        dialog.dismiss();
+//                    }
+//                });
+//                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+//                negative.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        dialog.dismiss();
+//                        finish();
+//                    }
+//                });
+//            }
+//        }
+//    }
 
-    public boolean isOnline() {
+//    public void StatusDetails() {
+//        try {
+//            this.connection = createConnection();
+//            //    Toast.makeText(MainActivity.this, "Connected",Toast.LENGTH_SHORT).show();
+//
+//
+//            Statement stmt = connection.createStatement();
+//
+//
+//
+//
+//            ResultSet rs=stmt.executeQuery("Select DARM_APPLICATION_TYPE,\n" +
+//                    "cASE WHEN DARM_REQ_TYPE = 'Late' then 'Late Arrival Information' when DARM_REQ_TYPE = 'Early' then 'Early Departure Information' else 'Work Time Update' end req_type,\n" +
+//                    "(Select ATTD_UP_REQ_REASON_MST.AURRM_NAME FROM ATTD_UP_REQ_REASON_MST where ATTD_UP_REQ_REASON_MST.AURRM_ID = DARM_AURRM_ID) as REASON,\n" +
+//                    "                    TO_CHAR(DAILY_ATTEN_REQ_MST.DARM_DATE,'DD-MON-YY') DARM_DATE,\n" +
+//                    "                    TO_CHAR(DAILY_ATTEN_REQ_MST.DARM_UPDATE_DATE,'DD-MON-YYYY') DARM_UPDATE_DATE,\n" +
+//                    "                    TO_CHAR(DAILY_ATTEN_REQ_MST.DARM_REQ_ARRIVAL_TIME,'HH:MI AM') ARRIVAL_TIME,\n" +
+//                    "                    TO_CHAR(DAILY_ATTEN_REQ_MST.DARM_REQ_DEPART_TIME,'HH:MI AM') DEPARTURE_TIME,\n" +
+//                    "                   (Select COMPANY_OFFICE_ADDRESS.COA_NAME FROM COMPANY_OFFICE_ADDRESS Where COMPANY_OFFICE_ADDRESS.COA_ID = DARM_REQ_LOCATION_ID)\n" +
+//                    "                   as LOCATION,\n" +
+//                    "                   (Select OFFICE_SHIFT_MST.OSM_NAME FROM OFFICE_SHIFT_MST Where OFFICE_SHIFT_MST.OSM_ID =  DARM_REQ_OSM_ID) as SHIFT,\n" +
+//                    "                    DARM_REASON,DARM_ADD_DURING_CAUSE,(Select EMP_NAME FROM EMP_MST WHERE EMP_ID = DARM_APPLIED_TO_ID ) as APPROVER, DARM_REQ_LOCATION_ID,DARM_COMMENTS\n" +
+//                    "                    From DAILY_ATTEN_REQ_MST \n" +
+//                    "                    WHERE DARM_APP_CODE = '"+request+"'");
+//
+//
+//
+//            while(rs.next()) {
+//
+//                request_type = rs.getString(1);
+//                application_type = rs.getString(2);
+//                reasonName = rs.getString(3);
+//                dateNow = rs.getString(4);
+//                locotion_updated = rs.getString(8);
+//                shiftName = rs.getString(9);
+//                reasonDescription = rs.getString(10);
+//                addressOut = rs.getString(11);
+//                forwardTo = rs.getString(12);
+//                locationId = rs.getString(13);
+//                comments = rs.getString(14);
+//
+//            }
+//
+//            if (locationId != null) {
+//                ResultSet resultSet = stmt.executeQuery("SELECT AMS_MECHINE_CODE, AMS_ATTENDANCE_TYPE\n" +
+//                        "                    FROM ATTENDANCE_MECHINE_SETUP\n" +
+//                        "                    WHERE AMS_ID = (SELECT MAX(AMS_ID)\n" +
+//                        "                   FROM ATTENDANCE_MECHINE_SETUP\n" +
+//                        "                    WHERE AMS_COA_ID = "+locationId+")");
+//
+//                while (resultSet.next()) {
+//                    machineCode = resultSet.getString(1);
+//                    machineType = resultSet.getString(2);
+//                }
+//            }
+//
+//
+//
+//            connected = true;
+//
+//            connection.close();
+//
+//        }
+//        catch (Exception e) {
+//
+//            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
+//            Log.i("ERRRRR", e.getLocalizedMessage());
+//            e.printStackTrace();
+//        }
+//    }
 
-        Runtime runtime = Runtime.getRuntime();
-        try {
-            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
-            int     exitValue = ipProcess.waitFor();
-            return (exitValue == 0);
-        }
-        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
+    public void getAttendanceStatusDetails() {
+        waitProgress.show(getSupportFragmentManager(),"WaitBar");
+        waitProgress.setCancelable(false);
+        conn = false;
+        connected = false;
 
-        return false;
-    }
-    public class Check extends AsyncTask<Void, Void, Void> {
+        request_type = "";
+        application_type = "";
+        reasonName = "";
+        dateNow = "";
+        locotion_updated = "";
+        shiftName = "";
+        reasonDescription = "";
+        addressOut = "";
+        forwardTo = "";
+        locationId = "";
+        comments = "";
+        machineCode = "";
+        machineType = "";
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
+        String attStatUrl = "http://103.56.208.123:8001/apex/ttrams/attendanceStatus/attStatusDetails?darm_app_code="+request+"";
 
-            waitProgress.show(getSupportFragmentManager(),"WaitBar");
-            waitProgress.setCancelable(false);
-        }
+        RequestQueue requestQueue = Volley.newRequestQueue(AttendanceStatusDetails.this);
 
-        @Override
-        protected Void doInBackground(Void... voids) {
-            if (isConnected() && isOnline()) {
+        StringRequest attStatReq = new StringRequest(Request.Method.GET, attStatUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject attStatInfo = array.getJSONObject(i);
 
-                StatusDetails();
-                if (connected) {
-                    conn = true;
-                    message= "Internet Connected";
+                        request_type = attStatInfo.getString("darm_application_type")
+                                .equals("null") ? "" : attStatInfo.getString("darm_application_type");
+                        application_type = attStatInfo.getString("req_type")
+                                .equals("null") ? "" : attStatInfo.getString("req_type");
+                        reasonName = attStatInfo.getString("reason")
+                                .equals("null") ? "" : attStatInfo.getString("reason");
+                        dateNow = attStatInfo.getString("darm_date")
+                                .equals("null") ? "" : attStatInfo.getString("darm_date");
+                        locotion_updated = attStatInfo.getString("location")
+                                .equals("null") ? "" : attStatInfo.getString("location");
+                        shiftName = attStatInfo.getString("shift")
+                                .equals("null") ? "" : attStatInfo.getString("shift");
+                        reasonDescription = attStatInfo.getString("darm_reason")
+                                .equals("null") ? "" : attStatInfo.getString("darm_reason");
+                        addressOut = attStatInfo.getString("darm_add_during_cause")
+                                .equals("null") ? null : attStatInfo.getString("darm_add_during_cause");
+                        forwardTo = attStatInfo.getString("approver")
+                                .equals("null") ? "" : attStatInfo.getString("approver");
+                        locationId = attStatInfo.getString("darm_req_location_id")
+                                .equals("null") ? null : attStatInfo.getString("darm_req_location_id");
+                        comments = attStatInfo.getString("darm_comments")
+                                .equals("null") ? null : attStatInfo.getString("darm_comments");
+                    }
                 }
 
-            } else {
-                conn = false;
-                connected = false;
-                message = "Not Connected";
+                if (locationId != null) {
+                    getMachineData();
+                }
+                else {
+                    connected = true;
+                    updateLayout();
+                }
             }
+            catch (JSONException e) {
+                e.printStackTrace();
+                connected = false;
+                updateLayout();
+            }
+        }, error -> {
+            error.printStackTrace();
+            conn = false;
+            connected = false;
+            updateLayout();
+        });
 
-            return null;
-        }
+        requestQueue.add(attStatReq);
+    }
 
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
+    public void getMachineData() {
 
-            waitProgress.dismiss();
-            if (conn) {
+        String url = "http://103.56.208.123:8001/apex/ttrams/attendanceStatus/getMachineData/"+locationId+"";
 
+        RequestQueue requestQueue = Volley.newRequestQueue(AttendanceStatusDetails.this);
+
+        StringRequest machineDataReq = new StringRequest(Request.Method.GET, url, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject machInfo = array.getJSONObject(i);
+                        machineCode = machInfo.getString("ams_mechine_code");
+                        machineType = machInfo.getString("ams_attendance_type");
+                    }
+                }
+                connected = true;
+                updateLayout();
+            }
+            catch (JSONException e) {
+                e.printStackTrace();
+                connected = false;
+                updateLayout();
+            }
+        }, error -> {
+            error.printStackTrace();
+            conn = false;
+            connected = false;
+            updateLayout();
+        });
+
+        requestQueue.add(machineDataReq);
+    }
+
+    private void updateLayout() {
+        waitProgress.dismiss();
+        if (conn) {
+            if (connected) {
                 reqType.setText(request_type);
                 attType.setText(application_type);
                 locUpdate.setText(locotion_updated);
@@ -331,13 +574,10 @@ public class AttendanceStatusDetails extends AppCompatActivity {
 
                 forwarder.setText(forwardTo);
                 appDate.setText(dateNow);
-
-
-
-            }else {
-                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+            }
+            else {
                 AlertDialog dialog = new AlertDialog.Builder(AttendanceStatusDetails.this)
-                        .setMessage("Please Check Your Internet Connection")
+                        .setMessage("There is a network issue in the server. Please Try later.")
                         .setPositiveButton("Retry", null)
                         .setNegativeButton("Cancel",null)
                         .show();
@@ -345,94 +585,38 @@ public class AttendanceStatusDetails extends AppCompatActivity {
                 dialog.setCancelable(false);
                 dialog.setCanceledOnTouchOutside(false);
                 Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                positive.setOnClickListener(v -> {
 
-                        new Check().execute();
-                        dialog.dismiss();
-                    }
+                    getAttendanceStatusDetails();
+                    dialog.dismiss();
                 });
                 Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                        finish();
-                    }
+                negative.setOnClickListener(v -> {
+                    dialog.dismiss();
+                    finish();
                 });
             }
         }
-    }
+        else {
+            AlertDialog dialog = new AlertDialog.Builder(AttendanceStatusDetails.this)
+                    .setMessage("Please Check Your Internet Connection")
+                    .setPositiveButton("Retry", null)
+                    .setNegativeButton("Cancel",null)
+                    .show();
 
-    public void StatusDetails() {
-        try {
-            this.connection = createConnection();
-            //    Toast.makeText(MainActivity.this, "Connected",Toast.LENGTH_SHORT).show();
+            dialog.setCancelable(false);
+            dialog.setCanceledOnTouchOutside(false);
+            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            positive.setOnClickListener(v -> {
 
-
-            Statement stmt = connection.createStatement();
-
-
-
-
-            ResultSet rs=stmt.executeQuery("Select DARM_APPLICATION_TYPE,\n" +
-                    "cASE WHEN DARM_REQ_TYPE = 'Late' then 'Late Arrival Information' when DARM_REQ_TYPE = 'Early' then 'Early Departure Information' else 'Work Time Update' end req_type,\n" +
-                    "(Select ATTD_UP_REQ_REASON_MST.AURRM_NAME FROM ATTD_UP_REQ_REASON_MST where ATTD_UP_REQ_REASON_MST.AURRM_ID = DARM_AURRM_ID) as REASON,\n" +
-                    "                    TO_CHAR(DAILY_ATTEN_REQ_MST.DARM_DATE,'DD-MON-YY') DARM_DATE,\n" +
-                    "                    TO_CHAR(DAILY_ATTEN_REQ_MST.DARM_UPDATE_DATE,'DD-MON-YYYY') DARM_UPDATE_DATE,\n" +
-                    "                    TO_CHAR(DAILY_ATTEN_REQ_MST.DARM_REQ_ARRIVAL_TIME,'HH:MI AM') ARRIVAL_TIME,\n" +
-                    "                    TO_CHAR(DAILY_ATTEN_REQ_MST.DARM_REQ_DEPART_TIME,'HH:MI AM') DEPARTURE_TIME,\n" +
-                    "                   (Select COMPANY_OFFICE_ADDRESS.COA_NAME FROM COMPANY_OFFICE_ADDRESS Where COMPANY_OFFICE_ADDRESS.COA_ID = DARM_REQ_LOCATION_ID)\n" +
-                    "                   as LOCATION,\n" +
-                    "                   (Select OFFICE_SHIFT_MST.OSM_NAME FROM OFFICE_SHIFT_MST Where OFFICE_SHIFT_MST.OSM_ID =  DARM_REQ_OSM_ID) as SHIFT,\n" +
-                    "                    DARM_REASON,DARM_ADD_DURING_CAUSE,(Select EMP_NAME FROM EMP_MST WHERE EMP_ID = DARM_APPLIED_TO_ID ) as APPROVER, DARM_REQ_LOCATION_ID,DARM_COMMENTS\n" +
-                    "                    From DAILY_ATTEN_REQ_MST \n" +
-                    "                    WHERE DARM_APP_CODE = '"+request+"'");
-
-
-
-            while(rs.next()) {
-
-                request_type = rs.getString(1);
-                application_type = rs.getString(2);
-                reasonName = rs.getString(3);
-                dateNow = rs.getString(4);
-                locotion_updated = rs.getString(8);
-                shiftName = rs.getString(9);
-                reasonDescription = rs.getString(10);
-                addressOut = rs.getString(11);
-                forwardTo = rs.getString(12);
-                locationId = rs.getString(13);
-                comments = rs.getString(14);
-
-            }
-
-            if (locationId != null) {
-                ResultSet resultSet = stmt.executeQuery("SELECT AMS_MECHINE_CODE, AMS_ATTENDANCE_TYPE\n" +
-                        "                    FROM ATTENDANCE_MECHINE_SETUP\n" +
-                        "                    WHERE AMS_ID = (SELECT MAX(AMS_ID)\n" +
-                        "                   FROM ATTENDANCE_MECHINE_SETUP\n" +
-                        "                    WHERE AMS_COA_ID = "+locationId+")");
-
-                while (resultSet.next()) {
-                    machineCode = resultSet.getString(1);
-                    machineType = resultSet.getString(2);
-                }
-            }
-
-
-
-            connected = true;
-
-            connection.close();
-
-        }
-        catch (Exception e) {
-
-            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
-            Log.i("ERRRRR", e.getLocalizedMessage());
-            e.printStackTrace();
+                getAttendanceStatusDetails();
+                dialog.dismiss();
+            });
+            Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+            negative.setOnClickListener(v -> {
+                dialog.dismiss();
+                finish();
+            });
         }
     }
 }

@@ -18,9 +18,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import ttit.com.shuvo.ikglhrm.R;
-import ttit.com.shuvo.ikglhrm.attendance.Attendance;
 import ttit.com.shuvo.ikglhrm.attendance.approve.AttendanceApprove;
-import ttit.com.shuvo.ikglhrm.attendance.reqUpdate.AttendanceReqUpdate;
 import ttit.com.shuvo.ikglhrm.attendance.update.AttendanceUpdate;
 import ttit.com.shuvo.ikglhrm.leaveAll.LeaveApplication;
 import ttit.com.shuvo.ikglhrm.leaveAll.leaveApprove.LeaveApprove;
@@ -71,13 +69,16 @@ public class DialogueText extends AppCompatDialogFragment {
             String h = "Write Address During Leave:";
             textLay.setHint(h);
             editText.setText(LeaveApplication.text);
-        }else if (AttendanceReqUpdate.number_update == 1) {
-            textLay.setHint(AttendanceReqUpdate.hint_update);
-            editText.setText(AttendanceReqUpdate.text_update);
-        } else if (AttendanceReqUpdate.number_update == 2) {
-            textLay.setHint(AttendanceReqUpdate.hint_update);
-            editText.setText(AttendanceReqUpdate.text_update);
-        } else if (AttendanceApprove.number == 1) {
+        }
+//        else if (AttendanceReqUpdate.number_update == 1) {
+//            textLay.setHint(AttendanceReqUpdate.hint_update);
+//            editText.setText(AttendanceReqUpdate.text_update);
+//        }
+//        else if (AttendanceReqUpdate.number_update == 2) {
+//            textLay.setHint(AttendanceReqUpdate.hint_update);
+//            editText.setText(AttendanceReqUpdate.text_update);
+//        }
+        else if (AttendanceApprove.number == 1) {
             textLay.setHint(AttendanceApprove.hint);
             editText.setText(AttendanceApprove.text);
         } else if (LeaveApprove.number == 1) {
@@ -126,12 +127,15 @@ public class DialogueText extends AppCompatDialogFragment {
                     }
                     LeaveApplication.leaveAddress.setText(text);
 
-                } else if (AttendanceReqUpdate.number_update == 1) {
-                    AttendanceReqUpdate.reasonDescUpdate.setText(text);
-                    AttendanceReqUpdate.errorReasonDescUpdate.setVisibility(View.GONE);
-                } else if (AttendanceReqUpdate.number_update == 2) {
-                    AttendanceReqUpdate.addressStationUpdate.setText(text);
-                } else if (AttendanceApprove.number == 1) {
+                }
+//                else if (AttendanceReqUpdate.number_update == 1) {
+//                    AttendanceReqUpdate.reasonDescUpdate.setText(text);
+//                    AttendanceReqUpdate.errorReasonDescUpdate.setVisibility(View.GONE);
+//                }
+//                else if (AttendanceReqUpdate.number_update == 2) {
+//                    AttendanceReqUpdate.addressStationUpdate.setText(text);
+//                }
+                else if (AttendanceApprove.number == 1) {
                     AttendanceApprove.comments.setText(text);
                     if (text.isEmpty()) {
                         AttendanceApprove.commentsLay.setHint("Write Approve/Reject Comments:");
@@ -147,7 +151,7 @@ public class DialogueText extends AppCompatDialogFragment {
                     }
                 }
                 AttendanceUpdate.number = 0;
-                AttendanceReqUpdate.number_update = 0;
+//                AttendanceReqUpdate.number_update = 0;
                 LeaveApplication.leaveNumber = 0;
                 AttendanceApprove.number = 0;
                 LeaveApprove.number = 0;
@@ -160,7 +164,7 @@ public class DialogueText extends AppCompatDialogFragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 AttendanceUpdate.number = 0;
-                AttendanceReqUpdate.number_update = 0;
+//                AttendanceReqUpdate.number_update = 0;
                 LeaveApplication.leaveNumber = 0;
                 AttendanceApprove.number = 0;
                 LeaveApprove.number = 0;

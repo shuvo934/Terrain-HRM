@@ -22,7 +22,7 @@
         android:name="android.permission.MANAGE_DOCUMENTS"
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+<!--    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />-->
 
     <application
         android:name=".attendance.trackService.Notification"
@@ -38,8 +38,10 @@
         tools:targetApi="n">
         <activity
             android:name=".dashboard.UpdatePic"
+            android:screenOrientation="portrait"
             android:exported="false" />
-        <activity android:name=".directoryBook.DirectoryWithDivision" />
+        <activity android:name=".directoryBook.DirectoryWithDivision"
+            android:screenOrientation="portrait"/>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -54,43 +56,70 @@
 
         <activity
             android:name=".attendance.trackService.TimeLineActivity"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_time_line" />
         <activity
             android:name=".attendance.giveAttendance.MapsActivity"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_maps" />
-        <activity android:name=".attendance.giveAttendance.AttendanceGive" />
-        <activity android:name=".leaveAll.leaveApprove.LeaveApprove" />
-        <activity android:name=".attendance.approve.AttendanceApprove" />
+        <activity android:name=".attendance.giveAttendance.AttendanceGive"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".leaveAll.leaveApprove.LeaveApprove"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".attendance.approve.AttendanceApprove"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".dashboard.Dashboard"
             android:screenOrientation="portrait" />
         <activity
             android:name=".directoryBook.Directory"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
-        <activity android:name=".payRoll.advance.AdvanceDetails" />
-        <activity android:name=".payRoll.paySlip.PaySlip" />
-        <activity android:name=".payRoll.PayRollInfo" />
-        <activity android:name=".leaveAll.leaveStatus.LeaveStatus" />
-        <activity android:name=".leaveAll.leaveApplication.leaveApplicatinStatus.details.LeaveAppStatusDetails" />
-        <activity android:name=".leaveAll.leaveApplication.AllLeaveApplication" />
-        <activity android:name=".leaveAll.leaveApplication.leaveApplicatinStatus.LeaveApplicationStatus" />
-        <activity android:name=".leaveAll.LeaveApplication" />
-        <activity android:name=".attendance.status.statusDetail.AttendanceStatusDetails" />
-        <activity android:name=".leaveAll.leaveBalance.LeaveBalance" />
-        <activity android:name=".leaveAll.Leave" />
-        <activity android:name=".attendance.AttendanceUpdateAll" />
-        <activity android:name=".attendance.status.AttendanceStatus" />
-        <activity android:name=".attendance.reqUpdate.AttendanceReqUpdate" />
-        <activity android:name=".attendance.update.AttendanceUpdate" />
-        <activity android:name=".attendance.report.AttendanceReport" />
+        <activity android:name=".payRoll.advance.AdvanceDetails"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".payRoll.paySlip.PaySlip"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".payRoll.PayRollInfo"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".leaveAll.leaveStatus.LeaveStatus"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".leaveAll.leaveApplication.leaveApplicatinStatus.details.LeaveAppStatusDetails"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".leaveAll.leaveApplication.AllLeaveApplication"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".leaveAll.leaveApplication.leaveApplicatinStatus.LeaveApplicationStatus"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".leaveAll.LeaveApplication"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".attendance.status.statusDetail.AttendanceStatusDetails"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".leaveAll.leaveBalance.LeaveBalance"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".leaveAll.Leave"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".attendance.AttendanceUpdateAll"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".attendance.status.AttendanceStatus"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".attendance.reqUpdate.AttendanceReqUpdate"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".attendance.update.AttendanceUpdate"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".attendance.report.AttendanceReport"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".attendance.Attendance"
             android:screenOrientation="portrait" />
-        <activity android:name=".EmployeeInfo.performance.PerformanceApp" />
-        <activity android:name=".EmployeeInfo.transcript.EMPTranscript" />
-        <activity android:name=".EmployeeInfo.jobDesc.JobDescription" />
-        <activity android:name=".EmployeeInfo.personal.PersonalData" />
-        <activity android:name=".EmployeeInfo.EmplyeeInformation" />
+        <activity android:name=".EmployeeInfo.performance.PerformanceApp"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".EmployeeInfo.transcript.EMPTranscript"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".EmployeeInfo.jobDesc.JobDescription"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".EmployeeInfo.personal.PersonalData"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".EmployeeInfo.EmplyeeInformation"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".MainPage.MainMenu"
             android:screenOrientation="portrait" />
@@ -99,6 +128,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".MainActivity"
+            android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -24,19 +24,8 @@ import com.google.android.material.textfield.TextInputEditText;
 import java.util.ArrayList;
 
 import ttit.com.shuvo.ikglhrm.R;
-import ttit.com.shuvo.ikglhrm.attendance.reqUpdate.AttendanceReqUpdate;
 import ttit.com.shuvo.ikglhrm.leaveAll.LeaveApplication;
 
-import static ttit.com.shuvo.ikglhrm.attendance.reqUpdate.AttendanceReqUpdate.approverTestEditUpdate;
-import static ttit.com.shuvo.ikglhrm.attendance.reqUpdate.AttendanceReqUpdate.errorApproverUpdate;
-import static ttit.com.shuvo.ikglhrm.attendance.reqUpdate.AttendanceReqUpdate.errorShiftUpdate;
-import static ttit.com.shuvo.ikglhrm.attendance.reqUpdate.AttendanceReqUpdate.selectAllListsUpdate;
-import static ttit.com.shuvo.ikglhrm.attendance.reqUpdate.AttendanceReqUpdate.selected_approver_id_update;
-import static ttit.com.shuvo.ikglhrm.attendance.reqUpdate.AttendanceReqUpdate.selected_approver_name_update;
-import static ttit.com.shuvo.ikglhrm.attendance.reqUpdate.AttendanceReqUpdate.selected_shift_id_update;
-import static ttit.com.shuvo.ikglhrm.attendance.reqUpdate.AttendanceReqUpdate.selected_shift_name_update;
-import static ttit.com.shuvo.ikglhrm.attendance.reqUpdate.AttendanceReqUpdate.shiftTestEditUpdate;
-import static ttit.com.shuvo.ikglhrm.attendance.reqUpdate.AttendanceReqUpdate.showShoftTimeUpdate;
 import static ttit.com.shuvo.ikglhrm.attendance.update.AttendanceUpdate.approverTestEdit;
 import static ttit.com.shuvo.ikglhrm.attendance.update.AttendanceUpdate.dialogText;
 import static ttit.com.shuvo.ikglhrm.attendance.update.AttendanceUpdate.errorApprover;
@@ -111,19 +100,22 @@ public class SelectAll extends AppCompatDialogFragment implements SelectAllAdapt
             third.setText("Structure Designation");
             fourth.setText("Division");
             lists = selectAllLists;
-        } else if (AttendanceReqUpdate.dialogText_update == 1) {
-            first.setText("Shift");
-            second.setText("Start Time");
-            third.setText("Late After");
-            fourth.setText("End Time");
-            lists = selectAllListsUpdate;
-        } else if (AttendanceReqUpdate.dialogText_update == 2) {
-            first.setText("Employee");
-            second.setText("Functional Designation");
-            third.setText("Structure Designation");
-            fourth.setText("Division");
-            lists = selectAllListsUpdate;
-        } else if (LeaveApplication.dialogText_leave == 1) {
+        }
+//        else if (AttendanceReqUpdate.dialogText_update == 1) {
+//            first.setText("Shift");
+//            second.setText("Start Time");
+//            third.setText("Late After");
+//            fourth.setText("End Time");
+//            lists = selectAllListsUpdate;
+//        }
+//        else if (AttendanceReqUpdate.dialogText_update == 2) {
+//            first.setText("Employee");
+//            second.setText("Functional Designation");
+//            third.setText("Structure Designation");
+//            fourth.setText("Division");
+//            lists = selectAllListsUpdate;
+//        }
+        else if (LeaveApplication.dialogText_leave == 1) {
             first.setText("Name");
             second.setText("Calling Title");
             third.setText("Job Title");
@@ -145,7 +137,7 @@ public class SelectAll extends AppCompatDialogFragment implements SelectAllAdapt
             public void onClick(DialogInterface dialog, int which) {
 
                 dialogText = 0;
-                AttendanceReqUpdate.dialogText_update = 0;
+//                AttendanceReqUpdate.dialogText_update = 0;
                 LeaveApplication.dialogText_leave = 0;
                 dialog.dismiss();
             }
@@ -215,20 +207,23 @@ public class SelectAll extends AppCompatDialogFragment implements SelectAllAdapt
             errorApprover.setVisibility(View.GONE);
             selected_approver_id = id;
             selected_approver_name = name;
-        } else if (AttendanceReqUpdate.dialogText_update == 1) {
-            shiftTestEditUpdate.setText(name);
-            shiftTestEditUpdate.setTextColor(Color.BLACK);
-            errorShiftUpdate.setVisibility(View.GONE);
-            selected_shift_id_update = id;
-            selected_shift_name_update = name;
-            showShoftTimeUpdate.setVisibility(View.VISIBLE);
-        } else if (AttendanceReqUpdate.dialogText_update == 2) {
-            approverTestEditUpdate.setText(name);
-            approverTestEditUpdate.setTextColor(Color.BLACK);
-            errorApproverUpdate.setVisibility(View.GONE);
-            selected_approver_id_update = id;
-            selected_approver_name_update = name;
-        } else if (LeaveApplication.dialogText_leave == 1) {
+        }
+//        else if (AttendanceReqUpdate.dialogText_update == 1) {
+//            shiftTestEditUpdate.setText(name);
+//            shiftTestEditUpdate.setTextColor(Color.BLACK);
+//            errorShiftUpdate.setVisibility(View.GONE);
+//            selected_shift_id_update = id;
+//            selected_shift_name_update = name;
+//            showShoftTimeUpdate.setVisibility(View.VISIBLE);
+//        }
+//        else if (AttendanceReqUpdate.dialogText_update == 2) {
+//            approverTestEditUpdate.setText(name);
+//            approverTestEditUpdate.setTextColor(Color.BLACK);
+//            errorApproverUpdate.setVisibility(View.GONE);
+//            selected_approver_id_update = id;
+//            selected_approver_name_update = name;
+//        }
+        else if (LeaveApplication.dialogText_leave == 1) {
             workBackup.setText(name);
             workBackup.setTextColor(Color.BLACK);
             errorBackup.setVisibility(View.GONE);
@@ -238,7 +233,7 @@ public class SelectAll extends AppCompatDialogFragment implements SelectAllAdapt
 
 
         dialogText = 0;
-        AttendanceReqUpdate.dialogText_update = 0;
+//        AttendanceReqUpdate.dialogText_update = 0;
         LeaveApplication.dialogText_leave = 0;
         dialog.dismiss();
 
