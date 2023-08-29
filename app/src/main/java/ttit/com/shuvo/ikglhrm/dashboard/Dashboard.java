@@ -649,6 +649,10 @@ public class Dashboard extends AppCompatActivity {
                 getAllData();
             }
         });
+        appUpdateInfoTask.addOnFailureListener(e -> {
+            System.out.println("FAILED TO LISTEN");
+            getAllData();
+        });
     }
 
     @Override

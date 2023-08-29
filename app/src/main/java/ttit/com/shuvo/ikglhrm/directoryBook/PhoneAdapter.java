@@ -131,7 +131,7 @@ public class PhoneAdapter extends RecyclerView.Adapter<PhoneAdapter.PhoneHolder>
                         public void onClick(View v) {
 
                             dialog.dismiss();
-                            Intent callIntent = new Intent(Intent.ACTION_CALL);
+                            Intent callIntent = new Intent(Intent.ACTION_DIAL);
                             callIntent.setData(Uri.parse("tel:"+number));
                             activity.startActivity(callIntent);
 
