@@ -16,7 +16,7 @@ public class GPXFileWriter {
             + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
             + " xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd\">";
     private static final SimpleDateFormat POINT_DATE_FORMATTER = new SimpleDateFormat(
-            "yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault());
+            "yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH);
 
     public static void writeGpxFile(String trackName,
                                     ArrayList<String> trkpt, File target) throws IOException {

@@ -125,7 +125,7 @@ public class Service extends android.app.Service {
                     Log.d("Locations", location.getLatitude() + "," + location.getLongitude());
 
                     Date stopdate = Calendar.getInstance().getTime();
-                    SimpleDateFormat stopsimpleDateFormat = new SimpleDateFormat("hh:mm a",Locale.getDefault());
+                    SimpleDateFormat stopsimpleDateFormat = new SimpleDateFormat("hh:mm a",Locale.ENGLISH);
                     String stoptime = stopsimpleDateFormat.format(stopdate);
 
                     System.out.println(stoptime);
@@ -143,7 +143,7 @@ public class Service extends android.app.Service {
 
                         firstLocation = location;
                         Date date = Calendar.getInstance().getTime();
-                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm a",Locale.getDefault());
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm a",Locale.ENGLISH);
                         String time = simpleDateFormat.format(date);
                         //firstLoc.setText(add);
                         locationLists.add(new LatLngTimeList(ll,time));
@@ -155,7 +155,7 @@ public class Service extends android.app.Service {
                         Double distance = CalculationByDistance(preLatlng[0], ll);
 
                         Date date = Calendar.getInstance().getTime();
-                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm a",Locale.getDefault());
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm a",Locale.ENGLISH);
                         String time = simpleDateFormat.format(date);
                         Log.i("Distance", distance.toString());
 
@@ -349,7 +349,7 @@ public class Service extends android.app.Service {
 
         Calendar cal = GregorianCalendar.getInstance();
         Date calTime = cal.getTime();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yy",Locale.getDefault());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yy",Locale.ENGLISH);
 
         String ddd = simpleDateFormat.format(calTime);
 
@@ -386,7 +386,7 @@ public class Service extends android.app.Service {
                 String fTime = locationLists.get(0).getTime();
                 String lTime = locationLists.get(locationLists.size()-1).getTime();
 
-                SimpleDateFormat sdfTime = new SimpleDateFormat("hh:mm a",Locale.getDefault());
+                SimpleDateFormat sdfTime = new SimpleDateFormat("hh:mm a",Locale.ENGLISH);
 
                 Date first = null;
                 Date last = null;
@@ -410,7 +410,7 @@ public class Service extends android.app.Service {
                 String fTime = locationLists.get(0).getTime();
                 String lTime = locationLists.get(locationLists.size()-1).getTime();
 
-                SimpleDateFormat sdfTime = new SimpleDateFormat("hh:mm a",Locale.getDefault());
+                SimpleDateFormat sdfTime = new SimpleDateFormat("hh:mm a",Locale.ENGLISH);
 
                 Date first = null;
                 Date last = null;
@@ -439,7 +439,7 @@ public class Service extends android.app.Service {
                         String oneTime = locationLists.get(l).getTime();
                         String twoTime = locationLists.get(l+1).getTime();
 
-                        SimpleDateFormat sdfTime = new SimpleDateFormat("hh:mm a",Locale.getDefault());
+                        SimpleDateFormat sdfTime = new SimpleDateFormat("hh:mm a",Locale.ENGLISH);
 
                         Date first = null;
                         Date last = null;
@@ -475,7 +475,7 @@ public class Service extends android.app.Service {
                         String oneTime = locationLists.get(l).getTime();
                         String twoTime = locationLists.get(l+1).getTime();
 
-                        SimpleDateFormat sdfTime = new SimpleDateFormat("hh:mm a",Locale.getDefault());
+                        SimpleDateFormat sdfTime = new SimpleDateFormat("hh:mm a",Locale.ENGLISH);
 
                         Date first = null;
                         Date last = null;
@@ -544,7 +544,7 @@ public class Service extends android.app.Service {
 
         Date c = Calendar.getInstance().getTime();
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy", Locale.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
 
         String fileName = sdf.format(c);
         fileName = fileName.toUpperCase();
@@ -656,7 +656,7 @@ public class Service extends android.app.Service {
     }
 
     public String getAddress(double lat, double lng) {
-        Geocoder geocoder = new Geocoder(Service.this, Locale.getDefault());
+        Geocoder geocoder = new Geocoder(Service.this, Locale.ENGLISH);
         String address = "";
         try {
             List<Address> addresses = geocoder.getFromLocation(lat, lng, 1);

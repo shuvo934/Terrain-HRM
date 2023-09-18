@@ -372,7 +372,7 @@ public class AttendanceUpdate extends AppCompatActivity {
 
         String formattedDate = "";
 
-        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yy", Locale.getDefault());
+        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
 
         formattedDate = df.format(c);
 
@@ -848,7 +848,7 @@ public class AttendanceUpdate extends AppCompatActivity {
                                     Date nowDate = null;
                                     Date givenDate = null;
 
-                                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy", Locale.getDefault());
+                                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
                                     try {
                                         nowDate = sdf.parse(today);
                                         givenDate = sdf.parse(updateDate);
@@ -893,7 +893,7 @@ public class AttendanceUpdate extends AppCompatActivity {
                                     Date nowDate = null;
                                     Date givenDate = null;
 
-                                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy", Locale.getDefault());
+                                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
                                     try {
                                         nowDate = sdf.parse(today);
                                         givenDate = sdf.parse(updateDate);

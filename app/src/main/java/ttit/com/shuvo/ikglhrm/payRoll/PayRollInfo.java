@@ -164,8 +164,8 @@ public class PayRollInfo extends AppCompatActivity {
 
 
 
-        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yy", Locale.getDefault());
-        SimpleDateFormat mom = new SimpleDateFormat("MMMM",Locale.getDefault());
+        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
+        SimpleDateFormat mom = new SimpleDateFormat("MMMM",Locale.ENGLISH);
         String monnn = mom.format(c);
 
         refresh.setText("Month: "+monnn);
@@ -176,37 +176,37 @@ public class PayRollInfo extends AppCompatActivity {
         Calendar cal =  Calendar.getInstance();
 
         cal.add(Calendar.MONTH, -1);
-        String previousMonthYear  = new SimpleDateFormat("MMM-yy", Locale.getDefault()).format(cal.getTime());
+        String previousMonthYear  = new SimpleDateFormat("MMM-yy", Locale.ENGLISH).format(cal.getTime());
         previousMonthYear = previousMonthYear.toUpperCase();
         months.add(new SalaryMonthList(previousMonthYear,"0"));
         System.out.println(previousMonthYear);
 
         cal.add(Calendar.MONTH, -1);
-        previousMonthYear  = new SimpleDateFormat("MMM-yy", Locale.getDefault()).format(cal.getTime());
+        previousMonthYear  = new SimpleDateFormat("MMM-yy", Locale.ENGLISH).format(cal.getTime());
         previousMonthYear = previousMonthYear.toUpperCase();
         months.add(new SalaryMonthList(previousMonthYear,"0"));
         System.out.println(previousMonthYear);
 
         cal.add(Calendar.MONTH, -1);
-        previousMonthYear  = new SimpleDateFormat("MMM-yy", Locale.getDefault()).format(cal.getTime());
+        previousMonthYear  = new SimpleDateFormat("MMM-yy", Locale.ENGLISH).format(cal.getTime());
         previousMonthYear = previousMonthYear.toUpperCase();
         months.add(new SalaryMonthList(previousMonthYear,"0"));
         System.out.println(previousMonthYear);
 
         cal.add(Calendar.MONTH, -1);
-        previousMonthYear  = new SimpleDateFormat("MMM-yy", Locale.getDefault()).format(cal.getTime());
+        previousMonthYear  = new SimpleDateFormat("MMM-yy", Locale.ENGLISH).format(cal.getTime());
         previousMonthYear = previousMonthYear.toUpperCase();
         months.add(new SalaryMonthList(previousMonthYear,"0"));
         System.out.println(previousMonthYear);
 
         cal.add(Calendar.MONTH, -1);
-        previousMonthYear  = new SimpleDateFormat("MMM-yy", Locale.getDefault()).format(cal.getTime());
+        previousMonthYear  = new SimpleDateFormat("MMM-yy", Locale.ENGLISH).format(cal.getTime());
         previousMonthYear = previousMonthYear.toUpperCase();
         months.add(new SalaryMonthList(previousMonthYear,"0"));
         System.out.println(previousMonthYear);
 
         cal.add(Calendar.MONTH, -1);
-        previousMonthYear  = new SimpleDateFormat("MMM-yy", Locale.getDefault()).format(cal.getTime());
+        previousMonthYear  = new SimpleDateFormat("MMM-yy", Locale.ENGLISH).format(cal.getTime());
         previousMonthYear = previousMonthYear.toUpperCase();
         months.add(new SalaryMonthList(previousMonthYear,"0"));
         System.out.println(previousMonthYear);
@@ -249,8 +249,8 @@ public class PayRollInfo extends AppCompatActivity {
                 String lastformattedYear = "";
                 String lastdateView = "";
 
-                SimpleDateFormat df = new SimpleDateFormat("yyyy", Locale.getDefault());
-                SimpleDateFormat sdf = new SimpleDateFormat("MM",Locale.getDefault());
+                SimpleDateFormat df = new SimpleDateFormat("yyyy", Locale.ENGLISH);
+                SimpleDateFormat sdf = new SimpleDateFormat("MM",Locale.ENGLISH);
 
                 formattedYear = df.format(c);
                 monthValue = sdf.format(c);
@@ -278,7 +278,7 @@ public class PayRollInfo extends AppCompatActivity {
 
                 Date lastDayOfMonth = calendar1.getTime();
 
-                SimpleDateFormat sdff = new SimpleDateFormat("dd",Locale.getDefault());
+                SimpleDateFormat sdff = new SimpleDateFormat("dd",Locale.ENGLISH);
                 lastdateView = sdff.format(lastDayOfMonth);
 
                 int yearSelected;
@@ -361,7 +361,7 @@ public class PayRollInfo extends AppCompatActivity {
                         formattedDate = "15-"+mon+"-"+yearName;
                         //selected_date = "01-"+mon+"-"+yearName;
                         refresh.setText("Month: " +monthName);
-                        SimpleDateFormat sss = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
+                        SimpleDateFormat sss = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
 
                         Date today = null;
                         try {
@@ -379,44 +379,44 @@ public class PayRollInfo extends AppCompatActivity {
 
                             Date lastDayOfMonth = calendar1.getTime();
 
-                            SimpleDateFormat sdff = new SimpleDateFormat("dd",Locale.getDefault());
+                            SimpleDateFormat sdff = new SimpleDateFormat("dd",Locale.ENGLISH);
                             String llll = sdff.format(lastDayOfMonth);
                             formattedDate =  llll+ "-" + mon +"-"+ yearName;
 
                             months = new ArrayList<>();
 
                             calendar1.add(Calendar.MONTH, -1);
-                            String previousMonthYear  = new SimpleDateFormat("MMM-yy", Locale.getDefault()).format(calendar1.getTime());
+                            String previousMonthYear  = new SimpleDateFormat("MMM-yy", Locale.ENGLISH).format(calendar1.getTime());
                             previousMonthYear = previousMonthYear.toUpperCase();
                             months.add(new SalaryMonthList(previousMonthYear,"0"));
                             System.out.println(previousMonthYear);
 
                             calendar1.add(Calendar.MONTH, -1);
-                            previousMonthYear  = new SimpleDateFormat("MMM-yy", Locale.getDefault()).format(calendar1.getTime());
+                            previousMonthYear  = new SimpleDateFormat("MMM-yy", Locale.ENGLISH).format(calendar1.getTime());
                             previousMonthYear = previousMonthYear.toUpperCase();
                             months.add(new SalaryMonthList(previousMonthYear,"0"));
                             System.out.println(previousMonthYear);
 
                             calendar1.add(Calendar.MONTH, -1);
-                            previousMonthYear  = new SimpleDateFormat("MMM-yy", Locale.getDefault()).format(calendar1.getTime());
+                            previousMonthYear  = new SimpleDateFormat("MMM-yy", Locale.ENGLISH).format(calendar1.getTime());
                             previousMonthYear = previousMonthYear.toUpperCase();
                             months.add(new SalaryMonthList(previousMonthYear,"0"));
                             System.out.println(previousMonthYear);
 
                             calendar1.add(Calendar.MONTH, -1);
-                            previousMonthYear  = new SimpleDateFormat("MMM-yy", Locale.getDefault()).format(calendar1.getTime());
+                            previousMonthYear  = new SimpleDateFormat("MMM-yy", Locale.ENGLISH).format(calendar1.getTime());
                             previousMonthYear = previousMonthYear.toUpperCase();
                             months.add(new SalaryMonthList(previousMonthYear,"0"));
                             System.out.println(previousMonthYear);
 
                             calendar1.add(Calendar.MONTH, -1);
-                            previousMonthYear  = new SimpleDateFormat("MMM-yy", Locale.getDefault()).format(calendar1.getTime());
+                            previousMonthYear  = new SimpleDateFormat("MMM-yy", Locale.ENGLISH).format(calendar1.getTime());
                             previousMonthYear = previousMonthYear.toUpperCase();
                             months.add(new SalaryMonthList(previousMonthYear,"0"));
                             System.out.println(previousMonthYear);
 
                             calendar1.add(Calendar.MONTH, -1);
-                            previousMonthYear  = new SimpleDateFormat("MMM-yy", Locale.getDefault()).format(calendar1.getTime());
+                            previousMonthYear  = new SimpleDateFormat("MMM-yy", Locale.ENGLISH).format(calendar1.getTime());
                             previousMonthYear = previousMonthYear.toUpperCase();
                             months.add(new SalaryMonthList(previousMonthYear,"0"));
                             System.out.println(previousMonthYear);

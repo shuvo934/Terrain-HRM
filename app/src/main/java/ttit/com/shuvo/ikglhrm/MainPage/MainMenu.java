@@ -63,6 +63,7 @@ public class MainMenu extends AppCompatActivity {
 
     SharedPreferences sharedPreferences;
     SharedPreferences sharedSchedule;
+    SharedPreferences attendanceWidgetPreferences;
 
     public static final String SCHEDULING_FILE = "SCHEDULING FILE";
     public static final String SCHEDULING_EMP_ID = "SCHEDULING EMP ID";
@@ -94,6 +95,10 @@ public class MainMenu extends AppCompatActivity {
     public static final String COMPANY = "COMPANY";
     public static final String SOFTWARE = "SOFTWARE";
     public static final String LIVE_FLAG = "LIVE_FLAG";
+
+    public static final String WIDGET_FILE = "WIDGET_FILE";
+    public static final String WIDGET_EMP_ID = "WIDGET_EMP_ID";
+    public static final String WIDGET_TRACKER_FLAG = "WIDGET_TRACKER_FLAG";
 //    public static final String DATABASE_NAME = "DATABASE_NAME";
     TextView welcomeText;
 
@@ -139,6 +144,7 @@ public class MainMenu extends AppCompatActivity {
 
         setContentView(R.layout.activity_main_menu);
 
+        attendanceWidgetPreferences = getSharedPreferences(WIDGET_FILE,MODE_PRIVATE);
         sharedPreferences = getSharedPreferences(LOGIN_ACTIVITY_FILE, MODE_PRIVATE);
         sharedSchedule = getSharedPreferences(SCHEDULING_FILE, MODE_PRIVATE);
 
@@ -298,6 +304,12 @@ public class MainMenu extends AppCompatActivity {
                                     userDesignations = new ArrayList<>();
                                     isApproved = 0;
                                     isLeaveApproved = 0;
+
+                                    SharedPreferences.Editor widgetEditor = attendanceWidgetPreferences.edit();
+                                    widgetEditor.remove(WIDGET_EMP_ID);
+                                    widgetEditor.remove(WIDGET_TRACKER_FLAG);
+                                    widgetEditor.apply();
+                                    widgetEditor.commit();
 
                                     SharedPreferences.Editor editor1 = sharedPreferences.edit();
                                     editor1.remove(USER_NAME);

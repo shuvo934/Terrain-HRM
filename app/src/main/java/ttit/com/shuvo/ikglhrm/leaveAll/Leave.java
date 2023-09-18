@@ -152,8 +152,8 @@ public class Leave extends AppCompatActivity {
 
         Date c = Calendar.getInstance().getTime();
 
-        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yy", Locale.getDefault());
-        SimpleDateFormat mmm = new SimpleDateFormat("MMMM", Locale.getDefault());
+        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
+        SimpleDateFormat mmm = new SimpleDateFormat("MMMM", Locale.ENGLISH);
 
         String monnnn = mmm.format(c);
 
@@ -276,8 +276,8 @@ public class Leave extends AppCompatActivity {
                 String lastformattedYear = "";
                 String lastdateView = "";
 
-                SimpleDateFormat df = new SimpleDateFormat("yyyy", Locale.getDefault());
-                SimpleDateFormat sdf = new SimpleDateFormat("MM",Locale.getDefault());
+                SimpleDateFormat df = new SimpleDateFormat("yyyy", Locale.ENGLISH);
+                SimpleDateFormat sdf = new SimpleDateFormat("MM",Locale.ENGLISH);
 
                 formattedYear = df.format(c);
                 monthValue = sdf.format(c);
@@ -305,7 +305,7 @@ public class Leave extends AppCompatActivity {
 
                 Date lastDayOfMonth = calendar1.getTime();
 
-                SimpleDateFormat sdff = new SimpleDateFormat("dd",Locale.getDefault());
+                SimpleDateFormat sdff = new SimpleDateFormat("dd",Locale.ENGLISH);
                 lastdateView = sdff.format(lastDayOfMonth);
 
                 int yearSelected;
@@ -390,7 +390,7 @@ public class Leave extends AppCompatActivity {
                         //selected_date = "01-"+mon+"-"+yearName;
                         refresh.setText("Month: "+monthName);
 
-                        SimpleDateFormat sss = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
+                        SimpleDateFormat sss = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
 
                         Date today = null;
                         try {
@@ -408,7 +408,7 @@ public class Leave extends AppCompatActivity {
 
                             Date lastDayOfMonth = calendar1.getTime();
 
-                            SimpleDateFormat sdff = new SimpleDateFormat("dd",Locale.getDefault());
+                            SimpleDateFormat sdff = new SimpleDateFormat("dd",Locale.ENGLISH);
                             String llll = sdff.format(lastDayOfMonth);
                             leaveDate =  llll+ "-" + mon +"-"+ yearName;
                         }

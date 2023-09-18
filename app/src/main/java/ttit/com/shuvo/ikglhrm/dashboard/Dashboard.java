@@ -7,32 +7,55 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.IntentSenderRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.work.Data;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
 import android.provider.Settings;
 import android.util.Base64;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RemoteViews;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -54,8 +77,17 @@ import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.LargeValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.Priority;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.play.core.appupdate.AppUpdateInfo;
 import com.google.android.play.core.appupdate.AppUpdateManager;
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
@@ -65,10 +97,12 @@ import com.google.android.play.core.install.model.AppUpdateType;
 import com.google.android.play.core.install.model.UpdateAvailability;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -88,6 +122,9 @@ import ttit.com.shuvo.ikglhrm.UserDesignation;
 import ttit.com.shuvo.ikglhrm.UserInfoList;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
 import ttit.com.shuvo.ikglhrm.attendance.Attendance;
+import ttit.com.shuvo.ikglhrm.attendance.att_widget.AttWidgetReceiver;
+import ttit.com.shuvo.ikglhrm.attendance.att_widget.AttendanceWidget;
+import ttit.com.shuvo.ikglhrm.attendance.att_widget.WidgetAttendanceWorker;
 import ttit.com.shuvo.ikglhrm.attendance.trackService.Service;
 import ttit.com.shuvo.ikglhrm.leaveAll.Leave;
 import ttit.com.shuvo.ikglhrm.payRoll.PayRollInfo;
@@ -106,7 +143,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Dashboard extends AppCompatActivity {
+public class Dashboard extends AppCompatActivity implements View.OnTouchListener {
 
     TextView userName;
     TextView designation;
@@ -171,6 +208,7 @@ public class Dashboard extends AppCompatActivity {
 
     SharedPreferences sharedPreferences;
     SharedPreferences sharedSchedule;
+    SharedPreferences attendanceWidgetPreferences;
     public static AlarmManager alarmManager;
 
     CardView userCard;
@@ -213,6 +251,10 @@ public class Dashboard extends AppCompatActivity {
     public static String TOTAL_TIME = "TOTAL_TIME";
     public static String STOPPED_TIME = "STOPPED_TIME";
 
+    public static final String WIDGET_FILE = "WIDGET_FILE";
+    public static final String WIDGET_EMP_ID = "WIDGET_EMP_ID";
+    public static final String WIDGET_TRACKER_FLAG = "WIDGET_TRACKER_FLAG";
+
     boolean loginLog_check;
     boolean checkEmpFlag = false;
 
@@ -228,6 +270,28 @@ public class Dashboard extends AppCompatActivity {
     boolean imageFound = false;
     TextView welcomeText;
     AppUpdateManager appUpdateManager;
+
+    float dX;
+    float dY;
+    int lastAction;
+    private static float downRawX, downRawY;
+    private final static float CLICK_DRAG_TOLERANCE = 10;
+
+    FusedLocationProviderClient fusedLocationProviderClient;
+    LocationManager locationManager;
+    LocationRequest locationRequest;
+    String inTime = "";
+    String address = "";
+    LatLng[] lastLatLongitude = {new LatLng(0, 0)};
+    String lat = "";
+    String lon = "";
+    Timestamp ts;
+    String timeToShow = "";
+    String officeLatitude = "";
+    String officeLongitude = "";
+    String coverage = "";
+    String machineCode = "";
+//    private LocationCallback locationCallback;
 
     ActivityResultLauncher<IntentSenderRequest> activityResultLauncher =
             registerForActivityResult(new ActivityResultContracts.StartIntentSenderForResult(),
@@ -258,6 +322,7 @@ public class Dashboard extends AppCompatActivity {
                             }
                         }
             });
+    FloatingActionButton floatingActionButton;
 
     @SuppressLint("HardwareIds")
     @Override
@@ -275,6 +340,14 @@ public class Dashboard extends AppCompatActivity {
         userImage = findViewById(R.id.user_pic_dashboard);
         welcomeText = findViewById(R.id.welcome_text_view);
         appUpdateManager = AppUpdateManagerFactory.create(Dashboard.this);
+        floatingActionButton = findViewById(R.id.attendance_shortcut);
+        floatingActionButton.setOnTouchListener(this);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                attendanceShortcutTriggered();
+            }
+        });
 
         int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
         String wt = "";
@@ -296,6 +369,8 @@ public class Dashboard extends AppCompatActivity {
         loginLog_check = in.getBooleanExtra("FROMMAINMENU", true);
 
         System.out.println("Log Needed? :" +loginLog_check);
+
+        attendanceWidgetPreferences = getSharedPreferences(WIDGET_FILE,MODE_PRIVATE);
 
         sharedPreferences = getSharedPreferences(LOGIN_ACTIVITY_FILE, MODE_PRIVATE);
         boolean loginfile = sharedPreferences.getBoolean(LOGIN_TF,false);
@@ -449,7 +524,7 @@ public class Dashboard extends AppCompatActivity {
         for (int i = 0 ; i < 10 ;i ++) {
             cal.add(Calendar.DAY_OF_YEAR, +1);
             Date calTime = cal.getTime();
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yy", Locale.getDefault());
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
             String ddd = simpleDateFormat.format(calTime);
 
             ddd = ddd.toUpperCase();
@@ -492,6 +567,12 @@ public class Dashboard extends AppCompatActivity {
                                     userDesignations = new ArrayList<>();
                                     isApproved = 0;
                                     isLeaveApproved = 0;
+
+                                    SharedPreferences.Editor widgetEditor = attendanceWidgetPreferences.edit();
+                                    widgetEditor.remove(WIDGET_EMP_ID);
+                                    widgetEditor.remove(WIDGET_TRACKER_FLAG);
+                                    widgetEditor.apply();
+                                    widgetEditor.commit();
 
                                     SharedPreferences.Editor editor1 = sharedPreferences.edit();
                                     editor1.remove(USER_NAME);
@@ -930,6 +1011,16 @@ public class Dashboard extends AppCompatActivity {
         }
     }
 
+    private void createNotificationChannelForWidget() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel notificationChannel = new NotificationChannel(getString(R.string.att_channel_id), "Attendance Info", NotificationManager.IMPORTANCE_DEFAULT);
+            notificationChannel.setDescription("Attendance from Widget");
+
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(notificationChannel);
+        }
+    }
+
     public void SalaryInit() {
         months = new ArrayList<>();
         salaryMonthLists = new ArrayList<>();
@@ -974,44 +1065,44 @@ public class Dashboard extends AppCompatActivity {
 
         Date c = Calendar.getInstance().getTime();
 
-        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yy", Locale.getDefault());
+        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
 
         formattedDate = df.format(c);
 
         Calendar cal =  Calendar.getInstance();
 
         cal.add(Calendar.MONTH, -1);
-        String previousMonthYear  = new SimpleDateFormat("MMM", Locale.getDefault()).format(cal.getTime());
+        String previousMonthYear  = new SimpleDateFormat("MMM", Locale.ENGLISH).format(cal.getTime());
         previousMonthYear = previousMonthYear.toUpperCase();
         months.add(new SalaryMonthList(previousMonthYear,"0"));
         System.out.println(previousMonthYear);
 
         cal.add(Calendar.MONTH, -1);
-        previousMonthYear  = new SimpleDateFormat("MMM", Locale.getDefault()).format(cal.getTime());
+        previousMonthYear  = new SimpleDateFormat("MMM", Locale.ENGLISH).format(cal.getTime());
         previousMonthYear = previousMonthYear.toUpperCase();
         months.add(new SalaryMonthList(previousMonthYear,"0"));
         System.out.println(previousMonthYear);
 
         cal.add(Calendar.MONTH, -1);
-        previousMonthYear  = new SimpleDateFormat("MMM", Locale.getDefault()).format(cal.getTime());
+        previousMonthYear  = new SimpleDateFormat("MMM", Locale.ENGLISH).format(cal.getTime());
         previousMonthYear = previousMonthYear.toUpperCase();
         months.add(new SalaryMonthList(previousMonthYear,"0"));
         System.out.println(previousMonthYear);
 
         cal.add(Calendar.MONTH, -1);
-        previousMonthYear  = new SimpleDateFormat("MMM", Locale.getDefault()).format(cal.getTime());
+        previousMonthYear  = new SimpleDateFormat("MMM", Locale.ENGLISH).format(cal.getTime());
         previousMonthYear = previousMonthYear.toUpperCase();
         months.add(new SalaryMonthList(previousMonthYear,"0"));
         System.out.println(previousMonthYear);
 
         cal.add(Calendar.MONTH, -1);
-        previousMonthYear  = new SimpleDateFormat("MMM", Locale.getDefault()).format(cal.getTime());
+        previousMonthYear  = new SimpleDateFormat("MMM", Locale.ENGLISH).format(cal.getTime());
         previousMonthYear = previousMonthYear.toUpperCase();
         months.add(new SalaryMonthList(previousMonthYear,"0"));
         System.out.println(previousMonthYear);
 
         cal.add(Calendar.MONTH, -1);
-        previousMonthYear  = new SimpleDateFormat("MMM", Locale.getDefault()).format(cal.getTime());
+        previousMonthYear  = new SimpleDateFormat("MMM", Locale.ENGLISH).format(cal.getTime());
         previousMonthYear = previousMonthYear.toUpperCase();
         months.add(new SalaryMonthList(previousMonthYear,"0"));
         System.out.println(previousMonthYear);
@@ -1021,11 +1112,11 @@ public class Dashboard extends AppCompatActivity {
 
         Date c = Calendar.getInstance().getTime();
 
-        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yy", Locale.getDefault());
+        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
 
         lastDate = df.format(c);
 
-        SimpleDateFormat sdf = new SimpleDateFormat("MMM-yy", Locale.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM-yy", Locale.ENGLISH);
 
         beginDate = sdf.format(c);
         beginDate = "01-"+beginDate;
@@ -1062,7 +1153,7 @@ public class Dashboard extends AppCompatActivity {
     public void LeaveInit() {
         Date c = Calendar.getInstance().getTime();
 
-        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yy", Locale.getDefault());
+        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
 
         leaveDate = df.format(c);
 
@@ -1085,6 +1176,62 @@ public class Dashboard extends AppCompatActivity {
         leaveChart.getAxisLeft().setAxisMinimum(0);
 
         leaveChart.getAxisRight().setEnabled(false);
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        int action = event.getAction();
+        if (action == MotionEvent.ACTION_DOWN) {
+            downRawX = event.getRawX();
+            downRawY = event.getRawY();
+            dX = v.getX() - downRawX;
+            dY = v.getY() - downRawY;
+            return true; // Consumed
+        }
+        else if (action == MotionEvent.ACTION_MOVE) {
+            int viewWidth = v.getWidth();
+            int viewHeight = v.getHeight();
+
+            View viewParent = (View)v.getParent();
+            int parentWidth = viewParent.getWidth();
+            int parentHeight = viewParent.getHeight();
+
+            float newX = event.getRawX() + dX;
+            newX = Math.max(0, newX); // Don't allow the FAB past the left hand side of the parent
+            newX = Math.min(parentWidth - viewWidth, newX); // Don't allow the FAB past the right hand side of the parent
+
+            float newY = event.getRawY() + dY;
+            newY = Math.max(0, newY); // Don't allow the FAB past the top of the parent
+            newY = Math.min(parentHeight - viewHeight, newY); // Don't allow the FAB past the bottom of the parent
+
+            v.animate()
+                    .x(newX)
+                    .y(newY)
+                    .setDuration(0)
+                    .start();
+
+            return true; // Consumed
+
+        }
+        else if (action == MotionEvent.ACTION_UP) {
+
+            float upRawX = event.getRawX();
+            float upRawY = event.getRawY();
+
+            float upDX = upRawX - downRawX;
+            float upDY = upRawY - downRawY;
+
+            if (Math.abs(upDX) < CLICK_DRAG_TOLERANCE && Math.abs(upDY) < CLICK_DRAG_TOLERANCE) { // A click
+                return v.performClick();
+            }
+            else { // A drag
+                return true; // Consumed
+            }
+
+        }
+        else {
+            return v.onTouchEvent(event);
+        }
     }
 
     public static class MyAxisValueFormatter extends ValueFormatter {
@@ -2876,6 +3023,14 @@ public class Dashboard extends AppCompatActivity {
         String trackerFlagUrl = "http://103.56.208.123:8001/apex/ttrams/utility/getTrackerFlag/"+emp_id+"";
         String loginLogUrl = "http://103.56.208.123:8001/apex/ttrams/dashboard/loginLog";
         String userImageUrl = "http://103.56.208.123:8001/apex/ttrams/utility/getUserImage/"+emp_code+"";
+        System.out.println(empFlagUrl);
+        System.out.println(salaryDataUrl);
+        System.out.println(attendDataUrl);
+        System.out.println(leaveDataUrl);
+        System.out.println(trackerFlagUrl);
+        System.out.println(loginLogUrl);
+        System.out.println(userImageUrl);
+
 
         RequestQueue requestQueue = Volley.newRequestQueue(Dashboard.this);
 
@@ -3363,6 +3518,7 @@ public class Dashboard extends AppCompatActivity {
                         });
                     }
 
+                    createNotificationChannelForWidget();
 
                     if (trackerAvailable == 1) {
                         sharedSchedule = getSharedPreferences(SCHEDULING_FILE, MODE_PRIVATE);
@@ -3431,6 +3587,12 @@ public class Dashboard extends AppCompatActivity {
                                     isApproved = 0;
                                     isLeaveApproved = 0;
 
+                                    SharedPreferences.Editor widgetEditor = attendanceWidgetPreferences.edit();
+                                    widgetEditor.remove(WIDGET_EMP_ID);
+                                    widgetEditor.remove(WIDGET_TRACKER_FLAG);
+                                    widgetEditor.apply();
+                                    widgetEditor.commit();
+
                                     SharedPreferences.Editor editor1 = sharedPreferences.edit();
                                     editor1.remove(USER_NAME);
                                     editor1.remove(USER_F_NAME);
@@ -3461,6 +3623,7 @@ public class Dashboard extends AppCompatActivity {
                                     editor1.commit();
 
                                     if (trackerAvailable == 1) {
+                                        sharedSchedule = getSharedPreferences(SCHEDULING_FILE, MODE_PRIVATE);
                                         SharedPreferences.Editor editor = sharedSchedule.edit();
                                         editor.remove(SCHEDULING_EMP_ID);
                                         editor.remove(TRIGGERING);
@@ -3498,6 +3661,8 @@ public class Dashboard extends AppCompatActivity {
                 Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
                 positive.setOnClickListener(v -> {
 
+                    waitProgress.show(getSupportFragmentManager(),"WaitBar");
+                    waitProgress.setCancelable(false);
                     getAllData();
                     dialog.dismiss();
                 });
@@ -3531,6 +3696,8 @@ public class Dashboard extends AppCompatActivity {
             Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
             positive.setOnClickListener(v -> {
 
+                waitProgress.show(getSupportFragmentManager(),"WaitBar");
+                waitProgress.setCancelable(false);
                 getAllData();
                 dialog.dismiss();
             });
@@ -3551,5 +3718,404 @@ public class Dashboard extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    public void attendanceShortcutTriggered() {
+        attendanceWidgetPreferences = getSharedPreferences(WIDGET_FILE,MODE_PRIVATE);
+        emp_id = attendanceWidgetPreferences.getString(WIDGET_EMP_ID,"");
+        String tracker_flag = attendanceWidgetPreferences.getString(WIDGET_TRACKER_FLAG,"");
+
+        if (!emp_id.isEmpty()) {
+            if (tracker_flag.equals("1")) {
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(this, getString(R.string.att_channel_id))
+                        .setSmallIcon(R.drawable.thrn_logo)
+                        .setContentTitle("Attendance System")
+                        .setContentText("Your tracking flag is active. You need to give attendance from the app.")
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+                NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
+                notificationManagerCompat.notify(222, builder.build());
+            }
+            else {
+                doWork();
+            }
+        }
+        else {
+            Toast.makeText(this, "Please Login to Terrain HRM", Toast.LENGTH_SHORT).show();
+        }
+    }
+    private LocationCallback locationCallback = new LocationCallback() {
+        @Override
+        public void onLocationResult(@NonNull LocationResult locationResult) {
+            if (locationResult == null) {
+                System.out.println("ADADADA!!!");
+                return;
+            }
+            for (Location location : locationResult.getLocations()) {
+                System.out.println("ADADAD!!!!!A!!!");
+                Log.i("LocationFused ", location.toString());
+                SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yy, hh:mm:ss aa", Locale.ENGLISH);
+                SimpleDateFormat dftoShow = new SimpleDateFormat("hh:mm aa", Locale.ENGLISH);
+                lastLatLongitude[0] = new LatLng(location.getLatitude(), location.getLongitude());
+                lat = String.valueOf(lastLatLongitude[0].latitude);
+                lon = String.valueOf(lastLatLongitude[0].longitude);
+                Date c = Calendar.getInstance().getTime();
+                Date date = new Date();
+                ts = new Timestamp(date.getTime());
+                System.out.println(ts.toString());
+                inTime = df.format(c);
+                timeToShow = dftoShow.format(c);
+                System.out.println("IN TIME : " + inTime);
+                //getAddress(lastLatLongitude[0].latitude,lastLatLongitude[0].longitude);
+                stopLocationUpdate();
+            }
+        }
+    };
+
+    private void startLocationUpdates() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+
+            getNotification("Attendance System","Please check your Location Permission to access this feature.");
+            return;
+        }
+        fusedLocationProviderClient.requestLocationUpdates(locationRequest,locationCallback, Looper.getMainLooper());
+        System.out.println("ADADADA");
+    }
+    private void stopLocationUpdate() {
+        fusedLocationProviderClient.removeLocationUpdates(locationCallback);
+        getOfficeLocation();
+    }
+    public void doWork() {
+        waitProgress.show(getSupportFragmentManager(),"WaitBar");
+        waitProgress.setCancelable(false);
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getApplicationContext());
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 3000)
+                .setWaitForAccurateLocation(false)
+                .setMinUpdateIntervalMillis(1000)
+                .setMaxUpdateDelayMillis(1500)
+                .build();
+
+        boolean gps = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+        if (gps) {
+//            locationCallback = new LocationCallback() {
+//                @Override
+//                public void onLocationResult(LocationResult locationResult) {
+//                    super.onLocationResult(locationResult);
+//                }
+//            };
+
+//            try {
+//                fusedLocationProviderClient.requestLocationUpdates(locationRequest, null);
+//            } catch (SecurityException unlikely) {
+//                //Utils.setRequestingLocationUpdates(this, false);
+//                Log.e("TAG", "Lost location permission. Could not request updates. " + unlikely);
+//                getNotification("Attendance System", "Lost location permission. Could not request updates.");
+//            }
+//            try {
+//                fusedLocationProviderClient
+//                        .getLastLocation()
+//                        .addOnCompleteListener(task -> {
+//                            if (task.isSuccessful() && task.getResult() != null) {
+//                                Location mLocation = task.getResult();
+//                                Log.d("TAG", "Location : " + mLocation);
+//                                fusedLocationProviderClient.removeLocationUpdates(locationCallback);
+//                                SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yy, hh:mm:ss aa", Locale.ENGLISH);
+//                                SimpleDateFormat dftoShow = new SimpleDateFormat("hh:mm aa", Locale.ENGLISH);
+//                                lastLatLongitude[0] = new LatLng(mLocation.getLatitude(), mLocation.getLongitude());
+//                                lat = String.valueOf(lastLatLongitude[0].latitude);
+//                                lon = String.valueOf(lastLatLongitude[0].longitude);
+//                                Date c = Calendar.getInstance().getTime();
+//                                Date date = new Date();
+//                                ts = new Timestamp(date.getTime());
+//                                System.out.println(ts.toString());
+//                                inTime = df.format(c);
+//                                timeToShow = dftoShow.format(c);
+//                                System.out.println("IN TIME : " + inTime);
+//                                getOfficeLocation();
+//                            } else {
+//                                task.addOnFailureListener(new OnFailureListener() {
+//                                    @Override
+//                                    public void onFailure(@NonNull Exception e) {
+//                                        e.printStackTrace();
+//                                    }
+//                                });
+//                                Log.w("TAG", "Failed to get location.");
+//                                getNotification("Attendance System", "Failed to get location.");
+//                            }
+//                        })
+//                        .addOnFailureListener(new OnFailureListener() {
+//                            @Override
+//                            public void onFailure(@NonNull Exception e) {
+//                                e.printStackTrace();
+//                            }
+//                        });
+//            }
+//            catch (SecurityException unlikely) {
+//                Log.e("TAG", "Lost location permission." + unlikely);
+//                getNotification("Attendance System", "Lost location permission.");
+//            }
+            startLocationUpdates();
+        } else {
+            getNotification("Attendance System", "Your GPS is disabled. Please enable it and try again.");
+        }
+    }
+
+    public void getOfficeLocation() {
+
+        String offLocationUrl = "http://103.56.208.123:8001/apex/ttrams/attendance/getOffLatLong/"+emp_id+"";
+
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+
+        StringRequest offLocReq = new StringRequest(Request.Method.GET, offLocationUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject offLocInfo = array.getJSONObject(i);
+                        officeLatitude = offLocInfo.getString("coa_latitude").equals("null") ? null : offLocInfo.getString("coa_latitude");
+                        officeLongitude = offLocInfo.getString("coa_longitude").equals("null") ? null : offLocInfo.getString("coa_longitude");
+                        coverage = offLocInfo.getString("coa_coverage").equals("null") ? null : offLocInfo.getString("coa_coverage");
+                    }
+                }
+                connected = true;
+                updateInfo();
+            }
+            catch (JSONException e) {
+                e.printStackTrace();
+                connected = false;
+                updateInfo();
+            }
+        }, error -> {
+            error.printStackTrace();
+            conn = false;
+            connected = false;
+            updateInfo();
+        });
+
+        requestQueue.add(offLocReq);
+    }
+
+    public void updateInfo() {
+        if (conn) {
+            if (connected) {
+                conn = false;
+                connected = false;
+                if (!inTime.isEmpty()) {
+                    LatLng c_latLng = new LatLng(0,0);
+                    if (officeLatitude != null && officeLongitude != null) {
+                        if (!officeLatitude.isEmpty() && !officeLongitude.isEmpty()) {
+                            c_latLng = new LatLng(Double.parseDouble(officeLatitude),Double.parseDouble(officeLongitude));
+                        }
+                    }
+                    if (c_latLng.latitude != 0 && c_latLng.longitude != 0) {
+                        float[] distance = new float[1];
+                        Location.distanceBetween(c_latLng.latitude,c_latLng.longitude,lastLatLongitude[0].latitude,lastLatLongitude[0].longitude,distance);
+
+                        float radius = 0;
+                        if (coverage != null) {
+                            if (!coverage.isEmpty()) {
+                                radius = Float.parseFloat(coverage);
+                            }
+                        }
+
+                        if (radius == 0) {
+                            machineCode = "3";
+                        } else {
+                            machineCode = "1";
+                        }
+
+                        if (distance[0] <= radius || radius == 0) {
+                            new CheckAddress().execute();
+                        }
+                        else {
+                            getNotification("Attendance System","You are not around your office area");
+                        }
+                    }
+                    else {
+                        machineCode = "3";
+                        new CheckAddress().execute();
+                    }
+                }
+                else {
+                    getNotification("Attendance System","Failed to get Location");
+                }
+            }
+            else {
+                getNotification("Attendance System","There is a network issue in the server. Please Try later.");
+            }
+        }
+        else {
+            getNotification("Attendance System","Please Check Your Internet Connection.");
+        }
+    }
+
+    public boolean isConnected() {
+        boolean connected = false;
+        boolean isMobile = false;
+        try {
+            ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+            @SuppressLint("MissingPermission") NetworkInfo nInfo = cm.getActiveNetworkInfo();
+            connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
+            return connected;
+        } catch (Exception e) {
+            Log.e("Connectivity Exception", e.getMessage());
+        }
+        return connected;
+    }
+    public boolean isOnline() {
+
+        Runtime runtime = Runtime.getRuntime();
+        try {
+            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+            int     exitValue = ipProcess.waitFor();
+            return (exitValue == 0);
+        }
+        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
+
+        return false;
+    }
+
+    public class CheckAddress extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (isConnected() && isOnline()) {
+                conn = true;
+                getAddress(Double.parseDouble(lat),Double.parseDouble(lon));
+            }
+            else {
+                conn = false;
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            if (conn) {
+                conn = false;
+                giveAttendance();
+            }
+            else {
+                getNotification("Attendance System","Please Check Your Internet Connection.");
+            }
+
+        }
+    }
+
+    public void getAddress(double lat, double lng) {
+        Geocoder geocoder = new Geocoder(this, Locale.ENGLISH);
+        try {
+            List<Address> addresses = geocoder.getFromLocation(lat, lng, 1);
+            if (Geocoder.isPresent()) {
+                Address obj = addresses.get(0);
+                String adds = obj.getAddressLine(0);
+                address = adds;
+                System.out.println("Ekhane ashbe 1st");
+            } else {
+                address = "";
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            address = "";
+        }
+    }
+
+    public void giveAttendance() {
+        conn = false;
+        connected = false;
+
+        String attendaceUrl = "http://103.56.208.123:8001/apex/ttrams/attendance/giveAttendance";
+
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+
+        StringRequest attReq = new StringRequest(Request.Method.POST, attendaceUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String string_out = jsonObject.getString("string_out");
+                if (string_out.equals("Successfully Created")) {
+                    connected = true;
+                }
+                else {
+                    System.out.println(string_out);
+                    connected = false;
+                }
+                updateLayout();
+            }
+            catch (JSONException e) {
+                e.printStackTrace();
+                connected = false;
+                updateLayout();
+            }
+        }, error -> {
+            error.printStackTrace();
+            conn = false;
+            connected = false;
+            updateLayout();
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("P_EMP_ID",emp_id);
+                headers.put("P_PUNCH_TIME",ts.toString());
+                headers.put("P_MACHINE_CODE",machineCode);
+                headers.put("P_LATITUDE",lat);
+                headers.put("P_LONGITUDE",lon);
+                headers.put("P_ADDRESS",address);
+                return  headers;
+            }
+        };
+
+        requestQueue.add(attReq);
+    }
+
+    private  void updateLayout() {
+        if (conn) {
+            if (connected) {
+                connected = false;
+                conn = false;
+                getNotification("Attendance System", "Your Attendance is Recorded at "+timeToShow+".");
+
+            }
+            else {
+                getNotification("Attendance System", "There is a network issue in the server. Please Try later.");
+            }
+        }
+        else {
+            getNotification("Attendance System", "Please Check Your Internet Connection.");
+        }
+    }
+
+    public void getNotification(String title, String msg) {
+        waitProgress.dismiss();
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, getString(R.string.att_channel_id))
+                .setSmallIcon(R.drawable.thrn_logo)
+                .setContentTitle(title)
+                .setContentText(msg)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
+        notificationManagerCompat.notify(222, builder.build());
     }
 }

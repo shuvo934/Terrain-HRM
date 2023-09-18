@@ -207,7 +207,7 @@ public class LeaveStatus extends AppCompatActivity {
 
                 String formattedDate = "";
 
-                SimpleDateFormat df = new SimpleDateFormat("yyyy", Locale.getDefault());
+                SimpleDateFormat df = new SimpleDateFormat("yyyy", Locale.ENGLISH);
 
                 formattedDate = df.format(c);
 
@@ -289,7 +289,7 @@ public class LeaveStatus extends AppCompatActivity {
                         selected_month_full = monthName;
                         year_full = String.valueOf(year);
                         selected_date = "15-"+mon+"-"+yearName;
-                        SimpleDateFormat sss = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
+                        SimpleDateFormat sss = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
 
                         Date today = null;
                         try {
@@ -307,7 +307,7 @@ public class LeaveStatus extends AppCompatActivity {
 
                             Date lastDayOfMonth = calendar1.getTime();
 
-                            SimpleDateFormat sdff = new SimpleDateFormat("dd",Locale.getDefault());
+                            SimpleDateFormat sdff = new SimpleDateFormat("dd",Locale.ENGLISH);
                             String llll = sdff.format(lastDayOfMonth);
                             selected_date =  llll+ "-" + mon +"-"+ yearName;
                         }
@@ -330,10 +330,10 @@ public class LeaveStatus extends AppCompatActivity {
         });
 
         Date c = Calendar.getInstance().getTime();
-        SimpleDateFormat sss = new SimpleDateFormat("MMM-yy", Locale.getDefault());
+        SimpleDateFormat sss = new SimpleDateFormat("MMM-yy", Locale.ENGLISH);
         selected_date = sss.format(c);
         String selected_date1 = "15-" + selected_date;
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
 
         Date today = null;
         try {
@@ -351,7 +351,7 @@ public class LeaveStatus extends AppCompatActivity {
 
             Date lastDayOfMonth = calendar1.getTime();
 
-            SimpleDateFormat sdff = new SimpleDateFormat("dd",Locale.getDefault());
+            SimpleDateFormat sdff = new SimpleDateFormat("dd",Locale.ENGLISH);
             String llll = sdff.format(lastDayOfMonth);
             selected_date1 =  llll+ "-" +selected_date;
             selected_date = selected_date1;
@@ -359,13 +359,13 @@ public class LeaveStatus extends AppCompatActivity {
         System.out.println(selected_date);
 
 
-        SimpleDateFormat month_date = new SimpleDateFormat("MMMM",Locale.getDefault());
+        SimpleDateFormat month_date = new SimpleDateFormat("MMMM",Locale.ENGLISH);
         String month_name = month_date.format(c);
         month_name = month_name.toUpperCase();
         System.out.println(month_name);
         selected_month_full = month_name;
 
-        SimpleDateFormat presentYear = new SimpleDateFormat("yyyy",Locale.getDefault());
+        SimpleDateFormat presentYear = new SimpleDateFormat("yyyy",Locale.ENGLISH);
         String yyyy = presentYear.format(c);
         year_full = yyyy;
 

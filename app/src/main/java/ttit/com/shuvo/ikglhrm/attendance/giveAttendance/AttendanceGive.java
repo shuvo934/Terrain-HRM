@@ -305,8 +305,8 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
         final LatLng[] lastLatLongitude = {new LatLng(0, 0)};
 
 
-        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yy, hh:mm:ss aa", Locale.getDefault());
-        SimpleDateFormat dftoShow = new SimpleDateFormat("hh:mm aa", Locale.getDefault());
+        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yy, hh:mm:ss aa", Locale.ENGLISH);
+        SimpleDateFormat dftoShow = new SimpleDateFormat("hh:mm aa", Locale.ENGLISH);
 
         locationCallback = new LocationCallback() {
             @Override
@@ -532,7 +532,7 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
 
 
     public void getAddress(double lat, double lng) {
-        Geocoder geocoder = new Geocoder(AttendanceGive.this, Locale.getDefault());
+        Geocoder geocoder = new Geocoder(AttendanceGive.this, Locale.ENGLISH);
         try {
             List<Address> addresses = geocoder.getFromLocation(lat, lng, 1);
             if (Geocoder.isPresent()) {

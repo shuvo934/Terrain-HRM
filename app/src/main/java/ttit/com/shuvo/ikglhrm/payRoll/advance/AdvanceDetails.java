@@ -194,7 +194,7 @@ public class AdvanceDetails extends AppCompatActivity {
 
                 String formattedDate = "";
 
-                SimpleDateFormat df = new SimpleDateFormat("yyyy", Locale.getDefault());
+                SimpleDateFormat df = new SimpleDateFormat("yyyy", Locale.ENGLISH);
 
                 formattedDate = df.format(c);
 
@@ -292,19 +292,19 @@ public class AdvanceDetails extends AppCompatActivity {
         });
 
         Date c = Calendar.getInstance().getTime();
-        SimpleDateFormat sss = new SimpleDateFormat("MMM-yy", Locale.getDefault());
+        SimpleDateFormat sss = new SimpleDateFormat("MMM-yy", Locale.ENGLISH);
         selected_date = sss.format(c);
         selected_date = "01-" + selected_date;
         System.out.println(selected_date);
 
 
-        SimpleDateFormat month_date = new SimpleDateFormat("MMMM",Locale.getDefault());
+        SimpleDateFormat month_date = new SimpleDateFormat("MMMM",Locale.ENGLISH);
         String month_name = month_date.format(c);
         month_name = month_name.toUpperCase();
         System.out.println(month_name);
         selected_month_full = month_name;
 
-        SimpleDateFormat presentYear = new SimpleDateFormat("yyyy",Locale.getDefault());
+        SimpleDateFormat presentYear = new SimpleDateFormat("yyyy",Locale.ENGLISH);
         String yyyy = presentYear.format(c);
         year_full = yyyy;
 

@@ -20,6 +20,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
     <uses-permission android:name="android.permission.CALL_PHONE" />
 <!--    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />-->
     <uses-permission
@@ -154,6 +155,24 @@
         <receiver
             android:name=".scheduler.Uploader"
             android:enabled="true" />
+
+        <receiver android:name=".attendance.att_widget.AttendanceWidget"
+            android:enabled="false"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/attendance_app_widget_info"/>
+        </receiver>
+
+        <receiver android:name=".attendance.att_widget.AttWidgetReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="COM_TTIT_ATTENDANCE"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

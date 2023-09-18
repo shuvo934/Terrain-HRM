@@ -99,7 +99,7 @@ public class MyWorker extends Worker {
         for (int i = 0 ; i < 10 ;i ++) {
             cal.add(Calendar.DAY_OF_YEAR, +1);
             Date calTime = cal.getTime();
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yy", Locale.getDefault());
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
             String ddd = simpleDateFormat.format(calTime);
 
             ddd = ddd.toUpperCase();
@@ -327,7 +327,7 @@ public class MyWorker extends Worker {
 //
 //
 //                Timestamp timestamp = new Timestamp(c.getTime());
-//                //SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.getDefault());
+//                //SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.ENGLISH);
 //
 //                ResultSet rs2 = stmt.executeQuery("SELECT TO_CHAR(ELR_DATE,'DD-MON-RR') ELR_DATE FROM EMP_LOCATION_RECORD WHERE ELR_EMP_ID = "+emp_id+"\n" +
 //                        "AND ELR_DATE > SYSDATE-15\n" +
@@ -359,7 +359,7 @@ public class MyWorker extends Worker {
 //                            System.out.println(elr_id);
 //                        }
 //
-//                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yy",Locale.getDefault());
+//                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yy",Locale.ENGLISH);
 //
 //                        Date gpxDate = null;
 //

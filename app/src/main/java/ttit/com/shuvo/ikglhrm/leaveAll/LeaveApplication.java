@@ -255,7 +255,7 @@ public class LeaveApplication extends AppCompatActivity {
 
         Date c = Calendar.getInstance().getTime();
 
-        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yy", Locale.getDefault());
+        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
 
         formattedDate = df.format(c);
 
@@ -484,7 +484,7 @@ public class LeaveApplication extends AppCompatActivity {
                                     Date nowDate = null;
                                     Date givenDate = null;
 
-                                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy", Locale.getDefault());
+                                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
                                     try {
                                         nowDate = sdf.parse(today);
                                         givenDate = sdf.parse(updateDate);
@@ -561,7 +561,7 @@ public class LeaveApplication extends AppCompatActivity {
                                     Date nowDate = null;
                                     Date givenDate = null;
 
-                                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy", Locale.getDefault());
+                                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
                                     try {
                                         nowDate = sdf.parse(today);
                                         givenDate = sdf.parse(updateDate);
@@ -702,7 +702,7 @@ public class LeaveApplication extends AppCompatActivity {
                                     Date nowDate = null;
                                     Date givenDate = null;
 
-                                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy", Locale.getDefault());
+                                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
                                     try {
                                         nowDate = sdf.parse(today);
                                         givenDate = sdf.parse(updateDate);
@@ -779,7 +779,7 @@ public class LeaveApplication extends AppCompatActivity {
                                     Date nowDate = null;
                                     Date givenDate = null;
 
-                                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy", Locale.getDefault());
+                                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
                                     try {
                                         nowDate = sdf.parse(today);
                                         givenDate = sdf.parse(updateDate);

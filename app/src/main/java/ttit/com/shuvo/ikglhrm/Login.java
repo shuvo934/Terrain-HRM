@@ -120,6 +120,11 @@ public class Login extends AppCompatActivity {
 
     SharedPreferences sharedLogin;
 
+    SharedPreferences attendanceWidgetPreferences;
+    public static final String WIDGET_FILE = "WIDGET_FILE";
+    public static final String WIDGET_EMP_ID = "WIDGET_EMP_ID";
+    public static final String WIDGET_TRACKER_FLAG = "WIDGET_TRACKER_FLAG";
+
     String getUserName = "";
     String getPassword = "";
     boolean getChecked = false;
@@ -131,6 +136,7 @@ public class Login extends AppCompatActivity {
     String emp_id = "";
     String emp_code = "";
     int live_loc_flag = 0;
+    String tracker_flag = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -171,6 +177,7 @@ public class Login extends AppCompatActivity {
 //        database = findViewById(R.id.database_spinner);
 
         sharedLogin = getSharedPreferences(LOGIN_ACTIVITY_FILE,MODE_PRIVATE);
+        attendanceWidgetPreferences = getSharedPreferences(WIDGET_FILE,MODE_PRIVATE);
 
         sharedpreferences = getSharedPreferences(MyPREFERENCES,MODE_PRIVATE);
         getUserName = sharedpreferences.getString(user_emp_code,null);
@@ -1059,6 +1066,7 @@ public class Login extends AppCompatActivity {
                     for (int i = 0; i < array.length(); i++) {
                         JSONObject livLocFlInfo = array.getJSONObject(i);
                         live_loc_flag = livLocFlInfo.getInt("emp_live_loc_tracker_flag");
+                        tracker_flag = livLocFlInfo.getString("emp_timeline_tracker_flag");
                     }
                 }
                 requestQueue.add(updateFlag);
@@ -1200,6 +1208,15 @@ public class Login extends AppCompatActivity {
                                 } else {
                                     System.out.println("Not Remembered");
                                 }
+
+                                SharedPreferences.Editor widgetEditor = attendanceWidgetPreferences.edit();
+                                widgetEditor.remove(WIDGET_EMP_ID);
+                                widgetEditor.remove(WIDGET_TRACKER_FLAG);
+
+                                widgetEditor.putString(WIDGET_EMP_ID, userInfoLists.get(0).getEmp_id());
+                                widgetEditor.putString(WIDGET_TRACKER_FLAG, tracker_flag);
+                                widgetEditor.apply();
+                                widgetEditor.commit();
 
                                 SharedPreferences.Editor editor1 = sharedLogin.edit();
                                 editor1.remove(USER_NAME);

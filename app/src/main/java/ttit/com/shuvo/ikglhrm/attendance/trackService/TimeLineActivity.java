@@ -250,7 +250,7 @@ public class TimeLineActivity extends AppCompatActivity implements OnMapReadyCal
                         firstTime = timelist.get(0);
                         lastTime = timelist.get(timelist.size()-1);
 
-                        SimpleDateFormat sdfTime = new SimpleDateFormat("hh:mm a", Locale.getDefault());
+                        SimpleDateFormat sdfTime = new SimpleDateFormat("hh:mm a", Locale.ENGLISH);
 
                         Date first = null;
                         Date last = null;
@@ -395,7 +395,7 @@ public class TimeLineActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     public String getAddress(double lat, double lng) {
-        Geocoder geocoder = new Geocoder(TimeLineActivity.this, Locale.getDefault());
+        Geocoder geocoder = new Geocoder(TimeLineActivity.this, Locale.ENGLISH);
         try {
             List<Address> addresses = geocoder.getFromLocation(lat, lng, 1);
             if (Geocoder.isPresent()) {

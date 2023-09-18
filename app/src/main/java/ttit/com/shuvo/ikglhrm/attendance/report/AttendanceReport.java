@@ -267,8 +267,8 @@ public class AttendanceReport extends AppCompatActivity {
                 String lastformattedYear = "";
                 String lastdateView = "";
 
-                SimpleDateFormat df = new SimpleDateFormat("yyyy", Locale.getDefault());
-                SimpleDateFormat sdf = new SimpleDateFormat("MM",Locale.getDefault());
+                SimpleDateFormat df = new SimpleDateFormat("yyyy", Locale.ENGLISH);
+                SimpleDateFormat sdf = new SimpleDateFormat("MM",Locale.ENGLISH);
 
                 formattedYear = df.format(c);
                 monthValue = sdf.format(c);
@@ -296,7 +296,7 @@ public class AttendanceReport extends AppCompatActivity {
 
                 Date lastDayOfMonth = calendar1.getTime();
 
-                SimpleDateFormat sdff = new SimpleDateFormat("dd",Locale.getDefault());
+                SimpleDateFormat sdff = new SimpleDateFormat("dd",Locale.ENGLISH);
                 lastdateView = sdff.format(lastDayOfMonth);
 
                 int yearSelected;
@@ -381,7 +381,7 @@ public class AttendanceReport extends AppCompatActivity {
                         //selected_date = "01-"+mon+"-"+yearName;
                         selecetMonth.setText(monthName + "-" + year);
                         selectMonthLay.setHint("Month");
-                        SimpleDateFormat sss = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
+                        SimpleDateFormat sss = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
 
                         Date today = null;
                         try {
@@ -399,7 +399,7 @@ public class AttendanceReport extends AppCompatActivity {
 
                             Date lastDayOfMonth = calendar1.getTime();
 
-                            SimpleDateFormat sdff = new SimpleDateFormat("dd",Locale.getDefault());
+                            SimpleDateFormat sdff = new SimpleDateFormat("dd",Locale.ENGLISH);
                             String llll = sdff.format(lastDayOfMonth);
                             lastDate =  llll+ "-" + mon +"-"+ yearName;
 
@@ -567,7 +567,7 @@ public class AttendanceReport extends AppCompatActivity {
 //                    Date bDate = null;
 //                    Date eDate = null;
 //
-//                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy", Locale.getDefault());
+//                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
 //
 //                    try {
 //                        bDate = sdf.parse(firstDate);
@@ -598,8 +598,8 @@ public class AttendanceReport extends AppCompatActivity {
 //        });
 
         Date c = Calendar.getInstance().getTime();
-        SimpleDateFormat sss = new SimpleDateFormat("MMM-yyyy", Locale.getDefault());
-        SimpleDateFormat sdff = new SimpleDateFormat("dd-MMM-yyyy",Locale.getDefault());
+        SimpleDateFormat sss = new SimpleDateFormat("MMM-yyyy", Locale.ENGLISH);
+        SimpleDateFormat sdff = new SimpleDateFormat("dd-MMM-yyyy",Locale.ENGLISH);
         firstDate = sss.format(c);
         firstDate = "01-" + firstDate;
         System.out.println(firstDate);
@@ -625,16 +625,16 @@ public class AttendanceReport extends AppCompatActivity {
 
         }
 
-        SimpleDateFormat month_date = new SimpleDateFormat("MMMM",Locale.getDefault());
+        SimpleDateFormat month_date = new SimpleDateFormat("MMMM",Locale.ENGLISH);
         String month_name = month_date.format(c);
         month_name = month_name.toUpperCase();
         System.out.println(month_name);
 
-        SimpleDateFormat monthNumb = new SimpleDateFormat("MM",Locale.getDefault());
+        SimpleDateFormat monthNumb = new SimpleDateFormat("MM",Locale.ENGLISH);
         String monthNNN = monthNumb.format(c);
 
 
-        SimpleDateFormat presentYear = new SimpleDateFormat("yyyy",Locale.getDefault());
+        SimpleDateFormat presentYear = new SimpleDateFormat("yyyy",Locale.ENGLISH);
         String yyyy = presentYear.format(c);
 
         selecetMonth.setText(month_name+"-"+yyyy);
@@ -1090,8 +1090,8 @@ public class AttendanceReport extends AppCompatActivity {
 //
 //                String inStatus = "";
 //
-//                SimpleDateFormat tt = new SimpleDateFormat("hh:mm:ss aa", Locale.getDefault());
-//                SimpleDateFormat newtt = new SimpleDateFormat("hh:mm aa",Locale.getDefault());
+//                SimpleDateFormat tt = new SimpleDateFormat("hh:mm:ss aa", Locale.ENGLISH);
+//                SimpleDateFormat newtt = new SimpleDateFormat("hh:mm aa",Locale.ENGLISH);
 //
 //                if (inTime == null) {
 //                    inTime = "";
@@ -1479,8 +1479,8 @@ public class AttendanceReport extends AppCompatActivity {
 
                         String inStatus = "";
 
-                        SimpleDateFormat tt = new SimpleDateFormat("hh:mm:ss aa", Locale.getDefault());
-                        SimpleDateFormat newtt = new SimpleDateFormat("hh:mm aa",Locale.getDefault());
+                        SimpleDateFormat tt = new SimpleDateFormat("hh:mm:ss aa", Locale.ENGLISH);
+                        SimpleDateFormat newtt = new SimpleDateFormat("hh:mm aa",Locale.ENGLISH);
 
                         if (inTime == null) {
                             inTime = "";

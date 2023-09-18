@@ -227,20 +227,20 @@ public class Attendance extends AppCompatActivity {
 
         Date c = Calendar.getInstance().getTime();
 
-        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yy", Locale.getDefault());
+        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
 
         lastDate = df.format(c);
 
-        SimpleDateFormat dfffff = new SimpleDateFormat("dd-MMMM-yyyy", Locale.getDefault());
+        SimpleDateFormat dfffff = new SimpleDateFormat("dd-MMMM-yyyy", Locale.ENGLISH);
 
         lastDateForAttBot = dfffff.format(c);
 
-        SimpleDateFormat sdf = new SimpleDateFormat("MMM-yy", Locale.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM-yy", Locale.ENGLISH);
 
         beginDate = sdf.format(c);
         beginDate = "01-"+beginDate;
 
-        SimpleDateFormat mon = new SimpleDateFormat("MMMM",Locale.getDefault());
+        SimpleDateFormat mon = new SimpleDateFormat("MMMM",Locale.ENGLISH);
 
         String mmm = mon.format(c);
 
@@ -328,8 +328,8 @@ public class Attendance extends AppCompatActivity {
                 String lastformattedYear = "";
                 String lastdateView = "";
 
-                SimpleDateFormat df = new SimpleDateFormat("yyyy", Locale.getDefault());
-                SimpleDateFormat sdf = new SimpleDateFormat("MM",Locale.getDefault());
+                SimpleDateFormat df = new SimpleDateFormat("yyyy", Locale.ENGLISH);
+                SimpleDateFormat sdf = new SimpleDateFormat("MM",Locale.ENGLISH);
 
                 formattedYear = df.format(c);
                 monthValue = sdf.format(c);
@@ -357,7 +357,7 @@ public class Attendance extends AppCompatActivity {
 
                 Date lastDayOfMonth = calendar1.getTime();
 
-                SimpleDateFormat sdff = new SimpleDateFormat("dd",Locale.getDefault());
+                SimpleDateFormat sdff = new SimpleDateFormat("dd",Locale.ENGLISH);
                 lastdateView = sdff.format(lastDayOfMonth);
 
                 int yearSelected;
@@ -441,7 +441,7 @@ public class Attendance extends AppCompatActivity {
                         //selected_date = "01-"+mon+"-"+yearName;
                         refresh.setText("Month: "+ monthName);
 
-                        SimpleDateFormat sss = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
+                        SimpleDateFormat sss = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
 
                         Date today = null;
                         try {
@@ -459,7 +459,7 @@ public class Attendance extends AppCompatActivity {
 
                             Date lastDayOfMonth = calendar1.getTime();
 
-                            SimpleDateFormat sdff = new SimpleDateFormat("dd",Locale.getDefault());
+                            SimpleDateFormat sdff = new SimpleDateFormat("dd",Locale.ENGLISH);
                             String llll = sdff.format(lastDayOfMonth);
                             lastDate =  llll+ "-" + mon +"-"+ yearName;
                         }
@@ -480,7 +480,7 @@ public class Attendance extends AppCompatActivity {
         for (int i = 0 ; i < 10 ;i ++) {
             cal.add(Calendar.DAY_OF_YEAR, +1);
             Date calTime = cal.getTime();
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yy", Locale.getDefault());
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
             String ddd = simpleDateFormat.format(calTime);
 
             ddd = ddd.toUpperCase();
@@ -927,7 +927,7 @@ public class Attendance extends AppCompatActivity {
 //
 //
 //                Timestamp timestamp = new Timestamp(c.getTime());
-//                //SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.getDefault());
+//                //SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.ENGLISH);
 //
 //                ResultSet rs2 = stmt.executeQuery("SELECT TO_CHAR(ELR_DATE,'DD-MON-RR') ELR_DATE FROM EMP_LOCATION_RECORD WHERE ELR_EMP_ID = "+emp_id+"\n" +
 //                        "AND ELR_DATE > SYSDATE-15\n" +
@@ -959,7 +959,7 @@ public class Attendance extends AppCompatActivity {
 //                            System.out.println(elr_id);
 //                        }
 //
-//                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yy",Locale.getDefault());
+//                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yy",Locale.ENGLISH);
 //
 //                        Date gpxDate = null;
 //
