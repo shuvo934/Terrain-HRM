@@ -55,7 +55,7 @@ public class Uploader extends BroadcastReceiver {
                 .setInputData(data)
                 .build();
 
-        WorkManager.getInstance().enqueue(workRequest);
+        WorkManager.getInstance(context).enqueue(workRequest);
 
 //        Calendar cal = GregorianCalendar.getInstance();
 //        cal.setTime(new Date());

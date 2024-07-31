@@ -121,32 +121,76 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void enableUserLocation() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            Log.i("Ekhane", "3");
-            enableFileAccess();
 
-        } else {
-            Log.i("Ekhane", "4");
-            // Ask For Permission
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
-                // we need to show user  alert dialog
-                Log.i("Ekhane", "5");
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, FINE_LOCATION_ACCESS_REQUEST_CODE);
-            } else {
-                Log.i("Ekhane", "6");
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, FINE_LOCATION_ACCESS_REQUEST_CODE);
+        String[] permission = {
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+        };
+        for (String str : permission) {
+            if (this.checkSelfPermission(str) != PackageManager.PERMISSION_GRANTED) {
+                this.requestPermissions(permission, FINE_LOCATION_ACCESS_REQUEST_CODE);
+                return;
             }
         }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            Log.i("Ekhane", "3");
+            enableFileAccess();
+        }
+
+        // Old Request Type
+//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+//            Log.i("Ekhane", "3");
+//            enableFileAccess();
+//
+//        } else {
+//            Log.i("Ekhane", "4");
+//            // Ask For Permission
+//            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+//                // we need to show user  alert dialog
+//                Log.i("Ekhane", "5");
+//                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, FINE_LOCATION_ACCESS_REQUEST_CODE);
+//            } else {
+//                Log.i("Ekhane", "6");
+//                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, FINE_LOCATION_ACCESS_REQUEST_CODE);
+//            }
+//        }
     }
 
     private void enableFileAccess() {
 
-        if (Build.VERSION.SDK_INT >= 23 && Build.VERSION.SDK_INT < 33) {
+        if (Build.VERSION.SDK_INT >= 34) {
+            int REQUEST_CODE_PERMISSION_STORAGE = 100;
+            String[] permission = {
+                    Manifest.permission.READ_MEDIA_IMAGES,
+                    Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.CALL_PHONE,
+                    Manifest.permission.POST_NOTIFICATIONS
+            };
+
+            for (String str : permission) {
+                if (this.checkSelfPermission(str) != PackageManager.PERMISSION_GRANTED) {
+                    this.requestPermissions(permission, REQUEST_CODE_PERMISSION_STORAGE);
+                    return;
+                }
+            }
+
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+
+                goToActivityMap();
+            }
+        }
+        else if (Build.VERSION.SDK_INT < 33) {
             int REQUEST_CODE_PERMISSION_STORAGE = 100;
             String[] permission = {
                     Manifest.permission.READ_EXTERNAL_STORAGE,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    Manifest.permission.CALL_PHONE,
+                    Manifest.permission.CALL_PHONE
 //                    Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
             };
 
@@ -177,12 +221,13 @@ public class MainActivity extends AppCompatActivity {
 
 
         }
-        else if (Build.VERSION.SDK_INT >= 33) {
+        else {
             int REQUEST_CODE_PERMISSION_STORAGE = 100;
             String[] permission = {
                     Manifest.permission.READ_MEDIA_IMAGES,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.CALL_PHONE,
+                    Manifest.permission.POST_NOTIFICATIONS
             };
 
             for (String str : permission) {
@@ -193,8 +238,9 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED &&
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED ) {
+                ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
 
                 goToActivityMap();
             }

@@ -1065,8 +1065,10 @@ public class Login extends AppCompatActivity {
                     JSONArray array = new JSONArray(items);
                     for (int i = 0; i < array.length(); i++) {
                         JSONObject livLocFlInfo = array.getJSONObject(i);
-                        live_loc_flag = livLocFlInfo.getInt("emp_live_loc_tracker_flag");
-                        tracker_flag = livLocFlInfo.getString("emp_timeline_tracker_flag");
+                        live_loc_flag = Integer.parseInt(livLocFlInfo.getString("emp_live_loc_tracker_flag")
+                                .equals("null") ? "0" : livLocFlInfo.getString("emp_live_loc_tracker_flag"));
+                        tracker_flag = livLocFlInfo.getString("emp_timeline_tracker_flag")
+                                .equals("null") ? "" :livLocFlInfo.getString("emp_timeline_tracker_flag");
                     }
                 }
                 requestQueue.add(updateFlag);

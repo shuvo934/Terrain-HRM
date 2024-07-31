@@ -1050,8 +1050,10 @@ public class PaySlip extends AppCompatActivity {
                         total_word = paySlipInfo.getString("salary_in_word")
                                 .equals("null") ? "" : paySlipInfo.getString("salary_in_word");
 
-                        int index = total_word.indexOf("Taka");
-                        total_word = total_word.substring(index);
+                        if(!total_word.isEmpty()) {
+                            int index = total_word.indexOf("Taka");
+                            total_word = total_word.substring(index);
+                        }
                     }
                 }
 

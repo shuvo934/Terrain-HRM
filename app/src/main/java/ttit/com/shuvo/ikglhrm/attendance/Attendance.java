@@ -30,12 +30,12 @@ import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.sql.Connection;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -50,6 +50,7 @@ import java.util.Map;
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
 import ttit.com.shuvo.ikglhrm.attendance.giveAttendance.AttendanceGive;
+import ttit.com.shuvo.ikglhrm.attendance.movement_reg.MovementRegister;
 import ttit.com.shuvo.ikglhrm.attendance.report.AttendanceReport;
 
 import static ttit.com.shuvo.ikglhrm.Login.CompanyName;
@@ -65,7 +66,8 @@ public class Attendance extends AppCompatActivity {
 
     CardView attReport;
     CardView attUpdateall;
-    CardView attGive;
+    MaterialCardView attGive;
+    MaterialCardView movReg;
 
     TextView softName;
     TextView compName;
@@ -171,6 +173,8 @@ public class Attendance extends AppCompatActivity {
         attReport =findViewById(R.id.attendance_report);
         attUpdateall = findViewById(R.id.atten_update_all);
         attGive = findViewById(R.id.attendance_give);
+        movReg = findViewById(R.id.movement_register_button);
+        movReg.setVisibility(View.GONE);
 
         attBack = findViewById(R.id.attendance_back);
 
@@ -210,6 +214,11 @@ public class Attendance extends AppCompatActivity {
                 intent.putExtra("TODAY_DATE",lastDateForAttBot);
                 startActivity(intent);
             }
+        });
+
+        movReg.setOnClickListener(v -> {
+            Intent intent = new Intent(Attendance.this, MovementRegister.class);
+            startActivity(intent);
         });
 
 
@@ -1151,12 +1160,16 @@ public class Attendance extends AppCompatActivity {
                     JSONArray array = new JSONArray(items);
                     for (int i = 0; i < array.length(); i++) {
                         JSONObject empDataInfo = array.getJSONObject(i);
-                        tracking_flag = empDataInfo.getInt("emp_timeline_tracker_flag");
+                        tracking_flag =
+                        Integer.parseInt(empDataInfo.getString("emp_timeline_tracker_flag")
+                                .equals("null") ? "0" : empDataInfo.getString("emp_timeline_tracker_flag"));
                         job_id[0] = empDataInfo.getInt("emp_job_id");
                         coa_id[0] = empDataInfo.getString("job_pri_coa_id");
                         divm_id[0] = empDataInfo.getString("jsm_divm_id");
                         dept_id[0] = empDataInfo.getString("jsm_dept_id");
-                        live_tracking_flag = empDataInfo.getInt("emp_live_loc_tracker_flag");
+                        live_tracking_flag = 
+                        Integer.parseInt(empDataInfo.getString("emp_live_loc_tracker_flag")
+                                .equals("null") ? "0" : empDataInfo.getString("emp_live_loc_tracker_flag"));
                     }
                     if (tracking_flag == 1) {
                         getTrackerUploadDate(job_id[0],coa_id[0],divm_id[0],dept_id[0]);

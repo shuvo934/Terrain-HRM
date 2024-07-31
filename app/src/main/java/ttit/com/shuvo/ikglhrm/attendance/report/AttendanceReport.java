@@ -1614,12 +1614,18 @@ public class AttendanceReport extends AppCompatActivity {
                     for (int i = 0; i < array.length(); i++) {
                         JSONObject attStatInfo = array.getJSONObject(i);
 
-                        present_days = attStatInfo.getString("present_status");
-                        absent_days = attStatInfo.getString("absent_status");
-                        weekend = attStatInfo.getString("weekend_status");
-                        present_weekend = attStatInfo.getString("present_weekend");
-                        hol = attStatInfo.getString("holiday_status");
-                        present_holi = attStatInfo.getString("present_holiday_status");
+                        present_days = attStatInfo.getString("present_status")
+                                        .equals("null") ? "0" : attStatInfo.getString("present_status");
+                        absent_days = attStatInfo.getString("absent_status")
+                                        .equals("null") ? "0" : attStatInfo.getString("absent_status");
+                        weekend = attStatInfo.getString("weekend_status")
+                                        .equals("null") ? "0" : attStatInfo.getString("weekend_status");
+                        present_weekend = attStatInfo.getString("present_weekend")
+                                        .equals("null") ? "0" : attStatInfo.getString("present_weekend");
+                        hol = attStatInfo.getString("holiday_status")
+                                        .equals("null") ? "0" : attStatInfo.getString("holiday_status");
+                        present_holi = attStatInfo.getString("present_holiday_status")
+                                        .equals("null") ? "0" : attStatInfo.getString("present_holiday_status");
 
                     }
                 }

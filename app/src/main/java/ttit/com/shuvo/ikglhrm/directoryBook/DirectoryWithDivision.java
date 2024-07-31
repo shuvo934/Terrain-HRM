@@ -904,9 +904,19 @@ public class DirectoryWithDivision extends AppCompatActivity {
                                 .equals("null") ? null : dirInfo.getString("usr_contact");
                         String usr_email_new = dirInfo.getString("usr_email")
                                 .equals("null") ? null : dirInfo.getString("usr_email");
+                        String job_email = dirInfo.getString("job_email")
+                                .equals("null") ? null: dirInfo.getString("job_email");
+
+                        String mail = "";
+                        if (job_email == null) {
+                            mail = usr_email_new;
+                        }
+                        else {
+                            mail = job_email;
+                        }
 
                         allDirectoryLists.add(new DirectoryList(emp_id_new,emp_name_new,divm_name_new,
-                                dept_name_new,desig_name_new,usr_email_new,usr_contact_new,"2"));
+                                dept_name_new,desig_name_new,mail,usr_contact_new,"2"));
 
                         idofALl.add(emp_id_new);
                     }
