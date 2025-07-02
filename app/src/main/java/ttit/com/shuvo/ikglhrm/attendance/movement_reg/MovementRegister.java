@@ -139,7 +139,7 @@ public class MovementRegister extends AppCompatActivity implements OnMapReadyCal
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movement_register);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+//        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         software = findViewById(R.id.name_of_company_movement);
         todayDate = findViewById(R.id.today_date_time_movement_reg);
         clientSpinner = findViewById(R.id.movement_client_spinner);

@@ -13,16 +13,18 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
 
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -40,12 +42,10 @@ import org.json.JSONObject;
 // */
 public class FirstFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
@@ -92,25 +92,23 @@ public class FirstFragment extends Fragment {
     ArrayList<String> late;
     ArrayList<String> attBon;
 
-    ArrayAdapter<String> strrPosAdapter;
-    ArrayAdapter<String> lateAdapter;
-    ArrayAdapter<String> attAdapter;
+//    ArrayAdapter<String> strrPosAdapter;
+//    ArrayAdapter<String> lateAdapter;
+//    ArrayAdapter<String> attAdapter;
 
     WaitProgress waitProgress = new WaitProgress();
-//    private String message = null;
+
     private Boolean conn = false;
-//    private Boolean infoConnected = false;
     private Boolean connected = false;
 
-//    private Connection connection;
 
     String emp_id = "";
     String emp_code = "";
 
     Context mContext;
 
-    public static ArrayList<FirstPageData> firstPageData;
-    public static ArrayList<FirstPageAnotherData> firstPageAnotherData;
+    ArrayList<FirstPageData> firstPageData;
+    ArrayList<FirstPageAnotherData> firstPageAnotherData;
 
 
     public FirstFragment(Context context) {
@@ -118,23 +116,7 @@ public class FirstFragment extends Fragment {
         this.mContext = context;
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-//     * @param param1 Parameter 1.
-//     * @param param2 Parameter 2.
-     * @return A new instance of fragment FirstFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-//    public static FirstFragment newInstance(String param1, String param2) {
-//        FirstFragment fragment = new FirstFragment();
-//        Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
-//        fragment.setArguments(args);
-//        return fragment;
-//    }
+    Logger logger = Logger.getLogger(FirstFragment.class.getName());
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -351,7 +333,7 @@ public class FirstFragment extends Fragment {
 //            int     exitValue = ipProcess.waitFor();
 //            return (exitValue == 0);
 //        }
-//        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
+//        catch (IOException | InterruptedException e)          { logger.log(Level.WARNING, e.getMessage(), e); }
 //
 //        return false;
 //    }
@@ -407,7 +389,7 @@ public class FirstFragment extends Fragment {
 ////                            try {
 ////                                d = sdf.parse(oldDateString);
 ////                            } catch (ParseException e) {
-////                                e.printStackTrace();
+////                                logger.log(Level.WARNING, e.getMessage(), e);
 ////                            }
 ////                            sdf.applyPattern(NEW_FORMAT);
 ////                            //sdf.applyPattern(NEW_FORMAT);
@@ -428,7 +410,7 @@ public class FirstFragment extends Fragment {
 ////                            try {
 ////                                d = sdf.parse(oldDateString);
 ////                            } catch (ParseException e) {
-////                                e.printStackTrace();
+////                                logger.log(Level.WARNING, e.getMessage(), e);
 ////                            }
 ////                            sdf.applyPattern(NEW_FORMAT);
 ////                            newDateString = sdf.format(d);
@@ -450,7 +432,7 @@ public class FirstFragment extends Fragment {
 ////                            try {
 ////                                d = sdf.parse(oldDateString);
 ////                            } catch (ParseException e) {
-////                                e.printStackTrace();
+////                                logger.log(Level.WARNING, e.getMessage(), e);
 ////                            }
 ////                            sdf.applyPattern(NEW_FORMAT);
 ////                            newDateString = sdf.format(d);
@@ -659,7 +641,7 @@ public class FirstFragment extends Fragment {
 //
 //            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
 //            Log.i("ERRRRR", e.getLocalizedMessage());
-//            e.printStackTrace();
+//            logger.log(Level.WARNING, e.getMessage(), e);
 //        }
 //
 //    }
@@ -673,8 +655,8 @@ public class FirstFragment extends Fragment {
         firstPageData = new ArrayList<>();
         firstPageAnotherData = new ArrayList<>();
 
-        String firstPageDataUrl = "http://103.56.208.123:8001/apex/ttrams/emp_information/getTranscriptFirstPageData/"+emp_id+"/"+emp_code+"";
-        String firstPageAnotherDataUrl = "http://103.56.208.123:8001/apex/ttrams/emp_information/getTranscriptFirstPageData_1/"+emp_id+"";
+        String firstPageDataUrl = api_url_front + "emp_information/getTranscriptFirstPageData/"+emp_id+"/"+emp_code;
+        String firstPageAnotherDataUrl = api_url_front + "emp_information/getTranscriptFirstPageData_1/"+emp_id;
 
         RequestQueue requestQueue = Volley.newRequestQueue(mContext);
 
@@ -721,13 +703,13 @@ public class FirstFragment extends Fragment {
             }
             catch (JSONException e) {
                 connected = false;
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 updateLayout();
             }
         }, error -> {
             conn = false;
             connected = false;
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             updateLayout();
         });
 
@@ -868,13 +850,13 @@ public class FirstFragment extends Fragment {
             }
             catch (JSONException e) {
                 connected = false;
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 updateLayout();
             }
         }, error -> {
             conn = false;
             connected = false;
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             updateLayout();
         });
 
@@ -885,7 +867,7 @@ public class FirstFragment extends Fragment {
         waitProgress.dismiss();
         if (conn) {
             if (connected) {
-                if (firstPageData.size() != 0) {
+                if (!firstPageData.isEmpty()) {
                     for (int i = 0 ; i < firstPageData.size(); i++) {
 
                         String dateC = firstPageData.get(i).getRevisionDate();
@@ -989,7 +971,7 @@ public class FirstFragment extends Fragment {
                     }
                 }
 
-                if (firstPageAnotherData.size() != 0) {
+                if (!firstPageAnotherData.isEmpty()) {
                     for (int i= 0; i < firstPageAnotherData.size(); i++) {
 
                         if (firstPageAnotherData.get(i).getJob_no() != null) {
@@ -1015,7 +997,7 @@ public class FirstFragment extends Fragment {
                 connected = false;
             }
             else {
-                AlertDialog dialog = new AlertDialog.Builder(getContext())
+                AlertDialog dialog = new AlertDialog.Builder(mContext)
                         .setMessage("There is a network issue in the server. Please Try later")
                         .setPositiveButton("Retry", null)
                         .setNegativeButton("Cancel", null)
@@ -1037,7 +1019,7 @@ public class FirstFragment extends Fragment {
             }
         }
         else {
-            AlertDialog dialog = new AlertDialog.Builder(getContext())
+            AlertDialog dialog = new AlertDialog.Builder(mContext)
                     .setMessage("Please Check Your Internet Connection")
                     .setPositiveButton("Retry", null)
                     .setNegativeButton("Cancel", null)

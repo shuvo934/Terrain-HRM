@@ -1,7 +1,6 @@
 package ttit.com.shuvo.ikglhrm.leaveAll.leaveApplication;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
@@ -27,7 +26,6 @@ import static ttit.com.shuvo.ikglhrm.leaveAll.LeaveApplication.errorReason;
 import static ttit.com.shuvo.ikglhrm.leaveAll.LeaveApplication.isOtherReason;
 import static ttit.com.shuvo.ikglhrm.leaveAll.LeaveApplication.leaveType;
 import static ttit.com.shuvo.ikglhrm.leaveAll.LeaveApplication.leaveTypeLay;
-import static ttit.com.shuvo.ikglhrm.leaveAll.LeaveApplication.leaveTypeLists;
 import static ttit.com.shuvo.ikglhrm.leaveAll.LeaveApplication.otherReasonLay;
 import static ttit.com.shuvo.ikglhrm.leaveAll.LeaveApplication.reason;
 import static ttit.com.shuvo.ikglhrm.leaveAll.LeaveApplication.selected_leave_type_id;
@@ -53,8 +51,8 @@ public class SelectLeaveType extends AppCompatDialogFragment implements LeaveTyp
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = getActivity().getLayoutInflater();
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
 
         View view = inflater.inflate(R.layout.leave_type_list, null);
 
@@ -74,9 +72,11 @@ public class SelectLeaveType extends AppCompatDialogFragment implements LeaveTyp
         lists = new ArrayList<>();
 
         if (showD == 1) {
-            ftext.setText("Leave Type");
+            String ft = "Leave Type";
+            ftext.setText(ft);
         } else if (showD == 2) {
-            ftext.setText("Leave Reason");
+            String ft = "Leave Reason";
+            ftext.setText(ft);
         }
         lists = selectingIndivdual;
 
@@ -88,13 +88,10 @@ public class SelectLeaveType extends AppCompatDialogFragment implements LeaveTyp
         selectAllAdapter = new LeaveTypeAdapter(lists, getContext(),this);
         recyclerView.setAdapter(selectAllAdapter);
 
-        dialog.setButton(Dialog.BUTTON_NEGATIVE, "CANCEL", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+        dialog.setButton(Dialog.BUTTON_NEGATIVE, "CANCEL", (dialog, which) -> {
 
-                showD = 0;
-                dialog.dismiss();
-            }
+            showD = 0;
+            dialog.dismiss();
         });
 
         search.addTextChangedListener(new TextWatcher() {
@@ -134,8 +131,8 @@ public class SelectLeaveType extends AppCompatDialogFragment implements LeaveTyp
 
     @Override
     public void onCategoryClicked(int CategoryPosition) {
-        String name = "";
-        String id = "";
+        String name;
+        String id;
         if (isfiltered) {
             name = filteredList.get(CategoryPosition).getTypeName();
             id = filteredList.get(CategoryPosition).getId();

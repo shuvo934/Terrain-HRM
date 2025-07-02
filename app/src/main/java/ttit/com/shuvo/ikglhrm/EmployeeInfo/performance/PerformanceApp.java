@@ -5,19 +5,18 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import ttit.com.shuvo.ikglhrm.EmployeeInfo.jobDesc.JobAdapter;
 import ttit.com.shuvo.ikglhrm.EmployeeInfo.jobDesc.JobDescDetails;
@@ -25,6 +24,7 @@ import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
 
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -41,68 +41,27 @@ public class PerformanceApp extends AppCompatActivity {
     TextView no_gpi, no_kpi;
     Button gpikpiFinish;
     RecyclerView gpiList;
-    public static JobAdapter gpiAdapter;
+    JobAdapter gpiAdapter;
     RecyclerView.LayoutManager layoutManager;
 
     RecyclerView kpiList;
-    public static JobAdapter kpiAdapter;
+    JobAdapter kpiAdapter;
     RecyclerView.LayoutManager layoutManager1;
 
     public static ArrayList<JobDescDetails> gpiDetails;
     public static ArrayList<JobDescDetails> kpiDetails;
 
     WaitProgress waitProgress = new WaitProgress();
-//    private String message = null;
     private Boolean conn = false;
-//    private Boolean infoConnected = false;
     private Boolean connected = false;
-
-//    private Connection connection;
 
     String emp_id = "";
 
-//    @Override
-//    public void onWindowFocusChanged(boolean hasFocus) {
-//        super.onWindowFocusChanged(hasFocus);
-//        if (hasFocus) {
-//            hideSystemUI();
-//        }
-//    }
-//    private void hideSystemUI() {
-//        View decorView = getWindow().getDecorView();
-//        decorView.setSystemUiVisibility(
-//                View.SYSTEM_UI_FLAG_IMMERSIVE
-//                        // Set the content to appear under the system bars so that the
-//                        // content doesn't resize when the system bars hide and show.
-//                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-//                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-//                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-//                        // Hide the nav bar and status bar
-//                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-//                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
-//    }
+    Logger logger = Logger.getLogger(PerformanceApp.class.getName());
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-//        getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            Window w = getWindow();
-//           // w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-//        }
-//        if (Build.VERSION.SDK_INT < 16) {
-//            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-//                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//        }
-//        View decorView = getWindow().getDecorView();
-//        // Hide the status bar.
-//        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
-//        decorView.setSystemUiVisibility(uiOptions);
-        Window window = getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(ContextCompat.getColor(PerformanceApp.this,R.color.secondaryColor));
-
         setContentView(R.layout.activity_performance_app);
 
         emp_id = userInfoLists.get(0).getEmp_id();
@@ -118,7 +77,6 @@ public class PerformanceApp extends AppCompatActivity {
         gpiList = findViewById(R.id.gpi_list);
         kpiList = findViewById(R.id.kpi_list);
 
-//        new Check().execute();
         getGpiKpiDetails();
 
         gpiList.setHasFixedSize(true);
@@ -137,12 +95,7 @@ public class PerformanceApp extends AppCompatActivity {
 
 
 
-        gpikpiFinish.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        gpikpiFinish.setOnClickListener(v -> finish());
 
     }
 
@@ -354,8 +307,8 @@ public class PerformanceApp extends AppCompatActivity {
         gpiDetails = new ArrayList<>();
         kpiDetails = new ArrayList<>();
 
-        String gpiUrl = "http://103.56.208.123:8001/apex/ttrams/emp_information/getGpiDetails/"+emp_id+"";
-        String kpiUrl = "http://103.56.208.123:8001/apex/ttrams/emp_information/getKpiDetails/"+emp_id+"";
+        String gpiUrl = api_url_front + "emp_information/getGpiDetails/"+emp_id;
+        String kpiUrl = api_url_front + "emp_information/getKpiDetails/"+emp_id;
 
         RequestQueue requestQueue = Volley.newRequestQueue(PerformanceApp.this);
 
@@ -381,13 +334,13 @@ public class PerformanceApp extends AppCompatActivity {
             }
             catch (JSONException e) {
                 connected = false;
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 updateLayout();
             }
         }, error -> {
             conn = false;
             connected = false;
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             updateLayout();
         });
 
@@ -412,13 +365,13 @@ public class PerformanceApp extends AppCompatActivity {
             }
             catch (JSONException e) {
                 connected = false;
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 updateLayout();
             }
         }, error -> {
             conn = false;
             connected = false;
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             updateLayout();
         });
 
@@ -433,7 +386,7 @@ public class PerformanceApp extends AppCompatActivity {
                 kpiAdapter = new JobAdapter(kpiDetails,PerformanceApp.this);
                 gpiList.setAdapter(gpiAdapter);
                 kpiList.setAdapter(kpiAdapter);
-                if (gpiDetails.size() == 0) {
+                if (gpiDetails.isEmpty()) {
                     no_gpi.setVisibility(View.VISIBLE);
                     gpiList.setVisibility(View.GONE);
                 } else {
@@ -441,7 +394,7 @@ public class PerformanceApp extends AppCompatActivity {
                     gpiList.setVisibility(View.VISIBLE);
                 }
 
-                if (kpiDetails.size() == 0) {
+                if (kpiDetails.isEmpty()) {
                     no_kpi.setVisibility(View.VISIBLE);
                     kpiList.setVisibility(View.GONE);
                 } else {

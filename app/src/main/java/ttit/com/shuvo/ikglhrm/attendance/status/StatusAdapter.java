@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -15,10 +14,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.button.MaterialButton;
+
 import java.util.ArrayList;
 
-import ttit.com.shuvo.ikglhrm.EmployeeInfo.jobDesc.JobAdapter;
-import ttit.com.shuvo.ikglhrm.EmployeeInfo.jobDesc.JobDescDetails;
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.attendance.status.statusDetail.AttendanceStatusDetails;
 
@@ -28,13 +27,6 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusView
 
     public Context myContext;
 
-    public static String reqNo = "";
-    public static String att_Status = "";
-    public static String app_Date = "";
-    public static String update_Date = "";
-    public static String arrTime = "";
-    public static String depTime = "";
-    public static String approverrrrr = "";
 
 
 
@@ -48,8 +40,7 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusView
     @Override
     public StatusView onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(myContext).inflate(R.layout.status_item_list, parent, false);
-        StatusView ammvh = new StatusView(v);
-        return ammvh;
+        return new StatusView(v);
     }
 
     @Override
@@ -61,23 +52,31 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusView
         String approve = jobdddd.getApprover();
         String stat = jobdddd.getApproved();
 
-        if (stat.equals("0")) {
-            stat = "PENDING";
-            holder.cardView.setCardBackgroundColor(Color.parseColor("#636e72"));
-            holder.appLay.setVisibility(View.GONE);
-            holder.approver.setText("");
-        }else if (stat.equals("1")){
-            stat = "APPROVED";
-            holder.cardView.setCardBackgroundColor(Color.parseColor("#1abc9c"));
-            holder.approver.setText(approve);
-            holder.appLay.setVisibility(View.VISIBLE);
-            holder.appRej.setText("Approved By:");
-        } else if (stat.equals("2")) {
-            stat = "REJECTED";
-            holder.cardView.setCardBackgroundColor(Color.parseColor("#c0392b"));
-            holder.approver.setText(approve);
-            holder.appLay.setVisibility(View.VISIBLE);
-            holder.appRej.setText("Rejected By:");
+        switch (stat) {
+            case "0":
+                stat = "PENDING";
+                holder.cardView.setCardBackgroundColor(Color.parseColor("#636e72"));
+                holder.appLay.setVisibility(View.GONE);
+                holder.approver.setText("");
+                break;
+            case "1": {
+                stat = "APPROVED";
+                holder.cardView.setCardBackgroundColor(Color.parseColor("#1abc9c"));
+                holder.approver.setText(approve);
+                holder.appLay.setVisibility(View.VISIBLE);
+                String tt = "Approved By:";
+                holder.appRej.setText(tt);
+                break;
+            }
+            case "2": {
+                stat = "REJECTED";
+                holder.cardView.setCardBackgroundColor(Color.parseColor("#c0392b"));
+                holder.approver.setText(approve);
+                holder.appLay.setVisibility(View.VISIBLE);
+                String tt = "Rejected By:";
+                holder.appRej.setText(tt);
+                break;
+            }
         }
         holder.status.setText(stat);
         holder.reqDate.setText(jobdddd.getReq_date());
@@ -104,21 +103,21 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusView
 
     public class StatusView extends RecyclerView.ViewHolder {
 
-        private TextView req_no;
-        private TextView status;
-        private TextView reqDate;
-        private TextView reqType;
-        private TextView upDate;
-        private TextView arr;
-        private TextView dept;
-        private TextView approver;
-        private TextView appRej;
+        TextView req_no;
+        TextView status;
+        TextView reqDate;
+        TextView reqType;
+        TextView upDate;
+        TextView arr;
+        TextView dept;
+        TextView approver;
+        TextView appRej;
 
         LinearLayout appLay;
 
-        private CardView cardView;
+        CardView cardView;
 
-        private Button details;
+        MaterialButton details;
 
 
         public StatusView(@NonNull View itemView) {
@@ -138,32 +137,34 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusView
             appLay = itemView.findViewById(R.id.approver_layout);
             details = itemView.findViewById(R.id.button_status_all);
 
-            details.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    AppCompatActivity activity = (AppCompatActivity) v.getContext();
-                    reqNo = req_no.getText().toString();
-                    att_Status = status.getText().toString();
-                    app_Date = reqDate.getText().toString();
-                    update_Date = upDate.getText().toString();
-                    arrTime = arr.getText().toString();
-                    depTime = dept.getText().toString();
+            details.setOnClickListener(v -> {
+                AppCompatActivity activity = (AppCompatActivity) v.getContext();
+                String reqNo;
+                String att_Status;
+                String app_Date;
+                String update_Date;
+                String arrTime;
+                String depTime;
+                String approverrrrr;
+                reqNo = req_no.getText().toString();
+                att_Status = status.getText().toString();
+                app_Date = reqDate.getText().toString();
+                update_Date = upDate.getText().toString();
+                arrTime = arr.getText().toString();
+                depTime = dept.getText().toString();
 
-                    approverrrrr = approver.getText().toString();
+                approverrrrr = approver.getText().toString();
 
-                    Intent intent = new Intent(myContext, AttendanceStatusDetails.class);
-                    intent.putExtra("Request", reqNo);
-                    intent.putExtra("Status", att_Status);
-                    intent.putExtra("APP_DATE", app_Date);
-                    intent.putExtra("UPDATE_DATE", update_Date);
-                    intent.putExtra("ARRIVAL", arrTime);
-                    intent.putExtra("DEPARTURE", depTime);
-                    intent.putExtra("APPROVER",approverrrrr);
-                    activity.startActivity(intent);
-                }
+                Intent intent = new Intent(myContext, AttendanceStatusDetails.class);
+                intent.putExtra("Request", reqNo);
+                intent.putExtra("Status", att_Status);
+                intent.putExtra("APP_DATE", app_Date);
+                intent.putExtra("UPDATE_DATE", update_Date);
+                intent.putExtra("ARRIVAL", arrTime);
+                intent.putExtra("DEPARTURE", depTime);
+                intent.putExtra("APPROVER",approverrrrr);
+                activity.startActivity(intent);
             });
-
-
         }
     }
 }

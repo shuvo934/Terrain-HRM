@@ -3,12 +3,9 @@ package ttit.com.shuvo.ikglhrm.payRoll.advance;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
 
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -17,21 +14,23 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.github.dewinjm.monthyearpicker.MonthFormat;
-import com.github.dewinjm.monthyearpicker.MonthYearPickerDialog;
 import com.github.dewinjm.monthyearpicker.MonthYearPickerDialogFragment;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
-
 import static ttit.com.shuvo.ikglhrm.Login.userDesignations;
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,24 +40,14 @@ public class AdvanceDetails extends AppCompatActivity {
 
     TextInputEditText selectMonth;
     TextInputLayout selectMonthLay;
-
-    TextView errorMsgMonth;
-
-    Button show;
-
+    
     CardView reportCard;
-
-    TextView monthName;
-
+    
     TextInputEditText empName;
     TextInputEditText id;
     TextInputEditText band;
     TextInputEditText strDes;
     TextInputEditText jobPosition;
-
-    TextView advAllTaken;
-    TextView advAllPaid;
-    TextView advAllPayable;
 
     TextView advTaken;
     TextView advPaid;
@@ -67,9 +56,7 @@ public class AdvanceDetails extends AppCompatActivity {
     TextView scAdvAllTaken;
     TextView scAdvAllPaid;
     TextView scAdvAllPayable;
-
-    Button close;
-
+    
     String emp_id = "";
 
     String emp_name = "";
@@ -77,9 +64,7 @@ public class AdvanceDetails extends AppCompatActivity {
     String ban = "";
     String str_DES = "";
     String job_pos = "";
-
-    String selected_month_full = "";
-    String year_full = "";
+    
     String selected_date = "";
 
     WaitProgress waitProgress = new WaitProgress();
@@ -97,52 +82,23 @@ public class AdvanceDetails extends AppCompatActivity {
     String sc_adv_all_paid = "";
     String sc_adv_all_payable = "";
 
-    String showDate = "";
-
+    Logger logger = Logger.getLogger(AdvanceDetails.class.getName());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            Window w = getWindow();
-//            //w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-//        }
-//        if (Build.VERSION.SDK_INT < 16) {
-//            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-//                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//        }
-//        View decorView = getWindow().getDecorView();
-//// Hide the status bar.
-//        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
-//        decorView.setSystemUiVisibility(uiOptions);
-        Window window = getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(ContextCompat.getColor(AdvanceDetails.this,R.color.secondaryColor));
         setContentView(R.layout.activity_advance_details);
 
         selectMonth = findViewById(R.id.select_month_advance);
         selectMonthLay = findViewById(R.id.select_month_advance_lay);
 
-        errorMsgMonth = findViewById(R.id.error_msg_for_no_entry_advance);
-
-        show = findViewById(R.id.show_advance);
-
         reportCard = findViewById(R.id.advance_report_card);
-
-        monthName = findViewById(R.id.month_year_name_advance);
-
+        
         empName = findViewById(R.id.name_advance);
         id = findViewById(R.id.id_advance);
         band = findViewById(R.id.band_advance);
         strDes = findViewById(R.id.str_des_advance);
         jobPosition = findViewById(R.id.job_pos_advance);
-
-
-//        advAllTaken = findViewById(R.id.total_advance_taken);
-//        advAllPaid = findViewById(R.id.total_advance_paid_year);
-//        advAllPayable = findViewById(R.id.total_advance_payable_year);
 
         advTaken = findViewById(R.id.advance_taken);
         advPaid = findViewById(R.id.advance_paid);
@@ -152,11 +108,10 @@ public class AdvanceDetails extends AppCompatActivity {
         scAdvAllPaid = findViewById(R.id.total_scheduling_advance_paid);
         scAdvAllPayable = findViewById(R.id.sc_adv_paya_tot);
 
-        close = findViewById(R.id.advance_finish);
 
         emp_id = userInfoLists.get(0).getEmp_id();
 
-        if (userInfoLists.size() != 0) {
+        if (!userInfoLists.isEmpty()) {
             String firstname = userInfoLists.get(0).getUser_fname();
             String lastName = userInfoLists.get(0).getUser_lname();
             if (firstname == null) {
@@ -169,7 +124,7 @@ public class AdvanceDetails extends AppCompatActivity {
             user_id = userInfoLists.get(0).getUserName();
         }
 
-        if (userDesignations.size() != 0) {
+        if (!userDesignations.isEmpty()) {
             str_DES = userDesignations.get(0).getJsm_name();
             if (str_DES == null) {
                 str_DES = "";
@@ -183,112 +138,142 @@ public class AdvanceDetails extends AppCompatActivity {
                 job_pos = "";
             }
         }
+        
+        selectMonth.setOnClickListener(v -> {
 
+            Date c = Calendar.getInstance().getTime();
 
+            String formattedYear;
+            String monthValue;
+            String lastformattedYear;
+            String lastdateView;
 
-        selectMonth.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            SimpleDateFormat df = new SimpleDateFormat("yyyy", Locale.ENGLISH);
+            SimpleDateFormat sdf = new SimpleDateFormat("MM",Locale.ENGLISH);
 
-                Date c = Calendar.getInstance().getTime();
+            formattedYear = df.format(c);
+            monthValue = sdf.format(c);
+            int nowMonNumb = Integer.parseInt(monthValue);
+            nowMonNumb = nowMonNumb - 1;
+            int lastMonNumb = nowMonNumb - 11;
 
-                String formattedDate = "";
+            if (lastMonNumb < 0) {
+                lastMonNumb = lastMonNumb + 12;
+                int formatY = Integer.parseInt(formattedYear);
+                formatY = formatY - 1;
+                lastformattedYear = String.valueOf(formatY);
+            } else {
+                lastformattedYear = formattedYear;
+            }
 
-                SimpleDateFormat df = new SimpleDateFormat("yyyy", Locale.ENGLISH);
+            Date today = new Date();
 
-                formattedDate = df.format(c);
+            Calendar calendar1 = Calendar.getInstance();
+            calendar1.setTime(today);
 
-                int yearSelected;
-                int monthSelected;
-                MonthFormat monthFormat = MonthFormat.LONG;
-                String customTitle = "Select Month";
+            calendar1.set(Calendar.MONTH, 1);
+            calendar1.set(Calendar.DAY_OF_MONTH, 1);
+            calendar1.add(Calendar.DATE, -1);
+
+            Date lastDayOfMonth = calendar1.getTime();
+
+            SimpleDateFormat sdff = new SimpleDateFormat("dd",Locale.ENGLISH);
+            lastdateView = sdff.format(lastDayOfMonth);
+
+            int yearSelected;
+            int monthSelected;
+            MonthFormat monthFormat = MonthFormat.LONG;
+            String customTitle = "Select Month";
 // Use the calendar for create ranges
-                Calendar calendar = Calendar.getInstance();
-                yearSelected = calendar.get(Calendar.YEAR);
-                monthSelected = calendar.get(Calendar.MONTH);
-                calendar.clear();
-                calendar.set(2000, 0, 1); // Set minimum date to show in dialog
-                long minDate = calendar.getTimeInMillis(); // Get milliseconds of the modified date
+            Calendar calendar = Calendar.getInstance();
+            if (!selected_date.isEmpty()) {
+                SimpleDateFormat myf = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
+                Date md = null;
+                try {
+                    md = myf.parse(selected_date);
+                } catch (ParseException e) {
+                    logger.log(Level.WARNING, e.getMessage(), e);
+                }
 
-                calendar.clear();
-                calendar.set(Integer.parseInt(formattedDate), 11, 31); // Set maximum date to show in dialog
-                long maxDate = calendar.getTimeInMillis(); // Get milliseconds of the modified date
+                if (md != null) {
+                    calendar.setTime(md);
+                }
+            }
+            yearSelected = calendar.get(Calendar.YEAR);
+            monthSelected = calendar.get(Calendar.MONTH);
+            calendar.clear();
+            calendar.set(Integer.parseInt(lastformattedYear), lastMonNumb, 1); // Set minimum date to show in dialog
+            long minDate = calendar.getTimeInMillis(); // Get milliseconds of the modified date
+
+            calendar.clear();
+            calendar.set(Integer.parseInt(formattedYear), nowMonNumb, Integer.parseInt(lastdateView)); // Set maximum date to show in dialog
+            long maxDate = calendar.getTimeInMillis(); // Get milliseconds of the modified date
 
 // Create instance with date ranges values
-                MonthYearPickerDialogFragment dialogFragment =  MonthYearPickerDialogFragment
-                        .getInstance(monthSelected, yearSelected, minDate, maxDate, customTitle, monthFormat);
+            MonthYearPickerDialogFragment dialogFragment =  MonthYearPickerDialogFragment
+                    .getInstance(monthSelected, yearSelected, minDate, maxDate, customTitle, monthFormat);
+            
+            dialogFragment.show(getSupportFragmentManager(), null);
 
-                dialogFragment.show(getSupportFragmentManager(), null);
+            dialogFragment.setOnDateSetListener((year, monthOfYear) -> {
+                System.out.println(year);
+                System.out.println(monthOfYear);
 
-                dialogFragment.setOnDateSetListener(new MonthYearPickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(int year, int monthOfYear) {
-                        System.out.println(year);
-                        System.out.println(monthOfYear);
+                int month = monthOfYear + 1;
+                String monthName = "";
+                String mon = "";
+                String yearName;
 
-                        int month = monthOfYear + 1;
-                        String monthName = "";
-                        String mon = "";
-                        String yearName = "";
+                if (month == 1) {
+                    monthName = "JANUARY";
+                    mon = "JAN";
+                } else if (month == 2) {
+                    monthName = "FEBRUARY";
+                    mon = "FEB";
+                } else if (month == 3) {
+                    monthName = "MARCH";
+                    mon = "MAR";
+                } else if (month == 4) {
+                    monthName = "APRIL";
+                    mon = "APR";
+                } else if (month == 5) {
+                    monthName = "MAY";
+                    mon = "MAY";
+                } else if (month == 6) {
+                    monthName = "JUNE";
+                    mon = "JUN";
+                } else if (month == 7) {
+                    monthName = "JULY";
+                    mon = "JUL";
+                } else if (month == 8) {
+                    monthName = "AUGUST";
+                    mon = "AUG";
+                } else if (month == 9) {
+                    monthName = "SEPTEMBER";
+                    mon = "SEP";
+                } else if (month == 10) {
+                    monthName = "OCTOBER";
+                    mon = "OCT";
+                } else if (month == 11) {
+                    monthName = "NOVEMBER";
+                    mon = "NOV";
+                } else if (month == 12) {
+                    monthName = "DECEMBER";
+                    mon = "DEC";
+                }
 
-                        if (month == 1) {
-                            monthName = "JANUARY";
-                            mon = "JAN";
-                        } else if (month == 2) {
-                            monthName = "FEBRUARY";
-                            mon = "FEB";
-                        } else if (month == 3) {
-                            monthName = "MARCH";
-                            mon = "MAR";
-                        } else if (month == 4) {
-                            monthName = "APRIL";
-                            mon = "APR";
-                        } else if (month == 5) {
-                            monthName = "MAY";
-                            mon = "MAY";
-                        } else if (month == 6) {
-                            monthName = "JUNE";
-                            mon = "JUN";
-                        } else if (month == 7) {
-                            monthName = "JULY";
-                            mon = "JUL";
-                        } else if (month == 8) {
-                            monthName = "AUGUST";
-                            mon = "AUG";
-                        } else if (month == 9) {
-                            monthName = "SEPTEMBER";
-                            mon = "SEP";
-                        } else if (month == 10) {
-                            monthName = "OCTOBER";
-                            mon = "OCT";
-                        } else if (month == 11) {
-                            monthName = "NOVEMBER";
-                            mon = "NOV";
-                        } else if (month == 12) {
-                            monthName = "DECEMBER";
-                            mon = "DEC";
-                        }
+                yearName  = String.valueOf(year);
+                yearName = yearName.substring(yearName.length()-2);
 
-                        yearName  = String.valueOf(year);
-                        yearName = yearName.substring(yearName.length()-2);
+                selected_date = "01-"+mon+"-"+yearName;
+                //selected_date = "01-"+mon+"-"+yearName;
+                String tt = monthName + "-" + year;
+                selectMonth.setText(tt);
+                selectMonthLay.setHint("Month");
 
-                        selected_month_full = monthName;
-                        year_full = String.valueOf(year);
-                        selected_date = "01-"+mon+"-"+yearName;
-                        selectMonth.setText(monthName + "-" + year);
-                        selectMonthLay.setHint("Month:");
-                        errorMsgMonth.setVisibility(View.GONE);
+                getAdvanceData();
+            });
 
-                        reportCard.setVisibility(View.GONE);
-
-                        showDate = selectMonth.getText().toString();
-
-//                        new Check().execute();
-                        getAdvanceData();
-                    }
-                });
-
-            }
         });
 
         Date c = Calendar.getInstance().getTime();
@@ -302,54 +287,16 @@ public class AdvanceDetails extends AppCompatActivity {
         String month_name = month_date.format(c);
         month_name = month_name.toUpperCase();
         System.out.println(month_name);
-        selected_month_full = month_name;
 
         SimpleDateFormat presentYear = new SimpleDateFormat("yyyy",Locale.ENGLISH);
         String yyyy = presentYear.format(c);
-        year_full = yyyy;
 
-        selectMonth.setText(month_name+"-"+yyyy);
+        String smt = month_name+"-"+yyyy;
+        selectMonth.setText(smt);
         selectMonthLay.setHint("Month:");
-
-        showDate = selectMonth.getText().toString();
-
         reportCard.setVisibility(View.GONE);
-        errorMsgMonth.setVisibility(View.GONE);
 
-
-//        new Check().execute();
         getAdvanceData();
-
-
-        close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
-
-//        show.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                errorMsgMonth.setVisibility(View.GONE);
-//
-//                reportCard.setVisibility(View.GONE);
-//
-//
-//                showDate = selectMonth.getText().toString();
-//
-//                if (selected_date.isEmpty()) {
-//                    Toast.makeText(getApplicationContext(), "Please Select Proper Month", Toast.LENGTH_SHORT).show();
-//                    errorMsgMonth.setVisibility(View.VISIBLE);
-//                    errorMsgMonth.setText("You must provide Month to get Adavance Details");
-//
-//                } else {
-//                    new Check().execute();
-//                }
-//            }
-//        });
-
 
     }
 
@@ -375,7 +322,7 @@ public class AdvanceDetails extends AppCompatActivity {
 //            int     exitValue = ipProcess.waitFor();
 //            return (exitValue == 0);
 //        }
-//        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
+//        catch (IOException | InterruptedException e)          { logger.log(Level.WARNING, e.getMessage(), e); }
 //
 //        return false;
 //    }
@@ -568,7 +515,7 @@ public class AdvanceDetails extends AppCompatActivity {
 //
 //            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
 //            Log.i("ERRRRR", e.getLocalizedMessage());
-//            e.printStackTrace();
+//            logger.log(Level.WARNING, e.getMessage(), e);
 //        }
 //    }
 
@@ -578,18 +525,18 @@ public class AdvanceDetails extends AppCompatActivity {
         conn = false;
         connected = false;
 
-        adv_taken = "";
-        adv_paid = "";
-        sc_adv_paid = "";
-        total_paid = "";
-        sc_adv_all_taken = "";
-        sc_adv_all_paid = "";
-        sc_adv_all_payable = "";
+        adv_taken = "0";
+        adv_paid = "0";
+        sc_adv_paid = "0";
+        total_paid = "0";
+        sc_adv_all_taken = "0";
+        sc_adv_all_paid = "0";
+        sc_adv_all_payable = "0";
 
-        String advtakenUrl = "http://103.56.208.123:8001/apex/ttrams/advanceData/getAdvTaken/"+emp_id+"/"+selected_date+"";
-        String advPaidUrl = "http://103.56.208.123:8001/apex/ttrams/advanceData/getAdvancePaid/"+emp_id+"/"+selected_date+"";
-        String schAdvTakenUrl = "http://103.56.208.123:8001/apex/ttrams/advanceData/getSchAdvTaken/"+emp_id+"/"+selected_date+"";
-        String schAdvPaidUrl = "http://103.56.208.123:8001/apex/ttrams/advanceData/getSchAdvPaid/"+emp_id+"/"+selected_date+"";
+        String advtakenUrl = api_url_front + "advanceData/getAdvTaken/"+emp_id+"/"+selected_date;
+        String advPaidUrl = api_url_front + "advanceData/getAdvancePaid/"+emp_id+"/"+selected_date;
+        String schAdvTakenUrl = api_url_front + "advanceData/getSchAdvTaken/"+emp_id+"/"+selected_date;
+        String schAdvPaidUrl = api_url_front + "advanceData/getSchAdvPaid/"+emp_id+"/"+selected_date;
 
         RequestQueue requestQueue = Volley.newRequestQueue(AdvanceDetails.this);
 
@@ -605,19 +552,19 @@ public class AdvanceDetails extends AppCompatActivity {
                         JSONObject advInfo = array.getJSONObject(i);
 
                         sc_adv_all_paid = advInfo.getString("total_sch_paid")
-                                .equals("null") ? "" : advInfo.getString("total_sch_paid");
+                                .equals("null") ? "0" : advInfo.getString("total_sch_paid");
                     }
                 }
                 connected = true;
                 updateLayout();
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateLayout();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             conn = false;
             connected = false;
             updateLayout();
@@ -635,18 +582,18 @@ public class AdvanceDetails extends AppCompatActivity {
                         JSONObject advInfo = array.getJSONObject(i);
 
                         sc_adv_all_taken = advInfo.getString("sch_adv_amt")
-                                .equals("null") ? "" : advInfo.getString("sch_adv_amt");
+                                .equals("null") ? "0" : advInfo.getString("sch_adv_amt");
                     }
                 }
                 requestQueue.add(schAdvPaidReq);
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateLayout();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             conn = false;
             connected = false;
             updateLayout();
@@ -664,23 +611,23 @@ public class AdvanceDetails extends AppCompatActivity {
                        JSONObject advInfo = array.getJSONObject(i);
 
                        adv_paid = advInfo.getString("month_adv_paid")
-                               .equals("null") ? "" : advInfo.getString("month_adv_paid");
+                               .equals("null") ? "0" : advInfo.getString("month_adv_paid");
                        sc_adv_paid = advInfo.getString("month_sch_adv_paid")
-                               .equals("null") ? "" : advInfo.getString("month_sch_adv_paid");
+                               .equals("null") ? "0" : advInfo.getString("month_sch_adv_paid");
                        total_paid = advInfo.getString("total_month_paid")
-                               .equals("null") ? "" : advInfo.getString("total_month_paid");
+                               .equals("null") ? "0" : advInfo.getString("total_month_paid");
 
                    }
                }
                requestQueue.add(schAdvTakReq);
            }
            catch (JSONException e) {
-               e.printStackTrace();
+               logger.log(Level.WARNING, e.getMessage(), e);
                connected = false;
                updateLayout();
            }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             conn = false;
             connected = false;
             updateLayout();
@@ -698,19 +645,19 @@ public class AdvanceDetails extends AppCompatActivity {
                         JSONObject advInfo = array.getJSONObject(i);
 
                         adv_taken = advInfo.getString("month_advance")
-                                .equals("null") ? "" : advInfo.getString("month_advance");
+                                .equals("null") ? "0" : advInfo.getString("month_advance");
                     }
                 }
 
                 requestQueue.add(advPaidReq);
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateLayout();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             conn = false;
             connected = false;
             updateLayout();
@@ -723,11 +670,7 @@ public class AdvanceDetails extends AppCompatActivity {
         waitProgress.dismiss();
         if (conn) {
             if (connected) {
-                errorMsgMonth.setVisibility(View.GONE);
                 reportCard.setVisibility(View.VISIBLE);
-
-                monthName.setText(selectMonth.getText().toString());
-
                 empName.setText(emp_name);
                 id.setText(user_id);
                 band.setText(ban);
@@ -748,10 +691,10 @@ public class AdvanceDetails extends AppCompatActivity {
                         int payable = taken - paid;
                         scAdvAllPayable.setText(String.valueOf(payable));
                     } else {
-                        scAdvAllPayable.setText("");
+                        scAdvAllPayable.setText("0");
                     }
                 } else {
-                    scAdvAllPayable.setText("");
+                    scAdvAllPayable.setText("0");
                 }
                 conn = false;
                 connected = false;

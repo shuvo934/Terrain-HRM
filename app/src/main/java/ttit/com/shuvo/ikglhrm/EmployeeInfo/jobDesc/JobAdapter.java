@@ -1,7 +1,6 @@
 package ttit.com.shuvo.ikglhrm.EmployeeInfo.jobDesc;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,8 +30,7 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobHolder> {
     @Override
     public JobHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(myContext).inflate(R.layout.job_details_view, parent, false);
-        JobHolder ammvh = new JobHolder(v);
-        return ammvh;
+        return new JobHolder(v);
     }
 
     @Override
@@ -50,10 +48,10 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobHolder> {
         return jobDescDetails.size();
     }
 
-    public class JobHolder extends RecyclerView.ViewHolder {
+    public static class JobHolder extends RecyclerView.ViewHolder {
 
-        private TextView item;
-        private TextView jobDetails;
+        TextView item;
+        TextView jobDetails;
 
 
         public JobHolder(@NonNull View itemView) {

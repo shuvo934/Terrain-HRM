@@ -10,13 +10,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@color/black"
-        android:padding="2dp"
+        android:padding="@dimen/_1sdp"
         android:fontFamily="@font/poppins"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:text="Casual Leave"
+        android:layout_marginTop="@dimen/_4sdp"
+        android:layout_marginBottom="@dimen/_4sdp"
+        android:text=""
         android:background="@color/white"
         android:textStyle="bold"/>
-
 
 </LinearLayout>

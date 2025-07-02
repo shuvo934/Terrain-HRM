@@ -1,7 +1,6 @@
 package ttit.com.shuvo.ikglhrm.leaveAll.leaveApprove.leaveAppDialogues;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,15 +19,15 @@ import static ttit.com.shuvo.ikglhrm.leaveAll.leaveApprove.LeaveApprove.forwardH
 
 public class ForwardHistoryDial extends AppCompatDialogFragment {
 
-    private RecyclerView apptRecyclerView;
-    private ForwardHistoryAdapter forwardHistoryAdapter;
-    private RecyclerView.LayoutManager apptLayout;
+    RecyclerView apptRecyclerView;
+    ForwardHistoryAdapter forwardHistoryAdapter;
+    RecyclerView.LayoutManager apptLayout;
 
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = getActivity().getLayoutInflater();
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
 
         View view = inflater.inflate(R.layout.forward_history_list_view, null);
 
@@ -48,13 +47,7 @@ public class ForwardHistoryDial extends AppCompatDialogFragment {
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
 
-        dialog.setButton(Dialog.BUTTON_NEGATIVE, "OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                dialog.dismiss();
-            }
-        });
+        dialog.setButton(Dialog.BUTTON_NEGATIVE, "OK", (dialog1, which) -> dialog1.dismiss());
 
         return dialog;
     }

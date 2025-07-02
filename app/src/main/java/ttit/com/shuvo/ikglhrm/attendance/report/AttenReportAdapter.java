@@ -14,8 +14,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.button.MaterialButton;
+
 import java.sql.Blob;
-import java.sql.Connection;
 import java.util.ArrayList;
 
 import ttit.com.shuvo.ikglhrm.R;
@@ -29,9 +30,6 @@ public class AttenReportAdapter extends RecyclerView.Adapter<AttenReportAdapter.
     public Context myContext;
 
     public static Blob blobFromAdapter;
-    String downloadFile = "Downloaded_GPX.gpx";
-    private Connection connection;
-
 
     public AttenReportAdapter(ArrayList<AttenReportList> attenReportLists, Context myContext) {
         this.attenReportLists = attenReportLists;
@@ -43,8 +41,7 @@ public class AttenReportAdapter extends RecyclerView.Adapter<AttenReportAdapter.
     @Override
     public AttenHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(myContext).inflate(R.layout.att_rep_list_view, parent, false);
-        AttenHolder ammvh = new AttenHolder(v);
-        return ammvh;
+        return new AttenHolder(v);
     }
 
     @Override
@@ -65,13 +62,13 @@ public class AttenReportAdapter extends RecyclerView.Adapter<AttenReportAdapter.
 
         if (ininini.isEmpty() && outtttt.isEmpty()) {
             holder.status.setText(aRtl.getStatus());
-        } else if (ininini.isEmpty() && !outtttt.isEmpty()) {
+        } else if (ininini.isEmpty()) {
             String sss = aRtl.getStatus() + "\n(" + outtttt + ")";
             holder.status.setText(sss);
-        } else if (!ininini.isEmpty() && outtttt.isEmpty()) {
+        } else if (outtttt.isEmpty()) {
             String sss = aRtl.getStatus() + "\n(" + aRtl.getInStatus() + ")";
             holder.status.setText(sss);
-        } else if (!ininini.isEmpty() && !outtttt.isEmpty()) {
+        } else {
             String sss = aRtl.getStatus() + "\n(" + aRtl.getInStatus() + ")" + "\n(" + aRtl.getOutStatus() + ")";
             holder.status.setText(sss);
         }
@@ -83,31 +80,31 @@ public class AttenReportAdapter extends RecyclerView.Adapter<AttenReportAdapter.
         //System.out.println(attStatus);
         switch (attStatus) {
             case "Multi Station":
-                holder.linearLayout.setBackgroundColor(Color.parseColor("#C0C000"));
+                holder.status.setTextColor(Color.parseColor("#C0C000"));
                 break;
             case "Out Miss":
-                holder.linearLayout.setBackgroundColor(Color.parseColor("#00C080"));
+                holder.status.setTextColor(Color.parseColor("#00C080"));
                 break;
             case "In Leave":
-                holder.linearLayout.setBackgroundColor(Color.parseColor("#8F8F8F"));
+                holder.status.setTextColor(Color.parseColor("#8F8F8F"));
                 break;
             case "Off Day":
-                holder.linearLayout.setBackgroundColor(Color.parseColor("#7FDFFE"));
+                holder.status.setTextColor(Color.parseColor("#7FDFFE"));
                 break;
             case "Present on Leave Day":
-                holder.linearLayout.setBackgroundColor(Color.parseColor("#4080C0"));
+                holder.status.setTextColor(Color.parseColor("#4080C0"));
                 break;
             case "Present on Off Day":
-                holder.linearLayout.setBackgroundColor(Color.parseColor("#E0C080"));
+                holder.status.setTextColor(Color.parseColor("#E0C080"));
                 break;
             case "Absent":
-                holder.linearLayout.setBackgroundColor(Color.parseColor("#C000FF"));
+                holder.status.setTextColor(Color.parseColor("#C000FF"));
                 break;
-            case "White":
-                holder.linearLayout.setBackgroundColor(Color.WHITE);
-                break;
+//            case "White":
+//                holder.status.setTextColor(Color.BLACK);
+//                break;
             default:
-                holder.linearLayout.setBackgroundColor(Color.WHITE);
+                holder.status.setTextColor(Color.BLACK);
                 break;
         }
 
@@ -183,19 +180,19 @@ public class AttenReportAdapter extends RecyclerView.Adapter<AttenReportAdapter.
 
     public class AttenHolder extends RecyclerView.ViewHolder {
 
-        private TextView date;
-        private TextView status;
-        private TextView shift;
-        private TextView punch;
-        private TextView inTime;
-        private TextView inStatus;
-        private TextView out;
-        private TextView outStatus;
-        private Button inLoc;
-        private Button outLoc;
-        private Button timeline;
+        TextView date;
+        TextView status;
+        TextView shift;
+        TextView punch;
+        TextView inTime;
+        TextView inStatus;
+        TextView out;
+        TextView outStatus;
+        Button inLoc;
+        Button outLoc;
+        MaterialButton timeline;
 
-        private LinearLayout linearLayout;
+        LinearLayout linearLayout;
 
 
         public AttenHolder(@NonNull View itemView) {
@@ -214,58 +211,49 @@ public class AttenReportAdapter extends RecyclerView.Adapter<AttenReportAdapter.
             outLoc = itemView.findViewById(R.id.out_location);
             timeline = itemView.findViewById(R.id.timeline_activity_map);
 
-            inLoc.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    AppCompatActivity activity = (AppCompatActivity) v.getContext();
-                    String in_lat = attenReportLists.get(getAdapterPosition()).getInLat();
-                    String in_lon = attenReportLists.get(getAdapterPosition()).getInLon();
-                    String in_time = inTime.getText().toString();
-                    String dd = date.getText().toString();
+            inLoc.setOnClickListener(v -> {
+                AppCompatActivity activity = (AppCompatActivity) v.getContext();
+                String in_lat = attenReportLists.get(getAdapterPosition()).getInLat();
+                String in_lon = attenReportLists.get(getAdapterPosition()).getInLon();
+                String in_time = inTime.getText().toString();
+                String dd = date.getText().toString();
 
 
-                    Intent intent = new Intent(myContext, MapsActivity.class);
-                    intent.putExtra("lat", in_lat);
-                    intent.putExtra("lon", in_lon);
-                    intent.putExtra("time", in_time);
-                    intent.putExtra("date", dd);
-                    intent.putExtra("status","Attendance In Time");
-                    activity.startActivity(intent);
-                }
+                Intent intent = new Intent(myContext, MapsActivity.class);
+                intent.putExtra("lat", in_lat);
+                intent.putExtra("lon", in_lon);
+                intent.putExtra("time", in_time);
+                intent.putExtra("date", dd);
+                intent.putExtra("status","Attendance In Time");
+                activity.startActivity(intent);
             });
 
-            outLoc.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    AppCompatActivity activity = (AppCompatActivity) v.getContext();
-                    String out_lat = attenReportLists.get(getAdapterPosition()).getOutLat();
-                    String out_lon = attenReportLists.get(getAdapterPosition()).getOutLon();
+            outLoc.setOnClickListener(v -> {
+                AppCompatActivity activity = (AppCompatActivity) v.getContext();
+                String out_lat = attenReportLists.get(getAdapterPosition()).getOutLat();
+                String out_lon = attenReportLists.get(getAdapterPosition()).getOutLon();
 
-                    String out_time = out.getText().toString();
-                    String dd = date.getText().toString();
+                String out_time = out.getText().toString();
+                String dd = date.getText().toString();
 
 
-                    Intent intent = new Intent(myContext, MapsActivity.class);
-                    intent.putExtra("lat", out_lat);
-                    intent.putExtra("lon", out_lon);
-                    intent.putExtra("time", out_time);
-                    intent.putExtra("date", dd);
-                    intent.putExtra("status","Attendance Out Time");
-                    activity.startActivity(intent);
-                }
+                Intent intent = new Intent(myContext, MapsActivity.class);
+                intent.putExtra("lat", out_lat);
+                intent.putExtra("lon", out_lon);
+                intent.putExtra("time", out_time);
+                intent.putExtra("date", dd);
+                intent.putExtra("status","Attendance Out Time");
+                activity.startActivity(intent);
             });
 
-            timeline.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    AppCompatActivity activity = (AppCompatActivity) v.getContext();
-                    Intent intent = new Intent(myContext, TimeLineActivity.class);
-                    String elr_id = attenReportLists.get(getAdapterPosition()).getElr_id();
-                    intent.putExtra("ELR", elr_id);
-                    blobFromAdapter = attenReportLists.get(getAdapterPosition()).getBlob();
+            timeline.setOnClickListener(v -> {
+                AppCompatActivity activity = (AppCompatActivity) v.getContext();
+                Intent intent = new Intent(myContext, TimeLineActivity.class);
+                String elr_id = attenReportLists.get(getAdapterPosition()).getElr_id();
+                intent.putExtra("ELR", elr_id);
+                blobFromAdapter = attenReportLists.get(getAdapterPosition()).getBlob();
 
-                    activity.startActivity(intent);
-                }
+                activity.startActivity(intent);
             });
 
 

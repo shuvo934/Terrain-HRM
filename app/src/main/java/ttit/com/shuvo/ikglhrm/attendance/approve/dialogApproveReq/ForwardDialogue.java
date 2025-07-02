@@ -1,9 +1,9 @@
 package ttit.com.shuvo.ikglhrm.attendance.approve.dialogApproveReq;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,7 +26,6 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
@@ -37,6 +36,9 @@ import com.google.android.material.textfield.TextInputLayout;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
@@ -51,6 +53,7 @@ import static ttit.com.shuvo.ikglhrm.attendance.approve.AttendanceApprove.req_co
 import static ttit.com.shuvo.ikglhrm.leaveAll.leaveApprove.LeaveApprove.forwardFromLeave;
 import static ttit.com.shuvo.ikglhrm.leaveAll.leaveApprove.LeaveApprove.la_id;
 import static ttit.com.shuvo.ikglhrm.leaveAll.leaveApprove.LeaveApprove.req_code_leave;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -78,7 +81,6 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
 
     WaitProgress waitProgress = new WaitProgress();
 
-    private String message = null;
     private Boolean conn = false;
     private Boolean connected = false;
 
@@ -115,16 +117,17 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
     View view;
     AlertDialog forwarDialog;
 
-    public ForwardDialogue(Context context) {
+    Logger logger = Logger.getLogger(ForwardDialogue.class.getName());
 
+    public ForwardDialogue(Context context) {
         this.mContext = context;
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = getActivity().getLayoutInflater();
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
 
         view = inflater.inflate(R.layout.forward_req_view, null);
         activity = (AppCompatActivity) view.getContext();
@@ -170,120 +173,87 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
         forwarDialog = builder.create();
         forwarDialog.setCancelable(false);
         forwarDialog.setCanceledOnTouchOutside(false);
+        setCancelable(false);
 
-        comm.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH ||
-                        actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT || event != null && event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER &&
-                        event.getKeyCode() == KeyEvent.KEYCODE_NAVIGATE_NEXT) {
-                    if (event == null || !event.isShiftPressed()) {
-                        // the user is done typing.
-                        Log.i("Let see", "Come here");
-                        comm.clearFocus();
-                        closeKeyBoard();
+        comm.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH ||
+                    actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT || event != null && event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER &&
+                    event.getKeyCode() == KeyEvent.KEYCODE_NAVIGATE_NEXT) {
+                if (event == null || !event.isShiftPressed()) {
+                    // the user is done typing.
+                    Log.i("Let see", "Come here");
+                    comm.clearFocus();
+                    closeKeyBoard();
 
-                        return false; // consume.
-                    }
+                    return false; // consume.
                 }
-                return false;
             }
+            return false;
         });
 
-        employeeName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        employeeName.setOnClickListener(v -> {
 
-                int vis = lisLay.getVisibility();
-                if (vis == 0) {
-                    lisLay.setVisibility(View.GONE);
+            int vis = lisLay.getVisibility();
+            if (vis == 0) {
+                lisLay.setVisibility(View.GONE);
+            } else {
+                lisLay.setVisibility(View.VISIBLE);
+            }
+
+        });
+
+        goBack.setOnClickListener(v -> forwarDialog.dismiss());
+
+        cont.setOnClickListener(v -> {
+
+            forward_comm = Objects.requireNonNull(comm.getText()).toString();
+            System.out.println(forwardFromAtt);
+            System.out.println(forwardFromLeave);
+
+            if (forwardFromAtt == 1) {
+                if (forward_comm.isEmpty()) {
+                    Toast.makeText(getContext(),"Please enter forward comment",Toast.LENGTH_SHORT).show();
                 } else {
-                    lisLay.setVisibility(View.VISIBLE);
-                }
-
-            }
-        });
-
-        goBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                forwarDialog.dismiss();
-            }
-        });
-
-        cont.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                forward_comm = comm.getText().toString();
-                System.out.println(forwardFromAtt);
-                System.out.println(forwardFromLeave);
-
-                if (forwardFromAtt == 1) {
-                    if (forward_comm.isEmpty()) {
-                        Toast.makeText(getContext(),"Please enter forward comment",Toast.LENGTH_SHORT).show();
+                    if (forward_to_id.isEmpty()) {
+                        Toast.makeText(getContext(),"Please enter forward to employee",Toast.LENGTH_SHORT).show();
                     } else {
-                        if (forward_to_id.isEmpty()) {
-                            Toast.makeText(getContext(),"Please enter forward to employee",Toast.LENGTH_SHORT).show();
-                        } else {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                            builder.setTitle("Forward Request!")
-                                    .setMessage("Do you want forward this request?")
-                                    .setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
+                        AlertDialog.Builder builder1 = new AlertDialog.Builder(activity);
+                        builder1.setTitle("Forward Request!")
+                                .setMessage("Do you want forward this request?")
+                                .setPositiveButton("YES", (dialog, which) -> forwardAttReq())
+                                .setNegativeButton("NO", (dialog, which) -> {
 
-//                                            new ForwardCheck().execute();
-                                            forwardAttReq();
-                                        }
-                                    })
-                                    .setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-
-                                        }
-                                    });
-                            AlertDialog alert = builder.create();
-                            alert.show();
+                                });
+                        AlertDialog alert = builder1.create();
+                        alert.show();
 
 
-                        }
-                    }
-                } else if (forwardFromLeave == 1) {
-                    if (forward_comm.isEmpty()) {
-                        Toast.makeText(getContext(),"Please enter forward comment",Toast.LENGTH_SHORT).show();
-                    } else {
-                        if (forward_to_id.isEmpty()) {
-                            Toast.makeText(getContext(),"Please enter forward to employee",Toast.LENGTH_SHORT).show();
-                        } else {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                            builder.setTitle("Forward Leave Application!")
-                                    .setMessage("Do you want forward this leave application?")
-                                    .setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-
-//                                            new ForwardCheckLeave().execute();
-                                            forwardLeaveReq();
-                                        }
-                                    })
-                                    .setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-
-                                        }
-                                    });
-                            AlertDialog alert = builder.create();
-                            alert.show();
-
-
-                        }
                     }
                 }
+            } else if (forwardFromLeave == 1) {
+                if (forward_comm.isEmpty()) {
+                    Toast.makeText(getContext(),"Please enter forward comment",Toast.LENGTH_SHORT).show();
+                } else {
+                    if (forward_to_id.isEmpty()) {
+                        Toast.makeText(getContext(),"Please enter forward to employee",Toast.LENGTH_SHORT).show();
+                    } else {
+                        AlertDialog.Builder builder1 = new AlertDialog.Builder(activity);
+                        builder1.setTitle("Forward Leave Application!")
+                                .setMessage("Do you want forward this leave application?")
+                                .setPositiveButton("YES", (dialog, which) -> forwardLeaveReq())
+                                .setNegativeButton("NO", (dialog, which) -> {
+
+                                });
+                        AlertDialog alert = builder1.create();
+                        alert.show();
 
 
-
+                    }
+                }
             }
+
+
+
         });
 
         return forwarDialog;
@@ -302,9 +272,7 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
     @Override
     public void onCategoryClicked(int CategoryPosition) {
         lisLay.setVisibility(View.GONE);
-        String name = "";
-
-        name = forwardEMPLists.get(CategoryPosition).getEmpName();
+        String name = forwardEMPLists.get(CategoryPosition).getEmpName();
         forward_to_id = forwardEMPLists.get(0).getEmpID();
         employeeName.setText(name);
         employeeName.setTextColor(Color.BLACK);
@@ -942,10 +910,10 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
         approval_band = "";
         count_approv_emp = 0;
 
-        String approverDivUrl = "http://103.56.208.123:8001/apex/ttrams/forwardReq/attReqApproverWithDiv/"+emp_id+"";
-        String appWithoutDivUrl  = "http://103.56.208.123:8001/apex/ttrams/forwardReq/attReqApproverWithoutDiv/"+emp_id+"";
-        String allapproverUrl = "http://103.56.208.123:8001/apex/ttrams/forwardReq/attReqAllApprover/"+emp_id+"";
-        String desigPriorUrl = "http://103.56.208.123:8001/apex/ttrams/forwardReq/getDesigPriority/"+emp_id+"";
+        String approverDivUrl = api_url_front + "forwardReq/attReqApproverWithDiv/"+emp_id;
+        String appWithoutDivUrl  = api_url_front + "forwardReq/attReqApproverWithoutDiv/"+emp_id;
+        String allapproverUrl = api_url_front + "forwardReq/attReqAllApprover/"+emp_id;
+        String desigPriorUrl = api_url_front + "forwardReq/getDesigPriority/"+emp_id;
 
         RequestQueue requestQueue = Volley.newRequestQueue(mContext);
 
@@ -973,7 +941,7 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
                     getForwarderList();
                 }
                 else {
-                    if (allSelectedApprover.size() != 0) {
+                    if (!allSelectedApprover.isEmpty()) {
                         for (int i = 0; i<allSelectedApprover.size(); i++) {
                             forwardEMPLists.add(new ForwardEMPList(allSelectedApprover.get(i).getId(),allSelectedApprover.get(i).getFirst(),allSelectedApprover.get(i).getSecond(),allSelectedApprover.get(i).getThird(),allSelectedApprover.get(i).getFourth()));
                         }
@@ -983,12 +951,12 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
                 }
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateInfo();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             conn = false;
             connected = false;
             updateInfo();
@@ -1023,12 +991,12 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
                 requestQueue.add(desigPriorReq);
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateInfo();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             conn = false;
             connected = false;
             updateInfo();
@@ -1064,12 +1032,12 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
                 requestQueue.add(allAppReq);
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateInfo();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             conn = false;
             connected = false;
             updateInfo();
@@ -1102,12 +1070,12 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
                 requestQueue.add(appWithoutDivReq);
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateInfo();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             conn = false;
             connected = false;
             updateInfo();
@@ -1118,9 +1086,9 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
 
     public void getForwarderList() {
 
-        String approvalBandUrl = "http://103.56.208.123:8001/apex/ttrams/forwardReq/getApprovalBand/"+desig_priority+"";
-        String countApp1Url = "http://103.56.208.123:8001/apex/ttrams/forwardReq/getCountApprovEmp/"+divm_id+"/"+desig_priority+"";
-        String countApp2Url = "http://103.56.208.123:8001/apex/ttrams/forwardReq/getCountApprovEmp_2/"+desig_priority+"";
+        String approvalBandUrl = api_url_front + "forwardReq/getApprovalBand/"+desig_priority;
+        String countApp1Url = api_url_front + "forwardReq/getCountApprovEmp/"+divm_id+"/"+desig_priority;
+        String countApp2Url = api_url_front + "forwardReq/getCountApprovEmp_2/"+desig_priority;
 
         RequestQueue requestQueue = Volley.newRequestQueue(mContext);
 
@@ -1146,7 +1114,7 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
                     allSelectedApprover = allApproverEmp;
                 }
 
-                if (allSelectedApprover.size() != 0) {
+                if (!allSelectedApprover.isEmpty()) {
                     for (int i = 0; i<allSelectedApprover.size(); i++) {
                         forwardEMPLists.add(new ForwardEMPList(allSelectedApprover.get(i).getId(),allSelectedApprover.get(i).getFirst(),allSelectedApprover.get(i).getSecond(),allSelectedApprover.get(i).getThird(),allSelectedApprover.get(i).getFourth()));
                     }
@@ -1156,12 +1124,12 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
 
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateInfo();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             conn = false;
             connected = false;
             updateInfo();
@@ -1185,7 +1153,7 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
                 }
                 else {
                     allSelectedApprover = allApproverDivision;
-                    if (allSelectedApprover.size() != 0) {
+                    if (!allSelectedApprover.isEmpty()) {
                         for (int i = 0; i<allSelectedApprover.size(); i++) {
                             forwardEMPLists.add(new ForwardEMPList(allSelectedApprover.get(i).getId(),allSelectedApprover.get(i).getFirst(),allSelectedApprover.get(i).getSecond(),allSelectedApprover.get(i).getThird(),allSelectedApprover.get(i).getFourth()));
                         }
@@ -1195,12 +1163,12 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
                 }
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateInfo();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             conn = false;
             connected = false;
             updateInfo();
@@ -1225,7 +1193,7 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
                     requestQueue.add(countApp1Req);
                 }
                 else {
-                    if (allSelectedApprover.size() != 0) {
+                    if (!allSelectedApprover.isEmpty()) {
                         for (int i = 0; i<allSelectedApprover.size(); i++) {
                             forwardEMPLists.add(new ForwardEMPList(allSelectedApprover.get(i).getId(),allSelectedApprover.get(i).getFirst(),allSelectedApprover.get(i).getSecond(),allSelectedApprover.get(i).getThird(),allSelectedApprover.get(i).getFourth()));
                         }
@@ -1235,12 +1203,12 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
                 }
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateInfo();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             conn = false;
             connected = false;
             updateInfo();
@@ -1249,11 +1217,12 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
         requestQueue.add(appBandReq);
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private void updateInfo() {
         waitProgress.dismiss();
         if (conn) {
             if (connected) {
-                if (forwardEMPLists.size() == 0) {
+                if (forwardEMPLists.isEmpty()) {
                     noEmp.setVisibility(View.VISIBLE);
                 } else {
                     noEmp.setVisibility(View.GONE);
@@ -1366,7 +1335,7 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
 //
 //            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
 //            Log.i("ERRRRR", e.getLocalizedMessage());
-//            e.printStackTrace();
+//            logger.log(Level.WARNING, e.getMessage(), e);
 //        }
 //    }
 
@@ -1378,7 +1347,7 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
         isForwardExe = false;
         isForwarded = false;
 
-        String forwardAttReqUrl = "http://103.56.208.123:8001/apex/ttrams/forwardReq/forwardAttReq";
+        String forwardAttReqUrl = api_url_front + "forwardReq/forwardAttReq";
 
         RequestQueue requestQueue = Volley.newRequestQueue(mContext);
 
@@ -1399,18 +1368,18 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
                 updateLayout();
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 isForwarded = false;
                 updateLayout();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             ffffoooorrrwww = false;
             isForwarded = false;
             updateLayout();
         }) {
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
+            public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
                 headers.put("P_DARM_ID",darm_id);
                 headers.put("P_EMP_ID",emp_id);
@@ -1445,14 +1414,11 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
                     dialog1.setCancelable(false);
                     dialog1.setCanceledOnTouchOutside(false);
                     Button positive = dialog1.getButton(AlertDialog.BUTTON_POSITIVE);
-                    positive.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
+                    positive.setOnClickListener(v -> {
 
-                            dialog1.dismiss();
-                            ((Activity)mContext).finish();
+                        dialog1.dismiss();
+                        ((Activity)mContext).finish();
 
-                        }
                     });
 
                 }
@@ -1471,13 +1437,10 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
                         .show();
 
                 Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                positive.setOnClickListener(v -> {
 
-                        forwardAttReq();
-                        dialog.dismiss();
-                    }
+                    forwardAttReq();
+                    dialog.dismiss();
                 });
             }
         }
@@ -1489,13 +1452,10 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
                     .show();
 
             Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            positive.setOnClickListener(v -> {
 
-                    forwardAttReq();
-                    dialog.dismiss();
-                }
+                forwardAttReq();
+                dialog.dismiss();
             });
         }
     }
@@ -1553,7 +1513,7 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
 //
 //            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
 //            Log.i("ERRRRR", e.getLocalizedMessage());
-//            e.printStackTrace();
+//            logger.log(Level.WARNING, e.getMessage(), e);
 //        }
 //    }
 
@@ -1565,7 +1525,7 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
         isForwardExeLeave = false;
         isForwardedLeave = false;
 
-        String forwardAttReqUrl = "http://103.56.208.123:8001/apex/ttrams/forwardReq/forwardLeaveReq";
+        String forwardAttReqUrl = api_url_front + "forwardReq/forwardLeaveReq";
 
         RequestQueue requestQueue = Volley.newRequestQueue(mContext);
 
@@ -1586,18 +1546,18 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
                 updateLayoutLeave();
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 isForwardedLeave = false;
                 updateLayoutLeave();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             ffffoooorrrwwwllll = false;
             isForwardedLeave = false;
             updateLayoutLeave();
         }) {
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
+            public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
                 headers.put("P_LA_ID",la_id);
                 headers.put("P_EMP_ID",emp_id);
@@ -1632,14 +1592,11 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
                     dialog1.setCancelable(false);
                     dialog1.setCanceledOnTouchOutside(false);
                     Button positive = dialog1.getButton(AlertDialog.BUTTON_POSITIVE);
-                    positive.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
+                    positive.setOnClickListener(v -> {
 
-                            dialog1.dismiss();
-                            ((Activity)mContext).finish();
+                        dialog1.dismiss();
+                        ((Activity)mContext).finish();
 
-                        }
                     });
 
                 }
@@ -1658,13 +1615,10 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
                         .show();
 
                 Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                positive.setOnClickListener(v -> {
 
-                        forwardLeaveReq();
-                        dialog.dismiss();
-                    }
+                    forwardLeaveReq();
+                    dialog.dismiss();
                 });
             }
         }
@@ -1676,13 +1630,10 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
                     .show();
 
             Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            positive.setOnClickListener(v -> {
 
-                    forwardLeaveReq();
-                    dialog.dismiss();
-                }
+                forwardLeaveReq();
+                dialog.dismiss();
             });
         }
     }

@@ -18,11 +18,13 @@
         android:fontFamily="@font/poppins"
         android:textColor="@color/black"
         android:layout_weight=".25"
-        android:text="01-JUN-21"/>
+        android:text=""/>
+
     <View
         android:layout_width="1dp"
         android:layout_height="match_parent"
-        android:background="@android:color/black" />
+        android:background="@color/dark_gray" />
+
     <TextView
         android:id="@+id/short_code"
         android:layout_width="0dp"
@@ -34,11 +36,13 @@
         android:fontFamily="@font/poppins"
         android:textColor="@color/black"
         android:layout_weight=".1"
-        android:text="Present"/>
+        android:text=""/>
+
     <View
         android:layout_width="1dp"
         android:layout_height="match_parent"
-        android:background="@android:color/black" />
+        android:background="@color/dark_gray" />
+
     <TextView
         android:id="@+id/opening_qty"
         android:layout_width="0dp"
@@ -50,11 +54,13 @@
         android:padding="2dp"
         android:textColor="@color/black"
         android:layout_weight=".15"
-        android:text="General"/>
+        android:text=""/>
+
     <View
         android:layout_width="1dp"
         android:layout_height="match_parent"
-        android:background="@android:color/black" />
+        android:background="@color/dark_gray" />
+
     <TextView
         android:id="@+id/earn"
         android:layout_width="0dp"
@@ -66,11 +72,13 @@
         android:padding="2dp"
         android:textColor="@color/black"
         android:layout_weight=".15"
-        android:text="Factory"/>
+        android:text=""/>
+
     <View
         android:layout_width="1dp"
         android:layout_height="match_parent"
-        android:background="@android:color/black" />
+        android:background="@color/dark_gray" />
+
     <TextView
         android:id="@+id/consumed"
         android:layout_width="0dp"
@@ -82,11 +90,13 @@
         android:fontFamily="@font/poppins"
         android:textColor="@color/black"
         android:layout_weight=".13"
-        android:text="09:05:00 AM"/>
+        android:text=""/>
+
     <View
         android:layout_width="1dp"
         android:layout_height="match_parent"
-        android:background="@android:color/black" />
+        android:background="@color/dark_gray" />
+
     <TextView
         android:id="@+id/transfered"
         android:layout_width="0dp"
@@ -98,11 +108,13 @@
         android:fontFamily="@font/poppins"
         android:textColor="@color/black"
         android:layout_weight=".14"
-        android:text="Late"/>
+        android:text=""/>
+
     <View
         android:layout_width="1dp"
         android:layout_height="match_parent"
-        android:background="@android:color/black" />
+        android:background="@color/dark_gray" />
+
     <TextView
         android:id="@+id/cash_taken"
         android:layout_width="0dp"
@@ -114,11 +126,13 @@
         android:padding="2dp"
         android:textColor="@color/black"
         android:layout_weight=".13"
-        android:text="05:30:00 pm"/>
+        android:text=""/>
+
     <View
         android:layout_width="1dp"
         android:layout_height="match_parent"
-        android:background="@android:color/black" />
+        android:background="@color/dark_gray" />
+
     <TextView
         android:id="@+id/balance_qty"
         android:layout_width="0dp"
@@ -130,10 +144,6 @@
         android:padding="2dp"
         android:textColor="@color/black"
         android:layout_weight=".15"
-        android:text="Early"/>
-
-
-
-
+        android:text=""/>
 
 </LinearLayout>

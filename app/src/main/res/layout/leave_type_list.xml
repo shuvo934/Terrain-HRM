@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -11,41 +12,40 @@
         android:layout_height="wrap_content"
         android:hint="Search by Name"
         app:boxStrokeWidth="2dp"
-        android:layout_margin="5dp"
+        android:layout_margin="@dimen/_4sdp"
         app:boxStrokeColor="#0984e3"
         app:hintTextColor="#dfe6e9"
-        app:boxCornerRadiusBottomStart="10dp"
-        app:boxCornerRadiusBottomEnd="10dp"
-        app:boxCornerRadiusTopEnd="10dp"
-        app:boxCornerRadiusTopStart="10dp"
-
+        app:boxCornerRadiusBottomStart="@dimen/_8sdp"
+        app:boxCornerRadiusBottomEnd="@dimen/_8sdp"
+        app:boxCornerRadiusTopEnd="@dimen/_8sdp"
+        app:boxCornerRadiusTopStart="@dimen/_8sdp"
         app:helperTextEnabled="true"
         app:helperText=""
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        >
+        tools:ignore="HardcodedText">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/leave_type_search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:fontFamily="@font/open_sans_bold"
+            android:fontFamily="@font/be_vietnam_pro_bold"
             android:textSize="@dimen/_11sdp"
             android:textStyle="bold"
             android:textColor="#636e72"
-            android:inputType="textMultiLine"
-            />
+            android:inputType="textMultiLine" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="@dimen/_40sdp"
         android:orientation="horizontal"
-        android:layout_marginTop="5dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
+        android:layout_marginTop="@dimen/_4sdp"
+        android:layout_marginStart="@dimen/_4sdp"
+        android:layout_marginEnd="@dimen/_4sdp"
         android:background="#dfe6e9">
+
         <TextView
             android:id="@+id/name_of_type_reason"
             android:layout_width="match_parent"
@@ -55,29 +55,28 @@
             android:fontFamily="@font/poppins_semibold"
             android:textColor="@color/black"
             android:textStyle="bold"
-            android:textSize="16sp"
-            android:layout_marginStart="10dp"
+            android:textSize="@dimen/_12sdp"
+            android:layout_marginStart="@dimen/_8sdp"
             android:layout_gravity="center"
             android:background="#dfe6e9"
-            />
-
+            tools:ignore="HardcodedText" />
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="@dimen/_350sdp"
         android:orientation="horizontal">
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/all_leave_type_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:padding="5dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="5dp"/>
+            android:layout_marginBottom="@dimen/_4sdp"
+            android:padding="@dimen/_4sdp"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginEnd="@dimen/_4sdp"/>
 
     </LinearLayout>
-
 
 </LinearLayout>

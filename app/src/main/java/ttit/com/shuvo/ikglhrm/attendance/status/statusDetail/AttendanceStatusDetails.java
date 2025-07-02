@@ -3,15 +3,12 @@ package ttit.com.shuvo.ikglhrm.attendance.status.statusDetail;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
 import android.graphics.Color;
 
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -25,20 +22,20 @@ import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
 
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class AttendanceStatusDetails extends AppCompatActivity {
 
     WaitProgress waitProgress = new WaitProgress();
-//    private String message = null;
     private Boolean conn = false;
-//    private Boolean infoConnected = false;
     private Boolean connected = false;
-
-//    private Connection connection;
 
     String emp_id = "";
 
@@ -93,31 +90,13 @@ public class AttendanceStatusDetails extends AppCompatActivity {
     String dateNow = "";
     String comments = "";
 
-    Button close;
-
     TextView appRej;
+
+    Logger logger = Logger.getLogger(AttendanceStatusDetails.class.getName());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            Window w = getWindow();
-//            //w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-//        }
-//        if (Build.VERSION.SDK_INT < 16) {
-//            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-//                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//        }
-//        View decorView = getWindow().getDecorView();
-//// Hide the status bar.
-//        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
-//        decorView.setSystemUiVisibility(uiOptions);
-
-        Window window = getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(ContextCompat.getColor(AttendanceStatusDetails.this,R.color.secondaryColor));
         setContentView(R.layout.activity_attendance_status_details);
 
         status = findViewById(R.id.status_of_att_from_list);
@@ -142,7 +121,6 @@ public class AttendanceStatusDetails extends AppCompatActivity {
         reasonDesc = findViewById(R.id.reason_description_update_st_dt);
         address = findViewById(R.id.address_outside_sta_st_dt);
 
-        close = findViewById(R.id.status_details_finish);
 
         appRej = findViewById(R.id.is_app_or_rej);
 
@@ -178,24 +156,29 @@ public class AttendanceStatusDetails extends AppCompatActivity {
 
         reqCode.setText(request);
 
-        if (statttt.equals("PENDING")) {
-            status.setText(statttt);
-            statusCard.setCardBackgroundColor(Color.parseColor("#636e72"));
-            approverLay.setVisibility(View.GONE);
-            approver.setText("");
-        } else if (statttt.equals("APPROVED")){
-            status.setText(statttt);
-            approverLay.setVisibility(View.VISIBLE);
-            statusCard.setCardBackgroundColor(Color.parseColor("#1abc9c"));
-            approver.setText(apprrroovveerr);
-            appRej.setText("Approved By:");
-
-        } else if (statttt.equals("REJECTED")) {
-            status.setText(statttt);
-            statusCard.setCardBackgroundColor(Color.parseColor("#c0392b"));
-            approverLay.setVisibility(View.VISIBLE);
-            approver.setText(apprrroovveerr);
-            appRej.setText("Rejected By:");
+        switch (statttt) {
+            case "PENDING":
+                status.setText(statttt);
+                statusCard.setCardBackgroundColor(Color.parseColor("#636e72"));
+                approverLay.setVisibility(View.GONE);
+                approver.setText("");
+                break;
+            case "APPROVED":
+                status.setText(statttt);
+                approverLay.setVisibility(View.VISIBLE);
+                statusCard.setCardBackgroundColor(Color.parseColor("#1abc9c"));
+                approver.setText(apprrroovveerr);
+                String tt = "Approved By:";
+                appRej.setText(tt);
+                break;
+            case "REJECTED":
+                status.setText(statttt);
+                statusCard.setCardBackgroundColor(Color.parseColor("#c0392b"));
+                approverLay.setVisibility(View.VISIBLE);
+                approver.setText(apprrroovveerr);
+                String tt1 = "Rejected By:";
+                appRej.setText(tt1);
+                break;
         }
 
 
@@ -227,14 +210,6 @@ public class AttendanceStatusDetails extends AppCompatActivity {
 //        new Check().execute();
         getAttendanceStatusDetails();
 
-
-        close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
     }
 
 //    public boolean isConnected() {
@@ -259,7 +234,7 @@ public class AttendanceStatusDetails extends AppCompatActivity {
 //            int     exitValue = ipProcess.waitFor();
 //            return (exitValue == 0);
 //        }
-//        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
+//        catch (IOException | InterruptedException e)          { logger.log(Level.WARNING, e.getMessage(), e); }
 //
 //        return false;
 //    }
@@ -423,7 +398,7 @@ public class AttendanceStatusDetails extends AppCompatActivity {
 //
 //            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
 //            Log.i("ERRRRR", e.getLocalizedMessage());
-//            e.printStackTrace();
+//            logger.log(Level.WARNING, e.getMessage(), e);
 //        }
 //    }
 
@@ -447,7 +422,7 @@ public class AttendanceStatusDetails extends AppCompatActivity {
         machineCode = "";
         machineType = "";
 
-        String attStatUrl = "http://103.56.208.123:8001/apex/ttrams/attendanceStatus/attStatusDetails?darm_app_code="+request+"";
+        String attStatUrl = api_url_front + "attendanceStatus/attStatusDetails?darm_app_code="+request;
 
         RequestQueue requestQueue = Volley.newRequestQueue(AttendanceStatusDetails.this);
 
@@ -496,12 +471,12 @@ public class AttendanceStatusDetails extends AppCompatActivity {
                 }
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateLayout();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             conn = false;
             connected = false;
             updateLayout();
@@ -512,7 +487,7 @@ public class AttendanceStatusDetails extends AppCompatActivity {
 
     public void getMachineData() {
 
-        String url = "http://103.56.208.123:8001/apex/ttrams/attendanceStatus/getMachineData/"+locationId+"";
+        String url = api_url_front + "attendanceStatus/getMachineData/"+locationId;
 
         RequestQueue requestQueue = Volley.newRequestQueue(AttendanceStatusDetails.this);
 
@@ -534,12 +509,12 @@ public class AttendanceStatusDetails extends AppCompatActivity {
                 updateLayout();
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateLayout();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             conn = false;
             connected = false;
             updateLayout();
@@ -561,7 +536,8 @@ public class AttendanceStatusDetails extends AppCompatActivity {
                 reason.setText(reasonName);
                 reasonDesc.setText(reasonDescription);
                 if (addressOut == null) {
-                    address.setText("No Address Given");
+                    String at = "No Address Given";
+                    address.setText(at);
                 } else {
                     address.setText(addressOut);
                 }

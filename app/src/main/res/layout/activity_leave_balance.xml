@@ -7,62 +7,91 @@
     android:background="@color/background_color"
     tools:context=".leaveAll.leaveBalance.LeaveBalance">
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/topLay_leave_balance"
         android:layout_width="match_parent"
-        android:layout_height="86dp"
+        android:layout_height="wrap_content"
+        android:background="@color/background_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/design_2"
-            android:orientation="vertical"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:gravity="center"/>
+            android:layout_height="0dp"
+            app:cardElevation="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="@dimen/_5sdp"
+            app:shapeAppearanceOverlay="@style/BottomRoundedCard"
+            app:cardBackgroundColor="@color/primaryVariant"/>
 
-        <LinearLayout
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:background="@drawable/design"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true">
+            android:layout_height="wrap_content"
+            app:cardElevation="@dimen/_2sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:gravity="center_vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:shapeAppearanceOverlay="@style/BottomRoundedCard"
+            app:cardBackgroundColor="@color/primaryColor">
 
-            <TextView
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:fontFamily="@font/russo_one"
-                android:gravity="center"
-                android:text="Leave Balance"
-                android:textColor="@color/white"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-    </RelativeLayout>
+                android:paddingTop="@dimen/_15sdp"
+                android:paddingBottom="@dimen/_15sdp"
+                android:paddingStart="@dimen/_15sdp"
+                android:paddingEnd="@dimen/_15sdp">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    android:id="@+id/terrain_logo2"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/hrm_new_round_icon_custom"
+                    tools:ignore="ContentDescription"
+                    app:civ_border_width="@dimen/_1sdp"
+                    app:civ_border_color="@color/white"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_12sdp"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:layout_toEndOf="@+id/terrain_logo2"
+                    android:layout_alignParentEnd="true"
+                    android:textColor="@color/white"
+                    android:layout_centerVertical="true"
+                    android:paddingTop="@dimen/_2sdp"
+                    android:paddingBottom="0dp"
+                    android:textSize="@dimen/_15sdp"
+                    android:text="Leave Balance"
+                    android:fontFamily="@font/poppins_bold"
+                    tools:ignore="HardcodedText" />
+
+            </RelativeLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ScrollView
         android:id="@+id/scrollView21_leave_balance"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-
-        android:layout_marginTop="100dp"
-        android:layout_marginBottom="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/_4sdp"
+        android:layout_marginBottom="@dimen/_8sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-
+        app:layout_constraintTop_toBottomOf="@+id/topLay_leave_balance"
+        app:layout_constraintBottom_toBottomOf="parent">
+        
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -72,33 +101,20 @@
                 android:id="@+id/report_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:layout_marginEnd="@dimen/_8sdp"
                 android:visibility="visible"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="@dimen/_8sdp"
                 android:background="@color/white"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="6dp">
+                app:cardCornerRadius="@dimen/_8sdp"
+                app:cardElevation="@dimen/_3sdp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
-
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="18sp"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginBottom="5dp"
-                        android:textStyle="bold"
-                        android:fontFamily="@font/open_sans_bold"
-                        android:textColor="@color/mazarine_blue"
-                        android:text="Leave Balance"
-                        android:gravity="center"
-                        />
+                    
                     <TextView
                         android:id="@+id/from_to_year"
                         android:layout_width="match_parent"
@@ -106,42 +122,41 @@
                         android:text="Year:"
                         android:textColor="@color/black"
                         android:textStyle="bold"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/_14sdp"
                         android:gravity="center"
+                        android:layout_margin="@dimen/_4sdp"
                         android:fontFamily="@font/poppins_semibold"
-                        android:layout_marginBottom="5dp"/>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:background="@android:color/darker_gray" />
+                        android:layout_marginBottom="@dimen/_4sdp"
+                        tools:ignore="HardcodedText" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:baselineAligned="false"
                         android:orientation="horizontal"
                         android:weightSum="1.2">
+
                         <com.google.android.material.textfield.TextInputLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:hint="Name:"
                             android:layout_weight=".7"
-                            android:layout_marginStart="5dp"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginBottom="5dp"
+                            android:layout_marginStart="@dimen/_4sdp"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:layout_marginBottom="@dimen/_4sdp"
                             app:boxStrokeColor="#f0932b"
                             app:boxStrokeWidth="0dp"
                             app:boxStrokeWidthFocused="1dp"
-                            app:boxCornerRadiusTopStart="5dp"
-                            app:boxCornerRadiusTopEnd="5dp"
-                            app:boxCornerRadiusBottomEnd="5dp"
-                            app:boxCornerRadiusBottomStart="5dp"
+                            app:boxCornerRadiusTopStart="@dimen/_4sdp"
+                            app:boxCornerRadiusTopEnd="@dimen/_4sdp"
+                            app:boxCornerRadiusBottomEnd="@dimen/_4sdp"
+                            app:boxCornerRadiusBottomStart="@dimen/_4sdp"
                             app:boxBackgroundMode="filled"
                             android:clickable="false"
                             android:enabled="false"
                             app:boxBackgroundColor="@color/white"
                             app:hintTextColor="@color/black"
-                            >
+                            tools:ignore="HardcodedText">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/name_leave"
@@ -155,31 +170,32 @@
                                 android:fontFamily="@font/poppins_semibold"
                                 android:textStyle="bold"
                                 android:textColor="@color/black"
-                                android:inputType="textMultiLine"
-                                />
+                                android:inputType="textMultiLine" />
 
                         </com.google.android.material.textfield.TextInputLayout>
+
                         <com.google.android.material.textfield.TextInputLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:hint="Joinging Date:"
+                            android:hint="Joining Date:"
                             android:layout_weight=".5"
-                            android:layout_marginStart="5dp"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginBottom="5dp"
+                            android:layout_marginStart="@dimen/_4sdp"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:layout_marginBottom="@dimen/_4sdp"
+                            android:layout_marginEnd="@dimen/_4sdp"
                             app:boxStrokeColor="#f0932b"
                             app:boxStrokeWidth="0dp"
                             app:boxStrokeWidthFocused="1dp"
-                            app:boxCornerRadiusTopStart="5dp"
-                            app:boxCornerRadiusTopEnd="5dp"
-                            app:boxCornerRadiusBottomEnd="5dp"
-                            app:boxCornerRadiusBottomStart="5dp"
+                            app:boxCornerRadiusTopStart="@dimen/_4sdp"
+                            app:boxCornerRadiusTopEnd="@dimen/_4sdp"
+                            app:boxCornerRadiusBottomEnd="@dimen/_4sdp"
+                            app:boxCornerRadiusBottomStart="@dimen/_4sdp"
                             app:boxBackgroundMode="filled"
                             android:clickable="false"
                             android:enabled="false"
                             app:boxBackgroundColor="@color/white"
                             app:hintTextColor="@color/black"
-                            >
+                            tools:ignore="HardcodedText">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/joining_leave"
@@ -193,219 +209,216 @@
                                 android:text=""
                                 android:textStyle="bold"
                                 android:textColor="@color/black"
-                                android:inputType="textMultiLine"
-                                />
+                                android:inputType="textMultiLine" />
 
                         </com.google.android.material.textfield.TextInputLayout>
 
                     </LinearLayout>
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:background="@android:color/darker_gray" />
-
-                    <LinearLayout
+                    <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:weightSum="1.2">
-                        <com.google.android.material.textfield.TextInputLayout
-                            android:layout_width="0dp"
+                        android:hint="Calling Title:"
+                        android:layout_marginStart="@dimen/_4sdp"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:layout_marginBottom="@dimen/_4sdp"
+                        android:layout_marginEnd="@dimen/_4sdp"
+                        app:boxStrokeColor="#f0932b"
+                        app:boxStrokeWidth="0dp"
+                        app:boxStrokeWidthFocused="1dp"
+                        app:boxCornerRadiusTopStart="@dimen/_4sdp"
+                        app:boxCornerRadiusTopEnd="@dimen/_4sdp"
+                        app:boxCornerRadiusBottomEnd="@dimen/_4sdp"
+                        app:boxCornerRadiusBottomStart="@dimen/_4sdp"
+                        app:boxBackgroundMode="filled"
+                        android:clickable="false"
+                        android:enabled="false"
+                        app:boxBackgroundColor="@color/white"
+                        app:hintTextColor="@color/black"
+                        tools:ignore="HardcodedText">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/calling_title_leave"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Calling Title:"
-                            android:layout_weight="1.2"
-                            android:layout_marginStart="5dp"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginBottom="5dp"
-                            app:boxStrokeColor="#f0932b"
-                            app:boxStrokeWidth="0dp"
-                            app:boxStrokeWidthFocused="1dp"
-                            app:boxCornerRadiusTopStart="5dp"
-                            app:boxCornerRadiusTopEnd="5dp"
-                            app:boxCornerRadiusBottomEnd="5dp"
-                            app:boxCornerRadiusBottomStart="5dp"
-                            app:boxBackgroundMode="filled"
+                            android:ems="10"
                             android:clickable="false"
                             android:enabled="false"
-                            app:boxBackgroundColor="@color/white"
-                            app:hintTextColor="@color/black"
-                            >
+                            android:textSize="12sp"
+                            android:text=""
+                            android:fontFamily="@font/poppins_semibold"
+                            android:textStyle="bold"
+                            android:textColor="@color/black"
+                            android:inputType="textMultiLine" />
 
-                            <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/calling_title_leave"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:ems="10"
-                                android:clickable="false"
-                                android:enabled="false"
-                                android:textSize="12sp"
-                                android:text=""
-                                android:fontFamily="@font/poppins_semibold"
-                                android:textStyle="bold"
-                                android:textColor="@color/black"
-                                android:inputType="textMultiLine"
-                                />
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                        </com.google.android.material.textfield.TextInputLayout>
-
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:background="@android:color/darker_gray" />
-
-
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:background="@android:color/darker_gray" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:layout_gravity="center"
+                        android:text="- - - - - - - - - - - -"
+                        android:layout_marginStart="@dimen/_34sdp"
+                        android:layout_marginEnd="@dimen/_34sdp"
+                        android:layout_marginTop="@dimen/_8sdp"
+                        android:layout_marginBottom="@dimen/_4sdp"
+                        android:fontFamily="@font/poppins_bold"
+                        tools:ignore="HardcodedText" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
-                        android:layout_marginTop="5dp"
+                        android:layout_marginTop="@dimen/_4sdp"
                         android:orientation="horizontal"
-
+                        android:background="@color/secondaryColor"
                         android:weightSum="1.2">
 
-
                         <TextView
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:textStyle="bold"
-                            android:padding="2dp"
+                            android:padding="@dimen/_1sdp"
                             android:textSize="@dimen/_7sdp"
                             android:gravity="center"
-                            android:background="#ced6e0"
                             android:fontFamily="@font/poppins"
-                            android:textColor="@color/black"
+                            android:textColor="@color/white"
                             android:layout_weight=".25"
-                            android:text="Leave Category"/>
+                            android:text="Leave Category"
+                            tools:ignore="HardcodedText" />
+
                         <View
                             android:layout_width="1dp"
                             android:layout_height="match_parent"
-                            android:background="@android:color/black" />
+                            android:background="@android:color/white" />
+
                         <TextView
                             android:layout_width="0dp"
                             android:textSize="@dimen/_7sdp"
                             android:layout_height="match_parent"
                             android:textStyle="bold"
                             android:gravity="center"
-                            android:background="#ced6e0"
                             android:fontFamily="@font/poppins"
-                            android:padding="2dp"
-                            android:textColor="@color/black"
+                            android:padding="@dimen/_1sdp"
+                            android:textColor="@color/white"
                             android:layout_weight=".1"
-                            android:text="Short Code"/>
+                            android:text="Short Code"
+                            tools:ignore="HardcodedText" />
+
                         <View
                             android:layout_width="1dp"
                             android:layout_height="match_parent"
-                            android:background="@android:color/black" />
+                            android:background="@android:color/white" />
+
                         <TextView
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:textStyle="bold"
                             android:textSize="@dimen/_7sdp"
                             android:gravity="center"
-                            android:padding="2dp"
-                            android:background="#ced6e0"
+                            android:padding="@dimen/_1sdp"
                             android:fontFamily="@font/poppins"
-                            android:textColor="@color/black"
+                            android:textColor="@color/white"
                             android:layout_weight=".15"
-                            android:text="Opening Quantity"/>
+                            android:text="Opening Quantity"
+                            tools:ignore="HardcodedText" />
+
                         <View
                             android:layout_width="1dp"
                             android:layout_height="match_parent"
-                            android:background="@android:color/black" />
+                            android:background="@android:color/white" />
+
                         <TextView
                             android:layout_width="0dp"
                             android:textSize="@dimen/_7sdp"
                             android:layout_height="match_parent"
                             android:textStyle="bold"
-                            android:background="#ced6e0"
                             android:gravity="center"
-                            android:padding="2dp"
+                            android:padding="@dimen/_1sdp"
                             android:fontFamily="@font/poppins"
-                            android:textColor="@color/black"
+                            android:textColor="@color/white"
                             android:layout_weight=".15"
-                            android:text="Current Quantity"/>
+                            android:text="Current Quantity"
+                            tools:ignore="HardcodedText" />
+
                         <View
                             android:layout_width="1dp"
                             android:layout_height="match_parent"
-                            android:background="@android:color/black" />
+                            android:background="@android:color/white" />
+
                         <TextView
                             android:layout_width="0dp"
                             android:textSize="@dimen/_7sdp"
                             android:layout_height="match_parent"
                             android:textStyle="bold"
                             android:gravity="center"
-                            android:background="#ced6e0"
-                            android:padding="2dp"
+                            android:padding="@dimen/_1sdp"
                             android:fontFamily="@font/poppins"
-                            android:textColor="@color/black"
+                            android:textColor="@color/white"
                             android:layout_weight=".13"
-                            android:text="Consumed"/>
+                            android:text="Consumed"
+                            tools:ignore="HardcodedText" />
+
                         <View
                             android:layout_width="1dp"
                             android:layout_height="match_parent"
-                            android:background="@android:color/black" />
+                            android:background="@android:color/white" />
+
                         <TextView
                             android:layout_width="0dp"
                             android:textSize="@dimen/_7sdp"
                             android:layout_height="match_parent"
                             android:textStyle="bold"
                             android:gravity="center"
-                            android:background="#ced6e0"
-                            android:padding="2dp"
+                            android:padding="@dimen/_1sdp"
                             android:fontFamily="@font/poppins"
-                            android:textColor="@color/black"
+                            android:textColor="@color/white"
                             android:layout_weight=".14"
-                            android:text="Transfered"/>
+                            android:text="Transferred"
+                            tools:ignore="HardcodedText" />
+
                         <View
                             android:layout_width="1dp"
                             android:layout_height="match_parent"
-                            android:background="@android:color/black" />
+                            android:background="@android:color/white" />
+
                         <TextView
                             android:layout_width="0dp"
                             android:textSize="@dimen/_7sdp"
                             android:layout_height="match_parent"
                             android:textStyle="bold"
                             android:gravity="center"
-                            android:background="#ced6e0"
-                            android:padding="2dp"
+                            android:padding="@dimen/_1sdp"
                             android:fontFamily="@font/poppins"
-                            android:textColor="@color/black"
+                            android:textColor="@color/white"
                             android:layout_weight=".13"
-                            android:text="Cash Taken"/>
+                            android:text="Cash Taken"
+                            tools:ignore="HardcodedText" />
+
                         <View
                             android:layout_width="1dp"
                             android:layout_height="match_parent"
-                            android:background="@android:color/black" />
+                            android:background="@android:color/white" />
+
                         <TextView
                             android:layout_width="0dp"
                             android:textSize="@dimen/_7sdp"
                             android:layout_height="match_parent"
                             android:textStyle="bold"
-                            android:background="#ced6e0"
                             android:gravity="center"
                             android:fontFamily="@font/poppins"
-                            android:textColor="@color/black"
+                            android:textColor="@color/white"
                             android:layout_weight=".15"
-                            android:text="Balance Quantity"/>
-
-
-
-
+                            android:text="Balance Quantity"
+                            tools:ignore="HardcodedText" />
 
                     </LinearLayout>
 
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginBottom="5dp">
+                        android:layout_marginBottom="@dimen/_4sdp">
+
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/leave_list_view"
                             android:layout_width="match_parent"
@@ -413,49 +426,28 @@
                             android:layout_alignParentStart="true"
                             android:layout_alignParentEnd="true"
                             android:layout_alignParentBottom="true"
-                            android:layout_alignParentTop="true"
-                            />
+                            android:layout_alignParentTop="true"/>
+
                     </RelativeLayout>
 
-
-
+                    <TextView
+                        android:id="@+id/no_leave_balance_msg"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="No Leave Initialized"
+                        android:textSize="@dimen/_12sdp"
+                        android:fontFamily="@font/poppins_bold"
+                        android:textColor="@color/black"
+                        android:layout_margin="@dimen/_8sdp"
+                        android:gravity="center"
+                        tools:ignore="HardcodedText" />
 
                 </LinearLayout>
 
-
             </androidx.cardview.widget.CardView>
-
-
 
         </LinearLayout>
 
     </ScrollView>
-
-    <LinearLayout
-        android:id="@+id/linearLayout34_leave"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:visibility="gone"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <Button
-            android:id="@+id/leave_balance_finish"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="40dp"
-            android:layout_marginEnd="40dp"
-            android:background="@drawable/custom_button"
-            android:text="Close"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            app:backgroundTint="@null" />
-    </LinearLayout>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

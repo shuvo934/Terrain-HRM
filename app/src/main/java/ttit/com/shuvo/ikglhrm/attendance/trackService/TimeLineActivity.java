@@ -3,7 +3,6 @@ package ttit.com.shuvo.ikglhrm.attendance.trackService;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -13,11 +12,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -42,6 +37,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
@@ -51,7 +49,6 @@ import static ttit.com.shuvo.ikglhrm.attendance.report.AttenReportAdapter.blobFr
 public class TimeLineActivity extends AppCompatActivity implements OnMapReadyCallback, LocationAdapter.ClickedItem{
 
     private GoogleMap mMap;
-    Button close;
 
     RecyclerView locationView;
     LocationAdapter locationAdapter;
@@ -70,30 +67,31 @@ public class TimeLineActivity extends AppCompatActivity implements OnMapReadyCal
     String elr_id = "";
 
     String downloadFile = "Downloaded_GPX.gpx";
-    String todayDate = "";
-    String todayFile = "";
+//    String todayDate = "";
+//    String todayFile = "";
 
     boolean blobNotNull = false;
     String address = "";
     public static ArrayList<WaypointList> wptList;
 
     public static ArrayList<ArrrayFile> multiGpxList;
+    Logger logger = Logger.getLogger(TimeLineActivity.class.getName());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Window window = getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(ContextCompat.getColor(TimeLineActivity.this,R.color.secondaryColor));
+//        Window window = getWindow();
+//        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+//        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+//        window.setStatusBarColor(ContextCompat.getColor(TimeLineActivity.this,R.color.secondaryColor));
         setContentView(R.layout.activity_time_line);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.timeline_map);
+        assert mapFragment != null;
         mapFragment.getMapAsync(this);
 
         locationView = findViewById(R.id.location_details_review);
-        close = findViewById(R.id.att_finish_timeline);
 
         wptList = new ArrayList<>();
         multiGpxList = new ArrayList<>();
@@ -104,13 +102,6 @@ public class TimeLineActivity extends AppCompatActivity implements OnMapReadyCal
         locationView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         locationView.setLayoutManager(layoutManager);
-        close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
     }
 
     /**
@@ -123,7 +114,7 @@ public class TimeLineActivity extends AppCompatActivity implements OnMapReadyCal
      * installed Google Play services and returned to the app.
      */
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
         mMap.getUiSettings().setZoomControlsEnabled(true);
 
@@ -174,25 +165,22 @@ public class TimeLineActivity extends AppCompatActivity implements OnMapReadyCal
 
 
 
-        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(@NonNull LatLng latLng) {
-                for (int i = 0 ; i < polyLindata.size(); i++) {
-                    Polyline polyline = polyLindata.get(i).getPolyline();
-                    polyline.setColor(Color.parseColor("#74b9ff"));
-                    polyline.setWidth(17);
-                }
-                for (int i = 0; i < markerData.size(); i++) {
-                    Marker marker = markerData.get(i).getMarker();
-                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.location_icon));
-                }
+        mMap.setOnMapClickListener(latLng -> {
+            for (int i = 0 ; i < polyLindata.size(); i++) {
+                Polyline polyline = polyLindata.get(i).getPolyline();
+                polyline.setColor(Color.parseColor("#74b9ff"));
+                polyline.setWidth(17);
+            }
+            for (int i = 0; i < markerData.size(); i++) {
+                Marker marker = markerData.get(i).getMarker();
+                marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.location_icon));
             }
         });
     }
 
     public void GpxInMap() {
 
-        String stringFIle = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + File.separator +  downloadFile;
+        String stringFIle = getExternalFilesDir(null).getPath() + File.separator +  downloadFile;
 
         File file = new File(stringFIle);
 
@@ -243,10 +231,10 @@ public class TimeLineActivity extends AppCompatActivity implements OnMapReadyCal
                     String lastLoc = "";
                     String firstTime = "";
                     String lastTime = "";
-                    String distance = "";
+                    String distance;
                     String calculateTime = "";
 
-                    if (timelist.size() != 0) {
+                    if (!timelist.isEmpty()) {
                         firstTime = timelist.get(0);
                         lastTime = timelist.get(timelist.size()-1);
 
@@ -259,7 +247,7 @@ public class TimeLineActivity extends AppCompatActivity implements OnMapReadyCal
                             first = sdfTime.parse(firstTime);
                             last = sdfTime.parse(lastTime);
                         } catch (ParseException e) {
-                            e.printStackTrace();
+                            logger.log(Level.WARNING, e.getMessage(), e);
                         }
 
                         if (first != null && last != null) {
@@ -284,7 +272,7 @@ public class TimeLineActivity extends AppCompatActivity implements OnMapReadyCal
 
                     int index = lengthh.indexOf(" ");
                     int index2 = lengthh.indexOf(" KM");
-                    String substr = "";
+                    String substr;
                     if (index < 0 && index2 < 0) {
                         substr = "0";
                     } else {
@@ -310,7 +298,7 @@ public class TimeLineActivity extends AppCompatActivity implements OnMapReadyCal
 
 
 
-                    Double j = 0.0;
+//                    Double j = 0.0;
 
                     for (int i = 0; i< gpxList.size(); i++) {
 
@@ -326,10 +314,11 @@ public class TimeLineActivity extends AppCompatActivity implements OnMapReadyCal
                             options.flat(true);
 
                             firstLoc = getAddress(gpxList.get(i).getLatitude(), gpxList.get(i).getLongitude());
-                            mMap.addMarker(options).setTitle(firstLoc);
+                            Objects.requireNonNull(mMap.addMarker(options)).setTitle(firstLoc);
 
-                        }else if (i == gpxList.size()-1){
-                            LatLng preGpx = new LatLng(gpxList.get(i-1).getLatitude(), gpxList.get(i-1).getLongitude());
+                        }
+                        else if (i == gpxList.size()-1){
+//                            LatLng preGpx = new LatLng(gpxList.get(i-1).getLatitude(), gpxList.get(i-1).getLongitude());
 
                             options.icon(BitmapDescriptorFactory.fromResource(R.drawable.stop_loc_icon_new));
                             options.anchor((float) 0.5,(float) 0.5);
@@ -340,8 +329,9 @@ public class TimeLineActivity extends AppCompatActivity implements OnMapReadyCal
                             options.flat(true);
 
                             lastLoc = getAddress(gpxList.get(i).getLatitude(), gpxList.get(i).getLongitude());
-                            mMap.addMarker(options).setTitle(lastLoc);
-                        } else {
+                            Objects.requireNonNull(mMap.addMarker(options)).setTitle(lastLoc);
+                        }
+//                        else {
 //                            LatLng preGpx = new LatLng(gpxList.get(i-1).getLatitude(), gpxList.get(i-1).getLongitude());
 //
 //                            options.icon(BitmapDescriptorFactory.fromResource(R.drawable.transparent_circle));
@@ -350,7 +340,7 @@ public class TimeLineActivity extends AppCompatActivity implements OnMapReadyCal
 //                            j  = j + diss;
 //                            options.snippet(String.format("%.3f", j) + " KM");
 //                            mMap.addMarker(options).setTitle("On Going Road");
-                        }
+//                        }
 
                     }
                     locationNameArrays.add(new LocationNameArray(firstLoc,lastLoc,false,firstTime,lastTime,distance,calculateTime,String.valueOf(a),null));
@@ -378,7 +368,7 @@ public class TimeLineActivity extends AppCompatActivity implements OnMapReadyCal
 //                        System.out.println("Got It");
 //                    }
 //                } catch (IOException e) {
-//                    e.printStackTrace();
+//                    logger.log(Level.WARNING, e.getMessage(), e);
 //                }
 
 
@@ -431,7 +421,7 @@ public class TimeLineActivity extends AppCompatActivity implements OnMapReadyCal
             // TennisAppActivity.showDialog(add);
         } catch (IOException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.log(Level.WARNING, e.getMessage(), e);
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
             return null;
         }
@@ -454,15 +444,15 @@ public class TimeLineActivity extends AppCompatActivity implements OnMapReadyCal
                     polyline.setWidth(30);
                     int size = polyline.getPoints().size();
                     size = size / 2;
-                    Double latitude = polyline.getPoints().get(size).latitude;
-                    Double longitude = polyline.getPoints().get(size).longitude;
+                    double latitude = polyline.getPoints().get(size).latitude;
+                    double longitude = polyline.getPoints().get(size).longitude;
                     LatLng gpx = new LatLng(latitude, longitude);
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(gpx, 17));
                     Toast.makeText(getApplicationContext(),distance,Toast.LENGTH_SHORT).show();
                 } else {
                     polyline.setColor(Color.parseColor("#74b9ff"));
                     polyline.setWidth(17);
-                    int size = polyline.getPoints().size();
+//                    int size = polyline.getPoints().size();
                 }
             }
         } else {
@@ -514,7 +504,7 @@ public class TimeLineActivity extends AppCompatActivity implements OnMapReadyCal
 //            int exitValue = ipProcess.waitFor();
 //            return (exitValue == 0);
 //        } catch (IOException | InterruptedException e) {
-//            e.printStackTrace();
+//            logger.log(Level.WARNING, e.getMessage(), e);
 //        }
 //
 //        return false;
@@ -645,7 +635,7 @@ public class TimeLineActivity extends AppCompatActivity implements OnMapReadyCal
 //            connected = true;
 //            connection.close();
 //        } catch (Exception e) {
-//            e.printStackTrace();
+//            logger.log(Level.WARNING, e.getMessage(), e);
 //        }
 //
 //    }
@@ -658,7 +648,7 @@ public class TimeLineActivity extends AppCompatActivity implements OnMapReadyCal
         try {
             if (blobFromAdapter != null && blobFromAdapter.length() != 0) {
                 System.out.println("BLOB paise");
-                File myExternalFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),downloadFile);
+                File myExternalFile = new File(getExternalFilesDir(null),downloadFile);
 
                 InputStream r = blobFromAdapter.getBinaryStream();
                 FileWriter fw=new FileWriter(myExternalFile);
@@ -675,7 +665,7 @@ public class TimeLineActivity extends AppCompatActivity implements OnMapReadyCal
             updateMap();
         }
         catch (Exception e) {
-            e.printStackTrace();
+            logger.log(Level.WARNING, e.getMessage(), e);
             connected = false;
             updateMap();
         }
@@ -718,22 +708,14 @@ public class TimeLineActivity extends AppCompatActivity implements OnMapReadyCal
 
 
             Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            positive.setOnClickListener(v -> {
 
-                    getMapData();
-                    dialog.dismiss();
-                }
+                getMapData();
+                dialog.dismiss();
             });
 
             Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-            negative.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialog.dismiss();
-                }
-            });
+            negative.setOnClickListener(v -> dialog.dismiss());
         }
     }
 }

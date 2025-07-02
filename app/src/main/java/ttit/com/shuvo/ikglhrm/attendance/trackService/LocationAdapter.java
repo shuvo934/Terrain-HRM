@@ -33,8 +33,7 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.LocHol
     @Override
     public LocHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(myContext).inflate(R.layout.location_details, parent, false);
-        LocHolder ammvh = new LocHolder(v,myClickedItem);
-        return ammvh;
+        return new LocHolder(v,myClickedItem);
     }
 
     @Override
@@ -47,7 +46,8 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.LocHol
         if (isWay) {
             holder.lastLay.setVisibility(View.GONE);
             holder.midDes.setVisibility(View.GONE);
-            holder.wayTrack.setText("You were in:");
+            String wtt = "You were in:";
+            holder.wayTrack.setText(wtt);
             holder.place.setText(locNA.getFirstLocation());
             holder.endTime.setVisibility(View.GONE);
             holder.distancelay.setVisibility(View.GONE);
@@ -63,7 +63,8 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.LocHol
         } else {
             holder.lastLay.setVisibility(View.VISIBLE);
             holder.midDes.setVisibility(View.VISIBLE);
-            holder.wayTrack.setText("You went from ");
+            String wtt = "You went from ";
+            holder.wayTrack.setText(wtt);
             holder.place.setText(locNA.getFirstLocation());
             holder.lastPlace.setText(locNA.getLastLocation());
             if (locNA.getFirstTime().isEmpty()) {
@@ -143,7 +144,7 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.LocHol
 
             this.clickedItem = ci;
 
-            itemView.setOnClickListener(this::onClick);
+            itemView.setOnClickListener(this);
 
         }
 

@@ -2,7 +2,6 @@ package ttit.com.shuvo.ikglhrm.directoryBook;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -14,14 +13,10 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -32,10 +27,16 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.rosemaryapp.amazingspinner.AmazingSpinner;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
+
 import static ttit.com.shuvo.ikglhrm.Login.userDesignations;
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -70,7 +71,6 @@ public class DirectoryWithDivision extends AppCompatActivity {
     TextInputEditText search;
     TextInputLayout searchLay;
 
-    Button close;
 
     String divName = "";
     String depName = "";
@@ -83,13 +83,12 @@ public class DirectoryWithDivision extends AppCompatActivity {
     ArrayList<TwoItemLists> depLists;
     ArrayList<TwoItemLists> desLists;
 
+    Logger logger = Logger.getLogger(DirectoryWithDivision.class.getName());
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Window window = getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(ContextCompat.getColor(DirectoryWithDivision.this,R.color.secondaryColor));
         setContentView(R.layout.activity_directory_with_division);
 
         depSpinner = findViewById(R.id.department_type_spinner);
@@ -97,7 +96,6 @@ public class DirectoryWithDivision extends AppCompatActivity {
         desSpinner = findViewById(R.id.designation_type_spinner);
 
         directoryView = findViewById(R.id.directory_division_list_view);
-        close = findViewById(R.id.directory_division_finish);
 
         search = findViewById(R.id.search_item_name_diretory_division);
         searchLay = findViewById(R.id.search_item_name_lay_directory_division);
@@ -117,98 +115,89 @@ public class DirectoryWithDivision extends AppCompatActivity {
         directoryView.setLayoutManager(layoutManager);
 
         // Selecting Division
-        divSpinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String name = parent.getItemAtPosition(position).toString();
-                System.out.println(position+": "+name);
+        divSpinner.setOnItemClickListener((parent, view, position, id) -> {
+            String name = parent.getItemAtPosition(position).toString();
+            System.out.println(position+": "+name);
 
-                depSpinner.setText("");
-                desSpinner.setText("");
-                search.setText("");
-                depName = "";
-                desigName = "";
-                searchingName = "";
-                searchingDep = "";
-                searchingDesg = "";
-                for (int i = 0; i <divLists.size(); i++) {
-                    if (name.equals(divLists.get(i).getName())) {
-                        div_id = divLists.get(i).getId();
-                        if (div_id.isEmpty()) {
-                            divName = "";
-                        } else {
-                            divName = divLists.get(i).getName();
-                        }
-
+            depSpinner.setText("");
+            desSpinner.setText("");
+            search.setText("");
+            depName = "";
+            desigName = "";
+            searchingName = "";
+            searchingDep = "";
+            searchingDesg = "";
+            for (int i = 0; i <divLists.size(); i++) {
+                if (name.equals(divLists.get(i).getName())) {
+                    div_id = divLists.get(i).getId();
+                    if (div_id.isEmpty()) {
+                        divName = "";
+                    } else {
+                        divName = divLists.get(i).getName();
                     }
-                }
 
-                dep_id = "";
-                desig_id = "";
+                }
+            }
+
+            dep_id = "";
+            desig_id = "";
 
 
 //                new DepartmentCheck().execute();
-                getDivisionWiseDepData();
+            getDivisionWiseDepData();
 
-            }
         });
 
         // Selecting Department
-        depSpinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String name = parent.getItemAtPosition(position).toString();
-                System.out.println(position+": "+name);
-                desSpinner.setText("");
-                search.setText("");
-                desigName = "";
-                searchingName = "";
-                searchingDesg = "";
-                for (int i = 0; i <depLists.size(); i++) {
-                    if (name.equals(depLists.get(i).getName())) {
-                        dep_id = depLists.get(i).getId();
-                        if (dep_id.isEmpty()) {
-                            depName = "";
-                            searchingDep = "";
-                        } else {
-                            depName = depLists.get(i).getName();
-                            searchingDep = depLists.get(i).getName();
-                        }
+        depSpinner.setOnItemClickListener((parent, view, position, id) -> {
+            String name = parent.getItemAtPosition(position).toString();
+            System.out.println(position+": "+name);
+            desSpinner.setText("");
+            search.setText("");
+            desigName = "";
+            searchingName = "";
+            searchingDesg = "";
+            for (int i = 0; i <depLists.size(); i++) {
+                if (name.equals(depLists.get(i).getName())) {
+                    dep_id = depLists.get(i).getId();
+                    if (dep_id.isEmpty()) {
+                        depName = "";
+                        searchingDep = "";
+                    } else {
+                        depName = depLists.get(i).getName();
+                        searchingDep = depLists.get(i).getName();
                     }
                 }
-
-                desig_id = "";
-//                new DesignationCheck().execute();
-                getDesignations();
-
             }
+
+            desig_id = "";
+//                new DesignationCheck().execute();
+            getDesignations();
+
         });
 
         // Selecting Employee
-        desSpinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String name = parent.getItemAtPosition(position).toString();
-                System.out.println(position+": "+name);
+        desSpinner.setOnItemClickListener((parent, view, position, id) -> {
+            String name = parent.getItemAtPosition(position).toString();
+            System.out.println(position+": "+name);
 
-                search.setText("");
-                searchingName = "";
+            search.setText("");
+            searchingName = "";
 
-                for (int i = 0; i <desLists.size(); i++) {
-                    if (name.equals(desLists.get(i).getName())) {
-                        desig_id = desLists.get(i).getId();
-                        if (desig_id.isEmpty()) {
-                            desigName = "";
-                            searchingDesg = "";
-                        } else {
-                            searchingDesg = desLists.get(i).getName();
-                            desigName = desLists.get(i).getName();
-                        }
+            for (int i = 0; i <desLists.size(); i++) {
+                if (name.equals(desLists.get(i).getName())) {
+                    desig_id = desLists.get(i).getId();
+                    if (desig_id.isEmpty()) {
+                        desigName = "";
+                        searchingDesg = "";
+                    } else {
+                        searchingDesg = desLists.get(i).getName();
+                        desigName = desLists.get(i).getName();
                     }
                 }
-
-
             }
+
+
         });
 
         search.addTextChangedListener(new TextWatcher() {
@@ -269,31 +258,21 @@ public class DirectoryWithDivision extends AppCompatActivity {
             }
         });
 
-        close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
-        search.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH ||
-                        actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT || event != null && event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER &&
-                        event.getKeyCode() == KeyEvent.KEYCODE_NAVIGATE_NEXT) {
-                    if (event == null || !event.isShiftPressed()) {
-                        // the user is done typing.
-                        Log.i("Let see", "Come here");
-                        closeKeyBoard();
+        search.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH ||
+                    actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT || event != null && event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER &&
+                    event.getKeyCode() == KeyEvent.KEYCODE_NAVIGATE_NEXT) {
+                if (event == null || !event.isShiftPressed()) {
+                    // the user is done typing.
+                    Log.i("Let see", "Come here");
+                    closeKeyBoard();
 
 
 
-                        return false; // consume.
-                    }
+                    return false; // consume.
                 }
-                return false;
             }
+            return false;
         });
 
 //        new Check().execute();
@@ -465,7 +444,7 @@ public class DirectoryWithDivision extends AppCompatActivity {
 //            int     exitValue = ipProcess.waitFor();
 //            return (exitValue == 0);
 //        }
-//        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
+//        catch (IOException | InterruptedException e)          { logger.log(Level.WARNING, e.getMessage(), e); }
 //
 //        return false;
 //    }
@@ -857,7 +836,7 @@ public class DirectoryWithDivision extends AppCompatActivity {
 //
 //            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
 //            Log.i("ERRRRR", e.getLocalizedMessage());
-//            e.printStackTrace();
+//            logger.log(Level.WARNING, e.getMessage(), e);
 //        }
 //    }
 
@@ -873,9 +852,9 @@ public class DirectoryWithDivision extends AppCompatActivity {
         allDirectoryLists = new ArrayList<>();
         ArrayList<String> idofALl = new ArrayList<>();
 
-        String divUrl = "http://103.56.208.123:8001/apex/ttrams/directory/getDivisions";
-        String depUrl = "http://103.56.208.123:8001/apex/ttrams/directory/getDepartments/"+div_id+"";
-        String divDirUrl = "http://103.56.208.123:8001/apex/ttrams/directory/getDivDirectories/"+div_id+"/"+emp_id+"";
+        String divUrl = api_url_front + "directory/getDivisions";
+        String depUrl = api_url_front + "directory/getDepartments/"+div_id;
+        String divDirUrl = api_url_front + "directory/getDivDirectories/"+div_id+"/"+emp_id;
 
         RequestQueue requestQueue = Volley.newRequestQueue(DirectoryWithDivision.this);
 
@@ -907,7 +886,7 @@ public class DirectoryWithDivision extends AppCompatActivity {
                         String job_email = dirInfo.getString("job_email")
                                 .equals("null") ? null: dirInfo.getString("job_email");
 
-                        String mail = "";
+                        String mail;
                         if (job_email == null) {
                             mail = usr_email_new;
                         }
@@ -924,12 +903,12 @@ public class DirectoryWithDivision extends AppCompatActivity {
                 getPhoneLists(idofALl);
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateLay();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             conn = false;
             connected = false;
             updateLay();
@@ -954,12 +933,12 @@ public class DirectoryWithDivision extends AppCompatActivity {
                 requestQueue.add(divDirReq);
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateLay();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             conn = false;
             connected = false;
             updateLay();
@@ -985,12 +964,12 @@ public class DirectoryWithDivision extends AppCompatActivity {
                 requestQueue.add(depReq);
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateLay();
             }
         }, error -> {
-           error.printStackTrace();
+           logger.log(Level.WARNING, error.getMessage(), error);
            conn = false;
            connected = false;
            updateLay();
@@ -1000,7 +979,7 @@ public class DirectoryWithDivision extends AppCompatActivity {
     }
 
     public void getPhoneLists(ArrayList<String> allId) {
-        if (allId.size() != 0) {
+        if (!allId.isEmpty()) {
             String id = allId.get(0);
             getPhones(id,allId);
         }
@@ -1011,7 +990,7 @@ public class DirectoryWithDivision extends AppCompatActivity {
     }
 
     public void getPhones(String id,ArrayList<String> allId) {
-        String url = "http://103.56.208.123:8001/apex/ttrams/directory/getAllPhones/"+id+"";
+        String url = api_url_front + "directory/getAllPhones/"+id;
 
         RequestQueue requestQueue = Volley.newRequestQueue(DirectoryWithDivision.this);
 
@@ -1036,12 +1015,12 @@ public class DirectoryWithDivision extends AppCompatActivity {
                 getPhoneLists(allId);
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateLay();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             conn = false;
             connected = false;
             updateLay();
@@ -1068,7 +1047,7 @@ public class DirectoryWithDivision extends AppCompatActivity {
                     type.add(divLists.get(i).getName());
                 }
 
-                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getApplicationContext(),R.layout.dropdown_menu_popup_item,R.id.drop_down_item,type);
+                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getApplicationContext(),R.layout.dropdown_menu_popup_item,R.id.drop_down_item,type);
 
                 divSpinner.setAdapter(arrayAdapter);
 
@@ -1078,7 +1057,7 @@ public class DirectoryWithDivision extends AppCompatActivity {
                     type1.add(depLists.get(i).getName());
                 }
 
-                ArrayAdapter<String> arrayAdapter1 = new ArrayAdapter<String>(getApplicationContext(),R.layout.dropdown_menu_popup_item,R.id.drop_down_item,type1);
+                ArrayAdapter<String> arrayAdapter1 = new ArrayAdapter<>(getApplicationContext(),R.layout.dropdown_menu_popup_item,R.id.drop_down_item,type1);
 
                 depSpinner.setAdapter(arrayAdapter1);
 
@@ -1227,7 +1206,7 @@ public class DirectoryWithDivision extends AppCompatActivity {
 //
 //            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
 //            Log.i("ERRRRR", e.getLocalizedMessage());
-//            e.printStackTrace();
+//            logger.log(Level.WARNING, e.getMessage(), e);
 //        }
 //    }
 
@@ -1242,8 +1221,8 @@ public class DirectoryWithDivision extends AppCompatActivity {
         allDirectoryLists = new ArrayList<>();
         ArrayList<String> idofALl = new ArrayList<>();
 
-        String depUrl = "http://103.56.208.123:8001/apex/ttrams/directory/getDepartments/"+div_id+"";
-        String divDirUrl = "http://103.56.208.123:8001/apex/ttrams/directory/getDivDirectories/"+div_id+"/"+emp_id+"";
+        String depUrl = api_url_front + "directory/getDepartments/"+div_id;
+        String divDirUrl = api_url_front + "directory/getDivDirectories/"+div_id+"/"+emp_id;
 
         RequestQueue requestQueue = Volley.newRequestQueue(DirectoryWithDivision.this);
 
@@ -1282,12 +1261,12 @@ public class DirectoryWithDivision extends AppCompatActivity {
                 getDivPhoneLists(idofALl);
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateAfterSelectingDiv();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             conn = false;
             connected = false;
             updateAfterSelectingDiv();
@@ -1312,12 +1291,12 @@ public class DirectoryWithDivision extends AppCompatActivity {
                 requestQueue.add(divDirReq);
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateAfterSelectingDiv();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             conn = false;
             connected = false;
             updateAfterSelectingDiv();
@@ -1327,7 +1306,7 @@ public class DirectoryWithDivision extends AppCompatActivity {
     }
 
     public void getDivPhoneLists(ArrayList<String> allId) {
-        if (allId.size() != 0) {
+        if (!allId.isEmpty()) {
             String id = allId.get(0);
             getDivPhones(id,allId);
         }
@@ -1338,7 +1317,7 @@ public class DirectoryWithDivision extends AppCompatActivity {
     }
 
     public void getDivPhones(String id,ArrayList<String> allId) {
-        String url = "http://103.56.208.123:8001/apex/ttrams/directory/getAllPhones/"+id+"";
+        String url = api_url_front + "directory/getAllPhones/"+id;
 
         RequestQueue requestQueue = Volley.newRequestQueue(DirectoryWithDivision.this);
 
@@ -1363,12 +1342,12 @@ public class DirectoryWithDivision extends AppCompatActivity {
                 getDivPhoneLists(allId);
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateAfterSelectingDiv();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             conn = false;
             connected = false;
             updateAfterSelectingDiv();
@@ -1389,7 +1368,7 @@ public class DirectoryWithDivision extends AppCompatActivity {
                     type.add(depLists.get(i).getName());
                 }
 
-                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getApplicationContext(),R.layout.dropdown_menu_popup_item,R.id.drop_down_item,type);
+                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getApplicationContext(),R.layout.dropdown_menu_popup_item,R.id.drop_down_item,type);
 
                 depSpinner.setAdapter(arrayAdapter);
 
@@ -1400,7 +1379,7 @@ public class DirectoryWithDivision extends AppCompatActivity {
                     type1.add(desLists.get(i).getName());
                 }
 
-                ArrayAdapter<String> arrayAdapter1 = new ArrayAdapter<String>(getApplicationContext(),R.layout.dropdown_menu_popup_item,R.id.drop_down_item,type1);
+                ArrayAdapter<String> arrayAdapter1 = new ArrayAdapter<>(getApplicationContext(),R.layout.dropdown_menu_popup_item,R.id.drop_down_item,type1);
 
                 desSpinner.setAdapter(arrayAdapter1);
 
@@ -1499,7 +1478,7 @@ public class DirectoryWithDivision extends AppCompatActivity {
 //
 //            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
 //            Log.i("ERRRRR", e.getLocalizedMessage());
-//            e.printStackTrace();
+//            logger.log(Level.WARNING, e.getMessage(), e);
 //        }
 //    }
 
@@ -1511,7 +1490,7 @@ public class DirectoryWithDivision extends AppCompatActivity {
 
         desLists = new ArrayList<>();
 
-        String url = "http://103.56.208.123:8001/apex/ttrams/directory/getDesignations/"+div_id+"/"+dep_id+"";
+        String url = api_url_front + "directory/getDesignations/"+div_id+"/"+dep_id;
 
         RequestQueue requestQueue = Volley.newRequestQueue(DirectoryWithDivision.this);
 
@@ -1536,12 +1515,12 @@ public class DirectoryWithDivision extends AppCompatActivity {
                 updateAfterSelectingDEP();
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateAfterSelectingDEP();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             conn = false;
             connected = false;
             updateAfterSelectingDEP();
@@ -1562,7 +1541,7 @@ public class DirectoryWithDivision extends AppCompatActivity {
                     type.add(desLists.get(i).getName());
                 }
 
-                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getApplicationContext(),R.layout.dropdown_menu_popup_item,R.id.drop_down_item,type);
+                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getApplicationContext(),R.layout.dropdown_menu_popup_item,R.id.drop_down_item,type);
 
                 desSpinner.setAdapter(arrayAdapter);
             }

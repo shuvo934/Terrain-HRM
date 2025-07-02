@@ -2,15 +2,12 @@ package ttit.com.shuvo.ikglhrm.leaveAll.leaveBalance;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -25,11 +22,15 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
+
 import static ttit.com.shuvo.ikglhrm.Login.userDesignations;
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,58 +49,38 @@ public class LeaveBalance extends AppCompatActivity {
     RecyclerView.LayoutManager layoutManager;
     LeaveBalanceAdapter leaveBalanceAdapter;
 
-    Button close;
+    TextView noLeaveBal;
 
-    public static ArrayList<LeaveBalanceList> leaveBalanceLists;
+    ArrayList<LeaveBalanceList> leaveBalanceLists;
 
     WaitProgress waitProgress = new WaitProgress();
-//    private String message = null;
     private Boolean conn = false;
     private Boolean connected = false;
-
-//    private Connection connection;
 
     String emp_id = "";
     String yearrr = "";
 
+    Logger logger = Logger.getLogger(LeaveBalance.class.getName());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-//        getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            Window w = getWindow();
-//            //w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-//        }
-//        if (Build.VERSION.SDK_INT < 16) {
-//            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-//                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//        }
-//        View decorView = getWindow().getDecorView();
-//// Hide the status bar.
-//        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
-//        decorView.setSystemUiVisibility(uiOptions);
-
-        Window window = getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(ContextCompat.getColor(LeaveBalance.this,R.color.secondaryColor));
         setContentView(R.layout.activity_leave_balance);
 
         name = findViewById(R.id.name_leave);
         join = findViewById(R.id.joining_leave);
         title = findViewById(R.id.calling_title_leave);
+        noLeaveBal = findViewById(R.id.no_leave_balance_msg);
+        noLeaveBal.setVisibility(View.GONE);
 
         year = findViewById(R.id.from_to_year);
 
         leaveView = findViewById(R.id.leave_list_view);
 
-        close = findViewById(R.id.leave_balance_finish);
 
         leaveBalanceLists = new ArrayList<>();
 
-        if (userInfoLists.size() != 0) {
+        if (!userInfoLists.isEmpty()) {
             String firstname = userInfoLists.get(0).getUser_fname();
             String lastName = userInfoLists.get(0).getUser_lname();
             if (firstname == null) {
@@ -113,7 +94,7 @@ public class LeaveBalance extends AppCompatActivity {
             emp_id = userInfoLists.get(0).getEmp_id();
         }
 
-        if (userDesignations.size() != 0) {
+        if (!userDesignations.isEmpty()) {
             String jsmName = userDesignations.get(0).getJsm_name();
             if (jsmName == null) {
                 jsmName = "";
@@ -130,6 +111,10 @@ public class LeaveBalance extends AppCompatActivity {
         Date c = Calendar.getInstance().getTime();
 
         SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
+        SimpleDateFormat yf = new SimpleDateFormat("yyyy", Locale.ENGLISH);
+
+        String yt = "YEAR: "+yf.format(c);
+        year.setText(yt);
 
         formattedDate = df.format(c);
 
@@ -139,15 +124,7 @@ public class LeaveBalance extends AppCompatActivity {
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(leaveView.getContext(),DividerItemDecoration.VERTICAL);
         leaveView.addItemDecoration(dividerItemDecoration);
 
-//        new Check().execute();
         getLeaveBalance();
-
-        close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
     }
 
 
@@ -173,7 +150,7 @@ public class LeaveBalance extends AppCompatActivity {
 //            int     exitValue = ipProcess.waitFor();
 //            return (exitValue == 0);
 //        }
-//        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
+//        catch (IOException | InterruptedException e)          { logger.log(Level.WARNING, e.getMessage(), e); }
 //
 //        return false;
 //    }
@@ -310,7 +287,7 @@ public class LeaveBalance extends AppCompatActivity {
 //
 //            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
 //            Log.i("ERRRRR", e.getLocalizedMessage());
-//            e.printStackTrace();
+//            logger.log(Level.WARNING, e.getMessage(), e);
 //        }
 //    }
 
@@ -323,7 +300,7 @@ public class LeaveBalance extends AppCompatActivity {
         leaveBalanceLists = new ArrayList<>();
         yearrr = "";
 
-        String url = "http://103.56.208.123:8001/apex/ttrams/leave/getLeaveBalance/"+emp_id+"/"+formattedDate+"";
+        String url = api_url_front + "leave/getLeaveBalance/"+emp_id+"/"+formattedDate;
 
         RequestQueue requestQueue = Volley.newRequestQueue(LeaveBalance.this);
 
@@ -338,16 +315,15 @@ public class LeaveBalance extends AppCompatActivity {
                     for (int i = 0; i < array.length(); i++) {
                         JSONObject leaveBalanceInfo = array.getJSONObject(i);
 
-//                        String lbem_emp_id = leaveBalanceInfo.getString("lbem_emp_id");
                         String now_year = leaveBalanceInfo.getString("now_year");
                         String lc_name = leaveBalanceInfo.getString("lc_name");
                         String lc_short_code = leaveBalanceInfo.getString("lc_short_code");
-                        String lbd_balance_qty = leaveBalanceInfo.getString("lbd_balance_qty");
-                        String lbd_opening_qty = leaveBalanceInfo.getString("lbd_opening_qty");
-                        String lbd_current_qty = leaveBalanceInfo.getString("lbd_current_qty");
-                        String lbd_taken_qty = leaveBalanceInfo.getString("lbd_taken_qty");
-                        String lbd_cash_taken_qty = leaveBalanceInfo.getString("lbd_cash_taken_qty");
-                        String lbd_transfer_qty = leaveBalanceInfo.getString("lbd_transfer_qty");
+                        String lbd_balance_qty = leaveBalanceInfo.getString("lbd_balance_qty").equals("null") ? "0" : leaveBalanceInfo.getString("lbd_balance_qty");
+                        String lbd_opening_qty = leaveBalanceInfo.getString("lbd_opening_qty").equals("null") ? "0" : leaveBalanceInfo.getString("lbd_opening_qty");
+                        String lbd_current_qty = leaveBalanceInfo.getString("lbd_current_qty").equals("null") ? "0" : leaveBalanceInfo.getString("lbd_current_qty");
+                        String lbd_taken_qty = leaveBalanceInfo.getString("lbd_taken_qty").equals("null") ? "0" : leaveBalanceInfo.getString("lbd_taken_qty");
+                        String lbd_cash_taken_qty = leaveBalanceInfo.getString("lbd_cash_taken_qty").equals("null") ? "0" : leaveBalanceInfo.getString("lbd_cash_taken_qty");
+                        String lbd_transfer_qty = leaveBalanceInfo.getString("lbd_transfer_qty").equals("null") ? "0" : leaveBalanceInfo.getString("lbd_transfer_qty");
 
                         leaveBalanceLists.add(new LeaveBalanceList(lc_name,lc_short_code,lbd_opening_qty,
                                 lbd_current_qty,lbd_taken_qty,lbd_transfer_qty,lbd_cash_taken_qty,lbd_balance_qty));
@@ -359,12 +335,12 @@ public class LeaveBalance extends AppCompatActivity {
                 updateLayout();
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateLayout();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             conn = false;
             connected = false;
             updateLayout();
@@ -377,10 +353,17 @@ public class LeaveBalance extends AppCompatActivity {
         waitProgress.dismiss();
         if (conn) {
             if (connected) {
+                if (leaveBalanceLists.isEmpty()) {
+                    noLeaveBal.setVisibility(View.VISIBLE);
+                }
+                else {
+                    noLeaveBal.setVisibility(View.GONE);
+                }
                 leaveBalanceAdapter = new LeaveBalanceAdapter(leaveBalanceLists, LeaveBalance.this);
                 leaveView.setAdapter(leaveBalanceAdapter);
 
-                year.setText("YEAR: "+yearrr);
+                conn = false;
+                connected = false;
             }
             else {
                 AlertDialog dialog = new AlertDialog.Builder(LeaveBalance.this)

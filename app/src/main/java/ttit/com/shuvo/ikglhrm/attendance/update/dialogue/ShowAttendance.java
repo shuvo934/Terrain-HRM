@@ -2,7 +2,6 @@ package ttit.com.shuvo.ikglhrm.attendance.update.dialogue;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,10 +25,14 @@ import ttit.com.shuvo.ikglhrm.WaitProgress;
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
 import static ttit.com.shuvo.ikglhrm.attendance.update.AttendanceUpdate.dateToShow;
 import static ttit.com.shuvo.ikglhrm.attendance.update.AttendanceUpdate.showAttendanceNumber;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ShowAttendance extends AppCompatDialogFragment {
 
@@ -42,7 +45,6 @@ public class ShowAttendance extends AppCompatDialogFragment {
     TextInputEditText exLocNa;
 
     WaitProgress waitProgress = new WaitProgress();
-    private String message = null;
     private Boolean conn = false;
     private Boolean connected = false;
 
@@ -64,6 +66,8 @@ public class ShowAttendance extends AppCompatDialogFragment {
 
     Context mContext;
 
+    Logger logger = Logger.getLogger(ShowAttendance.class.getName());
+
     public ShowAttendance(Context context) {
         this.mContext = context;
     }
@@ -71,8 +75,8 @@ public class ShowAttendance extends AppCompatDialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = getActivity().getLayoutInflater();
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
 
         View view = inflater.inflate(R.layout.show_attendance, null);
         activity = (AppCompatActivity) view.getContext();
@@ -104,14 +108,11 @@ public class ShowAttendance extends AppCompatDialogFragment {
         showAttdialog.setCancelable(false);
         showAttdialog.setCanceledOnTouchOutside(false);
 
-        showAttdialog.setButton(Dialog.BUTTON_NEGATIVE, "OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+        showAttdialog.setButton(Dialog.BUTTON_NEGATIVE, "OK", (dialog, which) -> {
 
-                showAttendanceNumber = 0;
+            showAttendanceNumber = 0;
 //                AttendanceReqUpdate.showAttendanceNumberUpdate = 0;
-                dialog.dismiss();
-            }
+            dialog.dismiss();
         });
 
         return showAttdialog;
@@ -360,7 +361,7 @@ public class ShowAttendance extends AppCompatDialogFragment {
         shiftName = "";
         locName = "";
 
-        String url = "http://103.56.208.123:8001/apex/ttrams/attendanceUpdateReq/showAttendance?emp_id="+emp_id+"&att_date="+date+"";
+        String url = api_url_front + "attendanceUpdateReq/showAttendance?emp_id="+emp_id+"&att_date="+date;
 
         RequestQueue requestQueue = Volley.newRequestQueue(mContext);
 
@@ -395,12 +396,12 @@ public class ShowAttendance extends AppCompatDialogFragment {
                 updateLay();
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateLay();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             conn = false;
             connected = false;
             updateLay();
@@ -413,11 +414,12 @@ public class ShowAttendance extends AppCompatDialogFragment {
         waitProgress.dismiss();
         if (conn) {
             if (connected) {
+                String ntf = "No Time Found";
                 if (shiftin == null) {
-                    intime.setText("No Time Found");
+                    intime.setText(ntf);
                 }else {
                     if (shiftin.isEmpty()) {
-                        intime.setText("No Time Found");
+                        intime.setText(ntf);
                     } else {
                         intime.setText(shiftin);
                     }
@@ -425,68 +427,70 @@ public class ShowAttendance extends AppCompatDialogFragment {
                 }
 
                 if (shiftout == null) {
-                    outtime.setText("No Time Found");
+                    outtime.setText(ntf);
                 }else {
                     if (shiftout.isEmpty()) {
-                        outtime.setText("No Time Found");
+                        outtime.setText(ntf);
                     } else {
                         outtime.setText(shiftout);
                     }
                 }
 
                 if (lateArr == null) {
-                    latetime.setText("No Time Found");
+                    latetime.setText(ntf);
                 }else {
                     if (lateArr.isEmpty()) {
-                        latetime.setText("No Time Found");
+                        latetime.setText(ntf);
                     } else {
                         latetime.setText(lateArr);
                     }
                 }
 
                 if (machineArr == null) {
-                    machArrTime.setText("No Time Found");
+                    machArrTime.setText(ntf);
                 }else {
                     if (machineArr.isEmpty()) {
-                        machArrTime.setText("No Time Found");
+                        machArrTime.setText(ntf);
                     } else {
                         machArrTime.setText(machineArr);
                     }
                 }
 
                 if (machiDep == null) {
-                    machDepTime.setText("No Time Found");
+                    machDepTime.setText(ntf);
                 }else {
                     if (machiDep.isEmpty()) {
-                        machDepTime.setText("No Time Found");
+                        machDepTime.setText(ntf);
                     } else {
                         machDepTime.setText(machiDep);
                     }
                 }
 
+                String nsf = "No Shift Found";
                 if (shiftName == null) {
-                    exShNa.setText("No Shift Found");
+                    exShNa.setText(nsf);
                 }else {
                     if (shiftName.isEmpty()) {
-                        exShNa.setText("No Shift Found");
+                        exShNa.setText(nsf);
                     } else {
                         exShNa.setText(shiftName);
                     }
 
                 }
 
+                String nlf = "No Location Found";
                 if (locName == null) {
-                    exLocNa.setText("No Location Found");
+                    exLocNa.setText(nlf);
                 }else {
                     if (locName.isEmpty()) {
-                        exLocNa.setText("No Location Found");
+                        exLocNa.setText(nlf);
                     } else {
                         exLocNa.setText(locName);
                     }
                 }
             }
             else {
-                AlertDialog dialog = new AlertDialog.Builder(getContext())
+                AlertDialog dialog = new AlertDialog.Builder(mContext)
                         .setMessage("There is a network issue in the server. Please Try later.")
                         .setPositiveButton("Retry", null)
                         .setNegativeButton("Cancel",null)
@@ -495,27 +499,21 @@ public class ShowAttendance extends AppCompatDialogFragment {
                 dialog.setCancelable(false);
                 dialog.setCanceledOnTouchOutside(false);
                 Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                positive.setOnClickListener(v -> {
 
-                        getAttendanceShow();
-                        dialog.dismiss();
-                    }
+                    getAttendanceShow();
+                    dialog.dismiss();
                 });
                 Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                        showAttdialog.dismiss();
+                negative.setOnClickListener(v -> {
+                    dialog.dismiss();
+                    showAttdialog.dismiss();
 
-                    }
                 });
             }
         }
         else {
-            AlertDialog dialog = new AlertDialog.Builder(getContext())
+            AlertDialog dialog = new AlertDialog.Builder(mContext)
                     .setMessage("Please Check Your Internet Connection")
                     .setPositiveButton("Retry", null)
                     .setNegativeButton("Cancel",null)
@@ -524,22 +522,16 @@ public class ShowAttendance extends AppCompatDialogFragment {
             dialog.setCancelable(false);
             dialog.setCanceledOnTouchOutside(false);
             Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            positive.setOnClickListener(v -> {
 
-                    getAttendanceShow();
-                    dialog.dismiss();
-                }
+                getAttendanceShow();
+                dialog.dismiss();
             });
             Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-            negative.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialog.dismiss();
-                    showAttdialog.dismiss();
+            negative.setOnClickListener(v -> {
+                dialog.dismiss();
+                showAttdialog.dismiss();
 
-                }
             });
         }
     }

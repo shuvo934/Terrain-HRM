@@ -11,8 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-import ttit.com.shuvo.ikglhrm.EmployeeInfo.jobDesc.JobAdapter;
-import ttit.com.shuvo.ikglhrm.EmployeeInfo.jobDesc.JobDescDetails;
 import ttit.com.shuvo.ikglhrm.R;
 
 public class ShowShiftAdapter extends RecyclerView.Adapter<ShowShiftAdapter.ShowShiftHolder> {
@@ -32,8 +30,7 @@ public class ShowShiftAdapter extends RecyclerView.Adapter<ShowShiftAdapter.Show
     @Override
     public ShowShiftHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(myContext).inflate(R.layout.shift_in_details_view, parent, false);
-        ShowShiftHolder ammvh = new ShowShiftHolder(v);
-        return ammvh;
+        return new ShowShiftHolder(v);
     }
 
     @Override
@@ -55,14 +52,14 @@ public class ShowShiftAdapter extends RecyclerView.Adapter<ShowShiftAdapter.Show
         return showShiftLists.size();
     }
 
-    public class ShowShiftHolder extends RecyclerView.ViewHolder {
+    public static class ShowShiftHolder extends RecyclerView.ViewHolder {
 
-        private TextView shift;
-        private TextView inTime;
-        private TextView lateArr;
-        private TextView early;
-        private TextView ouutt;
-        private TextView extend;
+        TextView shift;
+        TextView inTime;
+        TextView lateArr;
+        TextView early;
+        TextView ouutt;
+        TextView extend;
 
 
         public ShowShiftHolder(@NonNull View itemView) {

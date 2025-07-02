@@ -48,7 +48,7 @@ public class SelectApproveReqAdapter extends RecyclerView.Adapter<SelectApproveR
 
             this.mClickedItem = ci;
 
-            itemView.setOnClickListener(this::onClick);
+            itemView.setOnClickListener(this);
 
         }
 
@@ -67,8 +67,7 @@ public class SelectApproveReqAdapter extends RecyclerView.Adapter<SelectApproveR
     @Override
     public ApproveHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(myContext).inflate(R.layout.approval_request_view, parent, false);
-        ApproveHolder categoryViewHolder = new ApproveHolder(view, myClickedItem);
-        return categoryViewHolder;
+        return new ApproveHolder(view, myClickedItem);
     }
 
     @Override

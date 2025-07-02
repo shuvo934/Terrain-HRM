@@ -2,7 +2,6 @@ package ttit.com.shuvo.ikglhrm.attendance.approve.dialogApproveReq;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
@@ -68,8 +67,8 @@ public class SelectApproveReq extends AppCompatDialogFragment implements SelectA
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = getActivity().getLayoutInflater();
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
 
         view = inflater.inflate(R.layout.approval_request_list, null);
 
@@ -91,10 +90,12 @@ public class SelectApproveReq extends AppCompatDialogFragment implements SelectA
 
         if (fromAttApp == 1) {
             selectedReqList = selectApproveReqLists;
-            dateOrDays.setText("Update Date");
+            String tt = "Update Date";
+            dateOrDays.setText(tt);
         } else if(fromLApp == 1) {
             selectedReqList = leaveReqList;
-            dateOrDays.setText("Leave Days");
+            String tt = "Leave Days";
+            dateOrDays.setText(tt);
         }
 
         builder.setView(view);
@@ -114,14 +115,11 @@ public class SelectApproveReq extends AppCompatDialogFragment implements SelectA
 
 
 
-        dialog.setButton(Dialog.BUTTON_NEGATIVE, "CANCEL", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+        dialog.setButton(Dialog.BUTTON_NEGATIVE, "CANCEL", (dialog, which) -> {
 
-                fromAttApp = 0;
-                fromLApp = 0;
-                dialog.dismiss();
-            }
+            fromAttApp = 0;
+            fromLApp = 0;
+            dialog.dismiss();
         });
 
         search.addTextChangedListener(new TextWatcher() {
@@ -142,23 +140,20 @@ public class SelectApproveReq extends AppCompatDialogFragment implements SelectA
             }
         });
 
-        search.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH ||
-                        actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT || event != null && event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER &&
-                        event.getKeyCode() == KeyEvent.KEYCODE_NAVIGATE_NEXT) {
-                    if (event == null || !event.isShiftPressed()) {
-                        // the user is done typing.
-                        Log.i("Let see", "Come here");
-                        search.clearFocus();
-                        closeKeyBoard();
+        search.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH ||
+                    actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT || event != null && event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER &&
+                    event.getKeyCode() == KeyEvent.KEYCODE_NAVIGATE_NEXT) {
+                if (event == null || !event.isShiftPressed()) {
+                    // the user is done typing.
+                    Log.i("Let see", "Come here");
+                    search.clearFocus();
+                    closeKeyBoard();
 
-                        return false; // consume.
-                    }
+                    return false; // consume.
                 }
-                return false;
             }
+            return false;
         });
 
         return dialog;
@@ -190,10 +185,10 @@ public class SelectApproveReq extends AppCompatDialogFragment implements SelectA
     public void onCategoryClicked(int CategoryPosition) {
 
 
-        String name = "";
-        String id = "";
-        String darmID = "";
-        String darmEmp = "";
+        String name;
+        String id;
+        String darmID;
+        String darmEmp;
         if (isfiltered) {
             name = filteredList.get(CategoryPosition).getName();
             id = filteredList.get(CategoryPosition).getReqCode();

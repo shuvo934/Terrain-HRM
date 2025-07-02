@@ -1,28 +1,29 @@
 package ttit.com.shuvo.ikglhrm.attendance;
 
-import static ttit.com.shuvo.ikglhrm.Login.SoftwareName;
 import static ttit.com.shuvo.ikglhrm.Login.isApproved;
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.card.MaterialCardView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
@@ -32,70 +33,40 @@ import ttit.com.shuvo.ikglhrm.attendance.update.AttendanceUpdate;
 
 public class AttendanceUpdateAll extends AppCompatActivity {
 
-    CardView attUpdate;
-    CardView attReqUpdate;
-    CardView attStatus;
-    CardView attApprove;
-
-    Button attClose;
-    TextView softName;
-
+    MaterialCardView attUpdate;
+    MaterialCardView attReqUpdate;
+    MaterialCardView attStatus;
+    MaterialCardView attApprove;
+    
     WaitProgress waitProgress = new WaitProgress();
-//    private String message = null;
     private Boolean conn = false;
     private Boolean connected = false;
-
-//    private Connection connection;
-
+    
     String userName = "";
     int isApprovedCheckAgain = 0;
-
-
+    Logger logger = Logger.getLogger(AttendanceUpdateAll.class.getName());
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-//        getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            Window w = getWindow();
-//            //w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-//        }
-//        if (Build.VERSION.SDK_INT < 16) {
-//            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-//                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//        }
-//        View decorView = getWindow().getDecorView();
-//// Hide the status bar.
-//        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
-//        decorView.setSystemUiVisibility(uiOptions);
-
         setContentView(R.layout.activity_attendance_update_all);
 
         userName = userInfoLists.get(0).getUserName();
-
-        softName = findViewById(R.id.name_of_company_attendance_update_all);
 
         attUpdate = findViewById(R.id.atten_update_req);
         attReqUpdate = findViewById(R.id.attendance_update_request_upd);
         attStatus = findViewById(R.id.attendane_update_status);
         attApprove = findViewById(R.id.atten_update_req_approval);
-
-        attClose = findViewById(R.id.attendance_update_all_back);
-
-        softName.setText(SoftwareName);
-
+        
         if (isApproved > 0) {
             attApprove.setVisibility(View.VISIBLE);
         } else {
             attApprove.setVisibility(View.GONE);
         }
 
-        attUpdate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(AttendanceUpdateAll.this, AttendanceUpdate.class);
-                startActivity(intent);
-            }
+        attUpdate.setOnClickListener(v -> {
+            Intent intent = new Intent(AttendanceUpdateAll.this, AttendanceUpdate.class);
+            startActivity(intent);
         });
 
 //        attReqUpdate.setOnClickListener(new View.OnClickListener() {
@@ -106,30 +77,16 @@ public class AttendanceUpdateAll extends AppCompatActivity {
 //            }
 //        });
 
-        attStatus.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(AttendanceUpdateAll.this, AttendanceStatus.class);
-                startActivity(intent);
-            }
+        attStatus.setOnClickListener(v -> {
+            Intent intent = new Intent(AttendanceUpdateAll.this, AttendanceStatus.class);
+            startActivity(intent);
         });
 
-        attClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
+        attApprove.setOnClickListener(v -> {
+            Intent intent = new Intent(AttendanceUpdateAll.this, AttendanceApprove.class);
+            startActivity(intent);
         });
 
-        attApprove.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(AttendanceUpdateAll.this, AttendanceApprove.class);
-                startActivity(intent);
-            }
-        });
-
-//        new Check().execute();
     }
 
     @Override
@@ -160,7 +117,7 @@ public class AttendanceUpdateAll extends AppCompatActivity {
 //            int     exitValue = ipProcess.waitFor();
 //            return (exitValue == 0);
 //        }
-//        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
+//        catch (IOException | InterruptedException e)          { logger.log(Level.WARNING, e.getMessage(), e); }
 //
 //        return false;
 //    }
@@ -269,7 +226,7 @@ public class AttendanceUpdateAll extends AppCompatActivity {
 //
 //            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
 //            Log.i("ERRRRR", e.getLocalizedMessage());
-//            e.printStackTrace();
+//            logger.log(Level.WARNING, e.getMessage(), e);
 //        }
 //    }
 
@@ -281,7 +238,7 @@ public class AttendanceUpdateAll extends AppCompatActivity {
 
         isApprovedCheckAgain = 0;
 
-        String attendanceAppUrl = "http://103.56.208.123:8001/apex/ttrams/approval_flag/getAttendanceApproval/"+userName+"";
+        String attendanceAppUrl = api_url_front + "approval_flag/getAttendanceApproval/"+userName;
 
         RequestQueue requestQueue = Volley.newRequestQueue(AttendanceUpdateAll.this);
 
@@ -303,13 +260,13 @@ public class AttendanceUpdateAll extends AppCompatActivity {
             }
             catch (JSONException e) {
                 connected = false;
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 updateLay();
             }
         },error -> {
             conn = false;
             connected = false;
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             updateLay();
         });
 

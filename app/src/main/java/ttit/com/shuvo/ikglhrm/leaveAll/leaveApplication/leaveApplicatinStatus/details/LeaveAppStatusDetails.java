@@ -3,14 +3,11 @@ package ttit.com.shuvo.ikglhrm.leaveAll.leaveApplication.leaveApplicatinStatus.d
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -23,22 +20,24 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
+import ttit.com.shuvo.ikglhrm.leaveAll.leaveBalance.LeaveBalance;
 
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class LeaveAppStatusDetails extends AppCompatActivity {
 
     WaitProgress waitProgress = new WaitProgress();
-//    private String message = null;
     private Boolean conn = false;
     private Boolean connected = false;
-
-//    private Connection connection;
-
+    
     String emp_id = "";
 
     TextView status;
@@ -80,27 +79,11 @@ public class LeaveAppStatusDetails extends AppCompatActivity {
     String backupEmployeee = "";
     String comments = "";
 
-    Button close;
-
+    Logger logger = Logger.getLogger(LeaveBalance.class.getName());
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            Window w = getWindow();
-//            //w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-//        }
-//        if (Build.VERSION.SDK_INT < 16) {
-//            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-//                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//        }
-//        View decorView = getWindow().getDecorView();
-//// Hide the status bar.
-//        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
-//        decorView.setSystemUiVisibility(uiOptions);
-        Window window = getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(ContextCompat.getColor(LeaveAppStatusDetails.this,R.color.secondaryColor));
         setContentView(R.layout.activity_leave_app_status_details);
 
         status = findViewById(R.id.leave_app_status_of_from_list);
@@ -126,9 +109,7 @@ public class LeaveAppStatusDetails extends AppCompatActivity {
         backUp = findViewById(R.id.backUp_employee_status_details);
         comm = findViewById(R.id.comments_for_leave);
 
-        close = findViewById(R.id.leave_app_status_details_finish);
-
-        if (userInfoLists.size() != 0) {
+        if (!userInfoLists.isEmpty()) {
             String firstname = userInfoLists.get(0).getUser_fname();
             String lastName = userInfoLists.get(0).getUser_lname();
             if (firstname == null) {
@@ -156,34 +137,42 @@ public class LeaveAppStatusDetails extends AppCompatActivity {
 
         leaCode.setText(leave_code);
 
-        if (statttt.equals("PENDING")) {
-            status.setText(statttt);
-            statusCard.setCardBackgroundColor(Color.parseColor("#636e72"));
-            approverLay.setVisibility(View.GONE);
-            approver.setText("");
-        } else if (statttt.equals("APPROVED")) {
-            status.setText(statttt);
-            statusCard.setCardBackgroundColor(Color.parseColor("#1abc9c"));
-            approverLay.setVisibility(View.VISIBLE);
-            approver.setText(apprrroovveerr);
-            apporCan.setText("Approved By:");
-        } else if (statttt.equals("REJECTED")) {
-            status.setText(statttt);
-            statusCard.setCardBackgroundColor(Color.parseColor("#d63031"));
-            approverLay.setVisibility(View.VISIBLE);
-            approver.setText(apprrroovveerr);
-            apporCan.setText("Rejected By:");
-        } else if (statttt.equals("CANCEL APPROVED LEAVE")) {
-            status.setText(statttt);
-            statusCard.setCardBackgroundColor(Color.parseColor("#ff7675"));
-            if (apprrroovveerr.isEmpty()) {
+        switch (statttt) {
+            case "PENDING":
+                status.setText(statttt);
+                statusCard.setCardBackgroundColor(Color.parseColor("#636e72"));
                 approverLay.setVisibility(View.GONE);
                 approver.setText("");
-            } else {
+                break;
+            case "APPROVED":
+                status.setText(statttt);
+                statusCard.setCardBackgroundColor(Color.parseColor("#1abc9c"));
                 approverLay.setVisibility(View.VISIBLE);
                 approver.setText(apprrroovveerr);
-                apporCan.setText("Cancelled By:");
-            }
+                String at = "Approved By:";
+                apporCan.setText(at);
+                break;
+            case "REJECTED":
+                status.setText(statttt);
+                statusCard.setCardBackgroundColor(Color.parseColor("#d63031"));
+                approverLay.setVisibility(View.VISIBLE);
+                approver.setText(apprrroovveerr);
+                String rt = "Rejected By:";
+                apporCan.setText(rt);
+                break;
+            case "CANCEL APPROVED LEAVE":
+                status.setText(statttt);
+                statusCard.setCardBackgroundColor(Color.parseColor("#ff7675"));
+                if (apprrroovveerr.isEmpty()) {
+                    approverLay.setVisibility(View.GONE);
+                    approver.setText("");
+                } else {
+                    approverLay.setVisibility(View.VISIBLE);
+                    approver.setText(apprrroovveerr);
+                    String ct = "Cancelled By:";
+                    apporCan.setText(ct);
+                }
+                break;
         }
 
         leaveType.setText(leave_type);
@@ -191,20 +180,7 @@ public class LeaveAppStatusDetails extends AppCompatActivity {
         DateTO.setText(to_date);
         totalLeave.setText(total_leave);
 
-//        new Check().execute();
         getStatusDetails();
-
-
-
-        close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
-
-
     }
 
 //    public boolean isConnected() {
@@ -229,7 +205,7 @@ public class LeaveAppStatusDetails extends AppCompatActivity {
 //            int     exitValue = ipProcess.waitFor();
 //            return (exitValue == 0);
 //        }
-//        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
+//        catch (IOException | InterruptedException e)          { logger.log(Level.WARNING, e.getMessage(), e); }
 //
 //        return false;
 //    }
@@ -357,7 +333,7 @@ public class LeaveAppStatusDetails extends AppCompatActivity {
 //
 //            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
 //            Log.i("ERRRRR", e.getLocalizedMessage());
-//            e.printStackTrace();
+//            logger.log(Level.WARNING, e.getMessage(), e);
 //        }
 //    }
 
@@ -367,7 +343,7 @@ public class LeaveAppStatusDetails extends AppCompatActivity {
         conn = false;
         connected = false;
 
-        String url = "http://103.56.208.123:8001/apex/ttrams/leaveRequest/leaveReqStatDetails?leave_code="+leave_code+"";
+        String url = api_url_front + "leaveRequest/leaveReqStatDetails?leave_code="+leave_code;
 
         RequestQueue requestQueue = Volley.newRequestQueue(LeaveAppStatusDetails.this);
 
@@ -402,12 +378,12 @@ public class LeaveAppStatusDetails extends AppCompatActivity {
                 updateLay();
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateLay();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             conn = false;
             connected = false;
             updateLay();

@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -15,12 +14,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.button.MaterialButton;
+
 import java.util.ArrayList;
 
 import ttit.com.shuvo.ikglhrm.R;
-import ttit.com.shuvo.ikglhrm.attendance.status.StatusAdapter;
 import ttit.com.shuvo.ikglhrm.attendance.status.StatusList;
-import ttit.com.shuvo.ikglhrm.attendance.status.statusDetail.AttendanceStatusDetails;
 import ttit.com.shuvo.ikglhrm.leaveAll.leaveApplication.leaveApplicatinStatus.details.LeaveAppStatusDetails;
 
 public class LeaveAppStatusAdapter extends RecyclerView.Adapter<LeaveAppStatusAdapter.LeaAppStatusHolder> {
@@ -29,13 +28,13 @@ public class LeaveAppStatusAdapter extends RecyclerView.Adapter<LeaveAppStatusAd
 
     public Context myContext;
 
-    public static String leaveCode = "";
-    public static String leave_app_Status = "";
-    public static String lea_type = "";
-    public static String from_date = "";
-    public static String to_date = "";
-    public static String totalDays = "";
-    public static String approverrrrrrrr = "";
+    String leaveCode = "";
+    String leave_app_Status = "";
+    String lea_type = "";
+    String from_date = "";
+    String to_date = "";
+    String totalDays = "";
+    String approverrrrrrrr = "";
 
     public LeaveAppStatusAdapter(ArrayList<StatusList> statusLists, Context myContext) {
         this.statusLists = statusLists;
@@ -46,8 +45,7 @@ public class LeaveAppStatusAdapter extends RecyclerView.Adapter<LeaveAppStatusAd
     @Override
     public LeaAppStatusHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(myContext).inflate(R.layout.leave_app_status_item_lists, parent, false);
-        LeaAppStatusHolder ammvh = new LeaAppStatusHolder(v);
-        return ammvh;
+        return new LeaAppStatusHolder(v);
     }
 
     @Override
@@ -59,36 +57,44 @@ public class LeaveAppStatusAdapter extends RecyclerView.Adapter<LeaveAppStatusAd
         String approve = jobdddd.getApprover();
         String stat = jobdddd.getApproved();
 
-        if (stat.equals("0")) {
-            stat = "PENDING";
-            holder.cardView.setCardBackgroundColor(Color.parseColor("#636e72"));
-            holder.appLay.setVisibility(View.GONE);
-            holder.approver.setText("");
-        }else if (stat.equals("1")){
-            stat = "APPROVED";
-            holder.cardView.setCardBackgroundColor(Color.parseColor("#1abc9c"));
-            holder.approver.setText(approve);
-            holder.appLay.setVisibility(View.VISIBLE);
-            holder.appcan.setText("Approved By:");
-        } else if (stat.equals("2")) {
-            stat = "REJECTED";
-            holder.cardView.setCardBackgroundColor(Color.parseColor("#d63031"));
-            holder.approver.setText(approve);
-            holder.appLay.setVisibility(View.VISIBLE);
-            holder.appcan.setText("Rejected By:");
-        } else if (stat.equals("3")) {
-            stat = "CANCEL APPROVED LEAVE";
-            holder.cardView.setCardBackgroundColor(Color.parseColor("#ff7675"));
-            String cancel = jobdddd.getCanceler();
-            if (cancel != null) {
-                holder.approver.setText(cancel);
-                holder.appLay.setVisibility(View.VISIBLE);
-                holder.appcan.setText("Cancelled By:");
-            } else {
+        switch (stat) {
+            case "0":
+                stat = "PENDING";
+                holder.cardView.setCardBackgroundColor(Color.parseColor("#636e72"));
                 holder.appLay.setVisibility(View.GONE);
                 holder.approver.setText("");
-            }
+                break;
+            case "1":
+                stat = "APPROVED";
+                holder.cardView.setCardBackgroundColor(Color.parseColor("#1abc9c"));
+                holder.approver.setText(approve);
+                holder.appLay.setVisibility(View.VISIBLE);
+                String at = "Approved By:";
+                holder.appcan.setText(at);
+                break;
+            case "2":
+                stat = "REJECTED";
+                holder.cardView.setCardBackgroundColor(Color.parseColor("#d63031"));
+                holder.approver.setText(approve);
+                holder.appLay.setVisibility(View.VISIBLE);
+                String rt = "Rejected By:";
+                holder.appcan.setText(rt);
+                break;
+            case "3":
+                stat = "CANCEL APPROVED LEAVE";
+                holder.cardView.setCardBackgroundColor(Color.parseColor("#ff7675"));
+                String cancel = jobdddd.getCanceler();
+                if (cancel != null) {
+                    holder.approver.setText(cancel);
+                    holder.appLay.setVisibility(View.VISIBLE);
+                    String ct = "Cancelled By:";
+                    holder.appcan.setText(ct);
+                } else {
+                    holder.appLay.setVisibility(View.GONE);
+                    holder.approver.setText("");
+                }
 
+                break;
         }
 
         holder.status.setText(stat);
@@ -116,21 +122,21 @@ public class LeaveAppStatusAdapter extends RecyclerView.Adapter<LeaveAppStatusAd
 
     public class LeaAppStatusHolder extends RecyclerView.ViewHolder {
 
-        private TextView code_no;
-        private TextView status;
-        private TextView appDate;
-        private TextView leaTyp;
-        private TextView fromDate;
-        private TextView toDate;
-        private TextView total;
-        private TextView approver;
-        private TextView appcan;
+        TextView code_no;
+        TextView status;
+        TextView appDate;
+        TextView leaTyp;
+        TextView fromDate;
+        TextView toDate;
+        TextView total;
+        TextView approver;
+        TextView appcan;
 
         LinearLayout appLay;
 
-        private CardView cardView;
+        CardView cardView;
 
-        private Button details;
+        MaterialButton details;
 
 
         public LeaAppStatusHolder(@NonNull View itemView) {
@@ -150,31 +156,27 @@ public class LeaveAppStatusAdapter extends RecyclerView.Adapter<LeaveAppStatusAd
             appLay = itemView.findViewById(R.id.applicatin_status_approver_layout);
             details = itemView.findViewById(R.id.button_application_status_all);
 
-            details.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    AppCompatActivity activity = (AppCompatActivity) v.getContext();
-                    leaveCode = code_no.getText().toString();
-                    leave_app_Status = status.getText().toString();
-                    lea_type = leaTyp.getText().toString();
-                    from_date = fromDate.getText().toString();
-                    to_date = toDate.getText().toString();
-                    totalDays = total.getText().toString();
+            details.setOnClickListener(v -> {
+                AppCompatActivity activity = (AppCompatActivity) v.getContext();
+                leaveCode = code_no.getText().toString();
+                leave_app_Status = status.getText().toString();
+                lea_type = leaTyp.getText().toString();
+                from_date = fromDate.getText().toString();
+                to_date = toDate.getText().toString();
+                totalDays = total.getText().toString();
 
-                    approverrrrrrrr = approver.getText().toString();
+                approverrrrrrrr = approver.getText().toString();
 
-                    Intent intent = new Intent(myContext, LeaveAppStatusDetails.class);
-                    intent.putExtra("LEAVE", leaveCode);
-                    intent.putExtra("STATUS", leave_app_Status);
-                    intent.putExtra("LEAVE_TYPE", lea_type);
-                    intent.putExtra("FROM_DATE", from_date);
-                    intent.putExtra("TO_DATE", to_date);
-                    intent.putExtra("TOTAL", totalDays);
-                    intent.putExtra("APPROVER",approverrrrrrrr);
-                    activity.startActivity(intent);
-                }
+                Intent intent = new Intent(myContext, LeaveAppStatusDetails.class);
+                intent.putExtra("LEAVE", leaveCode);
+                intent.putExtra("STATUS", leave_app_Status);
+                intent.putExtra("LEAVE_TYPE", lea_type);
+                intent.putExtra("FROM_DATE", from_date);
+                intent.putExtra("TO_DATE", to_date);
+                intent.putExtra("TOTAL", totalDays);
+                intent.putExtra("APPROVER",approverrrrrrrr);
+                activity.startActivity(intent);
             });
-
 
         }
     }

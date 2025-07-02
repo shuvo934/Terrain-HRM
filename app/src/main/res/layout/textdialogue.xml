@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -11,17 +12,18 @@
         android:layout_height="0dp"
         android:hint=""
         android:layout_weight="1.2"
-        android:layout_margin="5dp"
+        android:layout_margin="@dimen/_4sdp"
         app:boxStrokeColor="#f0932b"
         app:boxStrokeWidth="2dp"
         app:boxStrokeWidthFocused="1dp"
-        app:boxCornerRadiusTopStart="5dp"
-        app:boxCornerRadiusTopEnd="5dp"
-        app:boxCornerRadiusBottomEnd="5dp"
-        app:boxCornerRadiusBottomStart="5dp"
+        app:boxCornerRadiusTopStart="@dimen/_4sdp"
+        app:boxCornerRadiusTopEnd="@dimen/_4sdp"
+        app:boxCornerRadiusBottomEnd="@dimen/_4sdp"
+        app:boxCornerRadiusBottomStart="@dimen/_4sdp"
         app:boxBackgroundMode="filled"
         app:boxBackgroundColor="#f1f2f6"
         app:hintTextColor="@color/black">
+
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/dialogue_text_edit"
             android:layout_width="match_parent"
@@ -29,19 +31,20 @@
             android:fontFamily="@font/poppins_semibold"
             android:textSize="@dimen/_10sdp"
             android:ems="10"
-            android:inputType="textMultiLine"
-            />
+            android:inputType="textMultiLine" />
 
     </com.google.android.material.textfield.TextInputLayout>
+
     <Button
         android:id="@+id/get_address"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="4dp"
+        android:padding="@dimen/_3sdp"
         android:visibility="gone"
-        android:layout_margin="10dp"
+        android:layout_margin="@dimen/_8sdp"
         android:text="Get User Address"
-        android:background="@drawable/custom_button1"/>
+        android:background="@drawable/custom_button1"
+        tools:ignore="HardcodedText" />
 
 
 </LinearLayout>

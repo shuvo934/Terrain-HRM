@@ -1,46 +1,39 @@
 package ttit.com.shuvo.ikglhrm.payRoll.paySlip;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
 
-import android.app.DownloadManager;
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.android.material.button.MaterialButton;
+import com.github.dewinjm.monthyearpicker.MonthFormat;
+import com.github.dewinjm.monthyearpicker.MonthYearPickerDialogFragment;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
-import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
 
 import static ttit.com.shuvo.ikglhrm.Login.userDesignations;
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,17 +41,10 @@ import org.json.JSONObject;
 
 public class PaySlip extends AppCompatActivity {
 
-    public static TextInputEditText selectMonth;
-    public static TextInputLayout selectMonthLay;
-
-    public static TextView errorMsgMonth;
-
-    Button show;
-    MaterialButton download;
+    TextInputEditText selectMonth;
+    TextInputLayout selectMonthLay;
 
     CardView reportCard;
-
-    TextView monthName;
 
     TextInputEditText empName;
     TextInputEditText id;
@@ -79,6 +65,7 @@ public class PaySlip extends AppCompatActivity {
     TextView basic;
     TextView houseRent;
     TextView food;
+    TextView medical;
     TextView conveyance;
     TextView grossSalary;
     TextView overTime;
@@ -108,11 +95,9 @@ public class PaySlip extends AppCompatActivity {
     TextView accountNo;
     TextView bankName;
 
-    Button close;
-
     String data_available_count = "";
 
-    public static String select_month_id = "";
+    String select_month_id = "";
     String emp_id = "";
 
     String emp_name = "";
@@ -132,6 +117,7 @@ public class PaySlip extends AppCompatActivity {
     String basic_salary = "";
     String hou_rent = "";
     String food_cost = "";
+    String medical_cost = "";
     String conveyance_cost = "";
     String gross_salary = "";
     String over_time = "";
@@ -162,36 +148,14 @@ public class PaySlip extends AppCompatActivity {
     String bank = "";
 
     WaitProgress waitProgress = new WaitProgress();
-//    private String message = null;
     private Boolean conn = false;
     private Boolean connected = false;
-    private Boolean downConn = false;
 
-//    private Connection connection;
+    Logger logger = Logger.getLogger(PaySlip.class.getName());
 
-    private ProgressDialog pDialog;
-
-    String URL = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            Window w = getWindow();
-//            //w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-//        }
-//        if (Build.VERSION.SDK_INT < 16) {
-//            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-//                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//        }
-//        View decorView = getWindow().getDecorView();
-//// Hide the status bar.
-//        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
-//        decorView.setSystemUiVisibility(uiOptions);
-        Window window = getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(ContextCompat.getColor(PaySlip.this,R.color.secondaryColor));
         setContentView(R.layout.activity_pay_slip);
 
         select_month_id = "";
@@ -199,14 +163,8 @@ public class PaySlip extends AppCompatActivity {
         selectMonth = findViewById(R.id.select_month_pay_slip);
         selectMonthLay = findViewById(R.id.select_month_pay_slip_lay);
 
-        errorMsgMonth = findViewById(R.id.error_msg_for_no_entry_pay_slip);
-
-        show = findViewById(R.id.show_pay_slip);
-        download = findViewById(R.id.download_pay_slip_report);
-
         reportCard = findViewById(R.id.pay_slip_report_card);
 
-        monthName = findViewById(R.id.month_year_name);
 
         empName = findViewById(R.id.name_pay_slip);
         id = findViewById(R.id.id_pay_slip);
@@ -227,6 +185,7 @@ public class PaySlip extends AppCompatActivity {
         basic = findViewById(R.id.basic_salary_pay_slip);
         houseRent = findViewById(R.id.house_rent_pay_slip);
         food = findViewById(R.id.food_pay_slip);
+        medical = findViewById(R.id.medical_pay_slip);
         conveyance = findViewById(R.id.conveyance_pay_slip);
         grossSalary = findViewById(R.id.gross_salary_pay_slip);
         overTime = findViewById(R.id.over_time_pay_slip);
@@ -256,11 +215,9 @@ public class PaySlip extends AppCompatActivity {
         accountNo = findViewById(R.id.account_number_pay_slip);
         bankName = findViewById(R.id.bank_name_pay_slip);
 
-        close = findViewById(R.id.pay_slip_finish);
-
         emp_id = userInfoLists.get(0).getEmp_id();
 
-        if (userInfoLists.size() != 0) {
+        if (!userInfoLists.isEmpty()) {
             String firstname = userInfoLists.get(0).getUser_fname();
             String lastName = userInfoLists.get(0).getUser_lname();
             if (firstname == null) {
@@ -274,7 +231,7 @@ public class PaySlip extends AppCompatActivity {
 
         }
 
-        if (userDesignations.size() != 0) {
+        if (!userDesignations.isEmpty()) {
             str_DES = userDesignations.get(0).getJsm_name();
             if (str_DES == null) {
                 str_DES = "";
@@ -300,205 +257,177 @@ public class PaySlip extends AppCompatActivity {
         email_name = userInfoLists.get(0).getEmail();
 
 
-        selectMonth.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MonthSelectDialogue monthSelectDialogue = new MonthSelectDialogue(PaySlip.this);
-                monthSelectDialogue.show(getSupportFragmentManager(),"MONTH");
-            }
-        });
-
-        selectMonth.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                errorMsgMonth.setVisibility(View.GONE);
-                download.setVisibility(View.GONE);
-                reportCard.setVisibility(View.GONE);
-//                new Check().execute();
-                getPaySlipData();
-
-            }
-        });
-
-//        show.setOnClickListener(new View.OnClickListener() {
+//        selectMonth.setOnClickListener(v -> {
+//            MonthSelectDialogue monthSelectDialogue = new MonthSelectDialogue(PaySlip.this);
+//            monthSelectDialogue.show(getSupportFragmentManager(),"MONTH");
+//        });
+//
+//        selectMonth.addTextChangedListener(new TextWatcher() {
 //            @Override
-//            public void onClick(View v) {
-//                errorMsgMonth.setVisibility(View.GONE);
-//                download.setVisibility(View.GONE);
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
 //                reportCard.setVisibility(View.GONE);
-//                if (!select_month_id.isEmpty()) {
-//                    new Check().execute();
-//                } else {
-//                    Toast.makeText(getApplicationContext(), "Please Select Month", Toast.LENGTH_SHORT).show();
-//                    errorMsgMonth.setVisibility(View.VISIBLE);
-//                }
+////                new Check().execute();
+//                getPaySlipData();
+//
 //            }
 //        });
 
-        close.setOnClickListener(new View.OnClickListener() {
+        selectMonth.setOnClickListener(v -> {
+
+            Date c = Calendar.getInstance().getTime();
+
+            String formattedYear;
+            String monthValue;
+            String lastformattedYear;
+            String lastdateView;
+
+            SimpleDateFormat df = new SimpleDateFormat("yyyy", Locale.ENGLISH);
+            SimpleDateFormat sdf = new SimpleDateFormat("MM",Locale.ENGLISH);
+
+            formattedYear = df.format(c);
+            monthValue = sdf.format(c);
+            int nowMonNumb = Integer.parseInt(monthValue);
+            nowMonNumb = nowMonNumb - 2;
+            int lastMonNumb = nowMonNumb - 11;
+
+            if (lastMonNumb < 0) {
+                lastMonNumb = lastMonNumb + 12;
+                int formatY = Integer.parseInt(formattedYear);
+                formatY = formatY - 1;
+                lastformattedYear = String.valueOf(formatY);
+            } else {
+                lastformattedYear = formattedYear;
+            }
+
+            Date today = new Date();
+
+            Calendar calendar1 = Calendar.getInstance();
+            calendar1.setTime(today);
+
+            calendar1.set(Calendar.DAY_OF_MONTH, 1);
+            calendar1.add(Calendar.DATE, -1);
+
+            Date lastDayOfMonth = calendar1.getTime();
+
+            SimpleDateFormat sdff = new SimpleDateFormat("dd",Locale.ENGLISH);
+            lastdateView = sdff.format(lastDayOfMonth);
+
+            int yearSelected;
+            int monthSelected;
+            MonthFormat monthFormat = MonthFormat.LONG;
+            String customTitle = "Select Month";
+// Use the calendar for create ranges
+            Calendar calendar = Calendar.getInstance();
+            if (!select_month_id.isEmpty()) {
+                SimpleDateFormat myf = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
+                Date md = null;
+                try {
+                    md = myf.parse(select_month_id);
+                } catch (ParseException e) {
+                    logger.log(Level.WARNING, e.getMessage(), e);
+                }
+
+                if (md != null) {
+                    calendar.setTime(md);
+                }
+            }
+            yearSelected = calendar.get(Calendar.YEAR);
+            monthSelected = calendar.get(Calendar.MONTH);
+            calendar.clear();
+            calendar.set(Integer.parseInt(lastformattedYear), lastMonNumb, 1); // Set minimum date to show in dialog
+            long minDate = calendar.getTimeInMillis(); // Get milliseconds of the modified date
+
+            calendar.clear();
+            calendar.set(Integer.parseInt(formattedYear), nowMonNumb, Integer.parseInt(lastdateView)); // Set maximum date to show in dialog
+            long maxDate = calendar.getTimeInMillis(); // Get milliseconds of the modified date
+
+// Create instance with date ranges values
+            MonthYearPickerDialogFragment dialogFragment =  MonthYearPickerDialogFragment
+                    .getInstance(monthSelected, yearSelected, minDate, maxDate, customTitle, monthFormat);
+
+
+
+            dialogFragment.show(getSupportFragmentManager(), null);
+
+            dialogFragment.setOnDateSetListener((year, monthOfYear) -> {
+                System.out.println(year);
+                System.out.println(monthOfYear);
+
+                int month = monthOfYear + 1;
+                String monthName = "";
+                String mon = "";
+                String yearName;
+
+                if (month == 1) {
+                    monthName = "JANUARY";
+                    mon = "JAN";
+                } else if (month == 2) {
+                    monthName = "FEBRUARY";
+                    mon = "FEB";
+                } else if (month == 3) {
+                    monthName = "MARCH";
+                    mon = "MAR";
+                } else if (month == 4) {
+                    monthName = "APRIL";
+                    mon = "APR";
+                } else if (month == 5) {
+                    monthName = "MAY";
+                    mon = "MAY";
+                } else if (month == 6) {
+                    monthName = "JUNE";
+                    mon = "JUN";
+                } else if (month == 7) {
+                    monthName = "JULY";
+                    mon = "JUL";
+                } else if (month == 8) {
+                    monthName = "AUGUST";
+                    mon = "AUG";
+                } else if (month == 9) {
+                    monthName = "SEPTEMBER";
+                    mon = "SEP";
+                } else if (month == 10) {
+                    monthName = "OCTOBER";
+                    mon = "OCT";
+                } else if (month == 11) {
+                    monthName = "NOVEMBER";
+                    mon = "NOV";
+                } else if (month == 12) {
+                    monthName = "DECEMBER";
+                    mon = "DEC";
+                }
+
+                yearName  = String.valueOf(year);
+                yearName = yearName.substring(yearName.length()-2);
+
+                select_month_id = "01-"+mon+"-"+yearName;
+                //selected_date = "01-"+mon+"-"+yearName;
+                String tt = monthName + "-" + year;
+                selectMonth.setText(tt);
+                selectMonthLay.setHint("Month");
+
+                getPaySlipData();
+            });
+
+        });
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
-            public void onClick(View v) {
+            public void handleOnBackPressed() {
                 select_month_id = "";
                 finish();
             }
         });
 
-        download.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(PaySlip.this);
-                builder.setTitle("Download Pay Slip!")
-                        .setMessage("Do you want to download this pay slip?")
-                        .setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                                new DownloadPDF().execute();
-
-                            }
-                        })
-                        .setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                            }
-                        });
-                AlertDialog alert = builder.create();
-                alert.show();
-            }
-        });
-
-
-    }
-
-    @Override
-    public void onBackPressed() {
-        select_month_id = "";
-        finish();
-    }
-
-    public void Download(String url, String title) {
-
-        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
-        String tempTitle = title.replace(" ", "_");
-        request.setTitle(tempTitle);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            request.allowScanningByMediaScanner();
-            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-
-        }
-
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, tempTitle+".pdf");
-        DownloadManager downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
-        request.setMimeType("application/pdf");
-        request.allowScanningByMediaScanner();
-        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE | DownloadManager.Request.NETWORK_WIFI);
-        downloadManager.enqueue(request);
-        downConn = true;
-
-    }
-
-    public boolean isConnected() {
-        boolean connected = false;
-        boolean isMobile = false;
-        try {
-            ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo nInfo = cm.getActiveNetworkInfo();
-            connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
-            return connected;
-        } catch (Exception e) {
-            Log.e("Connectivity Exception", e.getMessage());
-        }
-        return connected;
-    }
-
-    public boolean isOnline() {
-
-        Runtime runtime = Runtime.getRuntime();
-        try {
-            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
-            int     exitValue = ipProcess.waitFor();
-            return (exitValue == 0);
-        }
-        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
-
-        return false;
-    }
-
-    public class DownloadPDF extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            pDialog = new ProgressDialog(getApplicationContext());
-            pDialog.setMessage("Downloading...");
-            pDialog.setCancelable(false);
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            if (isConnected() && isOnline()) {
-
-                Download(URL, "Pay Slip"+" "+select_month_id);
-
-            } else {
-                downConn = false;
-//                message = "Not Connected";
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-            pDialog.dismiss();
-            if (downConn) {
-                Toast.makeText(getApplicationContext(), "Downloading...", Toast.LENGTH_SHORT).show();
-                downConn = false;
-            } else {
-                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
-                AlertDialog dialog = new AlertDialog.Builder(PaySlip.this)
-                        .setMessage("Please Check Your Internet Connection")
-                        .setPositiveButton("Retry", null)
-                        .setNegativeButton("Cancel",null)
-                        .show();
-
-//                dialog.setCancelable(false);
-//                dialog.setCanceledOnTouchOutside(false);
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        new DownloadPDF().execute();
-                        dialog.dismiss();
-                    }
-                });
-
-                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        dialog.dismiss();
-
-                    }
-                });
-            }
-        }
     }
 
 //    public class Check extends AsyncTask<Void, Void, Void> {
@@ -934,7 +863,7 @@ public class PaySlip extends AppCompatActivity {
 //
 //            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
 //            Log.i("ERRRRR", e.getLocalizedMessage());
-//            e.printStackTrace();
+//            logger.log(Level.WARNING, e.getMessage(), e);
 //        }
 //    }
 
@@ -947,6 +876,7 @@ public class PaySlip extends AppCompatActivity {
         basic_salary = "";
         hou_rent = "";
         food_cost = "";
+        medical_cost = "";
         conveyance_cost = "";
         gross_salary = "";
         over_time = "";
@@ -976,9 +906,9 @@ public class PaySlip extends AppCompatActivity {
         acc_no = "";
         bank = "";
 
-        String officeExtraUrl = "http://103.56.208.123:8001/apex/ttrams/paySlip/getOfficeExtra/"+emp_id+"";
-        String dataCCUrl = "http://103.56.208.123:8001/apex/ttrams/paySlip/getCount/"+emp_id+"/"+select_month_id+"";
-        String paySlipDataUrl = "http://103.56.208.123:8001/apex/ttrams/paySlip/getPaySlipDetails/"+emp_id+"/"+select_month_id+"";
+        String officeExtraUrl = api_url_front + "paySlip/getOfficeExtra/"+emp_id;
+        String dataCCUrl = api_url_front + "paySlip/getCount/"+emp_id+"/"+select_month_id;
+        String paySlipDataUrl = api_url_front + "paySlip/getPaySlipDetails/"+emp_id+"/"+select_month_id;
 
         RequestQueue requestQueue = Volley.newRequestQueue(PaySlip.this);
 
@@ -994,7 +924,7 @@ public class PaySlip extends AppCompatActivity {
                         JSONObject paySlipInfo = array.getJSONObject(i);
 
                         att_bon = paySlipInfo.getString("sd_attd_bonus_amt")
-                                .equals("null") ? "" : paySlipInfo.getString("sd_attd_bonus_amt");
+                                .equals("null") ? "0" : paySlipInfo.getString("sd_attd_bonus_amt");
                         acc_no = paySlipInfo.getString("ebam_acc_number")
                                 .equals("null") ? "" : paySlipInfo.getString("ebam_acc_number");
                         acc_name = paySlipInfo.getString("ebam_bank_account_name")
@@ -1002,49 +932,51 @@ public class PaySlip extends AppCompatActivity {
                         bank = paySlipInfo.getString("ebam_bank_name")
                                 .equals("null") ? "" : paySlipInfo.getString("ebam_bank_name");
                         basic_salary = paySlipInfo.getString("sd_basic")
-                                .equals("null") ? "" : paySlipInfo.getString("sd_basic");
+                                .equals("null") ? "0" : paySlipInfo.getString("sd_basic");
                         hou_rent = paySlipInfo.getString("sd_hr")
-                                .equals("null") ? "" : paySlipInfo.getString("sd_hr");
+                                .equals("null") ? "0" : paySlipInfo.getString("sd_hr");
                         food_cost = paySlipInfo.getString("sd_food_subsidy_amt")
-                                .equals("null") ? "" : paySlipInfo.getString("sd_food_subsidy_amt");
+                                .equals("null") ? "0" : paySlipInfo.getString("sd_food_subsidy_amt");
+                        medical_cost = paySlipInfo.getString("sd_md")
+                                .equals("null") ? "0" : paySlipInfo.getString("sd_md");
                         abs_ded_days = paySlipInfo.getString("absent_days")
                                 .equals("null") ? "" : paySlipInfo.getString("absent_days");
                         abs_ded = paySlipInfo.getString("sd_absent_amt")
-                                .equals("null") ? "" : paySlipInfo.getString("sd_absent_amt");
+                                .equals("null") ? "0" : paySlipInfo.getString("sd_absent_amt");
                         prov_fun = paySlipInfo.getString("sd_pf")
-                                .equals("null") ? "" : paySlipInfo.getString("sd_pf");
+                                .equals("null") ? "0" : paySlipInfo.getString("sd_pf");
                         tax_ded = paySlipInfo.getString("sd_tax")
-                                .equals("null") ? "" : paySlipInfo.getString("sd_tax");
+                                .equals("null") ? "0" : paySlipInfo.getString("sd_tax");
                         oth_ded = paySlipInfo.getString("sd_oth_deduct")
-                                .equals("null") ? "" : paySlipInfo.getString("sd_oth_deduct");
+                                .equals("null") ? "0" : paySlipInfo.getString("sd_oth_deduct");
                         loan_ded_one = paySlipInfo.getString("sd_advance_deduct")
-                                .equals("null") ? "" : paySlipInfo.getString("sd_advance_deduct");
+                                .equals("null") ? "0" : paySlipInfo.getString("sd_advance_deduct");
                         conveyance_cost = paySlipInfo.getString("sd_ta")
-                                .equals("null") ? "" : paySlipInfo.getString("sd_ta");
+                                .equals("null") ? "0" : paySlipInfo.getString("sd_ta");
                         gross_salary = paySlipInfo.getString("sd_gross_sal")
-                                .equals("null") ? "" : paySlipInfo.getString("sd_gross_sal");
+                                .equals("null") ? "0" : paySlipInfo.getString("sd_gross_sal");
                         stam = paySlipInfo.getString("sd_stamp")
-                                .equals("null") ? "" : paySlipInfo.getString("sd_stamp");
+                                .equals("null") ? "0" : paySlipInfo.getString("sd_stamp");
                         leave_pay_days = paySlipInfo.getString("lwpaydays")
                                 .equals("null") ? "" : paySlipInfo.getString("lwpaydays");
                         leave_pay = paySlipInfo.getString("sd_lwpay_amt")
-                                .equals("null") ? "" : paySlipInfo.getString("sd_lwpay_amt");
+                                .equals("null") ? "0" : paySlipInfo.getString("sd_lwpay_amt");
                         over_time = paySlipInfo.getString("total_ot_amt")
-                                .equals("null") ? "" : paySlipInfo.getString("total_ot_amt");
+                                .equals("null") ? "0" : paySlipInfo.getString("total_ot_amt");
                         loan_ded_boa = paySlipInfo.getString("sd_md_advance_deduct")
-                                .equals("null") ? "" : paySlipInfo.getString("sd_md_advance_deduct");
+                                .equals("null") ? "0" : paySlipInfo.getString("sd_md_advance_deduct");
                         loan_ded_sche = paySlipInfo.getString("sd_sch_advance_deduct")
-                                .equals("null") ? "" : paySlipInfo.getString("sd_sch_advance_deduct");
+                                .equals("null") ? "0" : paySlipInfo.getString("sd_sch_advance_deduct");
                         loan_ded_pf = paySlipInfo.getString("sd_pf_loan_deduct")
-                                .equals("null") ? "" : paySlipInfo.getString("sd_pf_loan_deduct");
+                                .equals("null") ? "0" : paySlipInfo.getString("sd_pf_loan_deduct");
                         lun_ded = paySlipInfo.getString("sd_lunch_deduct")
-                                .equals("null") ? "" : paySlipInfo.getString("sd_lunch_deduct");
+                                .equals("null") ? "0" : paySlipInfo.getString("sd_lunch_deduct");
                         other_allow = paySlipInfo.getString("other_allowances")
-                                .equals("null") ? "" : paySlipInfo.getString("other_allowances");
+                                .equals("null") ? "0" : paySlipInfo.getString("other_allowances");
                         total_perqqq = paySlipInfo.getString("total_salary")
-                                .equals("null") ? "" : paySlipInfo.getString("total_salary");
+                                .equals("null") ? "0" : paySlipInfo.getString("total_salary");
                         total_ded = paySlipInfo.getString("total_deduction")
-                                .equals("null") ? "" : paySlipInfo.getString("total_deduction");
+                                .equals("null") ? "0" : paySlipInfo.getString("total_deduction");
                         total = paySlipInfo.getString("net_salary")
                                 .equals("null") ? "" : paySlipInfo.getString("net_salary");
                         total_word = paySlipInfo.getString("salary_in_word")
@@ -1056,18 +988,16 @@ public class PaySlip extends AppCompatActivity {
                         }
                     }
                 }
-
-                URL = "http://103.56.208.123:7778/reports/rwservlet?hrsttrams+report=D:\\TTIT_RAMS\\Reports\\PAY_SLIP.rep+EMPID="+emp_id+"+MMONTH='"+select_month_id+"'";
                 connected = true;
                 updateInterface();
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateInterface();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             conn = false;
             connected = false;
             updateInterface();
@@ -1091,12 +1021,12 @@ public class PaySlip extends AppCompatActivity {
                 requestQueue.add(paySlipReq);
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateInterface();
             }
         }, error -> {
-           error.printStackTrace();
+           logger.log(Level.WARNING, error.getMessage(), error);
            conn = false;
            connected = false;
            updateInterface();
@@ -1127,12 +1057,12 @@ public class PaySlip extends AppCompatActivity {
                 requestQueue.add(countReq);
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateInterface();
             }
         }, error -> {
-           error.printStackTrace();
+           logger.log(Level.WARNING, error.getMessage(), error);
            conn = false;
            connected = false;
            updateInterface();
@@ -1145,12 +1075,7 @@ public class PaySlip extends AppCompatActivity {
         waitProgress.dismiss();
         if (conn) {
             if (connected) {
-                errorMsgMonth.setVisibility(View.GONE);
-
                 reportCard.setVisibility(View.VISIBLE);
-
-                monthName.setText(selectMonth.getText().toString());
-
                 empName.setText(emp_name);
                 id.setText(user_id);
                 band.setText(ban);
@@ -1159,14 +1084,15 @@ public class PaySlip extends AppCompatActivity {
                 division.setText(div);
                 department.setText(dep);
 
+                String nat = "Not Applicable";
                 if (email_name != null) {
                     if (!email_name.isEmpty()) {
                         email.setText(email_name);
                     } else {
-                        email.setText("Not Applicable");
+                        email.setText(nat);
                     }
                 } else {
-                    email.setText("Not Applicable");
+                    email.setText(nat);
                 }
 
 
@@ -1174,54 +1100,53 @@ public class PaySlip extends AppCompatActivity {
                     if (!off_loc.isEmpty()) {
                         officeLoc.setText(off_loc);
                     } else {
-                        officeLoc.setText("Not Applicable");
+                        officeLoc.setText(nat);
                     }
                 } else {
-                    officeLoc.setText("Not Applicable");
+                    officeLoc.setText(nat);
                 }
 
                 if (off_ext != null) {
                     if (!off_ext.isEmpty()) {
                         officeExt.setText(off_ext);
                     } else {
-                        officeExt.setText("Not Applicable");
+                        officeExt.setText(nat);
                     }
                 } else {
-                    officeExt.setText("Not Applicable");
+                    officeExt.setText(nat);
                 }
 
                 if (mobile_no != null) {
                     if (!mobile_no.isEmpty()) {
                         mobile.setText(mobile_no);
                     } else {
-                        mobile.setText("Not Applicable");
+                        mobile.setText(nat);
                     }
                 } else {
-                    mobile.setText("Not Applicable");
+                    mobile.setText(nat);
                 }
 
                 if (charge != null) {
                     if (!charge.isEmpty()) {
                         addCharge.setText(charge);
                     } else {
-                        addCharge.setText("Not Applicable");
+                        addCharge.setText(nat);
                     }
                 } else {
-                    addCharge.setText("Not Applicable");
+                    addCharge.setText(nat);
                 }
 
                 if (data_available_count.equals("1")) {
                     salaryLay.setVisibility(View.VISIBLE);
                     salaryData.setVisibility(View.GONE);
-                    download.setVisibility(View.VISIBLE);
                 } else {
                     salaryLay.setVisibility(View.GONE);
                     salaryData.setVisibility(View.VISIBLE);
-                    download.setVisibility(View.GONE);
                 }
                 basic.setText(basic_salary);
                 houseRent.setText(hou_rent);
                 food.setText(food_cost);
+                medical.setText(medical_cost);
                 conveyance.setText(conveyance_cost);
                 grossSalary.setText(gross_salary);
                 overTime.setText(over_time);
@@ -1230,9 +1155,11 @@ public class PaySlip extends AppCompatActivity {
                 totalPerquisite.setText(total_perqqq);
 
                 providentFund.setText(prov_fun);
-                leavePayText.setText(leavePayText.getText().toString() + leave_pay_days);
+                String lpt = "Leave Without Pay " + leave_pay_days;
+                leavePayText.setText(lpt);
                 leavePay.setText(leave_pay);
-                absentDeducText.setText(absentDeducText.getText().toString() + abs_ded_days);
+                String adt = "Absent Deduction " + abs_ded_days;
+                absentDeducText.setText(adt);
                 absentDeduc.setText(abs_ded);
                 loanDeducOneTime.setText(loan_ded_one);
                 loanDeducSched.setText(loan_ded_sche);

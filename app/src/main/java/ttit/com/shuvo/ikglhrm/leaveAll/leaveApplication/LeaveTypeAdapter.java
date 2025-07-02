@@ -39,7 +39,7 @@ public class LeaveTypeAdapter extends RecyclerView.Adapter<LeaveTypeAdapter.Leav
 
             this.mClickedItem = ci;
 
-            itemView.setOnClickListener(this::onClick);
+            itemView.setOnClickListener(this);
 
         }
 
@@ -58,8 +58,7 @@ public class LeaveTypeAdapter extends RecyclerView.Adapter<LeaveTypeAdapter.Leav
     @Override
     public LeaveTypeHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(myContext).inflate(R.layout.leave_type_list_view, parent, false);
-        LeaveTypeHolder categoryViewHolder = new LeaveTypeHolder(view, myClickedItem);
-        return categoryViewHolder;
+        return new LeaveTypeHolder(view, myClickedItem);
     }
 
     @Override

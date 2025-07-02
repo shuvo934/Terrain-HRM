@@ -2,23 +2,23 @@ package ttit.com.shuvo.ikglhrm.attendance.status;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
 
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -33,78 +33,44 @@ public class AttendanceStatus extends AppCompatActivity {
 
 
     TextView statusNot;
-    Button close;
     RecyclerView statusView;
-    public static StatusAdapter statusAdapter;
+    StatusAdapter statusAdapter;
     RecyclerView.LayoutManager layoutManager;
 
-    public static ArrayList<StatusList> statusLists;
+    ArrayList<StatusList> statusLists;
 
     WaitProgress waitProgress = new WaitProgress();
-//    private String message = null;
     private Boolean conn = false;
-//    private Boolean infoConnected = false;
     private Boolean connected = false;
-
-//    private Connection connection;
 
     String emp_id = "";
 
-//    @Override
-//    public void onWindowFocusChanged(boolean hasFocus) {
-//        super.onWindowFocusChanged(hasFocus);
-//        if (hasFocus) {
-//            hideSystemUI();
-//        }
-//    }
-//    private void hideSystemUI() {
-//        View decorView = getWindow().getDecorView();
-//        decorView.setSystemUiVisibility(
-//                View.SYSTEM_UI_FLAG_IMMERSIVE
-//                        // Set the content to appear under the system bars so that the
-//                        // content doesn't resize when the system bars hide and show.
-//                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-//                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-//                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-//                        // Hide the nav bar and status bar
-//                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-//                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
-//    }
+    TextView pendingStatusCount;
+    String pending_status_count = "0";
+
+    TextView approveStatusCount;
+    String approved_status_count = "0";
+
+    TextView rejectedStatusCount;
+    String rej_status_count = "0";
+
+    Logger logger = Logger.getLogger(AttendanceStatus.class.getName());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            Window w = getWindow();
-//            //w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-//        }
-//        if (Build.VERSION.SDK_INT < 16) {
-//            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-//                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//        }
-//        View decorView = getWindow().getDecorView();
-//// Hide the status bar.
-//        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
-//        decorView.setSystemUiVisibility(uiOptions);
-
-        Window window = getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(ContextCompat.getColor(AttendanceStatus.this,R.color.secondaryColor));
         setContentView(R.layout.activity_attendance_status);
 
         emp_id = userInfoLists.get(0).getEmp_id();
 
         statusView = findViewById(R.id.status_list_view);
-
-        close = findViewById(R.id.att_status_finish);
-
         statusNot = findViewById(R.id.status_not_found_msg);
+        pendingStatusCount = findViewById(R.id.pending_request_as);
+        approveStatusCount = findViewById(R.id.approved_request_as);
+        rejectedStatusCount = findViewById(R.id.rejected_request_as);
 
         statusLists = new ArrayList<>();
 
-//        new Check().execute();
         getAttendStatus();
 
         statusView.setHasFixedSize(true);
@@ -112,14 +78,6 @@ public class AttendanceStatus extends AppCompatActivity {
         statusView.setLayoutManager(layoutManager);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(statusView.getContext(),DividerItemDecoration.VERTICAL);
         statusView.addItemDecoration(dividerItemDecoration);
-
-
-        close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
 
     }
 
@@ -145,7 +103,7 @@ public class AttendanceStatus extends AppCompatActivity {
 //            int     exitValue = ipProcess.waitFor();
 //            return (exitValue == 0);
 //        }
-//        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
+//        catch (IOException | InterruptedException e)          { logger.log(Level.WARNING, e.getMessage(), e); }
 //
 //        return false;
 //    }
@@ -281,7 +239,7 @@ public class AttendanceStatus extends AppCompatActivity {
 //
 //            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
 //            Log.i("ERRRRR", e.getLocalizedMessage());
-//            e.printStackTrace();
+//            logger.log(Level.WARNING, e.getMessage(), e);
 //        }
 //    }
 
@@ -293,9 +251,45 @@ public class AttendanceStatus extends AppCompatActivity {
 
         statusLists = new ArrayList<>();
 
-        String url = "http://103.56.208.123:8001/apex/ttrams/attendanceStatus/attStatus/"+emp_id+"";
+        pending_status_count = "0";
+        approved_status_count = "0";
+        rej_status_count = "0";
+
+        String url = api_url_front + "attendanceStatus/attStatus/"+emp_id;
+        String stat_url = api_url_front + "attendanceStatus/getAttStatusCount?emp_id="+emp_id;
 
         RequestQueue requestQueue = Volley.newRequestQueue(AttendanceStatus.this);
+
+        StringRequest asCountReq = new StringRequest(Request.Method.GET, stat_url, response -> {
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject todayAttDataInfo = array.getJSONObject(i);
+                        pending_status_count = todayAttDataInfo.getString("pending")
+                                .equals("null") ? "0" : todayAttDataInfo.getString("pending");
+                        approved_status_count = todayAttDataInfo.getString("approved")
+                                .equals("null") ? "0" : todayAttDataInfo.getString("approved");
+                        rej_status_count = todayAttDataInfo.getString("rejected")
+                                .equals("null") ? "0" : todayAttDataInfo.getString("rejected");
+                    }
+                }
+                connected = true;
+                updateLayout();
+            } catch (JSONException e) {
+                logger.log(Level.WARNING, e.getMessage(), e);
+                connected = false;
+                updateLayout();
+            }
+        }, error -> {
+            logger.log(Level.WARNING, error.getMessage(), error);
+            conn = false;
+            connected = false;
+            updateLayout();
+        });
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, response -> {
             conn = true;
@@ -331,16 +325,15 @@ public class AttendanceStatus extends AppCompatActivity {
                                 departure_time,emp_name,null));
                     }
                 }
-                connected = true;
-                updateLayout();
+                requestQueue.add(asCountReq);
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateLayout();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             conn = false;
             connected = false;
             updateLayout();
@@ -357,13 +350,17 @@ public class AttendanceStatus extends AppCompatActivity {
 
                 statusView.setAdapter(statusAdapter);
 
-                if (statusLists.size() == 0) {
+                if (statusLists.isEmpty()) {
                     statusView.setVisibility(View.GONE);
                     statusNot.setVisibility(View.VISIBLE);
                 } else {
                     statusView.setVisibility(View.VISIBLE);
                     statusNot.setVisibility(View.GONE);
                 }
+
+                pendingStatusCount.setText(pending_status_count);
+                approveStatusCount.setText(approved_status_count);
+                rejectedStatusCount.setText(rej_status_count);
 
                 conn = false;
                 connected = false;

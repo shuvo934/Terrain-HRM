@@ -2,12 +2,10 @@ package ttit.com.shuvo.ikglhrm.leaveAll.leaveApplication;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
 
@@ -15,70 +13,46 @@ import ttit.com.shuvo.ikglhrm.leaveAll.LeaveApplication;
 import ttit.com.shuvo.ikglhrm.leaveAll.leaveApplication.leaveApplicatinStatus.LeaveApplicationStatus;
 import ttit.com.shuvo.ikglhrm.leaveAll.leaveApprove.LeaveApprove;
 
-import static ttit.com.shuvo.ikglhrm.Login.SoftwareName;
 import static ttit.com.shuvo.ikglhrm.Login.isLeaveApproved;
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.card.MaterialCardView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class AllLeaveApplication extends AppCompatActivity {
 
-    CardView newApp;
-    CardView appStat;
-    CardView leaveApprove;
-
-    TextView softname;
-
-
-    Button appClose;
+    MaterialCardView newApp;
+    MaterialCardView appStat;
+    MaterialCardView leaveApprove;
 
     WaitProgress waitProgress = new WaitProgress();
-//    private String message = null;
     private Boolean conn = false;
     private Boolean connected = false;
-
-//    private Connection connection;
 
     String user_id = "";
     int isLeaveApprovedCheck = 0;
 
+    Logger logger = Logger.getLogger(AllLeaveApplication.class.getName());
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-//        getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            Window w = getWindow();
-//            //w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-//        }
-//        if (Build.VERSION.SDK_INT < 16) {
-//            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-//                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//        }
-//        View decorView = getWindow().getDecorView();
-//// Hide the status bar.
-//        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
-//        decorView.setSystemUiVisibility(uiOptions);
-
         setContentView(R.layout.activity_all_leave_application);
-
-
 
         newApp = findViewById(R.id.leave_application_new_app);
         appStat = findViewById(R.id.leave_application_status_show);
         leaveApprove = findViewById(R.id.leave_req_approval);
-        softname = findViewById(R.id.name_of_company_all_leave_application);
-
-        softname.setText(SoftwareName);
-
-        appClose = findViewById(R.id.leave_app_stat_all_back);
 
         if (isLeaveApproved > 0) {
             leaveApprove.setVisibility(View.VISIBLE);
@@ -88,38 +62,21 @@ public class AllLeaveApplication extends AppCompatActivity {
 
         user_id = userInfoLists.get(0).getUserName();
 
-        newApp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(AllLeaveApplication.this, LeaveApplication.class);
-                startActivity(intent);
-            }
+        newApp.setOnClickListener(v -> {
+            Intent intent = new Intent(AllLeaveApplication.this, LeaveApplication.class);
+            startActivity(intent);
         });
 
-        appStat.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(AllLeaveApplication.this, LeaveApplicationStatus.class);
-                startActivity(intent);
-            }
+        appStat.setOnClickListener(v -> {
+            Intent intent = new Intent(AllLeaveApplication.this, LeaveApplicationStatus.class);
+            startActivity(intent);
         });
 
-        appClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
+        leaveApprove.setOnClickListener(v -> {
+            Intent intent = new Intent(AllLeaveApplication.this, LeaveApprove.class);
+            startActivity(intent);
         });
 
-        leaveApprove.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(AllLeaveApplication.this, LeaveApprove.class);
-                startActivity(intent);
-            }
-        });
-
-//        new Check().execute();
     }
 
     @Override
@@ -344,7 +301,7 @@ public class AllLeaveApplication extends AppCompatActivity {
 
         isLeaveApprovedCheck = 0;
 
-        String leaveAppUrl = "http://103.56.208.123:8001/apex/ttrams/approval_flag/getLeaveApproval/"+user_id+"";
+        String leaveAppUrl = api_url_front + "approval_flag/getLeaveApproval/"+user_id;
 
         RequestQueue requestQueue = Volley.newRequestQueue(AllLeaveApplication.this);
 
@@ -365,12 +322,12 @@ public class AllLeaveApplication extends AppCompatActivity {
                 updateLay();
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateLay();
             }
         }, error -> {
-           error.printStackTrace();
+           logger.log(Level.WARNING, error.getMessage(), error);
            conn = false;
            connected = false;
            updateLay();

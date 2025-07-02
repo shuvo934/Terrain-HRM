@@ -1,22 +1,18 @@
 package ttit.com.shuvo.ikglhrm.attendance.approve;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
@@ -27,6 +23,9 @@ import com.google.android.material.textfield.TextInputLayout;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
@@ -36,6 +35,7 @@ import ttit.com.shuvo.ikglhrm.attendance.approve.dialogApproveReq.SelectApproveR
 import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.DialogueText;
 
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -81,7 +81,6 @@ public class AttendanceApprove extends AppCompatActivity {
     Button approve;
     Button forward;
     Button reject;
-    Button close;
 
     public static ArrayList<SelectApproveReqList> selectApproveReqLists;
 
@@ -137,15 +136,11 @@ public class AttendanceApprove extends AppCompatActivity {
 
 //    int req_status_count = 0;
 
-
+    Logger logger = Logger.getLogger(AttendanceApprove.class.getName());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Window window = getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(ContextCompat.getColor(AttendanceApprove.this,R.color.secondaryColor));
         setContentView(R.layout.activity_attendance_approve);
 
         afterSelecting = findViewById(R.id.after_request_selecting_att_approve);
@@ -177,7 +172,6 @@ public class AttendanceApprove extends AppCompatActivity {
         approve = findViewById(R.id.approve_button_att);
         forward = findViewById(R.id.forward_button_att);
         reject = findViewById(R.id.reject_button_att);
-        close = findViewById(R.id.close_button_att_approve);
 
 
         selectApproveReqLists = new ArrayList<>();
@@ -189,26 +183,13 @@ public class AttendanceApprove extends AppCompatActivity {
 //        new Check().execute();
         getRequestList();
 
-        requestCode.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                fromAttApp = 1;
-                SelectApproveReq selectRequest = new SelectApproveReq();
-                selectRequest.show(getSupportFragmentManager(),"Request");
-            }
+        requestCode.setOnClickListener(v -> {
+            fromAttApp = 1;
+            SelectApproveReq selectRequest = new SelectApproveReq();
+            selectRequest.show(getSupportFragmentManager(),"Request");
         });
 
 
-        close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                req_code = "";
-                darm_id = "";
-                darm_emp_id = "";
-                selectApproveReqLists = new ArrayList<>();
-                finish();
-            }
-        });
 
         requestCode.addTextChangedListener(new TextWatcher() {
             @Override
@@ -229,96 +210,74 @@ public class AttendanceApprove extends AppCompatActivity {
             }
         });
 
-        comments.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                number = 1;
-                hint = commentsLay.getHint().toString();
-                text = comments.getText().toString();
-                DialogueText dialogueText = new DialogueText();
-                dialogueText.show(getSupportFragmentManager(),"TEXTEDIT");
-            }
+        comments.setOnClickListener(v -> {
+            number = 1;
+            hint = Objects.requireNonNull(commentsLay.getHint()).toString();
+            text = Objects.requireNonNull(comments.getText()).toString();
+            DialogueText dialogueText = new DialogueText();
+            dialogueText.show(getSupportFragmentManager(),"TEXTEDIT");
         });
 
-        approve.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        approve.setOnClickListener(v -> {
 //                text = comments.getText().toString();
 //                new ApproveCheck().execute();
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(AttendanceApprove.this);
-                builder.setTitle("Approve Request!")
-                        .setMessage("Do you want approve this request?")
-                        .setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(AttendanceApprove.this);
+            builder.setTitle("Approve Request!")
+                    .setMessage("Do you want approve this request?")
+                    .setPositiveButton("YES", (dialog, which) -> {
 
 
-                                text = comments.getText().toString();
+                        text = Objects.requireNonNull(comments.getText()).toString();
 //                                new ApproveCheck().execute();
-                                approveAttReq();
-                            }
-                        })
-                        .setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
+                        approveAttReq();
+                    })
+                    .setNegativeButton("NO", (dialog, which) -> {
 
-                            }
-                        });
-                AlertDialog alert = builder.create();
-                alert.show();
-            }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
         });
 
-        reject.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        reject.setOnClickListener(v -> {
 //                text = comments.getText().toString();
 //                new RejectCheck().execute();
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(AttendanceApprove.this);
-                builder.setTitle("Reject Request!")
-                        .setMessage("Do you want reject this request?")
-                        .setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(AttendanceApprove.this);
+            builder.setTitle("Reject Request!")
+                    .setMessage("Do you want reject this request?")
+                    .setPositiveButton("YES", (dialog, which) -> {
 
 
-                                text = comments.getText().toString();
+                        text = Objects.requireNonNull(comments.getText()).toString();
 //                                new RejectCheck().execute();
-                                rejectAttReq();
-                            }
-                        })
-                        .setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
+                        rejectAttReq();
+                    })
+                    .setNegativeButton("NO", (dialog, which) -> {
 
-                            }
-                        });
-                AlertDialog alert = builder.create();
-                alert.show();
-            }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
         });
 
-        forward.setOnClickListener(new View.OnClickListener() {
+        forward.setOnClickListener(v -> {
+            forwardFromAtt = 1;
+            ForwardDialogue forwardDialogue = new ForwardDialogue(AttendanceApprove.this);
+            forwardDialogue.show(getSupportFragmentManager(),"FORWARD");
+        });
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
-            public void onClick(View v) {
-                forwardFromAtt = 1;
-                ForwardDialogue forwardDialogue = new ForwardDialogue(AttendanceApprove.this);
-                forwardDialogue.show(getSupportFragmentManager(),"FORWARD");
+            public void handleOnBackPressed() {
+                req_code = "";
+                darm_id = "";
+                darm_emp_id = "";
+                selectApproveReqLists = new ArrayList<>();
+                finish();
             }
         });
 
 
-    }
-
-    @Override
-    public void onBackPressed() {
-        req_code = "";
-        darm_id = "";
-        darm_emp_id = "";
-        selectApproveReqLists = new ArrayList<>();
-        finish();
     }
 
 //    public boolean isConnected() {
@@ -840,7 +799,7 @@ public class AttendanceApprove extends AppCompatActivity {
 
         selectApproveReqLists = new ArrayList<>();
 
-        String url = "http://103.56.208.123:8001/apex/ttrams/attendanceUpdateReq/getRequestList/"+emp_code+"";
+        String url = api_url_front + "attendanceUpdateReq/getRequestList/"+emp_code;
 
         RequestQueue requestQueue = Volley.newRequestQueue(AttendanceApprove.this);
 
@@ -870,12 +829,12 @@ public class AttendanceApprove extends AppCompatActivity {
                 updateInterface();
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateInterface();
             }
         }, error -> {
-           error.printStackTrace();
+           logger.log(Level.WARNING, error.getMessage(), error);
            conn = false;
            connected = false;
            updateInterface();
@@ -890,6 +849,11 @@ public class AttendanceApprove extends AppCompatActivity {
             if (connected) {
                 conn = false;
                 connected = false;
+                if (!selectApproveReqLists.isEmpty()) {
+                    fromAttApp = 1;
+                    SelectApproveReq selectRequest = new SelectApproveReq();
+                    selectRequest.show(getSupportFragmentManager(),"Request");
+                }
             }
             else {
                 AlertDialog dialog = new AlertDialog.Builder(AttendanceApprove.this)
@@ -1056,7 +1020,7 @@ public class AttendanceApprove extends AppCompatActivity {
 //
 //            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
 //            Log.i("ERRRRR", e.getLocalizedMessage());
-//            e.printStackTrace();
+//            logger.log(Level.WARNING, e.getMessage(), e);
 //        }
 //    }
 
@@ -1084,7 +1048,7 @@ public class AttendanceApprove extends AppCompatActivity {
         forwarded_by = "";
         forward_comm = "";
 
-        String url = "http://103.56.208.123:8001/apex/ttrams/attendanceUpdateReq/getReqData?emp_id="+user_id+"&darm_app_code="+req_code+"";
+        String url = api_url_front + "attendanceUpdateReq/getReqData?emp_id="+user_id+"&darm_app_code="+req_code;
 
         RequestQueue requestQueue = Volley.newRequestQueue(AttendanceApprove.this);
 
@@ -1137,12 +1101,12 @@ public class AttendanceApprove extends AppCompatActivity {
                 updateLayout();
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 inDataaa = false;
                 updateLayout();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             dataIn = false;
             inDataaa = false;
             updateLayout();
@@ -1408,7 +1372,7 @@ public class AttendanceApprove extends AppCompatActivity {
 //
 //            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
 //            Log.i("ERRRRR", e.getLocalizedMessage());
-//            e.printStackTrace();
+//            logger.log(Level.WARNING, e.getMessage(), e);
 //        }
 //    }
 
@@ -1428,8 +1392,8 @@ public class AttendanceApprove extends AppCompatActivity {
         nowUpdateDate = "";
         jobEmail = "";
 
-        String approverDataUrl = "http://103.56.208.123:8001/apex/ttrams/attendanceUpdateReq/getApproverData/"+emp_code+"";
-        String approveAttUrl = "http://103.56.208.123:8001/apex/ttrams/attendanceUpdateReq/approveAttReq";
+        String approverDataUrl = api_url_front + "attendanceUpdateReq/getApproverData/"+emp_code;
+        String approveAttUrl = api_url_front + "attendanceUpdateReq/approveAttReq";
 
         RequestQueue requestQueue = Volley.newRequestQueue(AttendanceApprove.this);
 
@@ -1450,18 +1414,18 @@ public class AttendanceApprove extends AppCompatActivity {
                 updateApprovedReq();
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 isApprovedChecked = false;
                 updateApprovedReq();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             appppppprrrrr = false;
             isApprovedChecked = false;
             updateApprovedReq();
         }) {
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
+            public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
                 headers.put("P_DARM_ID",darm_id);
                 headers.put("P_EMP_ID",approvedEmpId);
@@ -1501,12 +1465,12 @@ public class AttendanceApprove extends AppCompatActivity {
                 requestQueue.add(approveReq);
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 isApprovedChecked = false;
                 updateApprovedReq();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             appppppprrrrr = false;
             isApprovedChecked = false;
             updateApprovedReq();
@@ -1534,13 +1498,10 @@ public class AttendanceApprove extends AppCompatActivity {
                     dialog.setCancelable(false);
                     dialog.setCanceledOnTouchOutside(false);
                     Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                    positive.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
+                    positive.setOnClickListener(v -> {
 
-                            dialog.dismiss();
-                            finish();
-                        }
+                        dialog.dismiss();
+                        finish();
                     });
 
                 }
@@ -1561,13 +1522,10 @@ public class AttendanceApprove extends AppCompatActivity {
 
 
                 Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                positive.setOnClickListener(v -> {
 
-                        approveAttReq();
-                        dialog.dismiss();
-                    }
+                    approveAttReq();
+                    dialog.dismiss();
                 });
             }
         }
@@ -1580,13 +1538,10 @@ public class AttendanceApprove extends AppCompatActivity {
 
 
             Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            positive.setOnClickListener(v -> {
 
-                    approveAttReq();
-                    dialog.dismiss();
-                }
+                approveAttReq();
+                dialog.dismiss();
             });
         }
     }
@@ -1683,7 +1638,7 @@ public class AttendanceApprove extends AppCompatActivity {
 //
 //            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
 //            Log.i("ERRRRR", e.getLocalizedMessage());
-//            e.printStackTrace();
+//            logger.log(Level.WARNING, e.getMessage(), e);
 //        }
 //    }
 
@@ -1703,8 +1658,8 @@ public class AttendanceApprove extends AppCompatActivity {
         nowUpdateDate = "";
         jobEmail = "";
 
-        String rejecterDataUrl = "http://103.56.208.123:8001/apex/ttrams/attendanceUpdateReq/getApproverData/"+emp_code+"";
-        String rejectAttUrl = "http://103.56.208.123:8001/apex/ttrams/attendanceUpdateReq/rejectAttReq";
+        String rejecterDataUrl = api_url_front + "attendanceUpdateReq/getApproverData/"+emp_code;
+        String rejectAttUrl = api_url_front + "attendanceUpdateReq/rejectAttReq";
 
         RequestQueue requestQueue = Volley.newRequestQueue(AttendanceApprove.this);
 
@@ -1729,13 +1684,13 @@ public class AttendanceApprove extends AppCompatActivity {
                 updateRejectedReq();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             rrreeejjjeecctt = false;
             isRejectedChecked = false;
             updateRejectedReq();
         }) {
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
+            public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
                 headers.put("P_DARM_ID",darm_id);
                 headers.put("P_EMP_ID",approvedEmpId);
@@ -1773,12 +1728,12 @@ public class AttendanceApprove extends AppCompatActivity {
                 requestQueue.add(rejectReq);
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 isRejectedChecked = false;
                 updateRejectedReq();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             rrreeejjjeecctt = false;
             isRejectedChecked = false;
             updateRejectedReq();
@@ -1806,13 +1761,10 @@ public class AttendanceApprove extends AppCompatActivity {
                     dialog.setCancelable(false);
                     dialog.setCanceledOnTouchOutside(false);
                     Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                    positive.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
+                    positive.setOnClickListener(v -> {
 
-                            dialog.dismiss();
-                            finish();
-                        }
+                        dialog.dismiss();
+                        finish();
                     });
 
                 }

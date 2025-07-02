@@ -3,7 +3,6 @@ package ttit.com.shuvo.ikglhrm.directoryBook;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,21 +14,18 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
 import ttit.com.shuvo.ikglhrm.R;
-import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.SelectAllList;
 
 public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.DirectoryHolder> {
 
     public ArrayList<DirectoryList> directoryLists;
     public Context myContext;
-    AppCompatActivity activity;
-    public static PhoneAdapter phoneAdapter;
+    PhoneAdapter phoneAdapter;
 
     public DirectoryAdapter(Context context, ArrayList<DirectoryList> directoryLists) {
         this.myContext = context;
@@ -40,8 +36,7 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.Dire
     @Override
     public DirectoryHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(myContext).inflate(R.layout.directory_item, parent, false);
-        DirectoryHolder ammvh = new DirectoryHolder(v);
-        return ammvh;
+        return new DirectoryHolder(v);
     }
 
 
@@ -56,7 +51,8 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.Dire
         holder.des.setText(itemList.getDes_name());
         String mail = itemList.getEmail_name();
         if (mail == null) {
-            holder.mailName.setText("No Email Found");
+            String neft = "No Email Found";
+            holder.mailName.setText(neft);
             holder.mailClick.setVisibility(View.GONE);
         } else {
             holder.mailName.setText(itemList.getEmail_name());
@@ -77,7 +73,7 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.Dire
             }
         }
         else*/ if (no.equals("2")) {
-            if(DirectoryWithDivision.allPhoneLists.size() != 0) {
+            if(!DirectoryWithDivision.allPhoneLists.isEmpty()) {
                 for (int i = 0; i < DirectoryWithDivision.allPhoneLists.size(); i++) {
                     if (id.equals(DirectoryWithDivision.allPhoneLists.get(i).getP_emp_id())) {
                         newArray.add(new PhoneList(DirectoryWithDivision.allPhoneLists.get(i).getP_emp_id(), DirectoryWithDivision.allPhoneLists.get(i).getPhone()));
@@ -86,7 +82,7 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.Dire
             }
         }
 
-        if (newArray.size() == 0) {
+        if (newArray.isEmpty()) {
             if (itemList.getContact_no() != null) {
                 if (!itemList.getContact_no().isEmpty()) {
                     newArray.add(new PhoneList(id, itemList.getContact_no()));
@@ -98,7 +94,7 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.Dire
 
 
 
-        if (newArray.size() == 0) {
+        if (newArray.isEmpty()) {
             System.out.println("FAKA ARRAY");
             holder.numberNot.setVisibility(View.VISIBLE);
             holder.phoneView.setVisibility(View.GONE);
@@ -124,7 +120,7 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.Dire
         return directoryLists.size();
     }
 
-    public class DirectoryHolder extends RecyclerView.ViewHolder {
+    public static class DirectoryHolder extends RecyclerView.ViewHolder {
 
          TextView empName;
          TextView div;
@@ -147,11 +143,9 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.Dire
             mailClick = itemView.findViewById(R.id.mail_click);
             numberNot = itemView.findViewById(R.id.phone_number_not_found);
 
-            mailClick.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    AppCompatActivity activity = (AppCompatActivity) v.getContext();
-                    String mmm = mailName.getText().toString();
+            mailClick.setOnClickListener(v -> {
+                AppCompatActivity activity = (AppCompatActivity) v.getContext();
+                String mmm = mailName.getText().toString();
 //                    Intent email = new Intent(Intent.ACTION_SEND);
 //                    email.putExtra(Intent.EXTRA_EMAIL, new String[]{mmm});
 //                    //email.setType("message/rfc822");
@@ -167,42 +161,33 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.Dire
 
 
 
-                    AlertDialog dialog = new AlertDialog.Builder(activity)
-                            .setMessage("Do you want to send an email to "+mmm+" ?")
-                            .setPositiveButton("Yes", null)
-                            .setNegativeButton("No",null)
-                            .show();
+                AlertDialog dialog = new AlertDialog.Builder(activity)
+                        .setMessage("Do you want to send an email to "+mmm+" ?")
+                        .setPositiveButton("Yes", null)
+                        .setNegativeButton("No",null)
+                        .show();
 
-                    dialog.setCancelable(false);
-                    dialog.setCanceledOnTouchOutside(false);
-                    Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                    positive.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
+                dialog.setCancelable(false);
+                dialog.setCanceledOnTouchOutside(false);
+                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                positive.setOnClickListener(v1 -> {
 
-                            dialog.dismiss();
-                            Intent intent = new Intent(Intent.ACTION_VIEW);
-                            Uri data = Uri.parse("mailto:"+mmm);
-                            intent.setData(data);
-                            try {
-                                activity.startActivity(intent);
+                    dialog.dismiss();
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    Uri data = Uri.parse("mailto:"+mmm);
+                    intent.setData(data);
+                    try {
+                        activity.startActivity(intent);
 
-                            } catch (android.content.ActivityNotFoundException ex) {
-                                Toast.makeText(activity, "There is no email app found.", Toast.LENGTH_SHORT).show();
-                            }
+                    } catch (android.content.ActivityNotFoundException ex) {
+                        Toast.makeText(activity, "There is no email app found.", Toast.LENGTH_SHORT).show();
+                    }
 
 
 
-                        }
-                    });
-                    Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                    negative.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            dialog.dismiss();
-                        }
-                    });
-                }
+                });
+                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+                negative.setOnClickListener(v12 -> dialog.dismiss());
             });
 
         }

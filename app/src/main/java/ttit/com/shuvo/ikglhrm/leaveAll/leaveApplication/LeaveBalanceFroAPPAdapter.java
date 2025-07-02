@@ -30,8 +30,7 @@ public class LeaveBalanceFroAPPAdapter extends RecyclerView.Adapter<LeaveBalance
     @Override
     public BalanceHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(myContext).inflate(R.layout.leave_balance_list_two_items, parent, false);
-        BalanceHolder ammvh = new BalanceHolder(v);
-        return ammvh;
+        return new BalanceHolder(v);
     }
 
     @Override
@@ -50,10 +49,10 @@ public class LeaveBalanceFroAPPAdapter extends RecyclerView.Adapter<LeaveBalance
         return leaveBalanceForAPPLists.size();
     }
 
-    public class BalanceHolder extends RecyclerView.ViewHolder {
+    public static class BalanceHolder extends RecyclerView.ViewHolder {
 
-        private TextView name;
-        private TextView balance;
+        TextView name;
+        TextView balance;
 
 
 

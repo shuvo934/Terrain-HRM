@@ -6,71 +6,102 @@
     android:layout_height="match_parent"
     android:background="@color/background_color"
     tools:context=".leaveAll.LeaveApplication">
-
-    <RelativeLayout
+    
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/upLayNew_leave_application"
         android:layout_width="match_parent"
-        android:layout_height="86dp"
+        android:layout_height="wrap_content"
+        android:background="@color/background_color"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true">
 
-        <LinearLayout
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/design_2"
-            android:orientation="vertical"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:gravity="center"/>
+            android:layout_height="0dp"
+            app:cardElevation="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="@dimen/_5sdp"
+            app:shapeAppearanceOverlay="@style/BottomRoundedCard"
+            app:cardBackgroundColor="@color/primaryVariant"/>
 
-        <LinearLayout
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/app_bar_card_emp_info"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:background="@drawable/design"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true">
+            android:layout_height="wrap_content"
+            app:cardElevation="@dimen/_2sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:gravity="center_vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:shapeAppearanceOverlay="@style/BottomRoundedCard"
+            app:cardBackgroundColor="@color/primaryColor">
 
-            <TextView
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:fontFamily="@font/russo_one"
-                android:gravity="center"
-                android:text="Leave Application"
-                android:textColor="@color/white"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-        </LinearLayout>
+                android:paddingTop="@dimen/_15sdp"
+                android:paddingBottom="@dimen/_15sdp"
+                android:paddingStart="@dimen/_15sdp"
+                android:paddingEnd="@dimen/_15sdp">
 
-    </RelativeLayout>
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    android:id="@+id/terrain_logo2"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/hrm_new_round_icon_custom"
+                    tools:ignore="ContentDescription"
+                    app:civ_border_width="@dimen/_1sdp"
+                    app:civ_border_color="@color/white"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_12sdp"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:layout_toEndOf="@+id/terrain_logo2"
+                    android:layout_alignParentEnd="true"
+                    android:textColor="@color/white"
+                    android:layout_centerVertical="true"
+                    android:paddingTop="@dimen/_2sdp"
+                    android:paddingBottom="0dp"
+                    android:textSize="@dimen/_15sdp"
+                    android:text="New Application"
+                    android:fontFamily="@font/poppins_bold"
+                    tools:ignore="HardcodedText" />
+
+            </RelativeLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="5dp"
+        android:layout_marginStart="@dimen/_8sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginEnd="@dimen/_8sdp"
+        android:layout_marginBottom="@dimen/_4sdp"
         android:background="@color/white"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_below="@id/upLayNew_leave_application"
-        android:layout_above="@id/linearLayout50_leave_application_apply_button"
-        app:cardCornerRadius="10dp"
-        app:cardElevation="8dp">
+        android:layout_above="@id/leave_new_application_button"
+        app:cardCornerRadius="@dimen/_8sdp"
+        app:cardElevation="@dimen/_3sdp">
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="3dp"
-            android:layout_marginBottom="3dp">
+            android:layout_marginTop="@dimen/_2sdp"
+            android:layout_marginBottom="@dimen/_2sdp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -80,29 +111,31 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:baselineAligned="false"
                     android:orientation="horizontal"
                     android:weightSum="1.2">
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginBottom="5dp"
+                        android:layout_marginStart="@dimen/_4sdp"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:layout_marginBottom="@dimen/_4sdp"
                         android:layout_weight=".6"
                         android:clickable="false"
                         android:enabled="false"
                         android:hint="Name:"
                         app:boxBackgroundColor="@color/white"
                         app:boxBackgroundMode="filled"
-                        app:boxCornerRadiusBottomEnd="5dp"
-                        app:boxCornerRadiusBottomStart="5dp"
-                        app:boxCornerRadiusTopEnd="5dp"
-                        app:boxCornerRadiusTopStart="5dp"
+                        app:boxCornerRadiusBottomEnd="@dimen/_4sdp"
+                        app:boxCornerRadiusBottomStart="@dimen/_4sdp"
+                        app:boxCornerRadiusTopEnd="@dimen/_4sdp"
+                        app:boxCornerRadiusTopStart="@dimen/_4sdp"
                         app:boxStrokeColor="#f0932b"
                         app:boxStrokeWidth="0dp"
                         app:boxStrokeWidthFocused="1dp"
-                        app:hintTextColor="@color/black">
+                        app:hintTextColor="@color/black"
+                        tools:ignore="HardcodedText">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/name_leave_application"
@@ -113,7 +146,7 @@
                             android:enabled="false"
                             android:fontFamily="@font/poppins_semibold"
                             android:inputType="textMultiLine"
-                            android:text="MD. BAITUL AMIN"
+                            android:text=""
                             android:textColor="@color/black"
                             android:textSize="@dimen/_8sdp"
                             android:textStyle="bold" />
@@ -123,23 +156,24 @@
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginBottom="5dp"
+                        android:layout_marginStart="@dimen/_4sdp"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:layout_marginBottom="@dimen/_4sdp"
                         android:layout_weight=".3"
                         android:clickable="false"
                         android:enabled="false"
                         android:hint="ID:"
                         app:boxBackgroundColor="@color/white"
                         app:boxBackgroundMode="filled"
-                        app:boxCornerRadiusBottomEnd="5dp"
-                        app:boxCornerRadiusBottomStart="5dp"
-                        app:boxCornerRadiusTopEnd="5dp"
-                        app:boxCornerRadiusTopStart="5dp"
+                        app:boxCornerRadiusBottomEnd="@dimen/_4sdp"
+                        app:boxCornerRadiusBottomStart="@dimen/_4sdp"
+                        app:boxCornerRadiusTopEnd="@dimen/_4sdp"
+                        app:boxCornerRadiusTopStart="@dimen/_4sdp"
                         app:boxStrokeColor="#f0932b"
                         app:boxStrokeWidth="0dp"
                         app:boxStrokeWidthFocused="1dp"
-                        app:hintTextColor="@color/black">
+                        app:hintTextColor="@color/black"
+                        tools:ignore="HardcodedText">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/id_leave_application"
@@ -149,7 +183,7 @@
                             android:ems="10"
                             android:enabled="false"
                             android:inputType="textMultiLine"
-                            android:text="00200821"
+                            android:text=""
                             android:fontFamily="@font/poppins_semibold"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_8sdp"
@@ -160,21 +194,22 @@
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_margin="5dp"
+                        android:layout_margin="@dimen/_4sdp"
                         android:layout_weight=".3"
                         android:clickable="false"
                         android:enabled="false"
                         android:hint="Date:"
                         app:boxBackgroundColor="@color/white"
                         app:boxBackgroundMode="filled"
-                        app:boxCornerRadiusBottomEnd="5dp"
-                        app:boxCornerRadiusBottomStart="5dp"
-                        app:boxCornerRadiusTopEnd="5dp"
-                        app:boxCornerRadiusTopStart="5dp"
+                        app:boxCornerRadiusBottomEnd="@dimen/_4sdp"
+                        app:boxCornerRadiusBottomStart="@dimen/_4sdp"
+                        app:boxCornerRadiusTopEnd="@dimen/_4sdp"
+                        app:boxCornerRadiusTopStart="@dimen/_4sdp"
                         app:boxStrokeColor="#f0932b"
                         app:boxStrokeWidth="0dp"
                         app:boxStrokeWidthFocused="1dp"
-                        app:hintTextColor="@color/black">
+                        app:hintTextColor="@color/black"
+                        tools:ignore="HardcodedText">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/now_date_leave_application"
@@ -185,7 +220,7 @@
                             android:enabled="false"
                             android:fontFamily="@font/poppins_semibold"
                             android:inputType="textMultiLine"
-                            android:text="31-JUL-21"
+                            android:text=""
                             android:textColor="@color/black"
                             android:textSize="@dimen/_8sdp"
                             android:textStyle="bold" />
@@ -195,52 +230,51 @@
                 </LinearLayout>
 
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="2dp"
-                    android:background="@android:color/darker_gray" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
                     android:gravity="center"
-                    android:text="- - - - - - - - - - - -" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="2dp"
-                    android:background="@android:color/darker_gray" />
+                    android:layout_gravity="center"
+                    android:text="- - - - - - - - - - - -"
+                    android:layout_marginStart="@dimen/_34sdp"
+                    android:layout_marginEnd="@dimen/_34sdp"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:layout_marginBottom="@dimen/_4sdp"
+                    android:fontFamily="@font/poppins_bold"
+                    tools:ignore="HardcodedText" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:orientation="horizontal"
+                    android:layout_marginBottom="@dimen/_3sdp"
                     android:weightSum="1">
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginBottom="5dp"
+                        android:layout_marginStart="@dimen/_4sdp"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:layout_marginBottom="@dimen/_4sdp"
                         android:layout_weight=".3"
                         android:fontFamily="@font/poppins_semibold"
                         android:textSize="@dimen/_10sdp"
                         android:text="Application Type: "
                         android:textColor="@color/mazarine_blue"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        tools:ignore="HardcodedText" />
 
                     <Spinner
                         android:id="@+id/spinner_leave_application_type"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginBottom="5dp"
+                        android:layout_marginStart="@dimen/_4sdp"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:layout_marginBottom="@dimen/_4sdp"
                         android:layout_weight=".68"
                         android:background="@drawable/blue_outline"
                         android:clickable="false"
@@ -251,11 +285,11 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="top"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginEnd="5dp"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:layout_marginEnd="@dimen/_4sdp"
                         android:layout_weight=".02"
-                        android:src="@drawable/ic_star" />
-
+                        android:src="@drawable/ic_star"
+                        tools:ignore="ContentDescription" />
 
                 </LinearLayout>
 
@@ -264,41 +298,36 @@
                     android:id="@+id/afterselecting_leave_app"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
+                    android:layout_marginBottom="@dimen/_8sdp"
                     android:orientation="vertical"
                     android:visibility="gone">
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:background="@android:color/darker_gray" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
                         android:gravity="center"
-                        android:text="- - - - - - - - - - - -" />
+                        android:layout_gravity="center"
+                        android:text="- - - - - - - - - - - -"
+                        android:layout_marginStart="@dimen/_34sdp"
+                        android:layout_marginEnd="@dimen/_34sdp"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:fontFamily="@font/poppins_bold"
+                        tools:ignore="HardcodedText" />
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:background="@android:color/darker_gray" />
-
-                    <Button
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/show_leave_balance"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="show Leave Balance"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginBottom="5dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginEnd="10dp"
+                        android:layout_marginStart="@dimen/_8sdp"
+                        android:layout_marginBottom="@dimen/_4sdp"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:layout_marginEnd="@dimen/_8sdp"
                         android:fontFamily="@font/lato_bold"
                         android:textStyle="bold"
                         android:visibility="visible"
-                        android:background="@drawable/custom_button1"
-                        app:backgroundTint="@null"/>
+                        app:cornerRadius="@dimen/_8sdp"
+                        tools:ignore="HardcodedText"/>
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -311,45 +340,32 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:layout_marginStart="5dp"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginBottom="5dp"
+                            android:layout_marginStart="@dimen/_4sdp"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:layout_marginBottom="@dimen/_4sdp"
                             android:layout_weight=".3"
                             android:text="Leave Type: "
                             android:textSize="@dimen/_10sdp"
                             android:fontFamily="@font/poppins_semibold"
                             android:textColor="@color/mazarine_blue"
-                            android:textStyle="bold" />
-
-                        <!--                            <Spinner-->
-                        <!--                                android:id="@+id/spinner_leave_type"-->
-                        <!--                                android:layout_width="0dp"-->
-                        <!--                                android:layout_height="wrap_content"-->
-                        <!--                                android:layout_gravity="center"-->
-                        <!--                                android:layout_marginStart="5dp"-->
-                        <!--                                android:layout_marginTop="5dp"-->
-                        <!--                                android:layout_marginBottom="5dp"-->
-                        <!--                                android:layout_weight=".68"-->
-                        <!--                                android:background="@drawable/blue_outline"-->
-                        <!--                                android:clickable="false"-->
-                        <!--                                android:popupBackground="@drawable/blue_outline_white_background"-->
-                        <!--                                android:spinnerMode="dropdown" />-->
+                            android:textStyle="bold"
+                            tools:ignore="HardcodedText" />
 
                         <com.google.android.material.textfield.TextInputLayout
                             android:id="@+id/leave_type_Layout"
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="5dp"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginBottom="5dp"
+                            android:layout_marginStart="@dimen/_4sdp"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:layout_marginBottom="@dimen/_4sdp"
                             android:layout_weight=".68"
                             android:hint=""
                             android:textColorHint="@color/black"
-                            app:boxCornerRadiusBottomEnd="10dp"
-                            app:boxCornerRadiusBottomStart="10dp"
-                            app:boxCornerRadiusTopEnd="10dp"
-                            app:boxCornerRadiusTopStart="10dp"
+                            app:boxCornerRadiusBottomEnd="@dimen/_8sdp"
+                            app:boxCornerRadiusBottomStart="@dimen/_8sdp"
+                            app:boxCornerRadiusTopEnd="@dimen/_8sdp"
+                            app:boxCornerRadiusTopStart="@dimen/_8sdp"
                             app:boxStrokeColor="#0984e3"
                             app:boxStrokeWidth="2dp"
                             app:helperText=""
@@ -362,7 +378,6 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:clickable="true"
-                                android:editable="false"
                                 android:ems="10"
                                 android:focusable="false"
                                 android:gravity="end"
@@ -371,39 +386,35 @@
                                 android:inputType="textMultiLine"
                                 android:text="Select"
                                 android:textColor="#636e72"
-                                android:textStyle="bold" />
+                                android:textStyle="bold"
+                                tools:ignore="HardcodedText" />
 
                         </com.google.android.material.textfield.TextInputLayout>
-
 
                         <ImageView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="top"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginEnd="5dp"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:layout_marginEnd="@dimen/_4sdp"
                             android:layout_weight=".02"
-                            android:src="@drawable/ic_star" />
-
+                            android:src="@drawable/ic_star"
+                            tools:ignore="ContentDescription" />
 
                     </LinearLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:background="@android:color/darker_gray" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
                         android:gravity="center"
-                        android:text="- - - - - - - - - - - -" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:background="@android:color/darker_gray" />
+                        android:layout_gravity="center"
+                        android:text="- - - - - - - - - - - -"
+                        android:layout_marginStart="@dimen/_34sdp"
+                        android:layout_marginEnd="@dimen/_34sdp"
+                        android:layout_marginTop="@dimen/_8sdp"
+                        android:layout_marginBottom="@dimen/_4sdp"
+                        android:fontFamily="@font/poppins_bold"
+                        tools:ignore="HardcodedText" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -415,34 +426,34 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:layout_marginStart="5dp"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginBottom="5dp"
+                            android:layout_marginStart="@dimen/_4sdp"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:layout_marginBottom="@dimen/_4sdp"
                             android:layout_weight=".3"
                             android:text="Date On/From:"
                             android:fontFamily="@font/poppins_semibold"
                             android:textSize="@dimen/_10sdp"
                             android:textColor="@color/mazarine_blue"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            tools:ignore="HardcodedText" />
 
                         <com.google.android.material.textfield.TextInputLayout
                             android:id="@+id/date_on_leave_layout"
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="5dp"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginBottom="5dp"
+                            android:layout_marginStart="@dimen/_4sdp"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:layout_marginBottom="@dimen/_4sdp"
                             android:layout_weight=".875"
                             android:clickable="true"
-                            android:editable="false"
                             android:focusable="false"
                             android:hint="Select Date"
                             app:boxBackgroundColor="@color/white"
-                            app:boxCornerRadiusBottomEnd="10dp"
-                            app:boxCornerRadiusBottomStart="10dp"
-                            app:boxCornerRadiusTopEnd="10dp"
-                            app:boxCornerRadiusTopStart="10dp"
+                            app:boxCornerRadiusBottomEnd="@dimen/_8sdp"
+                            app:boxCornerRadiusBottomStart="@dimen/_8sdp"
+                            app:boxCornerRadiusTopEnd="@dimen/_8sdp"
+                            app:boxCornerRadiusTopStart="@dimen/_8sdp"
                             app:boxStrokeColor="#0984e3"
                             app:boxStrokeWidth="2dp"
                             app:boxStrokeWidthFocused="1dp"
@@ -451,15 +462,14 @@
                             app:helperTextTextColor="#d63031"
                             app:startIconDrawable="@drawable/calendar_icon"
                             app:startIconTint="@android:color/transparent"
-                            app:startIconTintMode="screen">
-
+                            app:startIconTintMode="screen"
+                            tools:ignore="HardcodedText">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/date_on_from"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:clickable="true"
-                                android:editable="false"
                                 android:ems="10"
                                 android:focusable="false"
                                 android:fontFamily="@font/poppins_semibold"
@@ -475,13 +485,14 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="top"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginEnd="5dp"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:layout_marginEnd="@dimen/_4sdp"
                             android:layout_weight=".025"
-                            android:src="@drawable/ic_star" />
-
+                            android:src="@drawable/ic_star"
+                            tools:ignore="ContentDescription" />
 
                     </LinearLayout>
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -492,34 +503,34 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:layout_marginStart="5dp"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginBottom="5dp"
+                            android:layout_marginStart="@dimen/_4sdp"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:layout_marginBottom="@dimen/_4sdp"
                             android:layout_weight=".3"
                             android:text="Date To:"
                             android:fontFamily="@font/poppins_semibold"
                             android:textSize="@dimen/_10sdp"
                             android:textColor="@color/mazarine_blue"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            tools:ignore="HardcodedText" />
 
                         <com.google.android.material.textfield.TextInputLayout
                             android:id="@+id/date_to_leave_layout"
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="5dp"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginBottom="5dp"
+                            android:layout_marginStart="@dimen/_4sdp"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:layout_marginBottom="@dimen/_4sdp"
                             android:layout_weight=".875"
                             android:clickable="true"
-                            android:editable="false"
                             android:focusable="false"
                             android:hint="Select Date"
                             app:boxBackgroundColor="@color/white"
-                            app:boxCornerRadiusBottomEnd="10dp"
-                            app:boxCornerRadiusBottomStart="10dp"
-                            app:boxCornerRadiusTopEnd="10dp"
-                            app:boxCornerRadiusTopStart="10dp"
+                            app:boxCornerRadiusBottomEnd="@dimen/_8sdp"
+                            app:boxCornerRadiusBottomStart="@dimen/_8sdp"
+                            app:boxCornerRadiusTopEnd="@dimen/_8sdp"
+                            app:boxCornerRadiusTopStart="@dimen/_8sdp"
                             app:boxStrokeColor="#0984e3"
                             app:boxStrokeWidth="2dp"
                             app:boxStrokeWidthFocused="1dp"
@@ -528,15 +539,14 @@
                             app:helperTextTextColor="#d63031"
                             app:startIconDrawable="@drawable/calendar_icon"
                             app:startIconTint="@android:color/transparent"
-                            app:startIconTintMode="screen">
-
+                            app:startIconTintMode="screen"
+                            tools:ignore="HardcodedText">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/date_to_leave"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:clickable="true"
-                                android:editable="false"
                                 android:ems="10"
                                 android:focusable="false"
                                 android:fontFamily="@font/poppins_semibold"
@@ -552,13 +562,14 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="top"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginEnd="5dp"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:layout_marginEnd="@dimen/_4sdp"
                             android:layout_weight=".025"
-                            android:src="@drawable/ic_star" />
-
+                            android:src="@drawable/ic_star"
+                            tools:ignore="ContentDescription" />
 
                     </LinearLayout>
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -569,15 +580,16 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:layout_marginStart="5dp"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginBottom="5dp"
+                            android:layout_marginStart="@dimen/_4sdp"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:layout_marginBottom="@dimen/_4sdp"
                             android:layout_weight=".3"
                             android:text="Total:"
                             android:fontFamily="@font/poppins_semibold"
                             android:textSize="@dimen/_10sdp"
                             android:textColor="@color/mazarine_blue"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            tools:ignore="HardcodedText" />
 
                         <com.google.android.material.textfield.TextInputLayout
                             android:layout_width="0dp"
@@ -585,24 +597,22 @@
                             android:hint=""
                             android:layout_weight=".3"
                             app:boxStrokeWidth="0dp"
-                            android:layout_margin="5dp"
+                            android:layout_margin="@dimen/_4sdp"
                             app:boxStrokeColor="#0984e3"
                             app:hintTextColor="#dfe6e9"
-                            app:boxCornerRadiusTopStart="5dp"
-                            app:boxCornerRadiusTopEnd="5dp"
-                            app:boxCornerRadiusBottomEnd="5dp"
-                            app:boxCornerRadiusBottomStart="5dp"
+                            app:boxCornerRadiusTopStart="@dimen/_4sdp"
+                            app:boxCornerRadiusTopEnd="@dimen/_4sdp"
+                            app:boxCornerRadiusBottomEnd="@dimen/_4sdp"
+                            app:boxCornerRadiusBottomStart="@dimen/_4sdp"
                             app:boxBackgroundMode="filled"
                             android:textColorHint = "@color/black"
                             android:clickable="false"
-                            android:editable="false"
                             android:focusable="false"
                             android:enabled="false"
                             app:helperTextEnabled="true"
                             app:helperText=""
                             app:boxBackgroundColor="#F5F5F5"
-                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                            >
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/total_days_from_to"
@@ -610,7 +620,6 @@
                                 android:layout_height="wrap_content"
                                 android:ems="10"
                                 android:clickable="false"
-                                android:editable="false"
                                 android:focusable="false"
                                 android:enabled="false"
                                 android:text="0"
@@ -620,7 +629,7 @@
                                 android:textStyle="bold"
                                 android:textColor="@color/black"
                                 android:inputType="textMultiLine"
-                                />
+                                tools:ignore="HardcodedText" />
 
                         </com.google.android.material.textfield.TextInputLayout>
 
@@ -628,49 +637,35 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:layout_marginStart="5dp"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginBottom="5dp"
-                            android:layout_marginEnd="5dp"
+                            android:layout_marginStart="@dimen/_4sdp"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:layout_marginBottom="@dimen/_4sdp"
+                            android:layout_marginEnd="@dimen/_4sdp"
                             android:layout_weight=".6"
                             android:text="Days"
                             android:fontFamily="@font/poppins_semibold"
                             android:textSize="@dimen/_11sdp"
                             android:textColor="@color/black"
-                            android:textStyle="bold" />
-
+                            android:textStyle="bold"
+                            tools:ignore="HardcodedText" />
 
                     </LinearLayout>
 
 
 
-                    <!--                        <LinearLayout-->
-                    <!--                            android:layout_width="match_parent"-->
-                    <!--                            android:layout_height="wrap_content"-->
-                    <!--                            android:orientation="horizontal"-->
-                    <!--                            android:gravity="center"-->
-                    <!--                            android:weightSum="1.2">-->
-                    <!--                            -->
-                    <!--                            -->
-
-                    <!--                        </LinearLayout>-->
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:background="@android:color/darker_gray" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
                         android:gravity="center"
-                        android:text="- - - - - - - - - - - -" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:background="@android:color/darker_gray" />
+                        android:layout_gravity="center"
+                        android:text="- - - - - - - - - - - -"
+                        android:layout_marginStart="@dimen/_34sdp"
+                        android:layout_marginEnd="@dimen/_34sdp"
+                        android:layout_marginTop="@dimen/_8sdp"
+                        android:layout_marginBottom="@dimen/_4sdp"
+                        android:fontFamily="@font/poppins_bold"
+                        tools:ignore="HardcodedText" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -683,24 +678,25 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:layout_marginStart="5dp"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginBottom="5dp"
+                            android:layout_marginStart="@dimen/_4sdp"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:layout_marginBottom="@dimen/_4sdp"
                             android:layout_weight=".3"
                             android:text="Leave Duration:"
                             android:fontFamily="@font/poppins_semibold"
                             android:textSize="@dimen/_10sdp"
                             android:textColor="@color/mazarine_blue"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            tools:ignore="HardcodedText" />
 
                         <Spinner
                             android:id="@+id/spinner_leave_duration"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:layout_marginStart="5dp"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginBottom="5dp"
+                            android:layout_marginStart="@dimen/_4sdp"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:layout_marginBottom="@dimen/_4sdp"
                             android:layout_weight=".68"
                             android:background="@drawable/blue_outline"
                             android:clickable="false"
@@ -711,11 +707,11 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="top"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginEnd="5dp"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:layout_marginEnd="@dimen/_4sdp"
                             android:layout_weight=".02"
-                            android:src="@drawable/ic_star" />
-
+                            android:src="@drawable/ic_star"
+                            tools:ignore="ContentDescription" />
 
                     </LinearLayout>
 
@@ -723,30 +719,31 @@
                         android:id="@+id/error_input_leave_duration"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="5dp"
+                        android:layout_margin="@dimen/_4sdp"
                         android:gravity="center"
+                        android:textSize="@dimen/_9sdp"
                         android:text="Please Provide Leave Duration"
                         android:fontFamily="@font/poppins_semibold"
                         android:textColor="#d63031"
                         android:textStyle="bold"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        tools:ignore="HardcodedText" />
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:background="@android:color/darker_gray" />
+
+
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
                         android:gravity="center"
-                        android:text="- - - - - - - - - - - -" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:background="@android:color/darker_gray" />
+                        android:layout_gravity="center"
+                        android:text="- - - - - - - - - - - -"
+                        android:layout_marginStart="@dimen/_34sdp"
+                        android:layout_marginEnd="@dimen/_34sdp"
+                        android:layout_marginTop="@dimen/_8sdp"
+                        android:layout_marginBottom="@dimen/_2sdp"
+                        android:fontFamily="@font/poppins_bold"
+                        tools:ignore="HardcodedText" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -759,42 +756,32 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:layout_marginStart="5dp"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginBottom="5dp"
+                            android:layout_marginStart="@dimen/_4sdp"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:layout_marginBottom="@dimen/_4sdp"
                             android:layout_weight=".3"
                             android:text="Reason: "
                             android:fontFamily="@font/poppins_semibold"
                             android:textSize="@dimen/_10sdp"
                             android:textColor="@color/mazarine_blue"
-                            android:textStyle="bold" />
-                        <!--                        <Spinner-->
-                        <!--                            android:layout_gravity="center"-->
-                        <!--                            android:id="@+id/spinner_shift_updated"-->
-                        <!--                            android:layout_width="match_parent"-->
-                        <!--                            android:layout_height="wrap_content"-->
-                        <!--                            android:layout_margin = "5dp"-->
-                        <!--                            android:visibility="gone"-->
-                        <!--                            android:layout_weight=".3"-->
-                        <!--                            android:clickable="false"-->
-                        <!--                            android:background="@drawable/blue_outline"-->
-                        <!--                            android:popupBackground="@drawable/blue_outline_white_background"-->
-                        <!--                            android:spinnerMode="dropdown"/>-->
+                            android:textStyle="bold"
+                            tools:ignore="HardcodedText" />
+
                         <com.google.android.material.textfield.TextInputLayout
                             android:id="@+id/reason_leave_Layout"
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="5dp"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginBottom="5dp"
+                            android:layout_marginStart="@dimen/_4sdp"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:layout_marginBottom="@dimen/_4sdp"
                             android:layout_weight=".68"
                             android:hint=""
                             android:textColorHint="@color/black"
-                            app:boxCornerRadiusBottomEnd="10dp"
-                            app:boxCornerRadiusBottomStart="10dp"
-                            app:boxCornerRadiusTopEnd="10dp"
-                            app:boxCornerRadiusTopStart="10dp"
+                            app:boxCornerRadiusBottomEnd="@dimen/_8sdp"
+                            app:boxCornerRadiusBottomStart="@dimen/_8sdp"
+                            app:boxCornerRadiusTopEnd="@dimen/_8sdp"
+                            app:boxCornerRadiusTopStart="@dimen/_8sdp"
                             app:boxStrokeColor="#0984e3"
                             app:boxStrokeWidth="2dp"
                             app:helperText=""
@@ -806,7 +793,6 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:clickable="true"
-                                android:editable="false"
                                 android:ems="10"
                                 android:focusable="false"
                                 android:gravity="end"
@@ -815,7 +801,8 @@
                                 android:inputType="textMultiLine"
                                 android:text="Select"
                                 android:textColor="#636e72"
-                                android:textStyle="bold" />
+                                android:textStyle="bold"
+                                tools:ignore="HardcodedText" />
 
                         </com.google.android.material.textfield.TextInputLayout>
 
@@ -823,14 +810,13 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="top"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginEnd="5dp"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:layout_marginEnd="@dimen/_4sdp"
                             android:layout_weight=".02"
-                            android:src="@drawable/ic_star" />
-
+                            android:src="@drawable/ic_star"
+                            tools:ignore="ContentDescription" />
 
                     </LinearLayout>
-
 
                     <LinearLayout
                         android:id="@+id/other_reason_description_Layout_layout"
@@ -845,32 +831,31 @@
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="5dp"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginBottom="5dp"
+                            android:layout_marginStart="@dimen/_4sdp"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:layout_marginBottom="@dimen/_4sdp"
                             android:layout_weight="1.175"
                             android:clickable="true"
-                            android:editable="false"
                             android:focusable="false"
                             android:hint="Write Your Other Reason:"
                             app:boxBackgroundColor="@color/white"
-                            app:boxCornerRadiusBottomEnd="10dp"
-                            app:boxCornerRadiusBottomStart="10dp"
-                            app:boxCornerRadiusTopEnd="10dp"
-                            app:boxCornerRadiusTopStart="10dp"
+                            app:boxCornerRadiusBottomEnd="@dimen/_8sdp"
+                            app:boxCornerRadiusBottomStart="@dimen/_8sdp"
+                            app:boxCornerRadiusTopEnd="@dimen/_8sdp"
+                            app:boxCornerRadiusTopStart="@dimen/_8sdp"
                             app:boxStrokeColor="#0984e3"
                             app:boxStrokeWidth="2dp"
                             app:boxStrokeWidthFocused="1dp"
                             app:helperText=""
                             app:helperTextEnabled="true"
-                            app:helperTextTextColor="#d63031">
+                            app:helperTextTextColor="#d63031"
+                            tools:ignore="HardcodedText">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/other_reason_description"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:clickable="true"
-                                android:editable="false"
                                 android:ems="10"
                                 android:fontFamily="@font/poppins_semibold"
                                 android:textSize="@dimen/_11sdp"
@@ -886,11 +871,11 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="top"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginEnd="5dp"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:layout_marginEnd="@dimen/_4sdp"
                             android:layout_weight=".025"
-                            android:src="@drawable/ic_star" />
-
+                            android:src="@drawable/ic_star"
+                            tools:ignore="ContentDescription" />
 
                     </LinearLayout>
 
@@ -898,96 +883,85 @@
                         android:id="@+id/error_input_reason_leave"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="5dp"
+                        android:layout_margin="@dimen/_4sdp"
                         android:gravity="center"
+                        android:textSize="@dimen/_9sdp"
                         android:text="Please Provide Reason for Your Leave"
                         android:textColor="#d63031"
                         android:textStyle="bold"
                         android:fontFamily="@font/poppins_semibold"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        tools:ignore="HardcodedText" />
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:background="@android:color/darker_gray" />
+
+
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
                         android:gravity="center"
-                        android:text="- - - - - - - - - - - -" />
+                        android:layout_gravity="center"
+                        android:text="- - - - - - - - - - - -"
+                        android:layout_marginStart="@dimen/_34sdp"
+                        android:layout_marginEnd="@dimen/_34sdp"
+                        android:layout_marginTop="@dimen/_8sdp"
+                        android:layout_marginBottom="@dimen/_2sdp"
+                        android:fontFamily="@font/poppins_bold"
+                        tools:ignore="HardcodedText" />
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:background="@android:color/darker_gray" />
-
-                    <LinearLayout
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/during_leave_address_layout"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:weightSum="1.2">
+                        android:layout_margin="@dimen/_4sdp"
+                        android:clickable="true"
+                        android:focusable="false"
+                        android:hint="Write Address During Leave:"
+                        app:boxBackgroundColor="@color/white"
+                        app:boxCornerRadiusBottomEnd="@dimen/_8sdp"
+                        app:boxCornerRadiusBottomStart="@dimen/_8sdp"
+                        app:boxCornerRadiusTopEnd="@dimen/_8sdp"
+                        app:boxCornerRadiusTopStart="@dimen/_8sdp"
+                        app:boxStrokeColor="#0984e3"
+                        app:boxStrokeWidth="2dp"
+                        app:boxStrokeWidthFocused="1dp"
+                        app:helperText=""
+                        app:helperTextEnabled="true"
+                        app:helperTextTextColor="#d63031"
+                        tools:ignore="HardcodedText">
 
-                        <com.google.android.material.textfield.TextInputLayout
-                            android:id="@+id/during_leave_address_layout"
-                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                            android:layout_width="0dp"
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/during_leave_address"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_margin="5dp"
-                            android:layout_weight="1.2"
                             android:clickable="true"
-                            android:editable="false"
+                            android:ems="10"
                             android:focusable="false"
-                            android:hint="Write Address During Leave:"
-                            app:boxBackgroundColor="@color/white"
-                            app:boxCornerRadiusBottomEnd="10dp"
-                            app:boxCornerRadiusBottomStart="10dp"
-                            app:boxCornerRadiusTopEnd="10dp"
-                            app:boxCornerRadiusTopStart="10dp"
-                            app:boxStrokeColor="#0984e3"
-                            app:boxStrokeWidth="2dp"
-                            app:boxStrokeWidthFocused="1dp"
-                            app:helperText=""
-                            app:helperTextEnabled="true"
-                            app:helperTextTextColor="#d63031">
+                            android:fontFamily="@font/poppins_semibold"
+                            android:textSize="@dimen/_11sdp"
+                            android:inputType="textMultiLine"
+                            android:text=""
+                            android:textColor="@color/black"
+                            android:textStyle="bold" />
 
-                            <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/during_leave_address"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:clickable="true"
-                                android:editable="false"
-                                android:ems="10"
-                                android:focusable="false"
-                                android:fontFamily="@font/poppins_semibold"
-                                android:textSize="@dimen/_11sdp"
-                                android:inputType="textMultiLine"
-                                android:text=""
-                                android:textColor="@color/black"
-                                android:textStyle="bold" />
-
-                        </com.google.android.material.textfield.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
 
-                    </LinearLayout>
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:background="@android:color/darker_gray" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
                         android:gravity="center"
-                        android:text="- - - - - - - - - - - -" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:background="@android:color/darker_gray" />
+                        android:layout_gravity="center"
+                        android:text="- - - - - - - - - - - -"
+                        android:layout_marginStart="@dimen/_34sdp"
+                        android:layout_marginEnd="@dimen/_34sdp"
+                        android:layout_marginTop="@dimen/_6sdp"
+                        android:layout_marginBottom="@dimen/_2sdp"
+                        android:fontFamily="@font/poppins_bold"
+                        tools:ignore="HardcodedText" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -1000,42 +974,32 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:layout_marginStart="5dp"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginBottom="5dp"
+                            android:layout_marginStart="@dimen/_4sdp"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:layout_marginBottom="@dimen/_4sdp"
                             android:layout_weight=".3"
                             android:text="Work Backup Employee: "
                             android:fontFamily="@font/poppins_semibold"
                             android:textSize="@dimen/_10sdp"
                             android:textColor="@color/mazarine_blue"
-                            android:textStyle="bold" />
-                        <!--                        <Spinner-->
-                        <!--                            android:layout_gravity="center"-->
-                        <!--                            android:id="@+id/spinner_approver_updated"-->
-                        <!--                            android:layout_width="match_parent"-->
-                        <!--                            android:layout_height="wrap_content"-->
-                        <!--                            android:layout_margin = "5dp"-->
-                        <!--                            android:layout_weight=".3"-->
-                        <!--                            android:visibility="gone"-->
-                        <!--                            android:clickable="false"-->
-                        <!--                            android:background="@drawable/blue_outline"-->
-                        <!--                            android:popupBackground="@drawable/blue_outline_white_background"-->
-                        <!--                            android:spinnerMode="dropdown"/>-->
+                            android:textStyle="bold"
+                            tools:ignore="HardcodedText" />
+
                         <com.google.android.material.textfield.TextInputLayout
                             android:id="@+id/work_backup_layout"
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="5dp"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginBottom="5dp"
+                            android:layout_marginStart="@dimen/_4sdp"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:layout_marginBottom="@dimen/_4sdp"
                             android:layout_weight=".68"
                             android:hint=""
                             android:textColorHint="@color/black"
-                            app:boxCornerRadiusBottomEnd="10dp"
-                            app:boxCornerRadiusBottomStart="10dp"
-                            app:boxCornerRadiusTopEnd="10dp"
-                            app:boxCornerRadiusTopStart="10dp"
+                            app:boxCornerRadiusBottomEnd="@dimen/_8sdp"
+                            app:boxCornerRadiusBottomStart="@dimen/_8sdp"
+                            app:boxCornerRadiusTopEnd="@dimen/_8sdp"
+                            app:boxCornerRadiusTopStart="@dimen/_8sdp"
                             app:boxStrokeColor="#0984e3"
                             app:boxStrokeWidth="2dp"
                             app:helperText=""
@@ -1047,7 +1011,6 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:clickable="true"
-                                android:editable="false"
                                 android:ems="10"
                                 android:focusable="false"
                                 android:gravity="end"
@@ -1056,7 +1019,8 @@
                                 android:inputType="textMultiLine"
                                 android:text="Select"
                                 android:textColor="#636e72"
-                                android:textStyle="bold" />
+                                android:textStyle="bold"
+                                tools:ignore="HardcodedText" />
 
                         </com.google.android.material.textfield.TextInputLayout>
 
@@ -1064,11 +1028,11 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="top"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginEnd="5dp"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:layout_marginEnd="@dimen/_4sdp"
                             android:layout_weight=".02"
-                            android:src="@drawable/ic_star" />
-
+                            android:src="@drawable/ic_star"
+                            tools:ignore="ContentDescription" />
 
                     </LinearLayout>
 
@@ -1076,16 +1040,17 @@
                         android:id="@+id/error_input_work_backup"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="5dp"
+                        android:layout_margin="@dimen/_4sdp"
                         android:gravity="center"
+                        android:textSize="@dimen/_9sdp"
                         android:text="Please Select Work Backup Employee"
                         android:textColor="#d63031"
                         android:fontFamily="@font/poppins_semibold"
                         android:textStyle="bold"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        tools:ignore="HardcodedText" />
 
                 </LinearLayout>
-
 
             </LinearLayout>
 
@@ -1093,53 +1058,25 @@
 
     </androidx.cardview.widget.CardView>
 
-    <LinearLayout
-        android:id="@+id/linearLayout50_leave_application_apply_button"
+    <Button
+        android:id="@+id/leave_new_application_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginStart="@dimen/_12sdp"
+        android:layout_marginTop="@dimen/_8sdp"
+        android:layout_marginBottom="@dimen/_8sdp"
         android:visibility="gone"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:weightSum="1"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
+        android:layout_marginEnd="@dimen/_12sdp"
+        android:fontFamily="@font/russo_one"
+        android:background="@drawable/custom_button"
+        android:text="Apply"
+        android:textSize="@dimen/_14sdp"
+        android:textStyle="bold"
+        app:backgroundTint="@null"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true">
-
-        <Button
-            android:id="@+id/leave_new_application_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight=".5"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:visibility="visible"
-            android:layout_marginEnd="15dp"
-            android:fontFamily="@font/russo_one"
-            android:background="@drawable/custom_button"
-            android:text="Apply"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            app:backgroundTint="@null" />
-
-        <Button
-            android:id="@+id/leave_app_new_finish"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight=".5"
-            android:layout_marginStart="40dp"
-            android:layout_marginEnd="40dp"
-            android:background="@drawable/custom_button"
-            android:text="Close"
-            android:visibility="gone"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            app:backgroundTint="@null" />
-    </LinearLayout>
+        android:layout_alignParentBottom="true"
+        tools:ignore="HardcodedText" />
 
 </RelativeLayout>

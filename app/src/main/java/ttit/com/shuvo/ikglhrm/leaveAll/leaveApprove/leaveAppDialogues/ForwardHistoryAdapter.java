@@ -12,8 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 import ttit.com.shuvo.ikglhrm.R;
-import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.ShowShiftAdapter;
-import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.ShowShiftList;
 
 public class ForwardHistoryAdapter extends RecyclerView.Adapter<ForwardHistoryAdapter.FHVHolder> {
 
@@ -32,8 +30,7 @@ public class ForwardHistoryAdapter extends RecyclerView.Adapter<ForwardHistoryAd
     @Override
     public FHVHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(myContext).inflate(R.layout.forward_history_list_item, parent, false);
-        FHVHolder ammvh = new FHVHolder(v);
-        return ammvh;
+        return new FHVHolder(v);
     }
 
     @Override
@@ -52,13 +49,11 @@ public class ForwardHistoryAdapter extends RecyclerView.Adapter<ForwardHistoryAd
         return forwardHistoryLists.size();
     }
 
-    public class FHVHolder extends RecyclerView.ViewHolder {
+    public static class FHVHolder extends RecyclerView.ViewHolder {
 
-        private TextView foby;
-        private TextView foc;
-        private TextView fot;
-
-
+        TextView foby;
+        TextView foc;
+        TextView fot;
 
         public FHVHolder(@NonNull View itemView) {
             super(itemView);
@@ -66,9 +61,6 @@ public class ForwardHistoryAdapter extends RecyclerView.Adapter<ForwardHistoryAd
             foby = itemView.findViewById(R.id.forwarded_by_leave_approve);
             foc = itemView.findViewById(R.id.forward_comment_leave_approve);
             fot = itemView.findViewById(R.id.forward_to_leave_approve);
-
-
-
         }
     }
 

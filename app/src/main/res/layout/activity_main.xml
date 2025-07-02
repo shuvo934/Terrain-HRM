@@ -4,10 +4,41 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/back"
-    tools:context=".MainActivity"
-    >
+    android:background="@drawable/splash_screen_hrm_new_2"
+    tools:context=".MainActivity">
 
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        tools:ignore="UseCompoundDrawables">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="@dimen/_130sdp"
+            android:layout_height="@dimen/_130sdp"
+            android:layout_gravity="center"
+            android:background="@drawable/hrm_new_round_icon_custom"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/apps_name_main_page"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_18sdp"
+            android:fontFamily="@font/bungee"
+            android:gravity="center"
+            android:text="TERRAIN HRM"
+            android:visibility="gone"
+            android:textColor="@color/primaryColor"
+            android:textSize="@dimen/_27sdp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/layout_luncher_page"
@@ -17,32 +48,7 @@
         android:weightSum="1"
         android:layout_centerHorizontal="true"
         android:orientation="vertical">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:layout_weight=".8"
-            tools:ignore="UseCompoundDrawables">
-            <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="@dimen/_110sdp"
-                android:layout_height="@dimen/_110sdp"
-                android:layout_gravity="center"
-                android:background="@drawable/thrm_logo"
-                tools:ignore="ContentDescription" />
-            <TextView
-                android:id="@+id/apps_name_main_page"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_18sdp"
-                android:fontFamily="@font/bungee"
-                android:gravity="center"
-                android:text="TERRAIN HRM"
-                android:textColor="@color/white"
-                android:textSize="@dimen/_27sdp"
-                android:textStyle="bold" />
-        </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"

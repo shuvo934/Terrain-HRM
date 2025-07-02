@@ -7,163 +7,208 @@
     android:background="@color/background_color"
     tools:context=".EmployeeInfo.personal.PersonalData">
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/topLay_personal_data"
         android:layout_width="match_parent"
-        android:layout_height="86dp"
+        android:layout_height="wrap_content"
+        android:background="@color/background_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/design_2"
-            android:orientation="vertical"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:gravity="center"/>
-        <LinearLayout
 
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:background="@drawable/design"
-            android:orientation="vertical"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:gravity="center">
+            android:layout_height="0dp"
+            app:cardElevation="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="@dimen/_5sdp"
+            app:shapeAppearanceOverlay="@style/BottomRoundedCard"
+            app:cardBackgroundColor="@color/primaryVariant"/>
 
-            <TextView
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/app_bar_card_emp_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardElevation="@dimen/_2sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:gravity="center_vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:shapeAppearanceOverlay="@style/BottomRoundedCard"
+            app:cardBackgroundColor="@color/primaryColor">
+
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:fontFamily="@font/russo_one"
-                android:gravity="center"
-                android:text="Personal Information"
-                android:textColor="@color/white"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-        </LinearLayout>
+                android:paddingTop="@dimen/_15sdp"
+                android:paddingBottom="@dimen/_15sdp"
+                android:paddingStart="@dimen/_15sdp"
+                android:paddingEnd="@dimen/_15sdp">
 
-    </RelativeLayout>
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    android:id="@+id/terrain_logo2"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/hrm_new_round_icon_custom"
+                    tools:ignore="ContentDescription"
+                    app:civ_border_width="@dimen/_1sdp"
+                    app:civ_border_color="@color/white"/>
 
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_12sdp"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:layout_toEndOf="@+id/terrain_logo2"
+                    android:layout_alignParentEnd="true"
+                    android:textColor="@color/white"
+                    android:layout_centerVertical="true"
+                    android:paddingTop="@dimen/_2sdp"
+                    android:paddingBottom="0dp"
+                    android:textSize="@dimen/_15sdp"
+                    android:text="Personal Information"
+                    android:fontFamily="@font/poppins_bold"
+                    tools:ignore="HardcodedText" />
+
+            </RelativeLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/scrollView2"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="15dp"
-        app:cardCornerRadius="10dp"
-        app:cardElevation="10dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        app:cardCornerRadius="@dimen/_8sdp"
+        app:cardElevation="@dimen/_3sdp"
+        android:layout_marginStart="@dimen/_8sdp"
+        android:layout_marginEnd="@dimen/_8sdp"
         android:background="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout50_personal_data"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/topLay_personal_data">
 
-
-
-
-
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp"
-            android:background="@color/white"
-            >
+            android:layout_margin="@dimen/_8sdp"
+            android:background="@color/white">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
+                android:layout_margin="@dimen/_4sdp"
                 android:orientation="vertical">
 
-
-
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:layout_gravity="center"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="4dp"
+                        android:layout_marginTop="@dimen/_3sdp"
+                        android:layout_marginBottom="@dimen/_3sdp"
                         android:weightSum="1">
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:textStyle="bold"
                             android:layout_gravity="center"
                             android:textColor="@color/black"
-                            android:layout_weight=".7"
+                            android:layout_weight=".3"
+                            android:text="Name "
+                            android:textSize="@dimen/_10sdp"
                             android:fontFamily="@font/poppins"
-                            android:text="Name: "/>
-                        <EditText
+                            tools:ignore="HardcodedText" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_gravity="center"
+                            android:textColor="@color/black"
+                            android:layout_weight=".1"
+                            android:text=" : "
+                            android:gravity="center"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins"
+                            tools:ignore="HardcodedText" />
+
+                        <TextView
                             android:id="@+id/emp_name_p"
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:text=""
                             android:layout_gravity="center"
                             android:textStyle="bold"
-                            android:layout_weight=".3"
+                            android:layout_weight=".6"
                             android:gravity="end"
                             android:fontFamily="@font/poppins_semibold"
-                            android:textSize="15sp"
-                            android:textColor="@color/mazarine_blue"
-                            android:enabled="false"
-                            android:editable="false"
-                            android:focusable="false"
-                            android:inputType="textMultiLine"
+                            android:textSize="@dimen/_11sdp"
+                            android:textColor="@color/secondaryColor"
                             android:importantForAutofill="no"
-                            tools:ignore="LabelFor"
-                            android:clickable="false"/>
+                            tools:ignore="LabelFor"/>
 
                     </LinearLayout>
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:layout_gravity="center"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="4dp"
+                        android:layout_marginTop="@dimen/_3sdp"
+                        android:layout_marginBottom="@dimen/_3sdp"
                         android:weightSum="1">
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:textStyle="bold"
                             android:layout_gravity="center"
                             android:textColor="@color/black"
-                            android:layout_weight=".7"
+                            android:layout_weight=".3"
+                            android:textSize="@dimen/_10sdp"
                             android:fontFamily="@font/poppins"
+                            tools:ignore="HardcodedText"
                             android:text="Name (Bangla): "/>
-                        <EditText
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_gravity="center"
+                            android:textColor="@color/black"
+                            android:layout_weight=".1"
+                            android:text=" : "
+                            android:gravity="center"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins"
+                            tools:ignore="HardcodedText" />
+
+                        <TextView
                             android:id="@+id/bangla_name_p"
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:text=""
                             android:layout_gravity="center"
                             android:textStyle="bold"
-                            android:layout_weight=".3"
+                            android:layout_weight=".6"
                             android:gravity="end"
-                            android:textColor="@color/mazarine_blue"
+                            android:textColor="@color/secondaryColor"
                             android:fontFamily="@font/poppins_semibold"
-                            android:textSize="15sp"
-                            android:enabled="false"
-                            android:editable="false"
-                            android:focusable="false"
-                            android:inputType="textMultiLine"
+                            android:textSize="@dimen/_11sdp"
                             android:importantForAutofill="no"
-                            tools:ignore="LabelFor"
-                            android:clickable="false"/>
+                            tools:ignore="LabelFor" />
 
                     </LinearLayout>
                     <LinearLayout
@@ -171,75 +216,97 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:layout_gravity="center"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="4dp"
+                        android:layout_marginTop="@dimen/_3sdp"
+                        android:layout_marginBottom="@dimen/_3sdp"
                         android:weightSum="1">
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:textStyle="bold"
                             android:layout_gravity="center"
                             android:textColor="@color/black"
-                            android:layout_weight=".7"
+                            android:layout_weight=".3"
+                            android:textSize="@dimen/_10sdp"
                             android:fontFamily="@font/poppins"
+                            tools:ignore="HardcodedText"
                             android:text="Revision No: "/>
-                        <EditText
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_gravity="center"
+                            android:textColor="@color/black"
+                            android:layout_weight=".1"
+                            android:text=" : "
+                            android:gravity="center"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins"
+                            tools:ignore="HardcodedText" />
+
+                        <TextView
                             android:id="@+id/revision_no"
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:text=""
                             android:layout_gravity="center"
                             android:textStyle="bold"
-                            android:layout_weight=".3"
+                            android:layout_weight=".6"
                             android:gravity="end"
-                            android:textColor="@color/mazarine_blue"
+                            android:textColor="@color/secondaryColor"
                             android:fontFamily="@font/poppins_semibold"
-                            android:textSize="15sp"
-                            android:enabled="false"
-                            android:editable="false"
-                            android:focusable="false"
-                            android:inputType="textMultiLine"
+                            android:textSize="@dimen/_11sdp"
                             android:importantForAutofill="no"
-                            tools:ignore="LabelFor"
-                            android:clickable="false"/>
+                            tools:ignore="LabelFor"/>
 
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:weightSum="1"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="4dp"
+                        android:layout_marginTop="@dimen/_3sdp"
+                        android:layout_marginBottom="@dimen/_3sdp"
                         android:layout_gravity="center"
                         android:orientation="horizontal">
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:textStyle="bold"
                             android:layout_gravity="center"
-                            android:layout_weight=".7"
+                            android:layout_weight=".3"
                             android:textColor="@color/black"
+                            android:textSize="@dimen/_10sdp"
                             android:fontFamily="@font/poppins"
+                            tools:ignore="HardcodedText"
                             android:text="Effected Date: "/>
-                        <EditText
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_gravity="center"
+                            android:textColor="@color/black"
+                            android:layout_weight=".1"
+                            android:text=" : "
+                            android:gravity="center"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins"
+                            tools:ignore="HardcodedText" />
+
+                        <TextView
                             android:id="@+id/effected_da"
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:text=""
-                            android:layout_weight=".3"
+                            android:layout_weight=".6"
                             android:layout_gravity="center"
                             android:textStyle="bold"
                             android:gravity="end"
-                            android:textColor="@color/mazarine_blue"
+                            android:textColor="@color/secondaryColor"
                             android:fontFamily="@font/poppins_semibold"
-                            android:textSize="15sp"
-                            android:enabled="false"
-                            android:editable="false"
-                            android:focusable="false"
-                            android:inputType="textMultiLine"
-                            android:clickable="false"
+                            android:textSize="@dimen/_11sdp"
                             android:importantForAutofill="no"
                             tools:ignore="LabelFor" />
 
@@ -249,23 +316,38 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:weightSum="1"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="4dp"
+                        android:layout_marginTop="@dimen/_3sdp"
+                        android:layout_marginBottom="@dimen/_3sdp"
                         android:orientation="horizontal">
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:textStyle="bold"
-                            android:layout_weight=".7"
+                            android:layout_weight=".3"
                             android:layout_gravity="center"
                             android:textColor="@color/black"
+                            android:textSize="@dimen/_10sdp"
                             android:fontFamily="@font/poppins"
+                            tools:ignore="HardcodedText"
                             android:text="Blood Group: "/>
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_gravity="center"
+                            android:textColor="@color/black"
+                            android:layout_weight=".1"
+                            android:text=" : "
+                            android:gravity="center"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins"
+                            tools:ignore="HardcodedText" />
 <!--                        <Spinner-->
 <!--                            android:layout_gravity="center"-->
 <!--                            android:id="@+id/spinner_blood"-->
-<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_width="0dp"-->
 <!--                            android:layout_height="wrap_content"-->
 <!--                            android:layout_margin = "5dp"-->
 <!--                            android:layout_weight=".3"-->
@@ -273,49 +355,60 @@
 <!--                            android:background="@drawable/blue_outline"-->
 <!--                            android:popupBackground="@drawable/blue_outline_white_background"-->
 <!--                            android:spinnerMode="dropdown"/>-->
-                        <EditText
+                        <TextView
                             android:id="@+id/spinner_blood"
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:text=""
                             android:layout_gravity="center"
                             android:textStyle="bold"
-                            android:layout_weight=".3"
+                            android:layout_weight=".6"
                             android:gravity="end"
-                            android:textColor="@color/mazarine_blue"
+                            android:textColor="@color/secondaryColor"
                             android:fontFamily="@font/poppins_semibold"
-                            android:textSize="15sp"
-                            android:enabled="false"
-                            android:editable="false"
-                            android:focusable="false"
-                            android:inputType="textMultiLine"
+                            android:textSize="@dimen/_11sdp"
                             android:importantForAutofill="no"
-                            tools:ignore="LabelFor"
-                            android:clickable="false"/>
+                            tools:ignore="LabelFor"/>
 
                     </LinearLayout>
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:weightSum="1"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="4dp"
+                        android:layout_marginTop="@dimen/_3sdp"
+                        android:layout_marginBottom="@dimen/_3sdp"
                         android:orientation="horizontal">
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:textStyle="bold"
                             android:layout_gravity="center"
-                            android:layout_weight=".7"
+                            android:layout_weight=".3"
                             android:textColor="@color/black"
+                            android:textSize="@dimen/_10sdp"
                             android:fontFamily="@font/poppins"
+                            tools:ignore="HardcodedText"
                             android:text="Group Display: "/>
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_gravity="center"
+                            android:textColor="@color/black"
+                            android:layout_weight=".1"
+                            android:text=" : "
+                            android:gravity="center"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins"
+                            tools:ignore="HardcodedText" />
 <!--                        <Spinner-->
 <!--                            android:layout_gravity="center"-->
 <!--                            android:id="@+id/spinner_gr_display"-->
-<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_width="0dp"-->
 <!--                            android:layout_height="wrap_content"-->
 <!--                            android:layout_weight=".3"-->
 <!--                            android:layout_margin = "5dp"-->
@@ -323,581 +416,724 @@
 <!--                            android:background="@drawable/blue_outline"-->
 <!--                            android:popupBackground="@drawable/blue_outline_white_background"-->
 <!--                            android:spinnerMode="dropdown"/>-->
-                        <EditText
+                        <TextView
                             android:id="@+id/spinner_gr_display"
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:text=""
                             android:layout_gravity="center"
                             android:textStyle="bold"
-                            android:layout_weight=".3"
+                            android:layout_weight=".6"
                             android:gravity="end"
-                            android:textColor="@color/mazarine_blue"
+                            android:textColor="@color/secondaryColor"
                             android:fontFamily="@font/poppins_semibold"
-                            android:textSize="15sp"
-                            android:enabled="false"
-                            android:editable="false"
-                            android:focusable="false"
-                            android:inputType="textMultiLine"
+                            android:textSize="@dimen/_11sdp"
                             android:importantForAutofill="no"
-                            tools:ignore="LabelFor"
-                            android:clickable="false"/>
-
+                            tools:ignore="LabelFor"/>
 
                     </LinearLayout>
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:weightSum="1"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="4dp"
+                        android:layout_marginTop="@dimen/_3sdp"
+                        android:layout_marginBottom="@dimen/_3sdp"
                         android:orientation="horizontal">
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:textStyle="bold"
-                            android:layout_weight=".7"
+                            android:layout_weight=".3"
                             android:layout_gravity="center"
                             android:textColor="@color/black"
+                            android:textSize="@dimen/_10sdp"
                             android:fontFamily="@font/poppins"
+                            tools:ignore="HardcodedText"
                             android:text="Date of Birth: "/>
-                        <EditText
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_gravity="center"
+                            android:textColor="@color/black"
+                            android:layout_weight=".1"
+                            android:text=" : "
+                            android:gravity="center"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins"
+                            tools:ignore="HardcodedText" />
+
+                        <TextView
                             android:id="@+id/birth"
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:text=""
-                            android:layout_weight=".3"
+                            android:layout_weight=".6"
                             android:layout_gravity="center"
                             android:textStyle="bold"
                             android:gravity="end"
-                            android:textColor="@color/mazarine_blue"
+                            android:textColor="@color/secondaryColor"
                             android:fontFamily="@font/poppins_semibold"
-                            android:textSize="15sp"
-                            android:enabled="false"
-                            android:editable="false"
-                            android:focusable="false"
-                            android:inputType="textMultiLine"
-                            android:clickable="false"
+                            android:textSize="@dimen/_11sdp"
                             android:importantForAutofill="no"
                             tools:ignore="LabelFor" />
 
                     </LinearLayout>
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:weightSum="1"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="4dp"
+                        android:layout_marginTop="@dimen/_3sdp"
+                        android:layout_marginBottom="@dimen/_3sdp"
                         android:orientation="horizontal">
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:textStyle="bold"
-                            android:layout_weight=".7"
+                            android:layout_weight=".3"
                             android:layout_gravity="center"
                             android:textColor="@color/black"
+                            android:textSize="@dimen/_10sdp"
                             android:fontFamily="@font/poppins"
+                            tools:ignore="HardcodedText"
                             android:text="Religion: "/>
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_gravity="center"
+                            android:textColor="@color/black"
+                            android:layout_weight=".1"
+                            android:text=" : "
+                            android:gravity="center"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins"
+                            tools:ignore="HardcodedText" />
+
 <!--                        <Spinner-->
 <!--                            android:layout_gravity="center"-->
 <!--                            android:id="@+id/spineer_religion"-->
 <!--                            android:layout_weight=".3"-->
-<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_width="0dp"-->
 <!--                            android:layout_height="wrap_content"-->
 <!--                            android:layout_margin = "5dp"-->
 <!--                            android:clickable="false"-->
 <!--                            android:background="@drawable/blue_outline"-->
 <!--                            android:popupBackground="@drawable/blue_outline_white_background"-->
 <!--                            android:spinnerMode="dropdown"/>-->
-                        <EditText
+                        <TextView
                             android:id="@+id/spineer_religion"
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:text=""
                             android:layout_gravity="center"
                             android:textStyle="bold"
-                            android:layout_weight=".3"
+                            android:layout_weight=".6"
                             android:gravity="end"
-                            android:textColor="@color/mazarine_blue"
+                            android:textColor="@color/secondaryColor"
                             android:fontFamily="@font/poppins_semibold"
-                            android:textSize="15sp"
-                            android:enabled="false"
-                            android:editable="false"
-                            android:focusable="false"
-                            android:inputType="textMultiLine"
+                            android:textSize="@dimen/_11sdp"
                             android:importantForAutofill="no"
-                            tools:ignore="LabelFor"
-                            android:clickable="false"/>
-
+                            tools:ignore="LabelFor"/>
 
                     </LinearLayout>
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:weightSum="1"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="4dp"
+                        android:layout_marginTop="@dimen/_3sdp"
+                        android:layout_marginBottom="@dimen/_3sdp"
                         android:orientation="horizontal">
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:textStyle="bold"
-                            android:layout_weight=".7"
+                            android:layout_weight=".3"
                             android:layout_gravity="center"
                             android:textColor="@color/black"
+                            android:textSize="@dimen/_10sdp"
                             android:fontFamily="@font/poppins"
+                            tools:ignore="HardcodedText"
                             android:text="Nationality: "/>
-                        <EditText
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_gravity="center"
+                            android:textColor="@color/black"
+                            android:layout_weight=".1"
+                            android:text=" : "
+                            android:gravity="center"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins"
+                            tools:ignore="HardcodedText" />
+
+                        <TextView
                             android:id="@+id/nationality"
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:text=""
-                            android:layout_weight=".3"
+                            android:layout_weight=".6"
                             android:layout_gravity="center"
                             android:textStyle="bold"
                             android:gravity="end"
-                            android:textColor="@color/mazarine_blue"
+                            android:textColor="@color/secondaryColor"
                             android:fontFamily="@font/poppins_semibold"
-                            android:textSize="15sp"
-                            android:enabled="false"
-                            android:editable="false"
-                            android:focusable="false"
-                            android:inputType="textMultiLine"
-                            android:clickable="false"
+                            android:textSize="@dimen/_11sdp"
                             android:importantForAutofill="no"
                             tools:ignore="LabelFor" />
 
                     </LinearLayout>
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:weightSum="1"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="4dp"
+                        android:layout_marginTop="@dimen/_3sdp"
+                        android:layout_marginBottom="@dimen/_3sdp"
                         android:orientation="horizontal">
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:textStyle="bold"
-                            android:layout_weight=".7"
+                            android:layout_weight=".3"
                             android:layout_gravity="center"
+                            android:textSize="@dimen/_10sdp"
                             android:fontFamily="@font/poppins"
+                            tools:ignore="HardcodedText"
                             android:textColor="@color/black"
                             android:text="Sex: "/>
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_gravity="center"
+                            android:textColor="@color/black"
+                            android:layout_weight=".1"
+                            android:text=" : "
+                            android:gravity="center"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins"
+                            tools:ignore="HardcodedText" />
 <!--                        <Spinner-->
 <!--                            android:layout_gravity="center"-->
 <!--                            android:id="@+id/spinner_sex"-->
 <!--                            android:layout_weight=".3"-->
-<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_width="0dp"-->
 <!--                            android:layout_height="wrap_content"-->
 <!--                            android:layout_margin = "5dp"-->
 <!--                            android:clickable="false"-->
 <!--                            android:background="@drawable/blue_outline"-->
 <!--                            android:popupBackground="@drawable/blue_outline_white_background"-->
 <!--                            android:spinnerMode="dropdown"/>-->
-                        <EditText
+                        <TextView
                             android:id="@+id/spinner_sex"
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:text=""
                             android:layout_gravity="center"
                             android:textStyle="bold"
-                            android:layout_weight=".3"
+                            android:layout_weight=".6"
                             android:gravity="end"
-                            android:textColor="@color/mazarine_blue"
+                            android:textColor="@color/secondaryColor"
                             android:fontFamily="@font/poppins_semibold"
-                            android:textSize="15sp"
-                            android:enabled="false"
-                            android:editable="false"
-                            android:focusable="false"
-                            android:inputType="textMultiLine"
+                            android:textSize="@dimen/_11sdp"
                             android:importantForAutofill="no"
-                            tools:ignore="LabelFor"
-                            android:clickable="false"/>
-
+                            tools:ignore="LabelFor"/>
 
                     </LinearLayout>
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:weightSum="1"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="4dp"
+                        android:layout_marginTop="@dimen/_3sdp"
+                        android:layout_marginBottom="@dimen/_3sdp"
                         android:orientation="horizontal">
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:textStyle="bold"
-                            android:layout_weight=".7"
+                            android:layout_weight=".3"
                             android:layout_gravity="center"
                             android:textColor="@color/black"
+                            android:textSize="@dimen/_10sdp"
                             android:fontFamily="@font/poppins"
+                            tools:ignore="HardcodedText"
                             android:text="Family Name: "/>
-                        <EditText
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_gravity="center"
+                            android:textColor="@color/black"
+                            android:layout_weight=".1"
+                            android:text=" : "
+                            android:gravity="center"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins"
+                            tools:ignore="HardcodedText" />
+
+                        <TextView
                             android:id="@+id/family_name"
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:text=""
-                            android:layout_weight=".3"
+                            android:layout_weight=".6"
                             android:layout_gravity="center"
                             android:textStyle="bold"
                             android:gravity="end"
-                            android:textColor="@color/mazarine_blue"
+                            android:textColor="@color/secondaryColor"
                             android:fontFamily="@font/poppins_semibold"
-                            android:textSize="15sp"
-                            android:enabled="false"
-                            android:editable="false"
-                            android:focusable="false"
-                            android:inputType="textMultiLine"
-                            android:clickable="false"
+                            android:textSize="@dimen/_11sdp"
                             android:importantForAutofill="no"
                             tools:ignore="LabelFor" />
 
                     </LinearLayout>
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:weightSum="1"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="4dp"
+                        android:layout_marginTop="@dimen/_3sdp"
+                        android:layout_marginBottom="@dimen/_3sdp"
                         android:orientation="horizontal">
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:textStyle="bold"
-                            android:layout_weight=".7"
+                            android:layout_weight=".3"
                             android:layout_gravity="center"
                             android:textColor="@color/black"
+                            android:textSize="@dimen/_10sdp"
                             android:fontFamily="@font/poppins"
+                            tools:ignore="HardcodedText"
                             android:text="Calling Name: "/>
-                        <EditText
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_gravity="center"
+                            android:textColor="@color/black"
+                            android:layout_weight=".1"
+                            android:text=" : "
+                            android:gravity="center"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins"
+                            tools:ignore="HardcodedText" />
+
+                        <TextView
                             android:id="@+id/calling_name"
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:text=""
-                            android:layout_weight=".3"
+                            android:layout_weight=".6"
                             android:layout_gravity="center"
                             android:textStyle="bold"
                             android:gravity="end"
-                            android:textColor="@color/mazarine_blue"
+                            android:textColor="@color/secondaryColor"
                             android:fontFamily="@font/poppins_semibold"
-                            android:textSize="15sp"
-                            android:enabled="false"
-                            android:editable="false"
-                            android:focusable="false"
-                            android:inputType="textMultiLine"
-                            android:clickable="false"
+                            android:textSize="@dimen/_11sdp"
                             android:importantForAutofill="no"
                             tools:ignore="LabelFor" />
 
                     </LinearLayout>
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:weightSum="1"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="4dp"
+                        android:layout_marginTop="@dimen/_3sdp"
+                        android:layout_marginBottom="@dimen/_3sdp"
                         android:orientation="horizontal">
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:textStyle="bold"
-                            android:layout_weight=".7"
+                            android:layout_weight=".3"
                             android:layout_gravity="center"
                             android:textColor="@color/black"
+                            android:textSize="@dimen/_10sdp"
                             android:fontFamily="@font/poppins"
+                            tools:ignore="HardcodedText"
                             android:text="Personal Email: "/>
-                        <EditText
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_gravity="center"
+                            android:textColor="@color/black"
+                            android:layout_weight=".1"
+                            android:text=" : "
+                            android:gravity="center"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins"
+                            tools:ignore="HardcodedText" />
+
+                        <TextView
                             android:id="@+id/personal_email"
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:text=""
-                            android:layout_weight=".3"
+                            android:layout_weight=".6"
                             android:layout_gravity="center"
                             android:textStyle="bold"
                             android:gravity="end"
-                            android:editable="false"
-                            android:focusable="false"
-                            android:textColor="@color/mazarine_blue"
+                            android:textColor="@color/secondaryColor"
                             android:fontFamily="@font/poppins_semibold"
-                            android:textSize="15sp"
-                            android:enabled="false"
-                            android:inputType="textMultiLine"
-                            android:clickable="false"
+                            android:textSize="@dimen/_11sdp"
                             android:importantForAutofill="no"
                             tools:ignore="LabelFor" />
 
                     </LinearLayout>
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:weightSum="1"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="4dp"
+                        android:layout_marginTop="@dimen/_3sdp"
+                        android:layout_marginBottom="@dimen/_3sdp"
                         android:orientation="horizontal">
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:textStyle="bold"
-                            android:layout_weight=".7"
+                            android:layout_weight=".3"
                             android:layout_gravity="center"
                             android:textColor="@color/black"
+                            android:textSize="@dimen/_10sdp"
                             android:fontFamily="@font/poppins"
+                            tools:ignore="HardcodedText"
                             android:text="Present Address: "/>
-                        <EditText
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_gravity="center"
+                            android:textColor="@color/black"
+                            android:layout_weight=".1"
+                            android:text=" : "
+                            android:gravity="center"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins"
+                            tools:ignore="HardcodedText" />
+
+                        <TextView
                             android:id="@+id/present_address"
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:text=""
-                            android:layout_weight=".3"
+                            android:layout_weight=".6"
                             android:layout_gravity="center"
                             android:textStyle="bold"
                             android:gravity="end"
-                            android:editable="false"
-                            android:focusable="false"
-                            android:textColor="@color/mazarine_blue"
+                            android:textColor="@color/secondaryColor"
                             android:fontFamily="@font/poppins_semibold"
-                            android:textSize="15sp"
-                            android:enabled="false"
-                            android:inputType="textMultiLine"
-                            android:clickable="false"
+                            android:textSize="@dimen/_11sdp"
                             android:importantForAutofill="no"
                             tools:ignore="LabelFor" />
 
                     </LinearLayout>
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:weightSum="1"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="4dp"
+                        android:layout_marginTop="@dimen/_3sdp"
+                        android:layout_marginBottom="@dimen/_3sdp"
                         android:orientation="horizontal">
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:textStyle="bold"
-                            android:layout_weight=".7"
+                            android:layout_weight=".3"
                             android:layout_gravity="center"
                             android:textColor="@color/black"
+                            android:textSize="@dimen/_10sdp"
                             android:fontFamily="@font/poppins"
+                            tools:ignore="HardcodedText"
                             android:text="Permanent Address: "/>
-                        <EditText
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_gravity="center"
+                            android:textColor="@color/black"
+                            android:layout_weight=".1"
+                            android:text=" : "
+                            android:gravity="center"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins"
+                            tools:ignore="HardcodedText" />
+
+                        <TextView
                             android:id="@+id/permanent_address"
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:text=""
-                            android:layout_weight=".3"
+                            android:layout_weight=".6"
                             android:layout_gravity="center"
                             android:textStyle="bold"
                             android:gravity="end"
-                            android:editable="false"
-                            android:focusable="false"
-                            android:textColor="@color/mazarine_blue"
+                            android:textColor="@color/secondaryColor"
                             android:fontFamily="@font/poppins_semibold"
-                            android:textSize="15sp"
-                            android:enabled="false"
-                            android:inputType="textMultiLine"
-                            android:clickable="false"
+                            android:textSize="@dimen/_11sdp"
                             android:importantForAutofill="no"
                             tools:ignore="LabelFor" />
 
                     </LinearLayout>
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:weightSum="1"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="4dp"
+                        android:layout_marginTop="@dimen/_3sdp"
+                        android:layout_marginBottom="@dimen/_3sdp"
                         android:orientation="horizontal">
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:textStyle="bold"
-                            android:layout_weight=".7"
+                            android:layout_weight=".3"
                             android:layout_gravity="center"
                             android:textColor="@color/black"
+                            android:textSize="@dimen/_10sdp"
                             android:fontFamily="@font/poppins"
+                            tools:ignore="HardcodedText"
                             android:text="Marital Status: "/>
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_gravity="center"
+                            android:textColor="@color/black"
+                            android:layout_weight=".1"
+                            android:text=" : "
+                            android:gravity="center"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins"
+                            tools:ignore="HardcodedText" />
 <!--                        <Spinner-->
 <!--                            android:layout_gravity="center"-->
 <!--                            android:id="@+id/spinner_marital_status"-->
 <!--                            android:layout_weight=".3"-->
-<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_width="0dp"-->
 <!--                            android:layout_height="wrap_content"-->
 <!--                            android:layout_margin = "5dp"-->
 <!--                            android:clickable="false"-->
 <!--                            android:background="@drawable/blue_outline"-->
 <!--                            android:popupBackground="@drawable/blue_outline_white_background"-->
 <!--                            android:spinnerMode="dropdown"/>-->
-                        <EditText
+                        <TextView
                             android:id="@+id/spinner_marital_status"
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:text=""
                             android:layout_gravity="center"
                             android:textStyle="bold"
-                            android:layout_weight=".3"
+                            android:layout_weight=".6"
                             android:gravity="end"
-                            android:textColor="@color/mazarine_blue"
+                            android:textColor="@color/secondaryColor"
                             android:fontFamily="@font/poppins_semibold"
-                            android:textSize="15sp"
-                            android:enabled="false"
-                            android:editable="false"
-                            android:focusable="false"
-                            android:inputType="textMultiLine"
+                            android:textSize="@dimen/_11sdp"
                             android:importantForAutofill="no"
-                            tools:ignore="LabelFor"
-                            android:clickable="false"/>
-
+                            tools:ignore="LabelFor"/>
 
                     </LinearLayout>
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:weightSum="1"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="4dp"
+                        android:layout_marginTop="@dimen/_3sdp"
+                        android:layout_marginBottom="@dimen/_3sdp"
                         android:orientation="horizontal">
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:textStyle="bold"
-                            android:layout_weight=".7"
+                            android:layout_weight=".3"
                             android:layout_gravity="center"
                             android:textColor="@color/black"
+                            android:textSize="@dimen/_10sdp"
                             android:fontFamily="@font/poppins"
+                            tools:ignore="HardcodedText"
                             android:text="Present Address Bangla: "/>
-                        <EditText
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_gravity="center"
+                            android:textColor="@color/black"
+                            android:layout_weight=".1"
+                            android:text=" : "
+                            android:gravity="center"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins"
+                            tools:ignore="HardcodedText" />
+
+                        <TextView
                             android:id="@+id/present_address_bangla"
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:text=""
-                            android:layout_weight=".3"
+                            android:layout_weight=".6"
                             android:layout_gravity="center"
                             android:textStyle="bold"
                             android:gravity="end"
-                            android:editable="false"
-                            android:focusable="false"
-                            android:textColor="@color/mazarine_blue"
+                            android:textColor="@color/secondaryColor"
                             android:fontFamily="@font/poppins_semibold"
-                            android:textSize="15sp"
-                            android:enabled="false"
-                            android:inputType="textMultiLine"
-                            android:clickable="false"
+                            android:textSize="@dimen/_11sdp"
                             android:importantForAutofill="no"
                             tools:ignore="LabelFor" />
 
                     </LinearLayout>
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="4dp"
+                        android:layout_marginTop="@dimen/_3sdp"
+                        android:layout_marginBottom="@dimen/_3sdp"
                         android:weightSum="1"
                         android:orientation="horizontal">
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:textStyle="bold"
-                            android:layout_weight=".7"
+                            android:layout_weight=".3"
                             android:layout_gravity="center"
                             android:textColor="@color/black"
+                            android:textSize="@dimen/_10sdp"
                             android:fontFamily="@font/poppins"
+                            tools:ignore="HardcodedText"
                             android:text="Permanent Address Bangla: "/>
-                        <EditText
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_gravity="center"
+                            android:textColor="@color/black"
+                            android:layout_weight=".1"
+                            android:text=" : "
+                            android:gravity="center"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins"
+                            tools:ignore="HardcodedText" />
+
+                        <TextView
                             android:id="@+id/permanent_address_bangla"
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:text=""
-                            android:layout_weight=".3"
+                            android:layout_weight=".6"
                             android:layout_gravity="center"
                             android:textStyle="bold"
                             android:gravity="end"
-                            android:textColor="@color/mazarine_blue"
+                            android:textColor="@color/secondaryColor"
                             android:fontFamily="@font/poppins_semibold"
-                            android:textSize="15sp"
-                            android:enabled="false"
-                            android:editable="false"
-                            android:focusable="false"
-                            android:inputType="textMultiLine"
-                            android:clickable="false"
+                            android:textSize="@dimen/_11sdp"
                             android:importantForAutofill="no"
                             tools:ignore="LabelFor" />
 
                     </LinearLayout>
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="4dp"
+                        android:layout_marginTop="@dimen/_3sdp"
+                        android:layout_marginBottom="@dimen/_3sdp"
                         android:weightSum="1"
                         android:orientation="horizontal">
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:textStyle="bold"
-                            android:layout_weight=".7"
+                            android:layout_weight=".3"
                             android:layout_gravity="center"
                             android:textColor="@color/black"
+                            android:textSize="@dimen/_10sdp"
                             android:fontFamily="@font/poppins"
+                            tools:ignore="HardcodedText"
                             android:text="Mailing Address: "/>
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_gravity="center"
+                            android:textColor="@color/black"
+                            android:layout_weight=".1"
+                            android:text=" : "
+                            android:gravity="center"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins"
+                            tools:ignore="HardcodedText" />
 <!--                        <Spinner-->
 <!--                            android:layout_gravity="center"-->
 <!--                            android:id="@+id/spinner_mailing_address"-->
 <!--                            android:layout_weight=".3"-->
-<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_width="0dp"-->
 <!--                            android:layout_height="wrap_content"-->
 <!--                            android:layout_margin = "5dp"-->
 <!--                            android:clickable="false"-->
 <!--                            android:background="@drawable/blue_outline"-->
 <!--                            android:popupBackground="@drawable/blue_outline_white_background"-->
 <!--                            android:spinnerMode="dropdown"/>-->
-                        <EditText
+                        <TextView
                             android:id="@+id/spinner_mailing_address"
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:text=""
                             android:layout_gravity="center"
                             android:textStyle="bold"
-                            android:layout_weight=".3"
+                            android:layout_weight=".6"
                             android:gravity="end"
-                            android:textColor="@color/mazarine_blue"
+                            android:textColor="@color/secondaryColor"
                             android:fontFamily="@font/poppins_semibold"
-                            android:textSize="15sp"
-                            android:enabled="false"
-                            android:editable="false"
-                            android:focusable="false"
-                            android:inputType="textMultiLine"
+                            android:textSize="@dimen/_11sdp"
                             android:importantForAutofill="no"
-                            tools:ignore="LabelFor"
-                            android:clickable="false"/>
-
+                            tools:ignore="LabelFor"/>
 
                     </LinearLayout>
 
@@ -934,8 +1170,6 @@
             </LinearLayout>
 
         </ScrollView>
-
-
 
     </androidx.cardview.widget.CardView>
 

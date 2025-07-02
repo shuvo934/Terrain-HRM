@@ -1,32 +1,32 @@
 package ttit.com.shuvo.ikglhrm.leaveAll.leaveApprove;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
@@ -38,6 +38,7 @@ import ttit.com.shuvo.ikglhrm.leaveAll.leaveApprove.leaveAppDialogues.ForwardHis
 import ttit.com.shuvo.ikglhrm.leaveAll.leaveApprove.leaveAppDialogues.ForwardHistoryList;
 
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -74,8 +75,7 @@ public class LeaveApprove extends AppCompatActivity {
     Button approve;
     Button forward;
     Button reject;
-    Button close;
-    Button fh;
+    MaterialButton fh;
 
     String emp_name = "";
     String emp_id = "";
@@ -94,11 +94,8 @@ public class LeaveApprove extends AppCompatActivity {
     String approveSuccess = "";
     String rejectSuccess = "";
 
-
-
     WaitProgress waitProgress = new WaitProgress();
 
-//    private String message = null;
     private Boolean conn = false;
     private Boolean connected = false;
 
@@ -112,9 +109,7 @@ public class LeaveApprove extends AppCompatActivity {
     private Boolean isRejected = false;
     private Boolean isRejectedChecked = false;
     private Boolean rrreeejjjeecctt = false;
-
-//    private Connection connection;
-
+    
     String emp_code = "";
     String user_id = "";
     public static String req_code_leave = "";
@@ -127,13 +122,11 @@ public class LeaveApprove extends AppCompatActivity {
 
     public static ArrayList<ForwardHistoryList> forwardHistoryLists;
 
+    Logger logger = Logger.getLogger(LeaveApprove.class.getName());
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Window window = getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(ContextCompat.getColor(LeaveApprove.this,R.color.secondaryColor));
         setContentView(R.layout.activity_leave_approve);
 
         afterSelecting = findViewById(R.id.after_request_selecting_leave_approve);
@@ -157,7 +150,6 @@ public class LeaveApprove extends AppCompatActivity {
         approve = findViewById(R.id.approve_button_leave);
         forward = findViewById(R.id.forward_button_leave);
         reject = findViewById(R.id.reject_button_leave);
-        close = findViewById(R.id.close_button_leave_approve);
         fh = findViewById(R.id.forward_history_button_leave);
 
 
@@ -170,25 +162,10 @@ public class LeaveApprove extends AppCompatActivity {
 //        new Check().execute();
         getReqLists();
 
-        requestCodeLeave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                fromLApp = 1;
-                SelectApproveReq selectRequest = new SelectApproveReq();
-                selectRequest.show(getSupportFragmentManager(),"Request");
-            }
-        });
-
-        close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                req_code_leave = "";
-                la_id = "";
-                la_emp_id = "";
-                leaveReqList = new ArrayList<>();
-                finish();
-            }
+        requestCodeLeave.setOnClickListener(v -> {
+            fromLApp = 1;
+            SelectApproveReq selectRequest = new SelectApproveReq();
+            selectRequest.show(getSupportFragmentManager(),"Request");
         });
 
         requestCodeLeave.addTextChangedListener(new TextWatcher() {
@@ -204,149 +181,113 @@ public class LeaveApprove extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-
-
-//                new GettingData().execute();
                 getReqData();
-
             }
         });
 
-        fh.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                forwardFromLeave = 1;
-                ForwardHistoryDial forwardHistoryDial = new ForwardHistoryDial();
-                forwardHistoryDial.show(getSupportFragmentManager(),"Forward");
-            }
+        fh.setOnClickListener(v -> {
+            forwardFromLeave = 1;
+            ForwardHistoryDial forwardHistoryDial = new ForwardHistoryDial();
+            forwardHistoryDial.show(getSupportFragmentManager(),"Forward");
         });
 
-        comments.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                number = 1;
-                hintLA = commentsLay.getHint().toString();
-                textLA = comments.getText().toString();
-                DialogueText dialogueText = new DialogueText();
-                dialogueText.show(getSupportFragmentManager(),"TEXTEDIT");
-            }
+        comments.setOnClickListener(v -> {
+            number = 1;
+            hintLA = Objects.requireNonNull(commentsLay.getHint()).toString();
+            textLA = Objects.requireNonNull(comments.getText()).toString();
+            DialogueText dialogueText = new DialogueText();
+            dialogueText.show(getSupportFragmentManager(),"TEXTEDIT");
         });
 
-        approve.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        approve.setOnClickListener(v -> {
 //                text = comments.getText().toString();
 //                new ApproveCheck().execute();
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(LeaveApprove.this);
-                builder.setTitle("Approve Leave!")
-                        .setMessage("Do you want approve this leave?")
-                        .setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(LeaveApprove.this);
+            builder.setTitle("Approve Leave!")
+                    .setMessage("Do you want approve this leave?")
+                    .setPositiveButton("YES", (dialog, which) -> {
 
 
-                                // checking it is sick leave or not
-                                if (lc_id.equals("2")) {
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(LeaveApprove.this);
-                                    builder.setTitle("Prescription Check!")
-                                            .setMessage("Did you checked prescription of the applicant?")
-                                            .setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
+                        // checking it is sick leave or not
+                        if (lc_id.equals("2")) {
+                            AlertDialog.Builder builder1 = new AlertDialog.Builder(LeaveApprove.this);
+                            builder1.setTitle("Prescription Check!")
+                                    .setMessage("Did you checked prescription of the applicant?")
+                                    .setPositiveButton("YES", (dialog1, which1) -> {
 
 
-                                                    sl_check = "1";
-                                                    textLA = comments.getText().toString();
+                                        sl_check = "1";
+                                        textLA = Objects.requireNonNull(comments.getText()).toString();
 //                                                    new ApproveCheck().execute();
-                                                    leaveApproveProcess();
-                                                }
-                                            })
-                                            .setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    sl_check = "0";
-                                                    textLA = comments.getText().toString();
+                                        leaveApproveProcess();
+                                    })
+                                    .setNegativeButton("NO", (dialog12, which12) -> {
+                                        sl_check = "0";
+                                        textLA = Objects.requireNonNull(comments.getText()).toString();
 //                                                    new ApproveCheck().execute();
-                                                    leaveApproveProcess();
-                                                }
-                                            });
-                                    AlertDialog alert = builder.create();
-                                    alert.show();
+                                        leaveApproveProcess();
+                                    });
+                            AlertDialog alert = builder1.create();
+                            alert.show();
 
-                                } else {
+                        } else {
 
-                                    textLA = comments.getText().toString();
+                            textLA = Objects.requireNonNull(comments.getText()).toString();
 //                                    new ApproveCheck().execute();
-                                    leaveApproveProcess();
-                                }
+                            leaveApproveProcess();
+                        }
 
-                            }
+                    })
+                    .setNegativeButton("NO", (dialog, which) -> {
+
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
+        });
+
+        forward.setOnClickListener(v -> {
+            forwardFromLeave = 1;
+            ForwardDialogue forwardDialogue = new ForwardDialogue(LeaveApprove.this);
+            forwardDialogue.show(getSupportFragmentManager(),"FORWARD");
+        });
+
+        reject.setOnClickListener(v -> {
+//                text = comments.getText().toString();
+//                new ApproveCheck().execute();
+
+            textLA = Objects.requireNonNull(comments.getText()).toString();
+
+            if (textLA.isEmpty()) {
+                Toast.makeText(getApplicationContext(), "Please mention reason", Toast.LENGTH_SHORT).show();
+            } else {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(LeaveApprove.this);
+                builder.setTitle("Reject Leave!")
+                        .setMessage("Do you want reject this leave?")
+                        .setPositiveButton("YES", (dialog, which) -> {
+
+//                                    new RejectCheck().execute();
+                            leaveRejectProcess();
                         })
-                        .setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
+                        .setNegativeButton("NO", (dialog, which) -> {
 
-                            }
                         });
                 AlertDialog alert = builder.create();
                 alert.show();
             }
         });
-
-        forward.setOnClickListener(new View.OnClickListener() {
+        
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
-            public void onClick(View v) {
-
-                forwardFromLeave = 1;
-                ForwardDialogue forwardDialogue = new ForwardDialogue(LeaveApprove.this);
-                forwardDialogue.show(getSupportFragmentManager(),"FORWARD");
+            public void handleOnBackPressed() {
+                req_code_leave = "";
+                la_id = "";
+                la_emp_id = "";
+                leaveReqList = new ArrayList<>();
+                finish();
             }
         });
-
-        reject.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                text = comments.getText().toString();
-//                new ApproveCheck().execute();
-
-                textLA = comments.getText().toString();
-
-                if (textLA.isEmpty()) {
-                    Toast.makeText(getApplicationContext(), "Please mention reason", Toast.LENGTH_SHORT).show();
-                } else {
-
-                    AlertDialog.Builder builder = new AlertDialog.Builder(LeaveApprove.this);
-                    builder.setTitle("Reject Leave!")
-                            .setMessage("Do you want reject this leave?")
-                            .setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-//                                    new RejectCheck().execute();
-                                    leaveRejectProcess();
-                                }
-                            })
-                            .setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-                                }
-                            });
-                    AlertDialog alert = builder.create();
-                    alert.show();
-                }
-            }
-        });
-    }
-
-    @Override
-    public void onBackPressed() {
-        req_code_leave = "";
-        la_id = "";
-        la_emp_id = "";
-        leaveReqList = new ArrayList<>();
-        finish();
     }
 
 //    public boolean isConnected() {
@@ -371,7 +312,7 @@ public class LeaveApprove extends AppCompatActivity {
 //            int     exitValue = ipProcess.waitFor();
 //            return (exitValue == 0);
 //        }
-//        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
+//        catch (IOException | InterruptedException e)          { logger.log(Level.WARNING, e.getMessage(), e); }
 //
 //        return false;
 //    }
@@ -888,7 +829,7 @@ public class LeaveApprove extends AppCompatActivity {
 //
 //            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
 //            Log.i("ERRRRR", e.getLocalizedMessage());
-//            e.printStackTrace();
+//            logger.log(Level.WARNING, e.getMessage(), e);
 //        }
 //    }
 
@@ -900,7 +841,7 @@ public class LeaveApprove extends AppCompatActivity {
 
         leaveReqList = new ArrayList<>();
 
-        String leaveReqUrl = "http://103.56.208.123:8001/apex/ttrams/leaveRequest/leaveReqLists/"+user_id+"/"+emp_code+"";
+        String leaveReqUrl = api_url_front + "leaveRequest/leaveReqLists/"+user_id+"/"+emp_code;
 
         RequestQueue requestQueue = Volley.newRequestQueue(LeaveApprove.this);
 
@@ -933,12 +874,12 @@ public class LeaveApprove extends AppCompatActivity {
                 updateReqLists();
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateReqLists();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             conn = false;
             connected = false;
             updateReqLists();
@@ -954,6 +895,12 @@ public class LeaveApprove extends AppCompatActivity {
             if (connected) {
                 conn = false;
                 connected = false;
+
+                if (!leaveReqList.isEmpty()) {
+                    fromLApp = 1;
+                    SelectApproveReq selectRequest = new SelectApproveReq();
+                    selectRequest.show(getSupportFragmentManager(), "Request");
+                }
             }
             else {
                 AlertDialog dialog = new AlertDialog.Builder(LeaveApprove.this)
@@ -1084,7 +1031,7 @@ public class LeaveApprove extends AppCompatActivity {
 //
 //            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
 //            Log.i("ERRRRR", e.getLocalizedMessage());
-//            e.printStackTrace();
+//            logger.log(Level.WARNING, e.getMessage(), e);
 //        }
 //    }
 
@@ -1110,8 +1057,8 @@ public class LeaveApprove extends AppCompatActivity {
 
         System.out.println("BEFORE API CALL: "+req_code_leave);
 
-        String reqDataUrl = "http://103.56.208.123:8001/apex/ttrams/leaveRequest/getReqData/"+la_id+"";
-        String forwardHisUrl = "http://103.56.208.123:8001/apex/ttrams/leaveRequest/getForwardHistory/"+la_id+"";
+        String reqDataUrl = api_url_front + "leaveRequest/getReqData/"+la_id;
+        String forwardHisUrl = api_url_front + "leaveRequest/getForwardHistory/"+la_id;
 
         RequestQueue requestQueue = Volley.newRequestQueue(LeaveApprove.this);
 
@@ -1140,12 +1087,12 @@ public class LeaveApprove extends AppCompatActivity {
                 updateLayout();
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 inDataaa = false;
                 updateLayout();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             dataIn = false;
             inDataaa = false;
             updateLayout();
@@ -1190,12 +1137,12 @@ public class LeaveApprove extends AppCompatActivity {
                 requestQueue.add(forHisReq);
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 inDataaa = false;
                 updateLayout();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             dataIn = false;
             inDataaa = false;
             updateLayout();
@@ -1271,7 +1218,7 @@ public class LeaveApprove extends AppCompatActivity {
                     reason.setText(reason_desc);
                 }
 
-                if (forwardHistoryLists.size() == 0) {
+                if (forwardHistoryLists.isEmpty()) {
                     forLay.setVisibility(View.GONE);
                 } else {
                     forLay.setVisibility(View.VISIBLE);
@@ -1356,7 +1303,7 @@ public class LeaveApprove extends AppCompatActivity {
 //
 //            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
 //            Log.i("ERRRRR", e.getLocalizedMessage());
-//            e.printStackTrace();
+//            logger.log(Level.WARNING, e.getMessage(), e);
 //        }
 //    }
 
@@ -1369,7 +1316,7 @@ public class LeaveApprove extends AppCompatActivity {
 
         approveSuccess = "";
 
-        String approveUrl = "http://103.56.208.123:8001/apex/ttrams/leaveRequest/approveLeave";
+        String approveUrl = api_url_front + "leaveRequest/approveLeave";
 
         RequestQueue requestQueue = Volley.newRequestQueue(LeaveApprove.this);
 
@@ -1381,7 +1328,7 @@ public class LeaveApprove extends AppCompatActivity {
                 String updated_req = jsonObject.getString("updated_req");
                 if (string_out.equals("Successfully Created")) {
                     isApprovedd = true;
-                    isApprovedChecked = updated_req.toLowerCase().equals("ok");
+                    isApprovedChecked = updated_req.equalsIgnoreCase("ok");
                     approveSuccess = updated_req;
                 }
                 else {
@@ -1391,18 +1338,18 @@ public class LeaveApprove extends AppCompatActivity {
                 updateAfterApprove();
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 isApprovedd = false;
                 updateAfterApprove();
             }
         }, error -> {
-           error.printStackTrace();
+           logger.log(Level.WARNING, error.getMessage(), error);
            appppppprrrrr = false;
            isApprovedd = false;
            updateAfterApprove();
         }) {
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
+            public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
                 headers.put("P_LA_ID",la_id);
                 headers.put("P_EMP_CODE",emp_code);
@@ -1434,13 +1381,10 @@ public class LeaveApprove extends AppCompatActivity {
                     dialog.setCancelable(false);
                     dialog.setCanceledOnTouchOutside(false);
                     Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                    positive.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
+                    positive.setOnClickListener(v -> {
 
-                            dialog.dismiss();
-                            finish();
-                        }
+                        dialog.dismiss();
+                        finish();
                     });
                 }
                 else {
@@ -1511,7 +1455,7 @@ public class LeaveApprove extends AppCompatActivity {
 //
 //            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
 //            Log.i("ERRRRR", e.getLocalizedMessage());
-//            e.printStackTrace();
+//            logger.log(Level.WARNING, e.getMessage(), e);
 //        }
 //    }
 
@@ -1525,7 +1469,7 @@ public class LeaveApprove extends AppCompatActivity {
         isRejected = false;
         isRejectedChecked = false;
 
-        String rejectUrl = "http://103.56.208.123:8001/apex/ttrams/leaveRequest/rejectLeave";
+        String rejectUrl = api_url_front + "leaveRequest/rejectLeave";
 
         RequestQueue requestQueue = Volley.newRequestQueue(LeaveApprove.this);
 
@@ -1537,7 +1481,7 @@ public class LeaveApprove extends AppCompatActivity {
                 String updated_req = jsonObject.getString("updated_req");
                 if (string_out.equals("Successfully Created")) {
                     isRejected = true;
-                    isRejectedChecked = updated_req.toLowerCase().equals("ok");
+                    isRejectedChecked = updated_req.equalsIgnoreCase("ok");
                     rejectSuccess = updated_req;
                 }
                 else {
@@ -1547,18 +1491,18 @@ public class LeaveApprove extends AppCompatActivity {
                 updateAfterReject();
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 isRejected = false;
                 updateAfterReject();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             rrreeejjjeecctt = false;
             isRejected = false;
             updateAfterReject();
         }) {
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
+            public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
                 headers.put("P_LA_ID",la_id);
                 headers.put("P_EMP_CODE",emp_code);
@@ -1589,13 +1533,10 @@ public class LeaveApprove extends AppCompatActivity {
                     dialog.setCancelable(false);
                     dialog.setCanceledOnTouchOutside(false);
                     Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                    positive.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
+                    positive.setOnClickListener(v -> {
 
-                            dialog.dismiss();
-                            finish();
-                        }
+                        dialog.dismiss();
+                        finish();
                     });
 
                 }
@@ -1614,13 +1555,10 @@ public class LeaveApprove extends AppCompatActivity {
                         .show();
 
                 Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                positive.setOnClickListener(v -> {
 
-                        leaveRejectProcess();
-                        dialog.dismiss();
-                    }
+                    leaveRejectProcess();
+                    dialog.dismiss();
                 });
             }
         }
@@ -1632,13 +1570,10 @@ public class LeaveApprove extends AppCompatActivity {
                     .show();
 
             Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            positive.setOnClickListener(v -> {
 
-                    leaveRejectProcess();
-                    dialog.dismiss();
-                }
+                leaveRejectProcess();
+                dialog.dismiss();
             });
         }
     }

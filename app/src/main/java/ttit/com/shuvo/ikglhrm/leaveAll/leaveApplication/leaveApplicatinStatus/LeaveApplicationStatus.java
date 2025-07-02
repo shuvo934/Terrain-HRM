@@ -2,23 +2,28 @@ package ttit.com.shuvo.ikglhrm.leaveAll.leaveApplication.leaveApplicatinStatus;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
 import ttit.com.shuvo.ikglhrm.attendance.status.StatusList;
 
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -32,56 +37,42 @@ import org.json.JSONObject;
 public class LeaveApplicationStatus extends AppCompatActivity {
 
     TextView nostatus;
-    Button close;
     RecyclerView statusView;
-    public static LeaveAppStatusAdapter statusAdapter;
+    LeaveAppStatusAdapter statusAdapter;
     RecyclerView.LayoutManager layoutManager;
-
-    public static ArrayList<StatusList> leaveAppStatus;
+    ArrayList<StatusList> leaveAppStatus;
 
     WaitProgress waitProgress = new WaitProgress();
-//    private String message = null;
     private Boolean conn = false;
-//    private Boolean infoConnected = false;
     private Boolean connected = false;
-
-//    private Connection connection;
-
+    
     String emp_id = "";
+
+    TextView pendingLeaveCount;
+    String pending_leave_count = "0";
+
+    TextView approveLeaveCount;
+    String approved_leave_count = "0";
+
+    TextView rejectedLeaveCount;
+    String rej_leave_count = "0";
+
+    Logger logger = Logger.getLogger(LeaveApplicationStatus.class.getName());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            Window w = getWindow();
-//            //w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-//        }
-//        if (Build.VERSION.SDK_INT < 16) {
-//            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-//                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//        }
-//        View decorView = getWindow().getDecorView();
-//// Hide the status bar.
-//        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
-//        decorView.setSystemUiVisibility(uiOptions);
-        Window window = getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(ContextCompat.getColor(LeaveApplicationStatus.this,R.color.secondaryColor));
         setContentView(R.layout.activity_leave_application_status);
 
         emp_id = userInfoLists.get(0).getEmp_id();
-
         statusView = findViewById(R.id.leave_application_status_list_view);
-
         nostatus = findViewById(R.id.no_status_found_msg_leave);
-
-        close = findViewById(R.id.leave_app_status_finish);
+        pendingLeaveCount = findViewById(R.id.pending_leave_ls);
+        approveLeaveCount = findViewById(R.id.approved_leave_ls);
+        rejectedLeaveCount = findViewById(R.id.rejected_leave_ls);
 
         leaveAppStatus = new ArrayList<>();
 
-//        new Check().execute();
         getLeaveStatus();
 
         statusView.setHasFixedSize(true);
@@ -89,16 +80,7 @@ public class LeaveApplicationStatus extends AppCompatActivity {
         statusView.setLayoutManager(layoutManager);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(statusView.getContext(),DividerItemDecoration.VERTICAL);
         statusView.addItemDecoration(dividerItemDecoration);
-
-
-        close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
-
+        
     }
 
 //    public boolean isConnected() {
@@ -123,7 +105,7 @@ public class LeaveApplicationStatus extends AppCompatActivity {
 //            int     exitValue = ipProcess.waitFor();
 //            return (exitValue == 0);
 //        }
-//        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
+//        catch (IOException | InterruptedException e)          { logger.log(Level.WARNING, e.getMessage(), e); }
 //
 //        return false;
 //    }
@@ -259,7 +241,7 @@ public class LeaveApplicationStatus extends AppCompatActivity {
 //
 //            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
 //            Log.i("ERRRRR", e.getLocalizedMessage());
-//            e.printStackTrace();
+//            logger.log(Level.WARNING, e.getMessage(), e);
 //        }
 //    }
 
@@ -271,9 +253,49 @@ public class LeaveApplicationStatus extends AppCompatActivity {
 
         leaveAppStatus = new ArrayList<>();
 
-        String url = "http://103.56.208.123:8001/apex/ttrams/leaveRequest/leaveReqStat/"+emp_id+"";
+        Date c = Calendar.getInstance().getTime();
+        SimpleDateFormat yearFrm = new SimpleDateFormat("yyyy", Locale.ENGLISH);
+        String year = yearFrm.format(c);
+
+        pending_leave_count = "0";
+        approved_leave_count = "0";
+        rej_leave_count = "0";
+
+        String url = api_url_front + "leaveRequest/leaveReqStat/"+emp_id;
+        String leaveCountUrl = api_url_front + "dashboard/getLeaveAppStatusCount?emp_id=" + emp_id + "&start_date=01-JAN-" + year + "&end_date=31-DEC-" + year;
 
         RequestQueue requestQueue = Volley.newRequestQueue(LeaveApplicationStatus.this);
+
+        StringRequest leaveCountReq = new StringRequest(Request.Method.GET, leaveCountUrl, response -> {
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject todayAttDataInfo = array.getJSONObject(i);
+                        pending_leave_count = todayAttDataInfo.getString("pending")
+                                .equals("null") ? "0" : todayAttDataInfo.getString("pending");
+                        approved_leave_count = todayAttDataInfo.getString("approved")
+                                .equals("null") ? "0" : todayAttDataInfo.getString("approved");
+                        rej_leave_count = todayAttDataInfo.getString("rejected")
+                                .equals("null") ? "0" : todayAttDataInfo.getString("rejected");
+                    }
+                }
+                connected = true;
+                updateLay();
+            } catch (JSONException e) {
+                logger.log(Level.WARNING, e.getMessage(), e);
+                connected = false;
+                updateLay();
+            }
+        }, error -> {
+            logger.log(Level.WARNING, error.getMessage(), error);
+            conn = false;
+            connected = false;
+            updateLay();
+        });
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, response -> {
             conn = true;
@@ -315,16 +337,15 @@ public class LeaveApplicationStatus extends AppCompatActivity {
                     }
                 }
 
-                connected = true;
-                updateLay();
+                requestQueue.add(leaveCountReq);
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateLay();
             }
         }, error -> {
-           error.printStackTrace();
+           logger.log(Level.WARNING, error.getMessage(), error);
            conn = false;
            connected = false;
            updateLay();
@@ -342,13 +363,17 @@ public class LeaveApplicationStatus extends AppCompatActivity {
 
                 statusView.setAdapter(statusAdapter);
 
-                if (leaveAppStatus.size() == 0) {
+                if (leaveAppStatus.isEmpty()) {
                     statusView.setVisibility(View.GONE);
                     nostatus.setVisibility(View.VISIBLE);
                 } else {
                     statusView.setVisibility(View.VISIBLE);
                     nostatus.setVisibility(View.GONE);
                 }
+
+                pendingLeaveCount.setText(pending_leave_count);
+                approveLeaveCount.setText(approved_leave_count);
+                rejectedLeaveCount.setText(rej_leave_count);
             }
             else {
                 AlertDialog dialog = new AlertDialog.Builder(LeaveApplicationStatus.this)

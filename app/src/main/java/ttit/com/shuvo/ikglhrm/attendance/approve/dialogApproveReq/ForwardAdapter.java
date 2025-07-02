@@ -16,7 +16,7 @@ import ttit.com.shuvo.ikglhrm.R;
 
 public class ForwardAdapter extends RecyclerView.Adapter<ForwardAdapter.FHolder> {
 
-    private ArrayList<ForwardEMPList> mCategoryItem;
+    private final ArrayList<ForwardEMPList> mCategoryItem;
     private final ClickedItem myClickedItem;
     private final Context myContext;
 
@@ -45,7 +45,7 @@ public class ForwardAdapter extends RecyclerView.Adapter<ForwardAdapter.FHolder>
 
             this.mClickedItem = ci;
 
-            itemView.setOnClickListener(this::onClick);
+            itemView.setOnClickListener(this);
 
         }
 
@@ -64,8 +64,7 @@ public class ForwardAdapter extends RecyclerView.Adapter<ForwardAdapter.FHolder>
     @Override
     public FHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(myContext).inflate(R.layout.forward_req_list_item, parent, false);
-        FHolder categoryViewHolder = new FHolder(view, myClickedItem);
-        return categoryViewHolder;
+        return new FHolder(view, myClickedItem);
     }
 
     @Override

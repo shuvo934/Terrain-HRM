@@ -45,7 +45,7 @@ public class SelectAllAdapter extends RecyclerView.Adapter<SelectAllAdapter.Sele
 
             this.mClickedItem = ci;
 
-            itemView.setOnClickListener(this::onClick);
+            itemView.setOnClickListener(this);
 
         }
 
@@ -64,8 +64,7 @@ public class SelectAllAdapter extends RecyclerView.Adapter<SelectAllAdapter.Sele
     @Override
     public SelectView onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(myContext).inflate(R.layout.all_item_list_view, parent, false);
-        SelectView categoryViewHolder = new SelectView(view, myClickedItem);
-        return categoryViewHolder;
+        return new SelectView(view, myClickedItem);
     }
 
     @Override

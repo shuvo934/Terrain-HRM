@@ -1,35 +1,31 @@
 package ttit.com.shuvo.ikglhrm.attendance.update;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -41,6 +37,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
@@ -51,6 +50,7 @@ import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.ShowAttendance;
 import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.ShowShift;
 
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -101,15 +101,15 @@ public class AttendanceUpdate extends AppCompatActivity {
     Spinner reasonType;
     //Spinner approverName;
 
-    Button existingAtt;
-    public static Button showShoftTime;
+    MaterialButton existingAtt;
+    public static MaterialButton showShoftTime;
 
     Button close;
     Button update;
     LinearLayout updateButtonEnable;
 
-    Button arriClear;
-    Button deptClear;
+    MaterialButton arriClear;
+    MaterialButton deptClear;
 
     public static ArrayList<SelectAllList> selectAllLists;
     public static ArrayList<SelectAllList> allShiftDetails;
@@ -190,7 +190,6 @@ public class AttendanceUpdate extends AppCompatActivity {
     String desig_priority = "";
     String divm_id = "";
     String approval_band = "";
-    int flag = 1;
     int count_approv_emp = 0;
 
 
@@ -211,50 +210,11 @@ public class AttendanceUpdate extends AppCompatActivity {
     String selected_divm_id = "";
     String calling_title = "";
 
+    Logger logger = Logger.getLogger(AttendanceUpdate.class.getName());
 
-
-//    @Override
-//    public void onWindowFocusChanged(boolean hasFocus) {
-//        super.onWindowFocusChanged(hasFocus);
-//        if (hasFocus) {
-//            hideSystemUI();
-//        }
-//    }
-//    private void hideSystemUI() {
-//        View decorView = getWindow().getDecorView();
-//        decorView.setSystemUiVisibility(
-//                View.SYSTEM_UI_FLAG_IMMERSIVE
-//                        // Set the content to appear under the system bars so that the
-//                        // content doesn't resize when the system bars hide and show.
-//                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-//                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-//                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-//                        // Hide the nav bar and status bar
-//                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-//                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
-//    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-//        getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            Window w = getWindow();
-//            //w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-//        }
-//        if (Build.VERSION.SDK_INT < 16) {
-//            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-//                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//        }
-//        View decorView = getWindow().getDecorView();
-//// Hide the status bar.
-//        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
-//        decorView.setSystemUiVisibility(uiOptions);
-
-        Window window = getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(ContextCompat.getColor(AttendanceUpdate.this,R.color.secondaryColor));
         setContentView(R.layout.activity_attendance_update);
 
         selected_shift_id = "";
@@ -370,7 +330,7 @@ public class AttendanceUpdate extends AppCompatActivity {
 
         Date c = Calendar.getInstance().getTime();
 
-        String formattedDate = "";
+        String formattedDate;
 
         SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
 
@@ -387,22 +347,15 @@ public class AttendanceUpdate extends AppCompatActivity {
                 this,R.layout.item_country,onlyLocationLists){
             @Override
             public boolean isEnabled(int position){
-                if(position == 0)
-                {
-                    // Disable the first item from Spinner
-                    // First item will be use for hint
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
+                // Disable the first item from Spinner
+                // First item will be use for hint
+                return position != 0;
             }
             @Override
             public View getDropDownView(int position, View convertView,
-                                        ViewGroup parent) {
+                                        @NonNull ViewGroup parent) {
                 View view = super.getDropDownView(position, convertView, parent);
-                TextView tv = (TextView) view.findViewById(R.id.tvCountry);
+                TextView tv = view.findViewById(R.id.tvCountry);
                 if(position == 0){
                     // Set the hint text color gray
                     tv.setTextColor(Color.GRAY);
@@ -454,22 +407,15 @@ public class AttendanceUpdate extends AppCompatActivity {
                 this,R.layout.item_country,reqList){
             @Override
             public boolean isEnabled(int position){
-                if(position == 0)
-                {
-                    // Disable the first item from Spinner
-                    // First item will be use for hint
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
+                // Disable the first item from Spinner
+                // First item will be use for hint
+                return position != 0;
             }
             @Override
             public View getDropDownView(int position, View convertView,
-                                        ViewGroup parent) {
+                                        @NonNull ViewGroup parent) {
                 View view = super.getDropDownView(position, convertView, parent);
-                TextView tv = (TextView) view.findViewById(R.id.tvCountry);
+                TextView tv = view.findViewById(R.id.tvCountry);
                 if(position == 0){
                     // Set the hint text color gray
                     tv.setTextColor(Color.GRAY);
@@ -492,6 +438,7 @@ public class AttendanceUpdate extends AppCompatActivity {
                 if(position > 0){
                     selected_request = (String) parent.getItemAtPosition(position);
                     dateUpdated.setText("");
+                    selected_update_date = "";
                     dateUpdateLay.setHint("Select Update Date");
                     dateUpdateLay.setHelperText("");
                     existingAtt.setVisibility(View.GONE);
@@ -519,22 +466,15 @@ public class AttendanceUpdate extends AppCompatActivity {
                 this,R.layout.item_country,attenTypeList){
             @Override
             public boolean isEnabled(int position){
-                if(position == 0)
-                {
-                    // Disable the first item from Spinner
-                    // First item will be use for hint
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
+                // Disable the first item from Spinner
+                // First item will be use for hint
+                return position != 0;
             }
             @Override
             public View getDropDownView(int position, View convertView,
-                                        ViewGroup parent) {
+                                        @NonNull ViewGroup parent) {
                 View view = super.getDropDownView(position, convertView, parent);
-                TextView tv = (TextView) view.findViewById(R.id.tvCountry);
+                TextView tv = view.findViewById(R.id.tvCountry);
                 if(position == 0){
                     // Set the hint text color gray
                     tv.setTextColor(Color.GRAY);
@@ -657,22 +597,15 @@ public class AttendanceUpdate extends AppCompatActivity {
                 this,R.layout.item_country,reasonName){
             @Override
             public boolean isEnabled(int position){
-                if(position == 0)
-                {
-                    // Disable the first item from Spinner
-                    // First item will be use for hint
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
+                // Disable the first item from Spinner
+                // First item will be use for hint
+                return position != 0;
             }
             @Override
             public View getDropDownView(int position, View convertView,
-                                        ViewGroup parent) {
+                                        @NonNull ViewGroup parent) {
                 View view = super.getDropDownView(position, convertView, parent);
-                TextView tv = (TextView) view.findViewById(R.id.tvCountry);
+                TextView tv = view.findViewById(R.id.tvCountry);
                 if(position == 0){
                     // Set the hint text color gray
                     tv.setTextColor(Color.GRAY);
@@ -785,439 +718,440 @@ public class AttendanceUpdate extends AppCompatActivity {
 //        });
 
         // Date to be Updated
-        dateUpdated.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                {
-                    final Calendar c = Calendar.getInstance();
-                    mYear = c.get(Calendar.YEAR);
-                    mMonth = c.get(Calendar.MONTH);
-                    mDay = c.get(Calendar.DAY_OF_MONTH);
+        dateUpdated.setOnClickListener(v -> {
+            {
+                final Calendar c1 = Calendar.getInstance();
+                if (!selected_update_date.isEmpty()) {
+                    SimpleDateFormat myf = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
+                    Date md = null;
+                    try {
+                        md = myf.parse(selected_update_date);
+                    } catch (ParseException e) {
+                        logger.log(Level.WARNING, e.getMessage(), e);
+                    }
 
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                        DatePickerDialog datePickerDialog = new DatePickerDialog(AttendanceUpdate.this, new DatePickerDialog.OnDateSetListener() {
-                            @Override
-                            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                    if (md != null) {
+                        c1.setTime(md);
+                    }
+                }
+                mYear = c1.get(Calendar.YEAR);
+                mMonth = c1.get(Calendar.MONTH);
+                mDay = c1.get(Calendar.DAY_OF_MONTH);
 
-                                String monthName = "";
-                                String dayOfMonthName = "";
-                                String yearName = "";
-                                month = month + 1;
-                                if (month == 1) {
-                                    monthName = "JAN";
-                                } else if (month == 2) {
-                                    monthName = "FEB";
-                                } else if (month == 3) {
-                                    monthName = "MAR";
-                                } else if (month == 4) {
-                                    monthName = "APR";
-                                } else if (month == 5) {
-                                    monthName = "MAY";
-                                } else if (month == 6) {
-                                    monthName = "JUN";
-                                } else if (month == 7) {
-                                    monthName = "JUL";
-                                } else if (month == 8) {
-                                    monthName = "AUG";
-                                } else if (month == 9) {
-                                    monthName = "SEP";
-                                } else if (month == 10) {
-                                    monthName = "OCT";
-                                } else if (month == 11) {
-                                    monthName = "NOV";
-                                } else if (month == 12) {
-                                    monthName = "DEC";
-                                }
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                    DatePickerDialog datePickerDialog = new DatePickerDialog(AttendanceUpdate.this, (view, year, month, dayOfMonth) -> {
 
-                                if (dayOfMonth <= 9) {
-                                    dayOfMonthName = "0" + String.valueOf(dayOfMonth);
-                                } else {
-                                    dayOfMonthName = String.valueOf(dayOfMonth);
-                                }
-                                yearName  = String.valueOf(year);
-                                yearName = yearName.substring(yearName.length()-2);
-                                System.out.println(yearName);
-                                System.out.println(dayOfMonthName);
-                                dateUpdated.setText(dayOfMonthName + "-" + monthName + "-" + yearName);
+                        String monthName = "";
+                        String dayOfMonthName;
+                        String yearName;
+                        month = month + 1;
+                        if (month == 1) {
+                            monthName = "JAN";
+                        } else if (month == 2) {
+                            monthName = "FEB";
+                        } else if (month == 3) {
+                            monthName = "MAR";
+                        } else if (month == 4) {
+                            monthName = "APR";
+                        } else if (month == 5) {
+                            monthName = "MAY";
+                        } else if (month == 6) {
+                            monthName = "JUN";
+                        } else if (month == 7) {
+                            monthName = "JUL";
+                        } else if (month == 8) {
+                            monthName = "AUG";
+                        } else if (month == 9) {
+                            monthName = "SEP";
+                        } else if (month == 10) {
+                            monthName = "OCT";
+                        } else if (month == 11) {
+                            monthName = "NOV";
+                        } else if (month == 12) {
+                            monthName = "DEC";
+                        }
 
-                                if (selected_request.equals("PRE")) {
+                        if (dayOfMonth <= 9) {
+                            dayOfMonthName = "0" + dayOfMonth;
+                        } else {
+                            dayOfMonthName = String.valueOf(dayOfMonth);
+                        }
+                        yearName  = String.valueOf(year);
+                        yearName = yearName.substring(yearName.length()-2);
+                        System.out.println(yearName);
+                        System.out.println(dayOfMonthName);
+                        String tt = dayOfMonthName + "-" + monthName + "-" + yearName;
+                        dateUpdated.setText(tt);
 
-                                    String today = todayDate.getText().toString();
-                                    String updateDate = dateUpdated.getText().toString();
+                        if (selected_request.equals("PRE")) {
 
-                                    Date nowDate = null;
-                                    Date givenDate = null;
+                            String today = Objects.requireNonNull(todayDate.getText()).toString();
+                            String updateDate = Objects.requireNonNull(dateUpdated.getText()).toString();
 
-                                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
-                                    try {
-                                        nowDate = sdf.parse(today);
-                                        givenDate = sdf.parse(updateDate);
-                                    } catch (ParseException e) {
-                                        e.printStackTrace();
-                                    }
+                            Date nowDate = null;
+                            Date givenDate = null;
 
-                                    if (nowDate != null && givenDate != null) {
+                            SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
+                            try {
+                                nowDate = sdf.parse(today);
+                                givenDate = sdf.parse(updateDate);
+                            } catch (ParseException e) {
+                                logger.log(Level.WARNING, e.getMessage(), e);
+                            }
 
-                                        if (givenDate.after(nowDate) || givenDate.equals(nowDate)) {
-                                            //Toast.makeText(getApplicationContext(), "OK", Toast.LENGTH_SHORT).show();
+                            if (nowDate != null && givenDate != null) {
+
+                                if (givenDate.after(nowDate) || givenDate.equals(nowDate)) {
+                                    //Toast.makeText(getApplicationContext(), "OK", Toast.LENGTH_SHORT).show();
 //                                            dateUpdateLay.setHelperText("Requested Date never Less than Application Date");
 //                                            dateUpdateLay.setHelperTextColor(ColorStateList.valueOf(Color.RED));
 //                                            dateUpdated.setText("");
 //                                            existingAtt.setVisibility(View.GONE);
 
-                                            dateUpdated.setText(dayOfMonthName + "-" + monthName + "-" + yearName);
-                                            dateUpdateLay.setHelperText("");
-                                            dateUpdateLay.setHint("Update Date");
-                                            existingAtt.setVisibility(View.VISIBLE);
-                                            System.out.println("AHSE let");
+                                    String du = dayOfMonthName + "-" + monthName + "-" + yearName;
+                                    dateUpdated.setText(du);
+                                    selected_update_date = du;
+                                    dateUpdateLay.setHelperText("");
+                                    dateUpdateLay.setHint("Update Date");
+                                    existingAtt.setVisibility(View.VISIBLE);
+                                    System.out.println("AHSE let");
 
-                                        } else {
+                                } else {
 //                                            dateUpdated.setText(dayOfMonthName + "-" + monthName + "-" + yearName);
 //                                            dateUpdateLay.setHelperText("");
 //                                            existingAtt.setVisibility(View.VISIBLE);
 //                                            System.out.println("AHSE");
 
-                                            dateUpdateLay.setHelperText("Requested Date never Less than Application Date");
-                                            dateUpdateLay.setHint("Select Update Date");
-                                            dateUpdateLay.setHelperTextColor(ColorStateList.valueOf(Color.RED));
-                                            dateUpdated.setText("");
-                                            existingAtt.setVisibility(View.GONE);
-                                        }
-                                    }
+                                    dateUpdateLay.setHelperText("Requested Date never Less than Application Date");
+                                    dateUpdateLay.setHint("Select Update Date");
+                                    dateUpdateLay.setHelperTextColor(ColorStateList.valueOf(Color.RED));
+                                    dateUpdated.setText("");
+                                    selected_update_date = "";
+                                    existingAtt.setVisibility(View.GONE);
                                 }
-                                else if (selected_request.equals("POST")) {
+                            }
+                        }
+                        else if (selected_request.equals("POST")) {
 
-                                    String today = todayDate.getText().toString();
-                                    String updateDate = dateUpdated.getText().toString();
+                            String today = Objects.requireNonNull(todayDate.getText()).toString();
+                            String updateDate = Objects.requireNonNull(dateUpdated.getText()).toString();
 
-                                    Date nowDate = null;
-                                    Date givenDate = null;
+                            Date nowDate = null;
+                            Date givenDate = null;
 
-                                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
-                                    try {
-                                        nowDate = sdf.parse(today);
-                                        givenDate = sdf.parse(updateDate);
-                                    } catch (ParseException e) {
-                                        e.printStackTrace();
-                                    }
+                            SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
+                            try {
+                                nowDate = sdf.parse(today);
+                                givenDate = sdf.parse(updateDate);
+                            } catch (ParseException e) {
+                                logger.log(Level.WARNING, e.getMessage(), e);
+                            }
 
-                                    if (nowDate != null && givenDate != null) {
+                            if (nowDate != null && givenDate != null) {
 
-                                        if (givenDate.before(nowDate)) {
-                                            //Toast.makeText(getApplicationContext(), "OK", Toast.LENGTH_SHORT).show();
+                                if (givenDate.before(nowDate)) {
+                                    //Toast.makeText(getApplicationContext(), "OK", Toast.LENGTH_SHORT).show();
 //                                            dateUpdateLay.setHelperText("Requested Date should be Less than Application Date");
 //                                            dateUpdateLay.setHelperTextColor(ColorStateList.valueOf(Color.RED));
 //                                            dateUpdated.setText("");
 //                                            existingAtt.setVisibility(View.GONE);
 
-                                            dateUpdated.setText(dayOfMonthName + "-" + monthName + "-" + yearName);
-                                            dateUpdateLay.setHelperText("");
-                                            dateUpdateLay.setHint("Update Date");
-                                            existingAtt.setVisibility(View.VISIBLE);
-                                            System.out.println("AHSE POST");
+                                    String du = dayOfMonthName + "-" + monthName + "-" + yearName;
+                                    dateUpdated.setText(du);
+                                    selected_update_date = du;
+                                    dateUpdateLay.setHelperText("");
+                                    dateUpdateLay.setHint("Update Date");
+                                    existingAtt.setVisibility(View.VISIBLE);
+                                    System.out.println("AHSE POST");
 
 
-                                        } else {
+                                } else {
 //                                            dateUpdated.setText(dayOfMonthName + "-" + monthName + "-" + yearName);
 //                                            dateUpdateLay.setHelperText("");
 //                                            existingAtt.setVisibility(View.VISIBLE);
 //                                            System.out.println("AHSE");
 
-                                            dateUpdateLay.setHelperText("Requested Date should be Less than Application Date");
-                                            dateUpdateLay.setHint("Select Update Date");
-                                            dateUpdateLay.setHelperTextColor(ColorStateList.valueOf(Color.RED));
-                                            dateUpdated.setText("");
-                                            existingAtt.setVisibility(View.GONE);
-                                        }
-                                    }
+                                    dateUpdateLay.setHelperText("Requested Date should be Less than Application Date");
+                                    dateUpdateLay.setHint("Select Update Date");
+                                    dateUpdateLay.setHelperTextColor(ColorStateList.valueOf(Color.RED));
+                                    dateUpdated.setText("");
+                                    selected_update_date = "";
+                                    existingAtt.setVisibility(View.GONE);
                                 }
-
                             }
-                        }, mYear, mMonth, mDay);
-                        datePickerDialog.show();
-                    }
+                        }
+
+                    }, mYear, mMonth, mDay);
+                    datePickerDialog.show();
                 }
             }
         });
 
         // Time to be Updated - Arrival
-        arrivalTimeUpdated.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final Calendar c = Calendar.getInstance();
-                mHour = c.get(Calendar.HOUR_OF_DAY);
-                mMinute = c.get(Calendar.MINUTE);
+        arrivalTimeUpdated.setOnClickListener(v -> {
+            final Calendar c12 = Calendar.getInstance();
+            if (!arrival_time.isEmpty()) {
+                SimpleDateFormat myf = new SimpleDateFormat("hh:mma", Locale.ENGLISH);
+                Date md = null;
+                try {
+                    md = myf.parse(arrival_time);
+                } catch (ParseException e) {
+                    logger.log(Level.WARNING, e.getMessage(), e);
+                }
 
-                TimePickerDialog timePickerDialog = new TimePickerDialog(AttendanceUpdate.this, new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-
-                        String AM_PM ;
-                        if(hourOfDay < 12) {
-                            AM_PM = "AM";
-                            if (hourOfDay == 0) {
-                                hourOfDay = 12;
-                            }
-                        } else {
-                            AM_PM = "PM";
-                            if (hourOfDay > 12 ) {
-                                hourOfDay = hourOfDay - 12;
-                            }
-                        }
-                        String tt = String.valueOf(minute);
-                        if (tt.length() == 1) {
-                            tt = "0"+tt;
-                            arrivalTimeUpdated.setText(hourOfDay + ":" + tt + AM_PM);
-                            inTimeLay.setHint("In Time");
-                            arriClear.setVisibility(View.VISIBLE);
-                            errorTime.setVisibility(View.GONE);
-                        } else {
-                            arrivalTimeUpdated.setText(hourOfDay + ":" + minute + AM_PM);
-                            inTimeLay.setHint("In Time");
-                            arriClear.setVisibility(View.VISIBLE);
-                            errorTime.setVisibility(View.GONE);
-                        }
-                    }
-                },mHour, mMinute,false);
-                timePickerDialog.show();
+                if (md != null) {
+                    c12.setTime(md);
+                }
             }
+            mHour = c12.get(Calendar.HOUR_OF_DAY);
+            mMinute = c12.get(Calendar.MINUTE);
+
+            TimePickerDialog timePickerDialog = new TimePickerDialog(AttendanceUpdate.this, (view, hourOfDay, minute) -> {
+
+                String AM_PM ;
+                if(hourOfDay < 12) {
+                    AM_PM = "AM";
+                    if (hourOfDay == 0) {
+                        hourOfDay = 12;
+                    }
+                } else {
+                    AM_PM = "PM";
+                    if (hourOfDay > 12 ) {
+                        hourOfDay = hourOfDay - 12;
+                    }
+                }
+                String tt = String.valueOf(minute);
+                if (tt.length() == 1) {
+                    tt = "0"+tt;
+                    String atut = hourOfDay + ":" + tt + AM_PM;
+                    arrivalTimeUpdated.setText(atut);
+                    arrival_time = atut;
+                } else {
+                    String atut = hourOfDay + ":" + minute + AM_PM;
+                    arrivalTimeUpdated.setText(atut);
+                    arrival_time = atut;
+                }
+                inTimeLay.setHint("In Time");
+                arriClear.setVisibility(View.VISIBLE);
+                errorTime.setVisibility(View.GONE);
+            },mHour, mMinute,false);
+            timePickerDialog.show();
         });
 
         // Time to be updated - Departure
-        departTimeUpdated.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final Calendar c = Calendar.getInstance();
-                mHour = c.get(Calendar.HOUR_OF_DAY);
-                mMinute = c.get(Calendar.MINUTE);
+        departTimeUpdated.setOnClickListener(v -> {
+            final Calendar c13 = Calendar.getInstance();
+            if (!depart_time.isEmpty()) {
+                SimpleDateFormat myf = new SimpleDateFormat("hh:mma", Locale.ENGLISH);
+                Date md = null;
+                try {
+                    md = myf.parse(depart_time);
+                } catch (ParseException e) {
+                    logger.log(Level.WARNING, e.getMessage(), e);
+                }
 
-                TimePickerDialog timePickerDialog = new TimePickerDialog(AttendanceUpdate.this, new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                if (md != null) {
+                    c13.setTime(md);
+                }
+            }
+            mHour = c13.get(Calendar.HOUR_OF_DAY);
+            mMinute = c13.get(Calendar.MINUTE);
 
-                        String AM_PM ;
-                        if(hourOfDay < 12) {
-                            AM_PM = "AM";
-                            if (hourOfDay == 0) {
-                                hourOfDay = 12;
-                            }
-                        } else {
-                            AM_PM = "PM";
-                            if (hourOfDay > 12 ) {
-                                hourOfDay = hourOfDay - 12;
-                            }
-                        }
-                        String tt = String.valueOf(minute);
-                        if (tt.length() == 1) {
-                            tt = "0"+tt;
-                            departTimeUpdated.setText(hourOfDay + ":" + tt + AM_PM);
-                            outTimeLay.setHint("Out Time");
-                            deptClear.setVisibility(View.VISIBLE);
-                            errorTime.setVisibility(View.GONE);
-                        } else {
-                            departTimeUpdated.setText(hourOfDay + ":" + minute + AM_PM);
-                            outTimeLay.setHint("Out Time");
-                            deptClear.setVisibility(View.VISIBLE);
-                            errorTime.setVisibility(View.GONE);
-                        }
+            TimePickerDialog timePickerDialog = new TimePickerDialog(AttendanceUpdate.this, (view, hourOfDay, minute) -> {
+
+                String AM_PM ;
+                if(hourOfDay < 12) {
+                    AM_PM = "AM";
+                    if (hourOfDay == 0) {
+                        hourOfDay = 12;
                     }
-                },mHour, mMinute,false);
-                timePickerDialog.show();
-            }
+                } else {
+                    AM_PM = "PM";
+                    if (hourOfDay > 12 ) {
+                        hourOfDay = hourOfDay - 12;
+                    }
+                }
+                String tt = String.valueOf(minute);
+                if (tt.length() == 1) {
+                    tt = "0"+tt;
+                    String dtut = hourOfDay + ":" + tt + AM_PM;
+                    departTimeUpdated.setText(dtut);
+                    depart_time = dtut;
+                } else {
+                    String dtut = hourOfDay + ":" + minute + AM_PM;
+                    departTimeUpdated.setText(dtut);
+                    depart_time = dtut;
+                }
+                outTimeLay.setHint("Out Time");
+                deptClear.setVisibility(View.VISIBLE);
+                errorTime.setVisibility(View.GONE);
+            },mHour, mMinute,false);
+            timePickerDialog.show();
         });
 
 
-        arriClear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                arrivalTimeUpdated.setText("");
-                inTimeLay.setHint("Select In Time");
-                arriClear.setVisibility(View.GONE);
-            }
+        arriClear.setOnClickListener(v -> {
+            arrivalTimeUpdated.setText("");
+            arrival_time = "";
+            inTimeLay.setHint("Select In Time");
+            arriClear.setVisibility(View.GONE);
         });
 
-        deptClear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                departTimeUpdated.setText("");
-                outTimeLay.setHint("Select Out Time");
-                deptClear.setVisibility(View.GONE);
-            }
+        deptClear.setOnClickListener(v -> {
+            departTimeUpdated.setText("");
+            depart_time = "";
+            outTimeLay.setHint("Select Out Time");
+            deptClear.setVisibility(View.GONE);
         });
 
 
         // Reason Description
-        reasonDesc.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        reasonDesc.setOnClickListener(v -> {
 
-                number = 1;
-                hint = reasonLay.getHint().toString();
-                text = reasonDesc.getText().toString();
-                DialogueText dialogueText = new DialogueText();
-                dialogueText.show(getSupportFragmentManager(),"TEXTEDIT");
-            }
+            number = 1;
+            hint = Objects.requireNonNull(reasonLay.getHint()).toString();
+            text = Objects.requireNonNull(reasonDesc.getText()).toString();
+            DialogueText dialogueText = new DialogueText();
+            dialogueText.show(getSupportFragmentManager(),"TEXTEDIT");
         });
 
         // Address out of Station
-        addressStation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                number = 2;
-                hint = addStaLay.getHint().toString();
-                text = addressStation.getText().toString();
-                DialogueText dialogueText = new DialogueText();
-                dialogueText.show(getSupportFragmentManager(),"TEXTEDIT");
-            }
+        addressStation.setOnClickListener(v -> {
+            number = 2;
+            hint = Objects.requireNonNull(addStaLay.getHint()).toString();
+            text = Objects.requireNonNull(addressStation.getText()).toString();
+            DialogueText dialogueText = new DialogueText();
+            dialogueText.show(getSupportFragmentManager(),"TEXTEDIT");
         });
 
-        shiftTestEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialogText = 1;
-                selectAllLists = allShiftDetails;
-                SelectAll selectAll = new SelectAll();
-                selectAll.show(getSupportFragmentManager(),"TEXTEDIT");
-            }
+        shiftTestEdit.setOnClickListener(v -> {
+            dialogText = 1;
+            selectAllLists = allShiftDetails;
+            SelectAll selectAll = new SelectAll();
+            selectAll.show(getSupportFragmentManager(),"TEXTEDIT");
         });
 
-        approverTestEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialogText = 2;
-                selectAllLists = allSelectedApprover;
-                SelectAll selectAll = new SelectAll();
-                selectAll.show(getSupportFragmentManager(),"TEXTEDIT");
-            }
+        approverTestEdit.setOnClickListener(v -> {
+            dialogText = 2;
+            selectAllLists = allSelectedApprover;
+            SelectAll selectAll = new SelectAll();
+            selectAll.show(getSupportFragmentManager(),"TEXTEDIT");
         });
 
-        existingAtt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showAttendanceNumber = 1;
-                dateToShow = dateUpdated.getText().toString();
-                if (!dateToShow.isEmpty()) {
-                    ShowAttendance showAttendance = new ShowAttendance(AttendanceUpdate.this);
-                    showAttendance.show(getSupportFragmentManager(),"Attendance");
-                }
-
+        existingAtt.setOnClickListener(v -> {
+            showAttendanceNumber = 1;
+            dateToShow = Objects.requireNonNull(dateUpdated.getText()).toString();
+            if (!dateToShow.isEmpty()) {
+                ShowAttendance showAttendance = new ShowAttendance(AttendanceUpdate.this);
+                showAttendance.show(getSupportFragmentManager(),"Attendance");
             }
+
         });
 
-        showShoftTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        showShoftTime.setOnClickListener(v -> {
 
-                showShiftNumber = 1;
-                shift_osm_id = selected_shift_id;
-                ShowShift showShift = new ShowShift(AttendanceUpdate.this);
-                showShift.show(getSupportFragmentManager(),"Shift");
-            }
+            showShiftNumber = 1;
+            shift_osm_id = selected_shift_id;
+            ShowShift showShift = new ShowShift(AttendanceUpdate.this);
+            showShift.show(getSupportFragmentManager(),"Shift");
         });
 
-        update.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        update.setOnClickListener(v -> {
 
-                now_date = todayDate.getText().toString();
-                selected_update_date = dateUpdated.getText().toString();
-                arrival_time = arrivalTimeUpdated.getText().toString();
-                depart_time = departTimeUpdated.getText().toString();
-                selected_reason_desc = reasonDesc.getText().toString();
-                selected_address_station = addressStation.getText().toString();
+            now_date = Objects.requireNonNull(todayDate.getText()).toString();
+            selected_update_date = Objects.requireNonNull(dateUpdated.getText()).toString();
+            arrival_time = Objects.requireNonNull(arrivalTimeUpdated.getText()).toString();
+            depart_time = Objects.requireNonNull(departTimeUpdated.getText()).toString();
+            selected_reason_desc = Objects.requireNonNull(reasonDesc.getText()).toString();
+            selected_address_station = Objects.requireNonNull(addressStation.getText()).toString();
 
 //                if (selected_address_station.isEmpty()) {
 //                    selected_address_station = null;
 //                }
 
-                if (!selected_update_date.isEmpty()) {
+            if (!selected_update_date.isEmpty()) {
 
-                    if (arrival_time.isEmpty() && depart_time.isEmpty()) {
-                        Toast.makeText(getApplicationContext(),"Please Check Time to be Updated",Toast.LENGTH_SHORT).show();
-                        errorTime.setVisibility(View.VISIBLE);
-                    } else {
-                        errorTime.setVisibility(View.GONE);
-                        if (!selected_loc_id.isEmpty()) {
-                            errorLocation.setVisibility(View.GONE);
+                if (arrival_time.isEmpty() && depart_time.isEmpty()) {
+                    Toast.makeText(getApplicationContext(),"Please Check Time to be Updated",Toast.LENGTH_SHORT).show();
+                    errorTime.setVisibility(View.VISIBLE);
+                } else {
+                    errorTime.setVisibility(View.GONE);
+                    if (!selected_loc_id.isEmpty()) {
+                        errorLocation.setVisibility(View.GONE);
 
-                            if (!selected_shift_id.isEmpty()) {
-                                System.out.println(selected_shift_id);
-                                errorShift.setVisibility(View.GONE);
+                        if (!selected_shift_id.isEmpty()) {
+                            System.out.println(selected_shift_id);
+                            errorShift.setVisibility(View.GONE);
 
-                                if (!selected_reason_id.isEmpty()) {
-                                    errorReason.setVisibility(View.GONE);
+                            if (!selected_reason_id.isEmpty()) {
+                                errorReason.setVisibility(View.GONE);
 
-                                    if (!selected_reason_desc.isEmpty()) {
-                                        errorReasonDesc.setVisibility(View.GONE);
+                                if (!selected_reason_desc.isEmpty()) {
+                                    errorReasonDesc.setVisibility(View.GONE);
 
-                                        if (!selected_approver_id.isEmpty()) {
-                                            errorApprover.setVisibility(View.GONE);
+                                    if (!selected_approver_id.isEmpty()) {
+                                        errorApprover.setVisibility(View.GONE);
 
-                                            AlertDialog.Builder builder = new AlertDialog.Builder(AttendanceUpdate.this);
-                                            builder.setTitle("Attendance Update Request!")
-                                                    .setMessage("Do you want send this request?")
-                                                    .setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(DialogInterface dialog, int which) {
+                                        AlertDialog.Builder builder = new AlertDialog.Builder(AttendanceUpdate.this);
+                                        builder.setTitle("Attendance Update Request!")
+                                                .setMessage("Do you want send this request?")
+                                                .setPositiveButton("YES", (dialog, which) -> insertReq())
+                                                .setNegativeButton("NO", (dialog, which) -> {
 
-//                                                            new InsertCheck().execute();
-                                                            insertReq();
-
-                                                        }
-                                                    })
-                                                    .setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(DialogInterface dialog, int which) {
-
-                                                        }
-                                                    });
-                                            AlertDialog alert = builder.create();
-                                            alert.show();
+                                                });
+                                        AlertDialog alert = builder.create();
+                                        alert.show();
 
 
 
-                                        } else {
-                                            Toast.makeText(getApplicationContext(),"Please Check Approver Name",Toast.LENGTH_SHORT).show();
-                                            errorApprover.setVisibility(View.VISIBLE);
-                                        }
-                                    }else {
-                                        Toast.makeText(getApplicationContext(),"Please Check Reason Description",Toast.LENGTH_SHORT).show();
-                                        errorReasonDesc.setVisibility(View.VISIBLE);
+                                    } else {
+                                        Toast.makeText(getApplicationContext(),"Please Check Approver Name",Toast.LENGTH_SHORT).show();
+                                        errorApprover.setVisibility(View.VISIBLE);
                                     }
-
-                                } else {
-                                    Toast.makeText(getApplicationContext(),"Please Check Reason Type",Toast.LENGTH_SHORT).show();
-                                    errorReason.setVisibility(View.VISIBLE);
+                                }else {
+                                    Toast.makeText(getApplicationContext(),"Please Check Reason Description",Toast.LENGTH_SHORT).show();
+                                    errorReasonDesc.setVisibility(View.VISIBLE);
                                 }
 
                             } else {
-                                Toast.makeText(getApplicationContext(),"Please Check Shift to be Updated",Toast.LENGTH_SHORT).show();
-                                errorShift.setVisibility(View.VISIBLE);
+                                Toast.makeText(getApplicationContext(),"Please Check Reason Type",Toast.LENGTH_SHORT).show();
+                                errorReason.setVisibility(View.VISIBLE);
                             }
 
                         } else {
-                            Toast.makeText(getApplicationContext(),"Please Check Location to be Updated",Toast.LENGTH_SHORT).show();
-                            errorLocation.setVisibility(View.VISIBLE);
+                            Toast.makeText(getApplicationContext(),"Please Check Shift to be Updated",Toast.LENGTH_SHORT).show();
+                            errorShift.setVisibility(View.VISIBLE);
                         }
 
+                    } else {
+                        Toast.makeText(getApplicationContext(),"Please Check Location to be Updated",Toast.LENGTH_SHORT).show();
+                        errorLocation.setVisibility(View.VISIBLE);
                     }
 
-                } else {
-                    Toast.makeText(getApplicationContext(),"Please Check Date to be Updated",Toast.LENGTH_SHORT).show();
-                    dateUpdateLay.setHelperText("Please Provide 'Date to be Updated'");
                 }
 
+            } else {
+                Toast.makeText(getApplicationContext(),"Please Check Date to be Updated",Toast.LENGTH_SHORT).show();
+                dateUpdateLay.setHelperText("Please Provide 'Date to be Updated'");
             }
+
         });
 
-        close.setOnClickListener(new View.OnClickListener() {
+        close.setOnClickListener(v -> {
+            selected_shift_id = "";
+            selected_approver_id = "";
+
+            finish();
+
+        });
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
-            public void onClick(View v) {
+            public void handleOnBackPressed() {
                 selected_shift_id = "";
                 selected_approver_id = "";
 
                 finish();
-
             }
         });
 
@@ -1226,15 +1160,6 @@ public class AttendanceUpdate extends AppCompatActivity {
 
     //----------------------------------------------------
 
-
-    @Override
-    public void onBackPressed() {
-
-        selected_shift_id = "";
-        selected_approver_id = "";
-
-        finish();
-    }
 
 //    public boolean isConnected() {
 //        boolean connected = false;
@@ -1258,7 +1183,7 @@ public class AttendanceUpdate extends AppCompatActivity {
 //            int     exitValue = ipProcess.waitFor();
 //            return (exitValue == 0);
 //        }
-//        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
+//        catch (IOException | InterruptedException e)          { logger.log(Level.WARNING, e.getMessage(), e); }
 //
 //        return false;
 //    }
@@ -1944,7 +1869,7 @@ public class AttendanceUpdate extends AppCompatActivity {
 //
 //            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
 //            Log.i("ERRRRR", e.getLocalizedMessage());
-//            e.printStackTrace();
+//            logger.log(Level.WARNING, e.getMessage(), e);
 //        }
 //    }
 
@@ -1963,13 +1888,13 @@ public class AttendanceUpdate extends AppCompatActivity {
         allApproverEmp = new ArrayList<>();
         allSelectedApprover = new ArrayList<>();
 
-        String companyOfficeUrl = "http://103.56.208.123:8001/apex/ttrams/attendanceUpNewReq/getCompanyOffice";
-        String shiftsUrl = "http://103.56.208.123:8001/apex/ttrams/attendanceUpNewReq/getShiftLists";
-        String empInfoUrl = "http://103.56.208.123:8001/apex/ttrams/attendanceUpNewReq/getEmpInfo/"+emp_id+"";
-        String forwardListsWithDivUrl = "http://103.56.208.123:8001/apex/ttrams/attendanceUpNewReq/getForward_ApproverListWithDiv/"+emp_id+"";
-        String forwardWithoutDivUrl = "http://103.56.208.123:8001/apex/ttrams/attendanceUpNewReq/getFor_AppListWIthoutDiv/"+emp_id+"";
-        String forwardAllUrl = "http://103.56.208.123:8001/apex/ttrams/attendanceUpNewReq/getAllFor_AppList/"+emp_id+"";
-        String desigPriorUrl = "http://103.56.208.123:8001/apex/ttrams/forwardReq/getDesigPriority/"+emp_id+"";
+        String companyOfficeUrl = api_url_front + "attendanceUpNewReq/getCompanyOffice";
+        String shiftsUrl = api_url_front + "attendanceUpNewReq/getShiftLists";
+        String empInfoUrl = api_url_front + "attendanceUpNewReq/getEmpInfo/"+emp_id;
+        String forwardListsWithDivUrl = api_url_front + "attendanceUpNewReq/getForward_ApproverListWithDiv/"+emp_id;
+        String forwardWithoutDivUrl = api_url_front + "attendanceUpNewReq/getFor_AppListWIthoutDiv/"+emp_id;
+        String forwardAllUrl = api_url_front + "attendanceUpNewReq/getAllFor_AppList/"+emp_id;
+        String desigPriorUrl = api_url_front + "forwardReq/getDesigPriority/"+emp_id;
 
         RequestQueue requestQueue = Volley.newRequestQueue(AttendanceUpdate.this);
 
@@ -2002,12 +1927,12 @@ public class AttendanceUpdate extends AppCompatActivity {
                 }
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateLay();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             conn = false;
             connected = false;
             updateLay();
@@ -2042,12 +1967,12 @@ public class AttendanceUpdate extends AppCompatActivity {
                 requestQueue.add(desigPriorReq);
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateLay();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             conn = false;
             connected = false;
             updateLay();
@@ -2084,12 +2009,12 @@ public class AttendanceUpdate extends AppCompatActivity {
                 requestQueue.add(forwardAllReq);
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateLay();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             conn = false;
             connected = false;
             updateLay();
@@ -2126,12 +2051,12 @@ public class AttendanceUpdate extends AppCompatActivity {
                 requestQueue.add(forwardWithoutDivReq);
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateLay();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             conn = false;
             connected = false;
             updateLay();
@@ -2158,12 +2083,12 @@ public class AttendanceUpdate extends AppCompatActivity {
                 requestQueue.add(forwardWithDivReq);
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateLay();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             conn = false;
             connected = false;
             updateLay();
@@ -2195,12 +2120,12 @@ public class AttendanceUpdate extends AppCompatActivity {
                 requestQueue.add(empInfoReq);
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateLay();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             conn = false;
             connected = false;
             updateLay();
@@ -2225,12 +2150,12 @@ public class AttendanceUpdate extends AppCompatActivity {
                 requestQueue.add(shiftReq);
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateLay();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             conn = false;
             connected = false;
             updateLay();
@@ -2241,9 +2166,9 @@ public class AttendanceUpdate extends AppCompatActivity {
 
     public void getForwarderApproverList() {
 
-        String approvalBandUrl = "http://103.56.208.123:8001/apex/ttrams/forwardReq/getApprovalBand/"+desig_priority+"";
-        String countApp1Url = "http://103.56.208.123:8001/apex/ttrams/forwardReq/getCountApprovEmp/"+divm_id+"/"+desig_priority+"";
-        String countApp2Url = "http://103.56.208.123:8001/apex/ttrams/forwardReq/getCountApprovEmp_2/"+desig_priority+"";
+        String approvalBandUrl = api_url_front + "forwardReq/getApprovalBand/"+desig_priority;
+        String countApp1Url = api_url_front + "forwardReq/getCountApprovEmp/"+divm_id+"/"+desig_priority;
+        String countApp2Url = api_url_front + "forwardReq/getCountApprovEmp_2/"+desig_priority;
 
         RequestQueue requestQueue = Volley.newRequestQueue(AttendanceUpdate.this);
 
@@ -2274,12 +2199,12 @@ public class AttendanceUpdate extends AppCompatActivity {
 
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateLay();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             conn = false;
             connected = false;
             updateLay();
@@ -2308,12 +2233,12 @@ public class AttendanceUpdate extends AppCompatActivity {
                 }
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateLay();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             conn = false;
             connected = false;
             updateLay();
@@ -2343,12 +2268,12 @@ public class AttendanceUpdate extends AppCompatActivity {
                 }
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateLay();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             conn = false;
             connected = false;
             updateLay();
@@ -2361,7 +2286,7 @@ public class AttendanceUpdate extends AppCompatActivity {
         waitProgress.dismiss();
         if (conn) {
             if (connected) {
-                if (locUpdateLists.size() != 0) {
+                if (!locUpdateLists.isEmpty()) {
                     for (int i = 0; i < locUpdateLists.size(); i++) {
                         onlyLocationLists.add(locUpdateLists.get(i).getLocation());
                     }
@@ -2448,7 +2373,7 @@ public class AttendanceUpdate extends AppCompatActivity {
 //
 //            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
 //            Log.i("ERRRRR", e.getLocalizedMessage());
-//            e.printStackTrace();
+//            logger.log(Level.WARNING, e.getMessage(), e);
 //        }
 //    }
 
@@ -2462,7 +2387,7 @@ public class AttendanceUpdate extends AppCompatActivity {
         machineCode = "";
         machineType = "";
 
-        String url = "http://103.56.208.123:8001/apex/ttrams/attendanceUpNewReq/getMachineData/"+selected_loc_id+"";
+        String url = api_url_front + "attendanceUpNewReq/getMachineData/"+selected_loc_id;
         RequestQueue requestQueue = Volley.newRequestQueue(AttendanceUpdate.this);
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, response -> {
@@ -2485,12 +2410,12 @@ public class AttendanceUpdate extends AppCompatActivity {
                 updateMachine();
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 machineCon = false;
                 updateMachine();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             machineConnn = false;
             machineCon = false;
             updateMachine();
@@ -2589,7 +2514,7 @@ public class AttendanceUpdate extends AppCompatActivity {
 //
 //            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
 //            Log.i("ERRRRR", e.getLocalizedMessage());
-//            e.printStackTrace();
+//            logger.log(Level.WARNING, e.getMessage(), e);
 //        }
 //    }
 
@@ -2602,7 +2527,7 @@ public class AttendanceUpdate extends AppCompatActivity {
 
         reasonLists = new ArrayList<>();
 
-        String url = "http://103.56.208.123:8001/apex/ttrams/attendanceUpNewReq/getReasonData/"+selected_attendance_type+"";
+        String url = api_url_front + "attendanceUpNewReq/getReasonData/"+selected_attendance_type;
         RequestQueue requestQueue = Volley.newRequestQueue(AttendanceUpdate.this);
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, response -> {
@@ -2626,12 +2551,12 @@ public class AttendanceUpdate extends AppCompatActivity {
                 updateReason();
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 reasonCon = false;
                 updateReason();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             reasonConnnn = false;
             reasonCon = false;
             updateReason();
@@ -2647,7 +2572,7 @@ public class AttendanceUpdate extends AppCompatActivity {
                 reasonName = new ArrayList<>();
                 reasonName.add("Select");
 
-                if (reasonLists.size() != 0) {
+                if (!reasonLists.isEmpty()) {
                     for (int i = 0; i < reasonLists.size(); i++) {
                         reasonName.add(reasonLists.get(i).getReason_name());
                         reasonAdapter.setNotifyOnChange(true);
@@ -2873,7 +2798,7 @@ public class AttendanceUpdate extends AppCompatActivity {
 //
 //            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
 //            Log.i("ERRRRR", e.getLocalizedMessage());
-//            e.printStackTrace();
+//            logger.log(Level.WARNING, e.getMessage(), e);
 //        }
 //    }
 
@@ -2886,7 +2811,7 @@ public class AttendanceUpdate extends AppCompatActivity {
         insertCon = false;
         isInserted = false;
 
-        String insertUrl = "http://103.56.208.123:8001/apex/ttrams/attendanceUpNewReq/insertAttUpReq";
+        String insertUrl = api_url_front + "attendanceUpNewReq/insertAttUpReq";
 
         RequestQueue requestQueue = Volley.newRequestQueue(AttendanceUpdate.this);
 
@@ -2911,13 +2836,13 @@ public class AttendanceUpdate extends AppCompatActivity {
                 updateInsertLay();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             insertConnn = false;
             insertCon = false;
             updateInsertLay();
         }) {
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
+            public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
                 headers.put("NOW_DATE", now_date);
                 headers.put("P_ADDRESS",selected_address_station);
@@ -2961,13 +2886,10 @@ public class AttendanceUpdate extends AppCompatActivity {
                     dialog.setCancelable(false);
                     dialog.setCanceledOnTouchOutside(false);
                     Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                    positive.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
+                    positive.setOnClickListener(v -> {
 
-                            dialog.dismiss();
-                            finish();
-                        }
+                        dialog.dismiss();
+                        finish();
                     });
                 }
                 else {

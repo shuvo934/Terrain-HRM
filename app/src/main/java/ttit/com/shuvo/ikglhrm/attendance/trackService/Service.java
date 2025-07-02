@@ -9,21 +9,18 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.os.Environment;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -31,7 +28,7 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.Priority;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONException;
@@ -51,12 +48,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import ttit.com.shuvo.ikglhrm.MainActivity;
 import ttit.com.shuvo.ikglhrm.R;
 
 import static ttit.com.shuvo.ikglhrm.attendance.trackService.DistanceCalculator.CalculationByDistance;
 import static ttit.com.shuvo.ikglhrm.attendance.trackService.Notification.CHANNEL_ID;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 
 public class Service extends android.app.Service {
@@ -64,14 +64,14 @@ public class Service extends android.app.Service {
     private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 3000;
     private FusedLocationProviderClient mFusedLocationClient;
     private LocationRequest locationRequest;
-    private LocationSettingsRequest locationSettingsRequest;
+//    private LocationSettingsRequest locationSettingsRequest;
     public static ArrayList<LatLngTimeList> locationLists;
     public static ArrayList<String> trk;
 
     private static final int ONE_MINUTES = 1000 * 60;
     public Location previousBestLocation = null;
     public Location firstLocation = null;
-    public Location nextLocation = null;
+//    public Location nextLocation = null;
 
     final int[] local = {0};
     final int[] localLive = {0};
@@ -91,7 +91,7 @@ public class Service extends android.app.Service {
 //            return "http://103.56.208.123:8001/apex/tracker/rest-v4/loctrackerv4/";
 //        }
 //        else if (DEFAULT_USERNAME.equals("TTRAMS")) {
-//            return "http://103.56.208.123:8001/apex/ttrams/tracker/update_loc";
+//            return api_url_front + "tracker/update_loc";
 //        }
 //        else {
 //            return "";
@@ -111,143 +111,136 @@ public class Service extends android.app.Service {
     public static  String DISTANCE = "DISTANCE";
     public static  String TOTAL_TIME = "TOTAL_TIME";
     public static  String STOPPED_TIME = "STOPPED_TIME";
-
+    Logger logger = Logger.getLogger(Service.class.getName());
     //Location Callback
-    private LocationCallback locationCallback = new LocationCallback() {
+    private final LocationCallback locationCallback = new LocationCallback() {
         @Override
-        public void onLocationResult(LocationResult locationResult) {
+        public void onLocationResult(@NonNull  LocationResult locationResult) {
 //            Location currentLocation = locationResult.getLastLocation();
 //            Log.d("Locations", currentLocation.getLatitude() + "," + currentLocation.getLongitude());
 
 
-            if (locationResult != null) {
-                for (Location location : locationResult.getLocations()) {
-                    Log.d("Locations", location.getLatitude() + "," + location.getLongitude());
+            for (Location location : locationResult.getLocations()) {
+                Log.d("Locations", location.getLatitude() + "," + location.getLongitude());
 
-                    Date stopdate = Calendar.getInstance().getTime();
-                    SimpleDateFormat stopsimpleDateFormat = new SimpleDateFormat("hh:mm a",Locale.ENGLISH);
-                    String stoptime = stopsimpleDateFormat.format(stopdate);
+                Date stopdate = Calendar.getInstance().getTime();
+                SimpleDateFormat stopsimpleDateFormat = new SimpleDateFormat("hh:mm a", Locale.ENGLISH);
+                String stoptime = stopsimpleDateFormat.format(stopdate);
 
-                    System.out.println(stoptime);
-                    if (stoptime.equals("11:59 PM")) {
-                        stopSelf();
-                    }
+                System.out.println(stoptime);
+                if (stoptime.equals("11:59 PM")) {
+                    stopSelf();
+                }
 
-                    System.out.println(locationLists.size());
+                System.out.println(locationLists.size());
 
-                    if (local[0] == 0) {
-                        local[0]++;
-                        LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());
+                if (local[0] == 0) {
+                    local[0]++;
+                    LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());
+                    preLatlng[0] = ll;
+                    length_multi = (String.format(Locale.ENGLISH,"%.3f", w[0]) + " KM");
+
+                    firstLocation = location;
+                    Date date = Calendar.getInstance().getTime();
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm a", Locale.ENGLISH);
+                    String time = simpleDateFormat.format(date);
+                    //firstLoc.setText(add);
+                    locationLists.add(new LatLngTimeList(ll, time));
+
+                } else {
+                    local[0]++;
+                    LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());
+                    Double distance = CalculationByDistance(preLatlng[0], ll);
+
+                    Date date = Calendar.getInstance().getTime();
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm a", Locale.ENGLISH);
+                    String time = simpleDateFormat.format(date);
+                    Log.i("Distance", distance.toString());
+
+                    long timeData = location.getTime() - firstLocation.getTime();
+                    double hour = (double) timeData / (ONE_MINUTES * 60);
+                    int speed = (int) (distance / hour);
+                    System.out.println("SPEED FOR GPX: " + speed + " KM/H");
+                    firstLocation = location;
+
+                    lastlatLng = ll;
+                    lastTime = time;
+                    lastDistance = distance;
+
+                    if (distance >= 0.03 && speed < 500) {
+
+                        w[0] = w[0] + distance;
+
                         preLatlng[0] = ll;
-                        length_multi = (String.format("%.3f", w[0]) + " KM");
+                        length_multi = (String.format(Locale.ENGLISH,"%.3f", w[0]) + " KM");
 
-                        firstLocation = location;
-                        Date date = Calendar.getInstance().getTime();
-                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm a",Locale.ENGLISH);
-                        String time = simpleDateFormat.format(date);
-                        //firstLoc.setText(add);
-                        locationLists.add(new LatLngTimeList(ll,time));
-
+                        locationLists.add(new LatLngTimeList(ll, time));
                     }
-                    else {
-                        local[0]++;
+
+                }
+
+
+                System.out.println("LOCATION ACCURACY: " + location.getAccuracy());
+                System.out.println("LOCATION TIME: " + location.getTime());
+
+
+                if (live_flag == 1) {
+                    if (localLive[0] == 0) {
+
+                        localLive[0]++;
+
+                        System.out.println("LOCATION FIRST: " + location);
+                        previousBestLocation = location;
                         LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());
-                        Double distance = CalculationByDistance(preLatlng[0], ll);
 
-                        Date date = Calendar.getInstance().getTime();
-                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm a",Locale.ENGLISH);
-                        String time = simpleDateFormat.format(date);
-                        Log.i("Distance", distance.toString());
-
-                        long timeData = location.getTime() - firstLocation.getTime();
-                        double hour = (double) timeData / (ONE_MINUTES * 60);
-                        int speed = (int) (distance / hour);
-                        System.out.println("SPEED FOR GPX: " + speed + " KM/H");
-                        firstLocation = location;
-
-                        lastlatLng = ll;
-                        lastTime = time;
-                        lastDistance = distance;
-
-                        if (distance >= 0.03 && speed < 500) {
-
-                            w[0] = w[0] + distance;
-
-                            preLatlng[0] = ll;
-                            length_multi = (String.format("%.3f", w[0]) + " KM");
-
-                            locationLists.add(new LatLngTimeList(ll,time));
-                        }
-
-                    }
+                        String lat = String.valueOf(location.getLatitude());
+                        String lon = String.valueOf(location.getLongitude());
+                        String spd = "0 KM/H";
+                        String add = getAddress(ll.latitude, ll.longitude);
+                        String acc = String.valueOf(location.getAccuracy());
+                        String bear = String.valueOf(location.getBearing());
+                        UpdateLocation(lat, lon, spd, add, acc, bear);
 
 
-                    System.out.println("LOCATION ACCURACY: "+ location.getAccuracy());
-                    System.out.println("LOCATION TIME: "+ location.getTime());
-
-
-                    if (live_flag == 1) {
-                        if (localLive[0] == 0) {
+                    } else {
+                        if (previousBestLocation != null) {
 
                             localLive[0]++;
+                            long timeData = location.getTime() - previousBestLocation.getTime();
+                            if (timeData >= ONE_MINUTES) {
 
-                            System.out.println("LOCATION FIRST: "+ location);
-                            previousBestLocation = location;
-                            LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());
+                                System.out.println("LOCATION OTHER: " + location);
+                                LatLng prell = new LatLng(previousBestLocation.getLatitude(), previousBestLocation.getLongitude());
+                                LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());
+                                double distance = CalculationByDistance(prell, ll);
+                                System.out.println("DISTANCE: " + distance);
+                                System.out.println("TIME DATA: " + timeData);
+                                double hour = (double) timeData / (ONE_MINUTES * 60);
+                                System.out.println("HOUR: " + hour);
+                                int speed = (int) (distance / hour);
+                                System.out.println("SPEED: " + speed + " KM/H");
+                                System.out.println("BEARING: " + location.getBearing());
+                                previousBestLocation = location;
 
-                            String lat = String.valueOf(location.getLatitude());
-                            String lon = String.valueOf(location.getLongitude());
-                            String spd = "0 KM/H";
-                            String add = getAddress(ll.latitude,ll.longitude);
-                            String acc = String.valueOf(location.getAccuracy());
-                            String bear = String.valueOf(location.getBearing());
-                            UpdateLocation(lat,lon,spd,add,acc,bear);
-
-
-                        }
-                        else {
-                            if (previousBestLocation != null) {
-
-                                localLive[0]++;
-                                long timeData = location.getTime() - previousBestLocation.getTime();
-                                if (timeData >= ONE_MINUTES) {
-
-                                    System.out.println("LOCATION OTHER: "+ location);
-                                    LatLng prell = new LatLng(previousBestLocation.getLatitude(), previousBestLocation.getLongitude());
-                                    LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());
-                                    double distance = CalculationByDistance(prell, ll);
-                                    System.out.println("DISTANCE: "+ distance);
-                                    System.out.println("TIME DATA: " + timeData);
-                                    double hour = (double) timeData / (ONE_MINUTES * 60);
-                                    System.out.println("HOUR: "+ hour);
-                                    int speed = (int) (distance / hour);
-                                    System.out.println("SPEED: " + speed + " KM/H");
-                                    System.out.println("BEARING: " + String.valueOf(location.getBearing()));
-                                    previousBestLocation = location;
-
-                                    String lat = String.valueOf(location.getLatitude());
-                                    String lon = String.valueOf(location.getLongitude());
-                                    String spd = String.valueOf(speed) + " KM/H";
-                                    String add = getAddress(ll.latitude,ll.longitude);
-                                    String acc = String.valueOf(location.getAccuracy());
-                                    String bear = String.valueOf(location.getBearing());
+                                String lat = String.valueOf(location.getLatitude());
+                                String lon = String.valueOf(location.getLongitude());
+                                String spd = speed + " KM/H";
+                                String add = getAddress(ll.latitude, ll.longitude);
+                                String acc = String.valueOf(location.getAccuracy());
+                                String bear = String.valueOf(location.getBearing());
 
 
-                                    UpdateLocation(lat,lon,spd,add,acc,bear);
-
-                                }
-
+                                UpdateLocation(lat, lon, spd, add, acc, bear);
 
                             }
 
+
                         }
+
                     }
-
-
-
-
-
                 }
+
+
             }
 
             //Share/Publish Location
@@ -257,33 +250,25 @@ public class Service extends android.app.Service {
     public void UpdateLocation(String lat, String lon, String speed, String adds, String acc, String bear) {
 
 //        String url = getUrl();
-        String url = "http://103.56.208.123:8001/apex/ttrams/tracker/update_loc";
+        String url = api_url_front + "tracker/update_loc";
         System.out.println("URL: "+url);
         RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
 
-        StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
+        StringRequest request = new StringRequest(Request.Method.POST, url, response -> {
 
-                System.out.println("RESPONSE ADDED");
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
+            System.out.println("RESPONSE ADDED");
+            try {
+                JSONObject jsonObject = new JSONObject(response);
 
-                } catch (JSONException e) {
-                    //System.out.println(e.getLocalizedMessage());
-                }
+            } catch (JSONException e) {
+                //System.out.println(e.getLocalizedMessage());
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                System.out.println("Failed to Upload Data");
-            }
-        }) {
-            @Nullable
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
+        }, error -> System.out.println("Failed to Upload Data")) {
 
-                Map<String, String> params = new HashMap<String, String>();
+            @Override
+            protected Map<String, String> getParams() {
+
+                Map<String, String> params = new HashMap<>();
                 params.put("empid", emp_id);
                 params.put("lat", lat);
                 params.put("long", lon);
@@ -323,14 +308,12 @@ public class Service extends android.app.Service {
 //        lastTime = "";
 
         Intent notificationIntent = new Intent(this, MainActivity.class);
-        PendingIntent pendingIntent = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
-        }
+        PendingIntent pendingIntent;
+        pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("Terrain HRM")
                 .setContentText("Tracking your Location")
-                .setSmallIcon(R.drawable.thrn_logo)
+                .setSmallIcon(R.drawable.hrm_new_icon_wb)
                 .setContentIntent(pendingIntent)
                 .build();
 
@@ -368,16 +351,16 @@ public class Service extends android.app.Service {
             if (lastlatLng != null) {
                 locationLists.add(new LatLngTimeList(lastlatLng,lastTime));
                 w[0] = w[0] + lastDistance;
-                length_multi = (String.format("%.3f", w[0]) + " KM");
+                length_multi = (String.format(Locale.ENGLISH,"%.3f", w[0]) + " KM");
             }
 
             if (distance != null) {
                 double ddddiss = Double.parseDouble(distance);
                 ddddiss = ddddiss + w[0];
-                distance = String.format("%.3f", ddddiss);
+                distance = String.format(Locale.ENGLISH,"%.3f", ddddiss);
             }
             else {
-                distance = String.format("%.3f", w[0]);
+                distance = String.format(Locale.ENGLISH,"%.3f", w[0]);
             }
 
             if (totalTime != null) {
@@ -395,7 +378,7 @@ public class Service extends android.app.Service {
                     first = sdfTime.parse(fTime);
                     last = sdfTime.parse(lTime);
                 } catch (ParseException e) {
-                    e.printStackTrace();
+                    logger.log(Level.WARNING, e.getMessage(), e);
                 }
 
                 if (first != null && last != null) {
@@ -419,7 +402,7 @@ public class Service extends android.app.Service {
                     first = sdfTime.parse(fTime);
                     last = sdfTime.parse(lTime);
                 } catch (ParseException e) {
-                    e.printStackTrace();
+                    logger.log(Level.WARNING, e.getMessage(), e);
                 }
 
                 if (first != null && last != null) {
@@ -448,7 +431,7 @@ public class Service extends android.app.Service {
                             first = sdfTime.parse(oneTime);
                             last = sdfTime.parse(twoTime);
                         } catch (ParseException e) {
-                            e.printStackTrace();
+                            logger.log(Level.WARNING, e.getMessage(), e);
                         }
 
                         if (first != null && last != null) {
@@ -484,7 +467,7 @@ public class Service extends android.app.Service {
                             first = sdfTime.parse(oneTime);
                             last = sdfTime.parse(twoTime);
                         } catch (ParseException e) {
-                            e.printStackTrace();
+                            logger.log(Level.WARNING, e.getMessage(), e);
                         }
 
                         if (first != null && last != null) {
@@ -552,12 +535,12 @@ public class Service extends android.app.Service {
         //fileName = "16-Oct-21"+"_Track";
 
 
-        File myExternalFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),fileName+".gpx");
+        File myExternalFile = new File(getExternalFilesDir(null),fileName+".gpx");
 
         if (myExternalFile.exists()) {
             try {
                 System.out.println("EXISTING FILE");
-                String gpxFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + File.separator +  fileName +".gpx";
+                String gpxFile = getExternalFilesDir(null).getPath() + File.separator +  fileName +".gpx";
                 BufferedReader bufferedReader = new BufferedReader(new FileReader(gpxFile));
                 String line;
                 String input = "";
@@ -576,7 +559,7 @@ public class Service extends android.app.Service {
                     Toast.makeText(getApplicationContext(), "Your Track Record Has Been Saved", Toast.LENGTH_SHORT).show();
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 Toast.makeText(getApplicationContext(), "Could Not Save", Toast.LENGTH_SHORT).show();
             }
         }
@@ -587,7 +570,7 @@ public class Service extends android.app.Service {
 //            trk.clear();
 
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 Toast.makeText(getApplicationContext(), "Could Not Save", Toast.LENGTH_SHORT).show();
             }
         }
@@ -636,10 +619,15 @@ public class Service extends android.app.Service {
         sharedPreferences = getSharedPreferences(LOGIN_ACTIVITY_FILE, MODE_PRIVATE);
         emp_id = sharedPreferences.getString(EMP_ID_LOGIN,null);
         live_flag = sharedPreferences.getInt(LIVE_FLAG,0);
-        locationRequest = LocationRequest.create();
-        locationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
-        locationRequest.setFastestInterval(2000);
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+//        locationRequest = LocationRequest.create();
+//        locationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
+//        locationRequest.setFastestInterval(2000);
+//        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, UPDATE_INTERVAL_IN_MILLISECONDS)
+                .setWaitForAccurateLocation(false)
+                .setMinUpdateIntervalMillis(1000)
+                .setMaxUpdateDelayMillis(2000)
+                .build();
         locationLists = new ArrayList<>();
         trk = new ArrayList<>();
         local[0] = 0;
@@ -693,7 +681,7 @@ public class Service extends android.app.Service {
             // TennisAppActivity.showDialog(add);
         } catch (IOException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.log(Level.WARNING, e.getMessage(), e);
             //Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
             return address;
         }

@@ -12,12 +12,13 @@
         <item name="colorSecondaryVariant">@color/teal_700</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" >?attr/colorPrimary</item>
+        <item name="android:statusBarColor">@color/primaryColor</item>
 <!--        <item name="android:windowTranslucentStatus">true</item>-->
 <!--        <item name="android:navigationBarColor">#f0932b</item>-->
         <item name="android:navigationBarColor">@color/primaryColor</item>
-        <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
+        <item name="android:forceDarkAllowed" tools:targetApi="29">false</item>
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
+        <item name="android:windowBackground">@color/background_color</item>
         <!-- Customize your theme here. -->
     </style>
     <style name="AppBottomSheetDialogTheme"
@@ -27,6 +28,7 @@
     <style name="AppModalStyle"
         parent="Widget.MaterialComponents.BottomSheet">
         <!--        <item name="android:background">@drawable/bottom_sheet_design</item>-->
+        <item name="backgroundTint">@android:color/transparent</item>
         <item name="shapeAppearanceOverlay">@style/CustomShapeAppearanceBottomSheetDialog</item>
     </style>
     <style name="CustomShapeAppearanceBottomSheetDialog" parent="">
@@ -38,6 +40,35 @@
     </style>
     <style name="TextInputLayoutHintText" parent="TextAppearance.Design.Hint">
         <item name="android:fontFamily">@font/poppins_semibold</item>
+    </style>
+
+    <style name="mySwitchStyle" parent="@style/Widget.AppCompat.CompoundButton.Switch">
+        <!-- do here for additional costumization on thumb, track background,text appearance -->
+    </style>
+
+    <style name="mySwitchTheme" parent="ThemeOverlay.AppCompat.Light">
+        <item name="switchStyle">@style/mySwitchStyle</item>
+        <item name="colorControlActivated">@color/window_color</item>
+        <item name="colorControlNormal">@color/background_color</item>
+        <item name="trackTint">@drawable/switch_track_design</item>
+    </style>
+
+    <style name="BottomRoundedCard" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">0dp</item>
+        <item name="cornerSizeTopRight">0dp</item>
+        <item name="cornerSizeBottomLeft">@dimen/_15sdp</item>
+        <item name="cornerSizeBottomRight">@dimen/_15sdp</item>
+    </style>
+
+    <style name="BottomNavigationTextStyle">
+        <item name="android:fontFamily">@font/poppins_medium</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/_9sdp</item>
+    </style>
+
+    <style name="CustomTextFont" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/open_sans</item>
     </style>
 
 </resources>

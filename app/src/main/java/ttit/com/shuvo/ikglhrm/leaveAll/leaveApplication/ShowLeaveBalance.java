@@ -2,7 +2,6 @@ package ttit.com.shuvo.ikglhrm.leaveAll.leaveApplication;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,11 +20,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
 
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -38,19 +40,17 @@ import org.json.JSONObject;
 
 public class ShowLeaveBalance extends AppCompatDialogFragment {
 
-    private RecyclerView apptRecyclerView;
-    public static LeaveBalanceFroAPPAdapter leaveBalanceFroAPPAdapter;
-    private RecyclerView.LayoutManager apptLayout;
+    RecyclerView apptRecyclerView;
+    LeaveBalanceFroAPPAdapter leaveBalanceFroAPPAdapter;
+    RecyclerView.LayoutManager apptLayout;
 
     WaitProgress waitProgress = new WaitProgress();
-    private String message = null;
     private Boolean conn = false;
     private Boolean connected = false;
 
-//    private Connection connection;
     AppCompatActivity activity;
 
-    public static ArrayList<LeaveBalanceForAPPList> leaveBalanceForAPPLists;
+    ArrayList<LeaveBalanceForAPPList> leaveBalanceForAPPLists;
 
     String emp_id = "";
     String formattedDate = "";
@@ -63,11 +63,13 @@ public class ShowLeaveBalance extends AppCompatDialogFragment {
         this.mContext = mContext;
     }
 
+    Logger logger = Logger.getLogger(ShowLeaveBalance.class.getName());
+
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = getActivity().getLayoutInflater();
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
 
         View view = inflater.inflate(R.layout.show_leave_balance, null);
 
@@ -89,7 +91,6 @@ public class ShowLeaveBalance extends AppCompatDialogFragment {
         apptRecyclerView.setLayoutManager(apptLayout);
 
 
-//        new Check().execute();
         getLeaveBalance();
 
 
@@ -101,13 +102,7 @@ public class ShowLeaveBalance extends AppCompatDialogFragment {
         lBdialog.setCancelable(false);
         lBdialog.setCanceledOnTouchOutside(false);
 
-        lBdialog.setButton(Dialog.BUTTON_NEGATIVE, "OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                dialog.dismiss();
-            }
-        });
+        lBdialog.setButton(Dialog.BUTTON_NEGATIVE, "OK", (dialog, which) -> dialog.dismiss());
 
         return lBdialog;
     }
@@ -136,7 +131,7 @@ public class ShowLeaveBalance extends AppCompatDialogFragment {
 //            int     exitValue = ipProcess.waitFor();
 //            return (exitValue == 0);
 //        }
-//        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
+//        catch (IOException | InterruptedException e)          { logger.log(Level.WARNING, e.getMessage(), e); }
 //
 //        return false;
 //    }
@@ -247,7 +242,7 @@ public class ShowLeaveBalance extends AppCompatDialogFragment {
 //
 //            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
 //            Log.i("ERRRRR", e.getLocalizedMessage());
-//            e.printStackTrace();
+//            logger.log(Level.WARNING, e.getMessage(), e);
 //        }
 //
 //    }
@@ -260,7 +255,7 @@ public class ShowLeaveBalance extends AppCompatDialogFragment {
 
         leaveBalanceForAPPLists = new ArrayList<>();
 
-        String url = "http://103.56.208.123:8001/apex/ttrams/leave/show_leave_balance/"+emp_id+"/"+formattedDate+"";
+        String url = api_url_front + "leave/show_leave_balance/"+emp_id+"/"+formattedDate;
 
         RequestQueue requestQueue = Volley.newRequestQueue(mContext);
 
@@ -288,12 +283,12 @@ public class ShowLeaveBalance extends AppCompatDialogFragment {
                 updateDial();
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateDial();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             conn = false;
             connected = false;
             updateDial();
@@ -310,7 +305,7 @@ public class ShowLeaveBalance extends AppCompatDialogFragment {
                 apptRecyclerView.setAdapter(leaveBalanceFroAPPAdapter);
             }
             else {
-                AlertDialog dialog = new AlertDialog.Builder(getContext())
+                AlertDialog dialog = new AlertDialog.Builder(mContext)
                         .setMessage("There is a network issue in the server. Please Try later.")
                         .setPositiveButton("Retry", null)
                         .setNegativeButton("Cancel",null)
@@ -332,7 +327,7 @@ public class ShowLeaveBalance extends AppCompatDialogFragment {
             }
         }
         else {
-            AlertDialog dialog = new AlertDialog.Builder(getContext())
+            AlertDialog dialog = new AlertDialog.Builder(mContext)
                     .setMessage("Please Check Your Internet Connection")
                     .setPositiveButton("Retry", null)
                     .setNegativeButton("Cancel",null)

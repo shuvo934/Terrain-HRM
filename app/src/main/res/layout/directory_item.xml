@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
@@ -8,10 +9,11 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="10dp"
-        app:cardElevation="5dp"
+        app:cardCornerRadius="@dimen/_8sdp"
+        app:cardElevation="@dimen/_4sdp"
         android:background="@color/white"
-        android:layout_margin="10dp">
+        android:layout_margin="@dimen/_8sdp">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -21,79 +23,82 @@
                 android:id="@+id/directory_emp_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="EMP_NAME"
+                android:text=""
                 android:textStyle="bold"
-                android:textSize="@dimen/_14sdp"
+                android:textSize="@dimen/_13sdp"
                 android:fontFamily="@font/poppins_bold"
                 android:textColor="@color/mazarine_blue"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
-                android:layout_marginTop="5dp"
-                android:padding="2dp"/>
+                android:layout_marginStart="@dimen/_4sdp"
+                android:layout_marginEnd="@dimen/_4sdp"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:padding="@dimen/_1sdp"/>
+
             <TextView
                 android:id="@+id/directory_designation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Division Name"
+                android:text=""
                 android:fontFamily="@font/poppins_semibold"
-                android:textSize="@dimen/_10sdp"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
-                android:paddingStart="2dp"
-                android:paddingEnd="2dp"/>
+                android:textSize="@dimen/_8sdp"
+                android:layout_marginStart="@dimen/_4sdp"
+                android:layout_marginEnd="@dimen/_4sdp"
+                android:paddingStart="@dimen/_1sdp"
+                android:paddingEnd="@dimen/_1sdp"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-
                 <TextView
                     android:id="@+id/directory_department"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Division Name"
+                    android:text=""
                     android:fontFamily="@font/poppins_semibold"
-                    android:textSize="@dimen/_10sdp"
-                    android:layout_marginStart="5dp"
-                    android:paddingStart="2dp"
-                    android:paddingEnd="2dp"/>
+                    android:textSize="@dimen/_8sdp"
+                    android:layout_marginStart="@dimen/_4sdp"
+                    android:paddingStart="@dimen/_1sdp"
+                    android:paddingEnd="@dimen/_1sdp"/>
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text=", "
                     android:fontFamily="@font/poppins_semibold"
-                    android:textSize="@dimen/_10sdp"
-                    android:paddingStart="2dp"
-                    android:paddingEnd="2dp"/>
+                    android:textSize="@dimen/_8sdp"
+                    android:paddingStart="@dimen/_1sdp"
+                    android:paddingEnd="@dimen/_1sdp"
+                    tools:ignore="HardcodedText" />
+
                 <TextView
                     android:id="@+id/directory_division"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Division Name"
+                    android:text=""
                     android:fontFamily="@font/poppins_semibold"
-                    android:textSize="@dimen/_10sdp"
-                    android:layout_marginEnd="5dp"
-                    android:paddingStart="2dp"
-                    android:paddingEnd="2dp"/>
+                    android:textSize="@dimen/_8sdp"
+                    android:layout_marginEnd="@dimen/_4sdp"
+                    android:paddingStart="@dimen/_1sdp"
+                    android:paddingEnd="@dimen/_1sdp"/>
 
             </LinearLayout>
-
-
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Phone Number:"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="5dp"
+                android:layout_marginStart="@dimen/_4sdp"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:layout_marginEnd="@dimen/_4sdp"
                 android:fontFamily="@font/poppins_bold"
-                android:paddingStart="2dp"
-                android:paddingEnd="2dp"
-                android:textSize="@dimen/_13sdp"
+                android:paddingStart="@dimen/_1sdp"
+                android:paddingEnd="@dimen/_1sdp"
+                android:textSize="@dimen/_11sdp"
                 android:textColor="@color/black"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                tools:ignore="HardcodedText" />
+
             <TextView
                 android:id="@+id/phone_number_not_found"
                 android:layout_width="match_parent"
@@ -101,64 +106,65 @@
                 android:text="No Number Found"
                 android:textStyle="bold"
                 android:visibility="gone"
+                android:textSize="@dimen/_10sdp"
                 android:textColor="@color/primaryColor"
                 android:fontFamily="@font/poppins_semibold"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="5dp"
-                android:paddingStart="2dp"
-                android:paddingEnd="2dp"/>
+                android:layout_marginStart="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:layout_marginEnd="@dimen/_4sdp"
+                android:paddingStart="@dimen/_1sdp"
+                android:paddingEnd="@dimen/_1sdp"
+                tools:ignore="HardcodedText" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="5dp">
+                android:layout_marginTop="@dimen/_4sdp"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:layout_marginEnd="@dimen/_4sdp">
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/phone_number_list_view"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-
-                   />
+                    android:layout_height="wrap_content" />
 
             </LinearLayout>
-
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Email:"
-                android:layout_margin="5dp"
-                android:paddingStart="2dp"
-                android:paddingEnd="2dp"
+                android:layout_margin="@dimen/_4sdp"
+                android:paddingStart="@dimen/_1sdp"
+                android:paddingEnd="@dimen/_1sdp"
                 android:fontFamily="@font/poppins_bold"
-                android:textSize="@dimen/_13sdp"
+                android:textSize="@dimen/_11sdp"
                 android:textColor="@color/black"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                tools:ignore="HardcodedText" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginBottom="10dp"
-                android:layout_marginStart="10dp"
+                android:layout_marginBottom="@dimen/_8sdp"
+                android:layout_marginStart="@dimen/_8sdp"
                 android:weightSum="1">
 
                 <TextView
                     android:id="@+id/directory_mail"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
+                    android:layout_marginEnd="@dimen/_4sdp"
                     android:layout_weight=".9"
                     android:textStyle="bold"
                     android:fontFamily="@font/poppins_semibold"
                     android:textColor="@color/primaryColor"
-                    android:paddingStart="2dp"
+                    android:paddingStart="@dimen/_1sdp"
                     android:layout_gravity="center"
-                    android:paddingEnd="2dp"
-                    android:textSize="@dimen/_11sdp"
-                    android:text="SSSSSSS@DDDDD"/>
+                    android:paddingEnd="@dimen/_1sdp"
+                    android:textSize="@dimen/_10sdp"
+                    android:text=""/>
 
                 <ImageView
                     android:id="@+id/mail_click"
@@ -166,17 +172,15 @@
                     android:layout_height="wrap_content"
                     android:layout_weight=".1"
                     android:src="@drawable/mail_24"
-                    android:layout_marginEnd="5dp"
+                    android:layout_marginEnd="@dimen/_4sdp"
                     app:tint="@color/mazarine_blue"
-                    android:layout_gravity="center"/>
+                    android:layout_gravity="center"
+                    tools:ignore="ContentDescription" />
 
             </LinearLayout>
 
-
-
         </LinearLayout>
+
     </androidx.cardview.widget.CardView>
-
-
 
 </LinearLayout>

@@ -5,21 +5,19 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import android.os.Bundle;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.TextView;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
 
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -38,12 +36,12 @@ public class PersonalData extends AppCompatActivity {
 //    Spinner sex;
 //    Spinner marital_status;
 //    Spinner mailing_address;
-    EditText bloodGroup;
-    EditText groupDisplay;
-    EditText religion;
-    EditText sex;
-    EditText marital_status;
-    EditText mailing_address;
+    TextView bloodGroup;
+    TextView groupDisplay;
+    TextView religion;
+    TextView sex;
+    TextView marital_status;
+    TextView mailing_address;
 
     public ArrayList<String> bg;
     public ArrayList<String> gd;
@@ -52,36 +50,32 @@ public class PersonalData extends AppCompatActivity {
     public ArrayList<String> ms;
     public ArrayList<String> ma;
 
-    ArrayAdapter<String> bgArrayAdapter;
-    ArrayAdapter<String> gdArrayAdapter;
-    ArrayAdapter<String> relArrayAdapter;
-    ArrayAdapter<String> seArrayAdapter;
-    ArrayAdapter<String> msArrayAdapter;
-    ArrayAdapter<String> maArrayAdapter;
+//    ArrayAdapter<String> bgArrayAdapter;
+//    ArrayAdapter<String> gdArrayAdapter;
+//    ArrayAdapter<String> relArrayAdapter;
+//    ArrayAdapter<String> seArrayAdapter;
+//    ArrayAdapter<String> msArrayAdapter;
+//    ArrayAdapter<String> maArrayAdapter;
 
-    EditText nameP;
-    EditText nameBP;
-    EditText revision;
-    EditText effectedDate;
-    EditText dateOfBirth;
-    EditText nationality;
-    EditText familyName;
-    EditText callingName;
-    EditText email;
-    EditText personalAdd;
-    EditText permanentAdd;
-    EditText personalAddBangla;
-    EditText permanentAddBangla;
+    TextView nameP;
+    TextView nameBP;
+    TextView revision;
+    TextView effectedDate;
+    TextView dateOfBirth;
+    TextView nationality;
+    TextView familyName;
+    TextView callingName;
+    TextView email;
+    TextView personalAdd;
+    TextView permanentAdd;
+    TextView personalAddBangla;
+    TextView permanentAddBangla;
 
     public static ArrayList<EMPInformation> empInformations;
 
     WaitProgress waitProgress = new WaitProgress();
-//    private String message = null;
     private Boolean conn = false;
-//    private Boolean infoConnected = false;
     private Boolean connected = false;
-
-//    private Connection connection;
 
     String emp_id = "";
 
@@ -89,49 +83,11 @@ public class PersonalData extends AppCompatActivity {
     String banglaName = "";
 
     Button ok;
+    Logger logger = Logger.getLogger(PersonalData.class.getName());
 
-//    @Override
-//    public void onWindowFocusChanged(boolean hasFocus) {
-//        super.onWindowFocusChanged(hasFocus);
-//        if (hasFocus) {
-//            hideSystemUI();
-//        }
-//    }
-//    private void hideSystemUI() {
-//        View decorView = getWindow().getDecorView();
-//        decorView.setSystemUiVisibility(
-//                View.SYSTEM_UI_FLAG_IMMERSIVE
-//                        // Set the content to appear under the system bars so that the
-//                        // content doesn't resize when the system bars hide and show.
-//                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-//                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-//                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-//                        // Hide the nav bar and status bar
-//                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-//                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
-//    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-//        getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            Window w = getWindow();
-//            //w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-//        }
-//        if (Build.VERSION.SDK_INT < 16) {
-//            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-//                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//        }
-//        View decorView = getWindow().getDecorView();
-//// Hide the status bar.
-//        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
-//        decorView.setSystemUiVisibility(uiOptions);
-        Window window = getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(ContextCompat.getColor(PersonalData.this,R.color.secondaryColor));
-
         setContentView(R.layout.activity_personal_data);
 
         emp_id = userInfoLists.get(0).getEmp_id();
@@ -444,12 +400,7 @@ public class PersonalData extends AppCompatActivity {
         getEmpInformation();
 
 
-        ok.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        ok.setOnClickListener(v -> finish());
     }
 
 //    public boolean isConnected() {
@@ -720,7 +671,7 @@ public class PersonalData extends AppCompatActivity {
         banglaName = "";
         empInformations = new ArrayList<>();
 
-        String jobDescUrl = "http://103.56.208.123:8001/apex/ttrams/emp_information/getPersonalInfo/"+emp_id+"";
+        String jobDescUrl = api_url_front + "emp_information/getPersonalInfo/"+emp_id;
 
         RequestQueue requestQueue = Volley.newRequestQueue(PersonalData.this);
 
@@ -855,13 +806,13 @@ public class PersonalData extends AppCompatActivity {
             }
             catch (JSONException e) {
                 connected = false;
-                e.printStackTrace();
+                logger.log(Level.WARNING,e.getMessage(),e);
                 updateLayout();
             }
         },error -> {
             conn = false;
             connected = false;
-            error.printStackTrace();
+            logger.log(Level.WARNING,error.getMessage(),error);
             updateLayout();
         });
 
@@ -872,7 +823,7 @@ public class PersonalData extends AppCompatActivity {
         waitProgress.dismiss();
         if (conn) {
             if (connected) {
-                if (empInformations.size() != 0) {
+                if (!empInformations.isEmpty()) {
                     for (int i = 0 ; i < empInformations.size(); i++) {
 
                         String dateC = empInformations.get(i).getEffectedDAte();

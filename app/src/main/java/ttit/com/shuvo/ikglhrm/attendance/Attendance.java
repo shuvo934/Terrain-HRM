@@ -2,25 +2,20 @@ package ttit.com.shuvo.ikglhrm.attendance;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.github.dewinjm.monthyearpicker.MonthFormat;
-import com.github.dewinjm.monthyearpicker.MonthYearPickerDialog;
 import com.github.dewinjm.monthyearpicker.MonthYearPickerDialogFragment;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
@@ -29,9 +24,8 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -46,16 +40,17 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
 import ttit.com.shuvo.ikglhrm.attendance.giveAttendance.AttendanceGive;
-import ttit.com.shuvo.ikglhrm.attendance.movement_reg.MovementRegister;
 import ttit.com.shuvo.ikglhrm.attendance.report.AttendanceReport;
+import ttit.com.shuvo.ikglhrm.dashboard.Dashboard;
 
-import static ttit.com.shuvo.ikglhrm.Login.CompanyName;
-import static ttit.com.shuvo.ikglhrm.Login.SoftwareName;
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -64,24 +59,29 @@ import org.json.JSONObject;
 public class Attendance extends AppCompatActivity {
 
 
-    CardView attReport;
-    CardView attUpdateall;
-    MaterialCardView attGive;
-    MaterialCardView movReg;
+    MaterialCardView attReport;
+    MaterialCardView attUpdateall;
+    MaterialButton attGive;
+//    MaterialCardView movReg;
 
-    TextView softName;
-    TextView compName;
+//    TextView softName;
+//    TextView compName;
 
-    Button attBack;
+//    Button attBack;
 
     PieChart pieChart;
     TextView refresh;
-    FloatingActionButton floatingActionButton;
+//    FloatingActionButton floatingActionButton;
+
+    TextView nowDateTime;
+    TextView officeHour;
+    TextView inTime;
+    TextView outTime;
+    TextView workingHours;
 
     int dateCount = 0;
 
     WaitProgress waitProgress = new WaitProgress();
-    private String message = null;
     private Boolean conn = false;
     private Boolean connected = false;
 
@@ -95,6 +95,8 @@ public class Attendance extends AppCompatActivity {
     String intTimeAttBot = "";
     String outTimeAttBot = "";
     String lastLtimAttBot = "";
+    String off_end_time = "";
+    String off_start_time = "";
 
     String absent = "";
     String present = "";
@@ -117,118 +119,87 @@ public class Attendance extends AppCompatActivity {
     public static  String DISTANCE = "DISTANCE";
     public static  String TOTAL_TIME = "TOTAL_TIME";
     public static  String STOPPED_TIME = "STOPPED_TIME";
-//    @Override
-//    public void onWindowFocusChanged(boolean hasFocus) {
-//        super.onWindowFocusChanged(hasFocus);
-//        if (hasFocus) {
-//            hideSystemUI();
-//        }
-//    }
-//    private void hideSystemUI() {
-//        View decorView = getWindow().getDecorView();
-//        decorView.setSystemUiVisibility(
-//                View.SYSTEM_UI_FLAG_IMMERSIVE
-//                        // Set the content to appear under the system bars so that the
-//                        // content doesn't resize when the system bars hide and show.
-//                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-//                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-//                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-//                        // Hide the nav bar and status bar
-//                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-//                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
-//    }
+
+    Logger logger = Logger.getLogger(Attendance.class.getName());
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-//        getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            Window w = getWindow();
-//            //w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-//        }
-//        if (Build.VERSION.SDK_INT < 16) {
-//            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-//                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//        }
-//        View decorView = getWindow().getDecorView();
-//// Hide the status bar.
-//        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
-//        decorView.setSystemUiVisibility(uiOptions);
-
         setContentView(R.layout.activity_attendance);
 
-        softName = findViewById(R.id.name_of_soft_attendance);
-        compName = findViewById(R.id.name_of_company_attendance);
+//        softName = findViewById(R.id.name_of_soft_attendance);
+//        compName = findViewById(R.id.name_of_company_attendance);
 
-        String soft = CompanyName;
-        String comp = SoftwareName;
+//        String soft = CompanyName;
+//        String comp = SoftwareName;
         lastTenDays = new ArrayList<>();
         lastTenDaysFromSQL = new ArrayList<>();
         updatedFiles = new ArrayList<>();
         updatedXml = new ArrayList<>();
 
-        softName.setText(soft);
-        compName.setText(comp);
+//        softName.setText(soft);
+//        compName.setText(comp);
 
         attReport =findViewById(R.id.attendance_report);
         attUpdateall = findViewById(R.id.atten_update_all);
         attGive = findViewById(R.id.attendance_give);
-        movReg = findViewById(R.id.movement_register_button);
-        movReg.setVisibility(View.GONE);
+//        movReg = findViewById(R.id.movement_register_button);
+//        movReg.setVisibility(View.GONE);
 
-        attBack = findViewById(R.id.attendance_back);
+//        attBack = findViewById(R.id.attendance_back);
 
         pieChart = findViewById(R.id.piechart_attendance);
         refresh = findViewById(R.id.refresh_graph_attendance);
-        floatingActionButton = findViewById(R.id.floating_button_att_bottom);
+//        floatingActionButton = findViewById(R.id.floating_button_att_bottom);
+//
+//        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                showBottomSheetDialog();
+//            }
+//        });
 
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showBottomSheetDialog();
-            }
-        });
+        nowDateTime = findViewById(R.id.now_date_time_attendance);
+        officeHour = findViewById(R.id.office_hour_attendance);
+        inTime = findViewById(R.id.in_time_attendance_attendance);
+        outTime = findViewById(R.id.out_time_attendance_attendance);
+        workingHours = findViewById(R.id.working_hours_attendance_dashboard);
 
+        Date dateCalendar = Calendar.getInstance().getTime();
+        SimpleDateFormat dateAttFormat = new SimpleDateFormat("EEE, dd MMM yyyy", Locale.ENGLISH);
+        String dc = dateAttFormat.format(dateCalendar) + " (today)";
+        nowDateTime.setText(dc);
 
-        attReport.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Attendance.this, AttendanceReport.class);
-                startActivity(intent);
-            }
-        });
-
-        attUpdateall.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Attendance.this, AttendanceUpdateAll.class);
-                startActivity(intent);
-            }
-        });
-
-        attGive.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Attendance.this, AttendanceGive.class);
-                intent.putExtra("LAST_TIME",lastLtimAttBot);
-                intent.putExtra("TODAY_DATE",lastDateForAttBot);
-                startActivity(intent);
-            }
-        });
-
-        movReg.setOnClickListener(v -> {
-            Intent intent = new Intent(Attendance.this, MovementRegister.class);
+        attReport.setOnClickListener(v -> {
+            Intent intent = new Intent(Attendance.this, AttendanceReport.class);
             startActivity(intent);
         });
 
-
-
-        attBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
+        attUpdateall.setOnClickListener(v -> {
+            Intent intent = new Intent(Attendance.this, AttendanceUpdateAll.class);
+            startActivity(intent);
         });
+
+        attGive.setOnClickListener(v -> {
+            Intent intent = new Intent(Attendance.this, AttendanceGive.class);
+            intent.putExtra("LAST_TIME",lastLtimAttBot);
+            intent.putExtra("TODAY_DATE",lastDateForAttBot);
+            startActivity(intent);
+        });
+
+//        movReg.setOnClickListener(v -> {
+//            Intent intent = new Intent(Attendance.this, MovementRegister.class);
+//            startActivity(intent);
+//        });
+//
+//
+//
+//        attBack.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                finish();
+//            }
+//        });
 
 
         emp_id = userInfoLists.get(0).getEmp_id();
@@ -251,9 +222,10 @@ public class Attendance extends AppCompatActivity {
 
         SimpleDateFormat mon = new SimpleDateFormat("MMMM",Locale.ENGLISH);
 
-        String mmm = mon.format(c);
+        String mmm = mon.format(c).toUpperCase();
 
-        refresh.setText("Month: "+mmm);
+        String tt = "Month: "+mmm;
+        refresh.setText(tt);
 
         NoOfEmp = new ArrayList<>();
 
@@ -288,24 +260,13 @@ public class Attendance extends AppCompatActivity {
         l.setVerticalAlignment(Legend.LegendVerticalAlignment.CENTER);
         l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
         l.setOrientation(Legend.LegendOrientation.VERTICAL);
-        l.setXOffset(20);
+        l.setXOffset(0);
         l.setTextSize(12);
         //l.setYOffset(50);
         l.setWordWrapEnabled(false);
         l.setDrawInside(false);
-        l.setYOffset(5f);
+        l.setYOffset(0f);
 
-        final int[] piecolors = new int[]{
-                Color.rgb(129, 236, 236),
-                Color.rgb(85, 239, 196),
-                Color.rgb(116, 185, 255),
-                Color.rgb(162, 155, 254),
-                Color.rgb(223, 230, 233),
-                Color.rgb(255, 234, 167),
-                Color.rgb(250, 177, 160),
-                Color.rgb(255, 118, 117),
-                Color.rgb(253, 121, 168),
-                Color.rgb(96, 163, 188)};
         pieChart.animateXY(1000, 1000);
 
 //        PieData data = new PieData(dataSet);
@@ -326,160 +287,167 @@ public class Attendance extends AppCompatActivity {
         getAttendanceGraph();
 
 
-        refresh.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        refresh.setOnClickListener(v -> {
 
-                Date c = Calendar.getInstance().getTime();
+            Date c1 = Calendar.getInstance().getTime();
 
-                String formattedYear = "";
-                String monthValue = "";
-                String lastformattedYear = "";
-                String lastdateView = "";
+            String formattedYear;
+            String monthValue;
+            String lastformattedYear;
+            String lastdateView;
 
-                SimpleDateFormat df = new SimpleDateFormat("yyyy", Locale.ENGLISH);
-                SimpleDateFormat sdf = new SimpleDateFormat("MM",Locale.ENGLISH);
+            SimpleDateFormat df1 = new SimpleDateFormat("yyyy", Locale.ENGLISH);
+            SimpleDateFormat sdf1 = new SimpleDateFormat("MM",Locale.ENGLISH);
 
-                formattedYear = df.format(c);
-                monthValue = sdf.format(c);
-                int nowMonNumb = Integer.parseInt(monthValue);
-                nowMonNumb = nowMonNumb - 1;
-                int lastMonNumb = nowMonNumb - 5;
+            formattedYear = df1.format(c1);
+            monthValue = sdf1.format(c1);
+            int nowMonNumb = Integer.parseInt(monthValue);
+            nowMonNumb = nowMonNumb - 1;
+            int lastMonNumb = nowMonNumb - 5;
 
-                if (lastMonNumb < 0) {
-                    lastMonNumb = lastMonNumb + 12;
-                    int formatY = Integer.parseInt(formattedYear);
-                    formatY = formatY - 1;
-                    lastformattedYear = String.valueOf(formatY);
-                } else {
-                    lastformattedYear = formattedYear;
+            if (lastMonNumb < 0) {
+                lastMonNumb = lastMonNumb + 12;
+                int formatY = Integer.parseInt(formattedYear);
+                formatY = formatY - 1;
+                lastformattedYear = String.valueOf(formatY);
+            } else {
+                lastformattedYear = formattedYear;
+            }
+
+            Date today = new Date();
+
+            Calendar calendar1 = Calendar.getInstance();
+            calendar1.setTime(today);
+
+            calendar1.add(Calendar.MONTH, 1);
+            calendar1.set(Calendar.DAY_OF_MONTH, 1);
+            calendar1.add(Calendar.DATE, -1);
+
+            Date lastDayOfMonth = calendar1.getTime();
+
+            SimpleDateFormat sdff = new SimpleDateFormat("dd",Locale.ENGLISH);
+            lastdateView = sdff.format(lastDayOfMonth);
+
+            int yearSelected;
+            int monthSelected;
+            MonthFormat monthFormat = MonthFormat.LONG;
+            String customTitle = "Select Month";
+// Use the calendar for create ranges
+            Calendar calendar = Calendar.getInstance();
+            if (!beginDate.isEmpty() && !lastDate.isEmpty()) {
+                SimpleDateFormat myf = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
+                Date md = null;
+                try {
+                    md = myf.parse(beginDate);
+                } catch (ParseException e) {
+                    logger.log(Level.WARNING, e.getMessage(), e);
                 }
 
-                Date today = new Date();
+                if (md != null) {
+                    calendar.setTime(md);
+                }
+            }
+            yearSelected = calendar.get(Calendar.YEAR);
+            monthSelected = calendar.get(Calendar.MONTH);
 
-                Calendar calendar1 = Calendar.getInstance();
-                calendar1.setTime(today);
+            calendar.clear();
+            calendar.set(Integer.parseInt(lastformattedYear), lastMonNumb, 1); // Set minimum date to show in dialog
+            long minDate = calendar.getTimeInMillis(); // Get milliseconds of the modified date
 
-                calendar1.add(Calendar.MONTH, 1);
-                calendar1.set(Calendar.DAY_OF_MONTH, 1);
-                calendar1.add(Calendar.DATE, -1);
-
-                Date lastDayOfMonth = calendar1.getTime();
-
-                SimpleDateFormat sdff = new SimpleDateFormat("dd",Locale.ENGLISH);
-                lastdateView = sdff.format(lastDayOfMonth);
-
-                int yearSelected;
-                int monthSelected;
-                MonthFormat monthFormat = MonthFormat.LONG;
-                String customTitle = "Select Month";
-// Use the calendar for create ranges
-                Calendar calendar = Calendar.getInstance();
-                yearSelected = calendar.get(Calendar.YEAR);
-                monthSelected = calendar.get(Calendar.MONTH);
-                calendar.clear();
-                calendar.set(Integer.parseInt(lastformattedYear), lastMonNumb, 1); // Set minimum date to show in dialog
-                long minDate = calendar.getTimeInMillis(); // Get milliseconds of the modified date
-
-                calendar.clear();
-                calendar.set(Integer.parseInt(formattedYear), nowMonNumb, Integer.parseInt(lastdateView)); // Set maximum date to show in dialog
-                long maxDate = calendar.getTimeInMillis(); // Get milliseconds of the modified date
+            calendar.clear();
+            calendar.set(Integer.parseInt(formattedYear), nowMonNumb, Integer.parseInt(lastdateView)); // Set maximum date to show in dialog
+            long maxDate = calendar.getTimeInMillis(); // Get milliseconds of the modified date
 
 // Create instance with date ranges values
-                MonthYearPickerDialogFragment dialogFragment =  MonthYearPickerDialogFragment
-                        .getInstance(monthSelected, yearSelected, minDate, maxDate, customTitle, monthFormat);
+            MonthYearPickerDialogFragment dialogFragment =  MonthYearPickerDialogFragment
+                    .getInstance(monthSelected, yearSelected, minDate, maxDate, customTitle, monthFormat);
 
 
 
-                dialogFragment.show(getSupportFragmentManager(), null);
+            dialogFragment.show(getSupportFragmentManager(), null);
 
-                dialogFragment.setOnDateSetListener(new MonthYearPickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(int year, int monthOfYear) {
-                        System.out.println(year);
-                        System.out.println(monthOfYear);
+            dialogFragment.setOnDateSetListener((year, monthOfYear) -> {
+                System.out.println(year);
+                System.out.println(monthOfYear);
 
-                        int month = monthOfYear + 1;
-                        String monthName = "";
-                        String mon = "";
-                        String yearName = "";
+                int month = monthOfYear + 1;
+                String monthName = "";
+                String mon1 = "";
+                String yearName;
 
-                        if (month == 1) {
-                            monthName = "JANUARY";
-                            mon = "JAN";
-                        } else if (month == 2) {
-                            monthName = "FEBRUARY";
-                            mon = "FEB";
-                        } else if (month == 3) {
-                            monthName = "MARCH";
-                            mon = "MAR";
-                        } else if (month == 4) {
-                            monthName = "APRIL";
-                            mon = "APR";
-                        } else if (month == 5) {
-                            monthName = "MAY";
-                            mon = "MAY";
-                        } else if (month == 6) {
-                            monthName = "JUNE";
-                            mon = "JUN";
-                        } else if (month == 7) {
-                            monthName = "JULY";
-                            mon = "JUL";
-                        } else if (month == 8) {
-                            monthName = "AUGUST";
-                            mon = "AUG";
-                        } else if (month == 9) {
-                            monthName = "SEPTEMBER";
-                            mon = "SEP";
-                        } else if (month == 10) {
-                            monthName = "OCTOBER";
-                            mon = "OCT";
-                        } else if (month == 11) {
-                            monthName = "NOVEMBER";
-                            mon = "NOV";
-                        } else if (month == 12) {
-                            monthName = "DECEMBER";
-                            mon = "DEC";
-                        }
+                if (month == 1) {
+                    monthName = "JANUARY";
+                    mon1 = "JAN";
+                } else if (month == 2) {
+                    monthName = "FEBRUARY";
+                    mon1 = "FEB";
+                } else if (month == 3) {
+                    monthName = "MARCH";
+                    mon1 = "MAR";
+                } else if (month == 4) {
+                    monthName = "APRIL";
+                    mon1 = "APR";
+                } else if (month == 5) {
+                    monthName = "MAY";
+                    mon1 = "MAY";
+                } else if (month == 6) {
+                    monthName = "JUNE";
+                    mon1 = "JUN";
+                } else if (month == 7) {
+                    monthName = "JULY";
+                    mon1 = "JUL";
+                } else if (month == 8) {
+                    monthName = "AUGUST";
+                    mon1 = "AUG";
+                } else if (month == 9) {
+                    monthName = "SEPTEMBER";
+                    mon1 = "SEP";
+                } else if (month == 10) {
+                    monthName = "OCTOBER";
+                    mon1 = "OCT";
+                } else if (month == 11) {
+                    monthName = "NOVEMBER";
+                    mon1 = "NOV";
+                } else if (month == 12) {
+                    monthName = "DECEMBER";
+                    mon1 = "DEC";
+                }
 
-                        yearName  = String.valueOf(year);
-                        yearName = yearName.substring(yearName.length()-2);
+                yearName  = String.valueOf(year);
+                yearName = yearName.substring(yearName.length()-2);
 
 
-                        beginDate = "01-"+mon+"-"+yearName;
-                        //selected_date = "01-"+mon+"-"+yearName;
-                        refresh.setText("Month: "+ monthName);
+                beginDate = "01-"+ mon1 +"-"+yearName;
+                //selected_date = "01-"+mon+"-"+yearName;
+                String ms = "Month: "+ monthName;
+                refresh.setText(ms);
 
-                        SimpleDateFormat sss = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
+                SimpleDateFormat sss = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
 
-                        Date today = null;
-                        try {
-                            today = sss.parse(beginDate);
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
+                Date today1 = null;
+                try {
+                    today1 = sss.parse(beginDate);
+                } catch (ParseException e) {
+                    logger.log(Level.WARNING, e.getMessage(), e);
+                }
 
-                        Calendar calendar1 = Calendar.getInstance();
-                        if (today != null) {
-                            calendar1.setTime(today);
-                            calendar1.add(Calendar.MONTH, 1);
-                            calendar1.set(Calendar.DAY_OF_MONTH, 1);
-                            calendar1.add(Calendar.DATE, -1);
+                Calendar calendar11 = Calendar.getInstance();
+                if (today1 != null) {
+                    calendar11.setTime(today1);
+                    calendar11.add(Calendar.MONTH, 1);
+                    calendar11.set(Calendar.DAY_OF_MONTH, 1);
+                    calendar11.add(Calendar.DATE, -1);
 
-                            Date lastDayOfMonth = calendar1.getTime();
+                    Date lastDayOfMonth1 = calendar11.getTime();
 
-                            SimpleDateFormat sdff = new SimpleDateFormat("dd",Locale.ENGLISH);
-                            String llll = sdff.format(lastDayOfMonth);
-                            lastDate =  llll+ "-" + mon +"-"+ yearName;
-                        }
+                    SimpleDateFormat sdff1 = new SimpleDateFormat("dd",Locale.ENGLISH);
+                    String llll = sdff1.format(lastDayOfMonth1);
+                    lastDate =  llll+ "-" + mon1 +"-"+ yearName;
+                }
 
+                getAttendanceGraph();
+            });
 
-//                        new Check().execute();
-                        getAttendanceGraph();
-                    }
-                });
-
-            }
         });
 
         Calendar cal = GregorianCalendar.getInstance();
@@ -499,27 +467,27 @@ public class Attendance extends AppCompatActivity {
 
     }
 
-    private void showBottomSheetDialog() {
-        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(Attendance.this);
-        bottomSheetDialog.setContentView(R.layout.bottom_sheet_dial_attendance);
-        TextView today_date_att_bot = bottomSheetDialog.findViewById(R.id.today_date_att_bottom);
-        TextView inTime_att_bot = bottomSheetDialog.findViewById(R.id.in_time_att_bottom);
-        TextView outTime_att_bot = bottomSheetDialog.findViewById(R.id.out_time_att_bottom);
-        TextView lastTime = bottomSheetDialog.findViewById(R.id.last_time_att_bottom);
-        if (today_date_att_bot != null) {
-            today_date_att_bot.setText(lastDateForAttBot);
-        }
-        if (inTime_att_bot != null) {
-            inTime_att_bot.setText(intTimeAttBot);
-        }
-        if (outTime_att_bot != null) {
-            outTime_att_bot.setText(outTimeAttBot);
-        }
-        if (lastTime != null) {
-            lastTime.setText(lastLtimAttBot);
-        }
-        bottomSheetDialog.show();
-    }
+//    private void showBottomSheetDialog() {
+//        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(Attendance.this);
+//        bottomSheetDialog.setContentView(R.layout.bottom_sheet_dial_attendance);
+//        TextView today_date_att_bot = bottomSheetDialog.findViewById(R.id.today_date_att_bottom);
+//        TextView inTime_att_bot = bottomSheetDialog.findViewById(R.id.in_time_att_bottom);
+//        TextView outTime_att_bot = bottomSheetDialog.findViewById(R.id.out_time_att_bottom);
+//        TextView lastTime = bottomSheetDialog.findViewById(R.id.last_time_att_bottom);
+//        if (today_date_att_bot != null) {
+//            today_date_att_bot.setText(lastDateForAttBot);
+//        }
+//        if (inTime_att_bot != null) {
+//            inTime_att_bot.setText(intTimeAttBot);
+//        }
+//        if (outTime_att_bot != null) {
+//            outTime_att_bot.setText(outTimeAttBot);
+//        }
+//        if (lastTime != null) {
+//            lastTime.setText(lastLtimAttBot);
+//        }
+//        bottomSheetDialog.show();
+//    }
 
 //    public boolean isConnected() {
 //        boolean connected = false;
@@ -543,7 +511,7 @@ public class Attendance extends AppCompatActivity {
 //            int     exitValue = ipProcess.waitFor();
 //            return (exitValue == 0);
 //        }
-//        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
+//        catch (IOException | InterruptedException e)          { logger.log(Level.WARNING, e.getMessage(), e); }
 //
 //        return false;
 //    }
@@ -1077,7 +1045,7 @@ public class Attendance extends AppCompatActivity {
 //
 //            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
 //            Log.i("ERRRRR", e.getLocalizedMessage());
-//            e.printStackTrace();
+//            logger.log(Level.WARNING, e.getMessage(), e);
 //        }
 //    }
 
@@ -1095,7 +1063,7 @@ public class Attendance extends AppCompatActivity {
         late = "";
         early = "";
 
-        String attendDataUrl = "http://103.56.208.123:8001/apex/ttrams/dashboard/getAttendanceData/"+beginDate+"/"+lastDate+"/"+emp_id+"";
+        String attendDataUrl = api_url_front + "dashboard/getAttendanceData/"+beginDate+"/"+lastDate+"/"+emp_id;
 
         RequestQueue requestQueue = Volley.newRequestQueue(Attendance.this);
 
@@ -1125,13 +1093,13 @@ public class Attendance extends AppCompatActivity {
             }
             catch (JSONException e) {
                 connected = false;
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 updateLayout();
             }
         }, error -> {
             conn = false;
             connected = false;
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             updateLayout();
         });
 
@@ -1146,7 +1114,7 @@ public class Attendance extends AppCompatActivity {
         conn = false;
         connected = false;
 
-        String empDataUrl = "http://103.56.208.123:8001/apex/ttrams/attendance/getEmpData/"+emp_id+"";
+        String empDataUrl = api_url_front + "attendance/getEmpData/"+emp_id;
 
         RequestQueue requestQueue = Volley.newRequestQueue(Attendance.this);
 
@@ -1185,13 +1153,13 @@ public class Attendance extends AppCompatActivity {
             }
             catch (JSONException e) {
                 connected = false;
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 updateLayout();
             }
         }, error -> {
             conn = false;
             connected = false;
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             updateLayout();
         });
 
@@ -1204,7 +1172,7 @@ public class Attendance extends AppCompatActivity {
         conn = false;
         connected = false;
 
-        String trackerDataUrl = "http://103.56.208.123:8001/apex/ttrams/attendance/getTrackUploadedDate/"+emp_id+"";
+        String trackerDataUrl = api_url_front + "attendance/getTrackUploadedDate/"+emp_id;
 
         RequestQueue requestQueue = Volley.newRequestQueue(Attendance.this);
 
@@ -1228,13 +1196,13 @@ public class Attendance extends AppCompatActivity {
             }
             catch (JSONException e) {
                 connected = false;
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 updateLayout();
             }
         },error -> {
             conn = false;
             connected = false;
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             updateLayout();
         });
 
@@ -1266,7 +1234,7 @@ public class Attendance extends AppCompatActivity {
                 String totalTime = sharedPreferencesDA.getString(TOTAL_TIME,null);
                 String stoppedTime = sharedPreferencesDA.getString(STOPPED_TIME,null);
 
-                String stringFIle = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + File.separator +  fileName +".gpx";
+                String stringFIle = getExternalFilesDir(null).getPath() + File.separator +  fileName +".gpx";
 
                 File blobFile = new File(stringFIle);
 
@@ -1277,7 +1245,7 @@ public class Attendance extends AppCompatActivity {
                     try {
                         bytes = method(blobFile);
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        logger.log(Level.WARNING, e.getMessage(), e);
                     }
                     updatedFiles.add(stringFIle);
                 }
@@ -1295,7 +1263,7 @@ public class Attendance extends AppCompatActivity {
 
     public void uploadEmpTrackerFile(int job_id, String coa_id, String divm_id, String dept_id, String date, byte[] bytes, File blobFile, String fileName, String dist, String totalTime, String stoppedTime) {
 
-        String uploadFileUrl = "http://103.56.208.123:8001/apex/ttrams/attendance/uploadTrackerFile";
+        String uploadFileUrl = api_url_front + "attendance/uploadTrackerFile";
 
         RequestQueue requestQueue = Volley.newRequestQueue(Attendance.this);
 
@@ -1316,25 +1284,25 @@ public class Attendance extends AppCompatActivity {
                 }
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 System.out.println("EKHANE ASHE 0");
                 connected = false;
                 updateLayout();
             }
         },error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             System.out.println("EKHANE ASHE -1");
             conn = false;
             connected = false;
             updateLayout();
         }){
             @Override
-            public byte[] getBody() throws AuthFailureError {
+            public byte[] getBody() {
                 return bytes;
             }
 
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
+            public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
                 if (blobFile.exists()) {
                     headers.put("P_ELR_ACTIVE","1");
@@ -1374,11 +1342,13 @@ public class Attendance extends AppCompatActivity {
         intTimeAttBot = "";
         outTimeAttBot = "";
         lastLtimAttBot = "";
+        off_end_time = "";
+        off_start_time = "";
 
         conn = false;
         connected = false;
 
-        String todayAttDataUrl = "http://103.56.208.123:8001/apex/ttrams/attendance/getTodayAttData/"+emp_id+"/"+lastDateForAttBot+"";
+        String todayAttDataUrl = api_url_front + "attendance/getTodayAttData/"+emp_id+"/"+lastDateForAttBot;
 
         RequestQueue requestQueue = Volley.newRequestQueue(Attendance.this);
 
@@ -1396,6 +1366,10 @@ public class Attendance extends AppCompatActivity {
                                 .equals("null") ? "" : todayAttDataInfo.getString("dac_in_date_time");
                         outTimeAttBot = todayAttDataInfo.getString("dac_out_date_time")
                                 .equals("null") ? "" : todayAttDataInfo.getString("dac_out_date_time");
+                        off_start_time = todayAttDataInfo.getString("dac_start_time")
+                                .equals("null") ? "" : todayAttDataInfo.getString("dac_start_time");
+                        off_end_time = todayAttDataInfo.getString("dac_end_time")
+                                .equals("null") ? "" : todayAttDataInfo.getString("dac_end_time");
                     }
                 }
                 connected = true;
@@ -1403,13 +1377,13 @@ public class Attendance extends AppCompatActivity {
             }
             catch (JSONException e) {
                 connected = false;
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 updateLayout();
             }
         }, error -> {
             conn = false;
             connected = false;
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             updateLayout();
         });
 
@@ -1494,7 +1468,7 @@ public class Attendance extends AppCompatActivity {
                 }
 
 
-                if (NoOfEmp.size() == 0) {
+                if (NoOfEmp.isEmpty()) {
                     NoOfEmp.add(new PieEntry(1,"No Data Found", 6));
 
                 }
@@ -1543,7 +1517,7 @@ public class Attendance extends AppCompatActivity {
 
                 if (dateCount > 0) {
 
-                    if (updatedFiles.size() != 0) {
+                    if (!updatedFiles.isEmpty()) {
                         for (int i = 0; i < updatedFiles.size(); i++) {
                             String stringFile = updatedFiles.get(i);
                             File blobFile = new File(stringFile);
@@ -1556,7 +1530,7 @@ public class Attendance extends AppCompatActivity {
                         }
                     }
 
-                    if (updatedXml.size() != 0) {
+                    if (!updatedXml.isEmpty()) {
                         for (int i = 0 ; i < updatedXml.size(); i++) {
 
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -1579,12 +1553,7 @@ public class Attendance extends AppCompatActivity {
                                 .setPositiveButton("OK",null)
                                 .show();
                         Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                        positive.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                dialog.dismiss();
-                            }
-                        });
+                        positive.setOnClickListener(v -> dialog.dismiss());
                     } else {
                         AlertDialog dialog = new AlertDialog.Builder(Attendance.this)
                                 .setTitle("Tracking Service!")
@@ -1592,21 +1561,18 @@ public class Attendance extends AppCompatActivity {
                                 .setPositiveButton("OK",null)
                                 .show();
                         Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                        positive.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                dialog.dismiss();
-                            }
-                        });
+                        positive.setOnClickListener(v -> dialog.dismiss());
                     }
 
                 }
 
+                if (!intTimeAttBot.isEmpty()) {
+                    String work_hours = calculateWorkingHours(intTimeAttBot, outTimeAttBot, off_end_time);
+                    workingHours.setText(work_hours);
+                }
+
                 if (intTimeAttBot != null) {
-                    if (!intTimeAttBot.isEmpty()) {
-                        intTimeAttBot = intTimeAttBot;
-                    }
-                    else {
+                    if (intTimeAttBot.isEmpty()) {
                         intTimeAttBot = "--:--";
                     }
                 }
@@ -1614,10 +1580,7 @@ public class Attendance extends AppCompatActivity {
                     intTimeAttBot = "--:--";
                 }
                 if (outTimeAttBot != null) {
-                    if (!outTimeAttBot.isEmpty()) {
-                        outTimeAttBot = outTimeAttBot;
-                    }
-                    else {
+                    if (outTimeAttBot.isEmpty()) {
                         outTimeAttBot = "--:--";
                     }
                 }
@@ -1633,6 +1596,22 @@ public class Attendance extends AppCompatActivity {
                 else {
                     lastLtimAttBot = "--:--";
                 }
+
+                inTime.setText(intTimeAttBot);
+                outTime.setText(outTimeAttBot);
+
+                String of_h_text = "Working Office Hour ("+off_start_time+" - "+off_end_time+")";
+                officeHour.setText(of_h_text);
+
+                if(tracking_flag == 1) {
+                    String t = "Punch & Tracker";
+                    attGive.setText(t);
+                }
+                else {
+                    String t = "Punch In/Out";
+                    attGive.setText(t);
+                }
+
                 conn = false;
                 connected = false;
             }
@@ -1646,22 +1625,16 @@ public class Attendance extends AppCompatActivity {
                 dialog.setCancelable(false);
                 dialog.setCanceledOnTouchOutside(false);
                 Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                positive.setOnClickListener(v -> {
 
-                        getAttendanceGraph();
-                        dialog.dismiss();
-                    }
+                    getAttendanceGraph();
+                    dialog.dismiss();
                 });
 
                 Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                        finish();
-                    }
+                negative.setOnClickListener(v -> {
+                    dialog.dismiss();
+                    finish();
                 });
             }
         }
@@ -1675,23 +1648,54 @@ public class Attendance extends AppCompatActivity {
             dialog.setCancelable(false);
             dialog.setCanceledOnTouchOutside(false);
             Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            positive.setOnClickListener(v -> {
 
-                    getAttendanceGraph();
-                    dialog.dismiss();
-                }
+                getAttendanceGraph();
+                dialog.dismiss();
             });
 
             Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-            negative.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialog.dismiss();
-                    finish();
-                }
+            negative.setOnClickListener(v -> {
+                dialog.dismiss();
+                finish();
             });
+        }
+    }
+
+    public static String calculateWorkingHours(String attendanceIn, String attendanceOut, String officeEnd) {
+        SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a", Locale.getDefault());
+
+        try {
+            Date inTime = timeFormat.parse(attendanceIn);
+            Date outTime = null;
+
+            if (attendanceOut != null && !attendanceOut.isEmpty()) {
+                outTime = timeFormat.parse(attendanceOut);
+            } else {
+                // Get current time and compare with office end time
+                Date now = Calendar.getInstance().getTime();
+                Date currentTime = timeFormat.parse(timeFormat.format(now)); // Strip seconds
+                Date officeEndTime = timeFormat.parse(officeEnd);
+
+                // Choose the earlier one between current time and office end time
+                if (currentTime != null) {
+                    outTime = currentTime.before(officeEndTime) ? currentTime : officeEndTime;
+                }
+            }
+
+            if (inTime == null || outTime == null) return "Invalid time";
+
+            long diffMillis = outTime.getTime() - inTime.getTime();
+            if (diffMillis < 0) return "Invalid time range";
+
+            long hours = diffMillis / (1000 * 60 * 60);
+            long minutes = (diffMillis / (1000 * 60)) % 60;
+
+            return String.format(Locale.getDefault(), "%02d:%02d Hours", hours, minutes);
+
+        } catch (ParseException e) {
+            Logger.getLogger(Dashboard.class.getName()).log(Level.WARNING, e.getMessage(), e);
+            return "Error parsing time";
         }
     }
 

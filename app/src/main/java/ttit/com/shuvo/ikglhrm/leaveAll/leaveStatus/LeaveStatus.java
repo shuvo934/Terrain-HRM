@@ -2,53 +2,48 @@ package ttit.com.shuvo.ikglhrm.leaveAll.leaveStatus;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
 
-import android.annotation.SuppressLint;
-import android.app.DownloadManager;
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.util.Log;
+import android.os.Handler;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
+
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.applandeo.materialcalendarview.CalendarDay;
+import com.applandeo.materialcalendarview.CalendarView;
+import com.applandeo.materialcalendarview.CalendarWeekDay;
+import com.applandeo.materialcalendarview.exceptions.OutOfDateRangeException;
 import com.github.dewinjm.monthyearpicker.MonthFormat;
-import com.github.dewinjm.monthyearpicker.MonthYearPickerDialog;
 import com.github.dewinjm.monthyearpicker.MonthYearPickerDialogFragment;
-import com.google.android.material.button.MaterialButton;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
+import ttit.com.shuvo.ikglhrm.leaveAll.leaveStatus.model.EmpLeaveDateList;
 
 import static ttit.com.shuvo.ikglhrm.Login.userDesignations;
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -58,31 +53,17 @@ public class LeaveStatus extends AppCompatActivity {
 
     TextInputEditText selectMonth;
     TextInputLayout selectMonthLay;
-    TextView errorReport;
-    TextView fromMonth;
 
     CardView statusReport;
 
-    Button show;
-    MaterialButton download;
-    Button close;
+    CalendarView calendarView;
+    String selected_date = "";
+    String selected_date_day = "";
+    Calendar startDates;
+    Calendar endDates;
 
-    TextInputEditText name;
-    TextInputEditText id;
-    TextInputEditText designation;
-    TextInputEditText department;
-
-    TextView balanceEL;
-    TextView balanceCL;
-    TextView balanceSL;
-    TextView balanceML;
-
-    TextView consumEL;
-    TextView consumCL;
-    TextView consumSL;
-    TextView consumML;
-
-    private ProgressDialog pDialog;
+    String first_date = "";
+    String last_date = "";
 
     String emp_id = "";
     String emp_name = "";
@@ -90,85 +71,29 @@ public class LeaveStatus extends AppCompatActivity {
     String desg = "";
     String dept = "";
 
-    String selected_date = "";
-    String selected_month_full = "";
-    String year_full = "";
-    String showDate = "";
-
-    String URL = "";
 
     WaitProgress waitProgress = new WaitProgress();
-//    private String message = null;
     private Boolean conn = false;
     private Boolean connected = false;
-    private Boolean downConn = false;
 
-//    private Connection connection;
-
-    ArrayList<String> leaveCode;
-    ArrayList<String> consumptionValue;
-    ArrayList<String> balanceValue;
+    ArrayList<EmpLeaveDateList> empLeaveDateLists;
+    Logger logger = Logger.getLogger(LeaveStatus.class.getName());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            Window w = getWindow();
-//            //w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-//        }
-//        if (Build.VERSION.SDK_INT < 16) {
-//            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-//                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//        }
-//        View decorView = getWindow().getDecorView();
-//// Hide the status bar.
-//        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
-//        decorView.setSystemUiVisibility(uiOptions);
-        Window window = getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(ContextCompat.getColor(LeaveStatus.this,R.color.secondaryColor));
         setContentView(R.layout.activity_leave_status);
 
         selectMonth = findViewById(R.id.select_month);
         selectMonthLay = findViewById(R.id.select_month_lay);
 
-        show = findViewById(R.id.show_leave_status);
-        download = findViewById(R.id.download_leave_status_report);
-        close = findViewById(R.id.leave_status_finish);
-
-        name = findViewById(R.id.name_leave_status);
-        id = findViewById(R.id.id_leave_status);
-        designation = findViewById(R.id.str_designation_leave_status);
-        department = findViewById(R.id.departmnet_leave_status);
-
-        errorReport = findViewById(R.id.error_report_msg_for_no_entry);
-        fromMonth = findViewById(R.id.from_to_month_year);
         statusReport = findViewById(R.id.leave_status_report_card);
 
-        balanceEL = findViewById(R.id.balance_el);
-        balanceCL = findViewById(R.id.balance_cl);
-        balanceSL = findViewById(R.id.balance_sl);
-        balanceML = findViewById(R.id.balance_ml);
-
-        consumEL = findViewById(R.id.consumption_el);
-        consumCL = findViewById(R.id.consumption_cl);
-        consumSL = findViewById(R.id.consumption_sl);
-        consumML = findViewById(R.id.consumption_ml);
-
-        leaveCode = new ArrayList<>();
-        consumptionValue = new ArrayList<>();
-        balanceValue = new ArrayList<>();
-
-        leaveCode.add("EL");
-        leaveCode.add("CL");
-        leaveCode.add("SL");
-        leaveCode.add("ML");
+        calendarView = findViewById(R.id.calendarView_new);
 
         emp_id = userInfoLists.get(0).getEmp_id();
 
-        if (userInfoLists.size() != 0) {
+        if (!userInfoLists.isEmpty()) {
             String firstname = userInfoLists.get(0).getUser_fname();
             String lastName = userInfoLists.get(0).getUser_lname();
             if (firstname == null) {
@@ -178,525 +103,305 @@ public class LeaveStatus extends AppCompatActivity {
                 lastName = "";
             }
             emp_name = firstname+" "+lastName;
-            name.setText(emp_name);
         }
 
         user_id = userInfoLists.get(0).getUserName();
 
-        if (userDesignations.size() != 0) {
+        if (!userDesignations.isEmpty()) {
             desg = userDesignations.get(0).getJsm_name();
             if (desg == null) {
                 desg = "";
             }
-            designation.setText(desg);
 
             dept = userDesignations.get(0).getDept_name();
             if (dept == null) {
                 dept = "";
             }
-            department.setText(dept);
         }
 
-        id.setText(user_id);
-
-        selectMonth.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Date c = Calendar.getInstance().getTime();
-
-                String formattedDate = "";
-
-                SimpleDateFormat df = new SimpleDateFormat("yyyy", Locale.ENGLISH);
-
-                formattedDate = df.format(c);
+        selectMonth.setOnClickListener(v -> {
+            Date c = Calendar.getInstance().getTime();
+            String formattedDate;
+            SimpleDateFormat df = new SimpleDateFormat("yyyy", Locale.ENGLISH);
+            formattedDate = df.format(c);
 
 
-                int yearSelected;
-                int monthSelected;
-                MonthFormat monthFormat = MonthFormat.LONG;
-                String customTitle = "Select Month";
-// Use the calendar for create ranges
-                Calendar calendar = Calendar.getInstance();
-                yearSelected = calendar.get(Calendar.YEAR);
-                monthSelected = calendar.get(Calendar.MONTH);
-                calendar.clear();
-                calendar.set(2000, 0, 1); // Set minimum date to show in dialog
-                long minDate = calendar.getTimeInMillis(); // Get milliseconds of the modified date
+            int yearSelected;
+            int monthSelected;
+            MonthFormat monthFormat = MonthFormat.LONG;
+            String customTitle = "Select Month";
+            // Use the calendar for create ranges
+            Calendar calendar = Calendar.getInstance();
+            if (!first_date.isEmpty() && !last_date.isEmpty()) {
+                SimpleDateFormat myf = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
+                Date md = null;
+                try {
+                    md = myf.parse(first_date);
+                } catch (ParseException e) {
+                    logger.log(Level.WARNING, e.getMessage(), e);
+                }
 
-                calendar.clear();
-                calendar.set(Integer.parseInt(formattedDate), 11, 31); // Set maximum date to show in dialog
-                long maxDate = calendar.getTimeInMillis(); // Get milliseconds of the modified date
-
-// Create instance with date ranges values
-                MonthYearPickerDialogFragment dialogFragment =  MonthYearPickerDialogFragment
-                        .getInstance(monthSelected, yearSelected, minDate, maxDate, customTitle, monthFormat);
-
-                dialogFragment.show(getSupportFragmentManager(), null);
-
-                dialogFragment.setOnDateSetListener(new MonthYearPickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(int year, int monthOfYear) {
-                        System.out.println(year);
-                        System.out.println(monthOfYear);
-
-                        int month = monthOfYear + 1;
-                        String monthName = "";
-                        String mon = "";
-                        String yearName = "";
-
-                        if (month == 1) {
-                            monthName = "JANUARY";
-                            mon = "JAN";
-                        } else if (month == 2) {
-                            monthName = "FEBRUARY";
-                            mon = "FEB";
-                        } else if (month == 3) {
-                            monthName = "MARCH";
-                            mon = "MAR";
-                        } else if (month == 4) {
-                            monthName = "APRIL";
-                            mon = "APR";
-                        } else if (month == 5) {
-                            monthName = "MAY";
-                            mon = "MAY";
-                        } else if (month == 6) {
-                            monthName = "JUNE";
-                            mon = "JUN";
-                        } else if (month == 7) {
-                            monthName = "JULY";
-                            mon = "JUL";
-                        } else if (month == 8) {
-                            monthName = "AUGUST";
-                            mon = "AUG";
-                        } else if (month == 9) {
-                            monthName = "SEPTEMBER";
-                            mon = "SEP";
-                        } else if (month == 10) {
-                            monthName = "OCTOBER";
-                            mon = "OCT";
-                        } else if (month == 11) {
-                            monthName = "NOVEMBER";
-                            mon = "NOV";
-                        } else if (month == 12) {
-                            monthName = "DECEMBER";
-                            mon = "DEC";
-                        }
-
-                        yearName  = String.valueOf(year);
-                        yearName = yearName.substring(yearName.length()-2);
-
-                        selected_month_full = monthName;
-                        year_full = String.valueOf(year);
-                        selected_date = "15-"+mon+"-"+yearName;
-                        SimpleDateFormat sss = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
-
-                        Date today = null;
-                        try {
-                            today = sss.parse(selected_date);
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-
-                        Calendar calendar1 = Calendar.getInstance();
-                        if (today != null) {
-                            calendar1.setTime(today);
-                            calendar1.add(Calendar.MONTH, 1);
-                            calendar1.set(Calendar.DAY_OF_MONTH, 1);
-                            calendar1.add(Calendar.DATE, -1);
-
-                            Date lastDayOfMonth = calendar1.getTime();
-
-                            SimpleDateFormat sdff = new SimpleDateFormat("dd",Locale.ENGLISH);
-                            String llll = sdff.format(lastDayOfMonth);
-                            selected_date =  llll+ "-" + mon +"-"+ yearName;
-                        }
-                        selectMonth.setText(monthName + "-" + year);
-                        selectMonthLay.setHint("Month");
-
-                        errorReport.setVisibility(View.GONE);
-                        download.setVisibility(View.GONE);
-                        statusReport.setVisibility(View.GONE);
-
-
-                        showDate = selectMonth.getText().toString();
-
-//                        new Check().execute();
-                        getStatus();
-                    }
-                });
-
+                if (md != null) {
+                    calendar.setTime(md);
+                }
             }
+            yearSelected = calendar.get(Calendar.YEAR);
+            monthSelected = calendar.get(Calendar.MONTH);
+            calendar.clear();
+            calendar.set(2000, 0, 1); // Set minimum date to show in dialog
+            long minDate = calendar.getTimeInMillis(); // Get milliseconds of the modified date
+
+            calendar.clear();
+            calendar.set(Integer.parseInt(formattedDate), 11, 31); // Set maximum date to show in dialog
+            long maxDate = calendar.getTimeInMillis(); // Get milliseconds of the modified date
+
+            // Create instance with date ranges values
+            MonthYearPickerDialogFragment dialogFragment =  MonthYearPickerDialogFragment
+                    .getInstance(monthSelected, yearSelected, minDate, maxDate, customTitle, monthFormat);
+
+            dialogFragment.show(getSupportFragmentManager(), null);
+
+            dialogFragment.setOnDateSetListener((year, monthOfYear) -> {
+                System.out.println(year);
+                System.out.println(monthOfYear);
+
+                int month = monthOfYear + 1;
+                String monthName = "";
+                String mon = "";
+                String yearName;
+
+                if (month == 1) {
+                    monthName = "JANUARY";
+                    mon = "JAN";
+                } else if (month == 2) {
+                    monthName = "FEBRUARY";
+                    mon = "FEB";
+                } else if (month == 3) {
+                    monthName = "MARCH";
+                    mon = "MAR";
+                } else if (month == 4) {
+                    monthName = "APRIL";
+                    mon = "APR";
+                } else if (month == 5) {
+                    monthName = "MAY";
+                    mon = "MAY";
+                } else if (month == 6) {
+                    monthName = "JUNE";
+                    mon = "JUN";
+                } else if (month == 7) {
+                    monthName = "JULY";
+                    mon = "JUL";
+                } else if (month == 8) {
+                    monthName = "AUGUST";
+                    mon = "AUG";
+                } else if (month == 9) {
+                    monthName = "SEPTEMBER";
+                    mon = "SEP";
+                } else if (month == 10) {
+                    monthName = "OCTOBER";
+                    mon = "OCT";
+                } else if (month == 11) {
+                    monthName = "NOVEMBER";
+                    mon = "NOV";
+                } else if (month == 12) {
+                    monthName = "DECEMBER";
+                    mon = "DEC";
+                }
+
+                yearName  = String.valueOf(year);
+                yearName = yearName.substring(yearName.length()-2);
+
+                first_date = "01-"+mon+"-"+yearName;
+
+                SimpleDateFormat sss = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
+
+                Date today = null;
+                try {
+                    today = sss.parse(first_date);
+                } catch (ParseException e) {
+                    logger.log(Level.WARNING,e.getMessage(),e);
+                }
+
+                if (today != null) {
+                    startDates = Calendar.getInstance();
+                    startDates.setTime(today);
+                    startDates.set(Calendar.DAY_OF_MONTH,1);
+                    startDates.set(Calendar.HOUR_OF_DAY,0);
+                    startDates.set(Calendar.MINUTE,0);
+                    startDates.set(Calendar.SECOND,0);
+                    startDates.set(Calendar.MILLISECOND,0);
+
+                    endDates = Calendar.getInstance();
+                    endDates.setTime(today);
+                    endDates.set(Calendar.DAY_OF_MONTH,endDates.getActualMaximum(Calendar.DAY_OF_MONTH));
+                    endDates.set(Calendar.HOUR_OF_DAY,0);
+                    endDates.set(Calendar.MINUTE,0);
+                    endDates.set(Calendar.SECOND,0);
+                    endDates.set(Calendar.MILLISECOND,0);
+
+                    calendarView.setMinimumDate(startDates);
+                    calendarView.setMaximumDate(endDates);
+                    calendarView.setFirstDayOfWeek(CalendarWeekDay.SATURDAY);
+                }
+
+                Calendar calendar1 = Calendar.getInstance();
+                if (today != null) {
+                    calendar1.setTime(today);
+                    calendar1.add(Calendar.MONTH, 1);
+                    calendar1.set(Calendar.DAY_OF_MONTH, 1);
+                    calendar1.add(Calendar.DATE, -1);
+
+                    Date lastDayOfMonth = calendar1.getTime();
+
+                    SimpleDateFormat sdff = new SimpleDateFormat("dd",Locale.ENGLISH);
+                    String llll = sdff.format(lastDayOfMonth);
+                    last_date =  llll+ "-" + mon +"-"+ yearName;
+                }
+                String tt = monthName + "-" + year;
+                selectMonth.setText(tt);
+                selectMonthLay.setHint("Month");
+
+                statusReport.setVisibility(View.GONE);
+
+                getStatus();
+            });
+
         });
 
-        Date c = Calendar.getInstance().getTime();
-        SimpleDateFormat sss = new SimpleDateFormat("MMM-yy", Locale.ENGLISH);
-        selected_date = sss.format(c);
-        String selected_date1 = "15-" + selected_date;
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_MONTH,1);
+        calendar.set(Calendar.HOUR_OF_DAY,0);
+        calendar.set(Calendar.MINUTE,0);
+        calendar.set(Calendar.SECOND,0);
+        calendar.set(Calendar.MILLISECOND,0);
 
-        Date today = null;
-        try {
-            today = simpleDateFormat.parse(selected_date1);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        Date c = calendar.getTime();
+        SimpleDateFormat sss = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
+        first_date = sss.format(c);
 
-        Calendar calendar1 = Calendar.getInstance();
-        if (today != null) {
-            calendar1.setTime(today);
-            calendar1.add(Calendar.MONTH, 1);
-            calendar1.set(Calendar.DAY_OF_MONTH, 1);
-            calendar1.add(Calendar.DATE, -1);
+        calendar.set(Calendar.DAY_OF_MONTH,calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+        calendar.set(Calendar.HOUR_OF_DAY,0);
+        calendar.set(Calendar.MINUTE,0);
+        calendar.set(Calendar.SECOND,0);
+        calendar.set(Calendar.MILLISECOND,0);
 
-            Date lastDayOfMonth = calendar1.getTime();
-
-            SimpleDateFormat sdff = new SimpleDateFormat("dd",Locale.ENGLISH);
-            String llll = sdff.format(lastDayOfMonth);
-            selected_date1 =  llll+ "-" +selected_date;
-            selected_date = selected_date1;
-        }
-        System.out.println(selected_date);
-
+        c = calendar.getTime();
+        last_date = sss.format(c);
 
         SimpleDateFormat month_date = new SimpleDateFormat("MMMM",Locale.ENGLISH);
         String month_name = month_date.format(c);
         month_name = month_name.toUpperCase();
-        System.out.println(month_name);
-        selected_month_full = month_name;
 
         SimpleDateFormat presentYear = new SimpleDateFormat("yyyy",Locale.ENGLISH);
         String yyyy = presentYear.format(c);
-        year_full = yyyy;
 
-        selectMonth.setText(month_name+"-"+yyyy);
+        String tt = month_name+"-"+yyyy;
+        selectMonth.setText(tt);
         selectMonthLay.setHint("Month");
 
-        showDate = selectMonth.getText().toString();
-
-        errorReport.setVisibility(View.GONE);
-        download.setVisibility(View.GONE);
         statusReport.setVisibility(View.GONE);
 
+        startDates = Calendar.getInstance();
+        startDates.set(Calendar.DAY_OF_MONTH,1);
+        startDates.set(Calendar.HOUR_OF_DAY,0);
+        startDates.set(Calendar.MINUTE,0);
+        startDates.set(Calendar.SECOND,0);
+        startDates.set(Calendar.MILLISECOND,0);
 
-//        new Check().execute();
+        endDates = Calendar.getInstance();
+        endDates.set(Calendar.DAY_OF_MONTH,endDates.getActualMaximum(Calendar.DAY_OF_MONTH));
+        endDates.set(Calendar.HOUR_OF_DAY,0);
+        endDates.set(Calendar.MINUTE,0);
+        endDates.set(Calendar.SECOND,0);
+        endDates.set(Calendar.MILLISECOND,0);
+
+        calendarView.setMinimumDate(startDates);
+        calendarView.setMaximumDate(endDates);
+        calendarView.setFirstDayOfWeek(CalendarWeekDay.SATURDAY);
+        calendarView.setSwipeEnabled(false);
+
+        calendarView.setOnCalendarDayClickListener(calendarDay -> {
+            Calendar ccc = calendarDay.getCalendar();
+
+            if (ccc.getTime().getTime() >= startDates.getTime().getTime() && ccc.getTime().getTime() <= endDates.getTime().getTime()) {
+                for (int i = 0; i < empLeaveDateLists.size(); i++) {
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy",Locale.ENGLISH);
+                    String lad_date = empLeaveDateLists.get(i).getD_date();
+                    Date date;
+                    try {
+                        date = dateFormat.parse(lad_date);
+                    } catch (ParseException e) {
+                        throw new RuntimeException(e);
+                    }
+                    if (date != null) {
+                        if (date.equals(ccc.getTime())) {
+                            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMMM, yyyy", Locale.ENGLISH);
+                            SimpleDateFormat dayNameFormat = new SimpleDateFormat("EEEE", Locale.ENGLISH);
+                            selected_date = simpleDateFormat.format(ccc.getTime());
+                            selected_date_day = dayNameFormat.format(ccc.getTime());
+
+                            int current_bal = Integer.parseInt(empLeaveDateLists.get(i).getCurrent_balance());
+                            String leave_name = empLeaveDateLists.get(i).getLeave_name();
+                            String up_come = empLeaveDateLists.get(i).getUpcoming();
+                            String rsn = empLeaveDateLists.get(i).getReason();
+                            String adds = empLeaveDateLists.get(i).getAddress();
+
+                            showBottomSheetDialog(leave_name,current_bal,up_come,rsn,adds);
+                            break;
+                        }
+                    }
+                }
+            }
+        });
+
         getStatus();
-
-        close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
-//        show.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                errorReport.setVisibility(View.GONE);
-//                download.setVisibility(View.GONE);
-//                statusReport.setVisibility(View.GONE);
-//
-//
-//                showDate = selectMonth.getText().toString();
-//
-//                if (selected_date.isEmpty()) {
-//                    Toast.makeText(getApplicationContext(), "Please Select Proper Month", Toast.LENGTH_SHORT).show();
-//                    errorReport.setVisibility(View.VISIBLE);
-//                    errorReport.setText("You must provide Month to get Leave Status");
-//
-//                } else {
-//                    new Check().execute();
-//                }
-//            }
-//        });
-
-        download.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(LeaveStatus.this);
-                builder.setTitle("Download Leave Status!")
-                        .setMessage("Do you want to download this report?")
-                        .setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                                new DownloadPDF().execute();
-
-                            }
-                        })
-                        .setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                            }
-                        });
-                AlertDialog alert = builder.create();
-                alert.show();
-
-            }
-        });
+        System.out.println(first_date);
+        System.out.println(last_date);
     }
 
-    public void Download(String url, String title) {
+    private void showBottomSheetDialog(String lv_name, int cur_bal,String upcoming, String rsn, String adds) {
+        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(LeaveStatus.this);
+        bottomSheetDialog.setContentView(R.layout.bottom_sheet_leave_status);
+        TextView today_date = bottomSheetDialog.findViewById(R.id.leave_date_for_emp_in_status);
+        TextView nameType = bottomSheetDialog.findViewById(R.id.leave_type_in_leave_status);
+        TextView bf_lv = bottomSheetDialog.findViewById(R.id.before_leave_bal_in_leave_status);
+        TextView cr_lv = bottomSheetDialog.findViewById(R.id.current_leave_balance_in_leave_staus);
+        LinearLayout con_not_happ = bottomSheetDialog.findViewById(R.id.consumption_not_happ_layout);
+        LinearLayout con_happ = bottomSheetDialog.findViewById(R.id.consumption_happ_layout);
+        TextView l_reason = bottomSheetDialog.findViewById(R.id.leave_reason_in_leave_staus);
+        TextView l_address = bottomSheetDialog.findViewById(R.id.address_during_leave_in_leave_staus);
 
-        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
-        String tempTitle = title.replace(" ", "_");
-        request.setTitle(tempTitle);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            request.allowScanningByMediaScanner();
-            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        assert nameType != null;
+        assert today_date != null;
+        assert bf_lv != null;
+        assert cr_lv != null;
+        assert con_not_happ != null;
+        assert con_happ != null;
+        assert l_reason != null;
+        assert l_address != null;
 
+        String dd = selected_date+"\n"+selected_date_day;
+        today_date.setText(dd);
+        nameType.setText(lv_name);
+        l_reason.setText(rsn);
+        l_address.setText(adds);
+
+        if (upcoming.equals("1")) {
+            bf_lv.setText(String.valueOf(cur_bal));
+            cr_lv.setText(String.valueOf(cur_bal));
+            con_not_happ.setVisibility(View.VISIBLE);
+            con_happ.setVisibility(View.GONE);
+        }
+        else {
+            int prev_bal = cur_bal + 1;
+            bf_lv.setText(String.valueOf(prev_bal));
+            cr_lv.setText(String.valueOf(cur_bal));
+            con_not_happ.setVisibility(View.GONE);
+            con_happ.setVisibility(View.VISIBLE);
         }
 
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, tempTitle+".pdf");
-        DownloadManager downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
-        request.setMimeType("application/pdf");
-        request.allowScanningByMediaScanner();
-        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE | DownloadManager.Request.NETWORK_WIFI);
-        downloadManager.enqueue(request);
-        downConn = true;
+        bottomSheetDialog.show();
     }
-
-    public boolean isConnected() {
-        boolean connected = false;
-        boolean isMobile = false;
-        try {
-            ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-            @SuppressLint("MissingPermission") NetworkInfo nInfo = cm.getActiveNetworkInfo();
-            connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
-            return connected;
-        } catch (Exception e) {
-            Log.e("Connectivity Exception", e.getMessage());
-        }
-        return connected;
-    }
-
-    public boolean isOnline() {
-
-        Runtime runtime = Runtime.getRuntime();
-        try {
-            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
-            int     exitValue = ipProcess.waitFor();
-            return (exitValue == 0);
-        }
-        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
-
-        return false;
-    }
-
-    public class DownloadPDF extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            pDialog = new ProgressDialog(getApplicationContext());
-            pDialog.setMessage("Downloading...");
-            pDialog.setCancelable(false);
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            if (isConnected() && isOnline()) {
-
-                Download(URL, "Leave Status "+showDate);
-
-            } else {
-                downConn = false;
-//                message = "Not Connected";
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-            pDialog.dismiss();
-            if (downConn) {
-                Toast.makeText(getApplicationContext(), "Downloading...", Toast.LENGTH_SHORT).show();
-                downConn = false;
-            } else {
-                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
-                AlertDialog dialog = new AlertDialog.Builder(LeaveStatus.this)
-                        .setMessage("Please Check Your Internet Connection")
-                        .setPositiveButton("Retry", null)
-                        .setNegativeButton("Cancel",null)
-                        .show();
-
-//                dialog.setCancelable(false);
-//                dialog.setCanceledOnTouchOutside(false);
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        new DownloadPDF().execute();
-                        dialog.dismiss();
-                    }
-                });
-
-                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        dialog.dismiss();
-
-                    }
-                });
-            }
-
-        }
-    }
-
-//    public class Check extends AsyncTask<Void, Void, Void> {
-//
-//        @Override
-//        protected void onPreExecute() {
-//            super.onPreExecute();
-//
-//            waitProgress.show(getSupportFragmentManager(),"WaitBar");
-//            waitProgress.setCancelable(false);
-//        }
-//
-//        @Override
-//        protected Void doInBackground(Void... voids) {
-//            if (isConnected() && isOnline()) {
-//
-//                StatusDetails();
-//                if (connected) {
-//                    conn = true;
-//                    message= "Internet Connected";
-//                }
-//
-//            } else {
-//                conn = false;
-//                message = "Not Connected";
-//            }
-//
-//            return null;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(Void aVoid) {
-//            super.onPostExecute(aVoid);
-//
-//            waitProgress.dismiss();
-//            if (conn) {
-//
-//                statusReport.setVisibility(View.VISIBLE);
-//                download.setVisibility(View.VISIBLE);
-//
-//                consumEL.setText(consumptionValue.get(0));
-//                consumCL.setText(consumptionValue.get(1));
-//                consumSL.setText(consumptionValue.get(2));
-//                consumML.setText(consumptionValue.get(3));
-//
-//                balanceEL.setText(balanceValue.get(0));
-//                balanceCL.setText(balanceValue.get(1));
-//                balanceSL.setText(balanceValue.get(2));
-//                balanceML.setText(balanceValue.get(3));
-//
-//                fromMonth.setText("'For Month-Year: "+ showDate+"'");
-//
-//
-//
-//            }
-//            else {
-//                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
-//                AlertDialog dialog = new AlertDialog.Builder(LeaveStatus.this)
-//                        .setMessage("Please Check Your Internet Connection")
-//                        .setPositiveButton("Retry", null)
-//                        .setNegativeButton("Cancel",null)
-//                        .show();
-//
-//                dialog.setCancelable(false);
-//                dialog.setCanceledOnTouchOutside(false);
-//                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-//                positive.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//
-//                        new Check().execute();
-//                        dialog.dismiss();
-//                    }
-//                });
-//
-//                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-//                negative.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        dialog.dismiss();
-//                        finish();
-//                    }
-//                });
-//            }
-//        }
-//    }
-
-//    public void StatusDetails() {
-//        try {
-//            this.connection = createConnection();
-//            //    Toast.makeText(MainActivity.this, "Connected",Toast.LENGTH_SHORT).show();
-//
-//
-//            balanceValue = new ArrayList<>();
-//            consumptionValue = new ArrayList<>();
-//           // Statement stmt = connection.createStatement();
-//
-//            CallableStatement callableStatement = connection.prepareCall("begin ? := GET_LEAVE_BALANCE(?,?,?); end;");
-//            callableStatement.setInt(2, Integer.parseInt(emp_id));
-//            callableStatement.setString(3, selected_date);
-//            for (int i = 0; i < leaveCode.size(); i++) {
-//                callableStatement.setString(4,leaveCode.get(i));
-//                callableStatement.registerOutParameter(1, Types.INTEGER);
-//                callableStatement.execute();
-//                int ddd = callableStatement.getInt(1);
-//                System.out.println(ddd);
-//                balanceValue.add(String.valueOf(ddd));
-//            }
-//
-//            callableStatement.close();
-//
-//            CallableStatement callableStatement1 = connection.prepareCall("begin ? := GET_CONSUMED_LEAVE_BY_MONTH(?,?,?); end;");
-//            callableStatement1.setInt(2, Integer.parseInt(emp_id));
-//            callableStatement1.setString(3, selected_date);
-//            for (int i = 0; i < leaveCode.size(); i++) {
-//                callableStatement1.setString(4,leaveCode.get(i));
-//                callableStatement1.registerOutParameter(1, Types.INTEGER);
-//                callableStatement1.execute();
-//                int ddd = callableStatement1.getInt(1);
-//                System.out.println(ddd);
-//                consumptionValue.add(String.valueOf(ddd));
-//            }
-//
-//            callableStatement1.close();
-//
-//
-//            String criteria = "Month,Year :"+selected_month_full+", "+year_full+", Employee ID:"+user_id+"";
-//
-//            if (DEFAULT_USERNAME.equals("IKGL")) {
-//                URL = "http://103.56.208.123:7778/reports/rwservlet?hrsikgl+report=D:\\ibrahim_knit\\Reports\\EMP_LEAVE_CONS_BAL.rep+EMPID="+emp_id+"+P_DATE='"+selected_date+"'+CRITERIA='"+criteria+"'";
-//            }
-//            else if (DEFAULT_USERNAME.equals("TTRAMS")) {
-//                URL = "http://103.56.208.123:7778/reports/rwservlet?hrsttrams+report=D:\\TTIT_RAMS\\Reports\\EMP_LEAVE_CONS_BAL.rep+EMPID="+emp_id+"+P_DATE='"+selected_date+"'+CRITERIA='"+criteria+"'";
-//            }
-//
-//
-//            connected = true;
-//
-//            connection.close();
-//
-//        }
-//        catch (Exception e) {
-//
-//            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
-//            Log.i("ERRRRR", e.getLocalizedMessage());
-//            e.printStackTrace();
-//        }
-//    }
 
     public void getStatus() {
         waitProgress.show(getSupportFragmentManager(),"WaitBar");
@@ -704,48 +409,13 @@ public class LeaveStatus extends AppCompatActivity {
         conn = false;
         connected = false;
 
-        balanceValue = new ArrayList<>();
-        consumptionValue = new ArrayList<>();
+        empLeaveDateLists = new ArrayList<>();
 
-        String blUrl = "http://103.56.208.123:8001/apex/ttrams/leave/getLeaveStatus_balance/"+emp_id+"/"+selected_date+"";
-        String consumUrl = "http://103.56.208.123:8001/apex/ttrams/leave/getLeaveStatus_consume/"+emp_id+"/"+selected_date+"";
+        String url = api_url_front+"leave/getEmpLeaveDate?first_date="+first_date+"&last_date="+last_date+"&emp_id="+emp_id;
 
         RequestQueue requestQueue = Volley.newRequestQueue(LeaveStatus.this);
 
-        StringRequest consReq = new StringRequest(Request.Method.GET, consumUrl, response -> {
-            conn = true;
-            try {
-                JSONObject jsonObject = new JSONObject(response);
-                String items = jsonObject.getString("items");
-                String count = jsonObject.getString("count");
-                if (!count.equals("0")) {
-                    JSONArray array = new JSONArray(items);
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject consInfo = array.getJSONObject(i);
-
-                        String val = consInfo.getString("leave_consumption");
-                        consumptionValue.add(val);
-                    }
-                }
-
-                String criteria = "Month,Year :"+selected_month_full+", "+year_full+", Employee ID:"+user_id+"";
-                URL = "http://103.56.208.123:7778/reports/rwservlet?hrsttrams+report=D:\\TTIT_RAMS\\Reports\\EMP_LEAVE_CONS_BAL.rep+EMPID="+emp_id+"+P_DATE='"+selected_date+"'+CRITERIA='"+criteria+"'";
-                connected = true;
-                updateLay();
-            }
-            catch (JSONException e) {
-                e.printStackTrace();
-                connected = false;
-                updateLay();
-            }
-        }, error -> {
-            error.printStackTrace();
-            conn = false;
-            connected = false;
-            updateLay();
-        });
-
-        StringRequest blReq = new StringRequest(Request.Method.GET, blUrl, response -> {
+        StringRequest blReq = new StringRequest(Request.Method.GET, url, response -> {
             conn = true;
             try {
                 JSONObject jsonObject = new JSONObject(response);
@@ -756,24 +426,39 @@ public class LeaveStatus extends AppCompatActivity {
                     for (int i = 0; i < array.length(); i++) {
                         JSONObject blInfo = array.getJSONObject(i);
 
-                        String val = blInfo.getString("leave_balance");
+                        String d_date = blInfo.getString("d_date")
+                                .equals("null") ? "" : blInfo.getString("d_date");
+                        String date_day = blInfo.getString("date_day")
+                                .equals("null") ? "" : blInfo.getString("date_day");
+                        String leave = blInfo.getString("leave")
+                                .equals("null") ? "" : blInfo.getString("leave");
+                        String short_code = blInfo.getString("short_code")
+                                .equals("null") ? "" : blInfo.getString("short_code");
+                        String bal = blInfo.getString("bal")
+                                .equals("null") ? "0" : blInfo.getString("bal");
+                        String upcoming = blInfo.getString("upcoming")
+                                .equals("null") ? "0" : blInfo.getString("upcoming");
+                        String leave_address = blInfo.getString("leave_address")
+                                .equals("null") ? "Not Found" : blInfo.getString("leave_address");
+                        String leave_reason = blInfo.getString("leave_reason")
+                                .equals("null") ? "Not Found" : blInfo.getString("leave_reason");
 
-                        balanceValue.add(val);
-
+                        empLeaveDateLists.add(new EmpLeaveDateList(d_date,date_day,leave,short_code,bal,upcoming,leave_reason,leave_address));
                     }
                 }
-                requestQueue.add(consReq);
+                connected = true;
+                updateLay();
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING,e.getMessage(),e);
                 connected = false;
                 updateLay();
             }
         }, error -> {
-           error.printStackTrace();
-           conn = false;
-           connected = false;
-           updateLay();
+            logger.log(Level.WARNING,error.getMessage(),error);
+            conn = false;
+            connected = false;
+            updateLay();
         });
 
         requestQueue.add(blReq);
@@ -781,25 +466,90 @@ public class LeaveStatus extends AppCompatActivity {
     }
 
     private void updateLay() {
-        waitProgress.dismiss();
         if (conn) {
             if (connected) {
                 statusReport.setVisibility(View.VISIBLE);
-                download.setVisibility(View.VISIBLE);
+                List<CalendarDay> events = new ArrayList<>();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy",Locale.ENGLISH);
+                Handler handler = new Handler();
+                handler.postDelayed(() -> {
+                    if (!empLeaveDateLists.isEmpty()) {
+                        for (int i = 0; i < empLeaveDateLists.size(); i++) {
+                            String lad_date = empLeaveDateLists.get(i).getD_date();
+                            Date date;
+                            try {
+                                date = dateFormat.parse(lad_date);
+                            } catch (ParseException e) {
+                                throw new RuntimeException(e);
+                            }
+                            if (date != null) {
+                                Calendar cc = Calendar.getInstance();
+                                cc.setTime(date);
+                                CalendarDay calendarDay = new CalendarDay(cc);
+                                calendarDay.setImageResource(R.drawable.leave_noc);
+                                calendarDay.setBackgroundDrawable(AppCompatResources.getDrawable(this,R.drawable.calendar_event_background));
+                                calendarDay.setLabelColor(R.color.primaryColor);
+                                events.add(calendarDay);
+                            }
+                        }
+                    }
 
-                consumEL.setText(consumptionValue.get(0));
-                consumCL.setText(consumptionValue.get(1));
-                consumSL.setText(consumptionValue.get(2));
-                consumML.setText(consumptionValue.get(3));
+                    Date today = null;
+                    try {
+                        today = dateFormat.parse(first_date);
+                    } catch (ParseException e) {
+                        logger.log(Level.WARNING,e.getMessage(),e);
+                    }
 
-                balanceEL.setText(balanceValue.get(0));
-                balanceCL.setText(balanceValue.get(1));
-                balanceSL.setText(balanceValue.get(2));
-                balanceML.setText(balanceValue.get(3));
+                    assert today != null;
 
-                fromMonth.setText("'For Month-Year: "+ showDate+"'");
+                    Calendar testStartdates = Calendar.getInstance();
+                    testStartdates.setTime(today);
+                    testStartdates.set(Calendar.DAY_OF_MONTH,1);
+
+                    Calendar testEndDates = Calendar.getInstance();
+                    testEndDates.setTime(today);
+                    testEndDates.set(Calendar.DAY_OF_MONTH,testEndDates.getActualMaximum(Calendar.DAY_OF_MONTH));
+
+                    SimpleDateFormat dayNameFormat3 = new SimpleDateFormat("EEE", Locale.ENGLISH);
+                    do {
+                        String text;
+                        Calendar ddc = Calendar.getInstance();
+                        if (testStartdates.getTime().equals(startDates.getTime())) {
+                            text = dayNameFormat3.format(testStartdates.getTime());
+                            if (text.contains("Fri")) {
+                                ddc.setTime(testStartdates.getTime());
+                                CalendarDay calendarDay = new CalendarDay(ddc);
+                                calendarDay.setLabelColor(R.color.red_pastel);
+                                events.add(calendarDay);
+                            }
+                        }
+
+                        testStartdates.add(Calendar.DAY_OF_MONTH,1);
+                        text = dayNameFormat3.format(testStartdates.getTime());
+                        if (text.contains("Fri")) {
+                            ddc.setTime(testStartdates.getTime());
+                            CalendarDay calendarDay = new CalendarDay(ddc);
+                            calendarDay.setLabelColor(R.color.red_pastel);
+                            System.out.println(text + ": " + testStartdates.getTime());
+                            events.add(calendarDay);
+                        }
+                    }
+                    while (!testStartdates.getTime().equals(testEndDates.getTime()));
+
+                    calendarView.setCalendarDays(events);
+
+                    try {
+                        calendarView.setDate(startDates);
+                    } catch (OutOfDateRangeException e) {
+                        throw new RuntimeException(e);
+                    }
+                    waitProgress.dismiss();
+
+                },1000);
             }
             else {
+                waitProgress.dismiss();
                 AlertDialog dialog = new AlertDialog.Builder(LeaveStatus.this)
                         .setMessage("There is a network issue in the server. Please Try later.")
                         .setPositiveButton("Retry", null)
@@ -823,6 +573,7 @@ public class LeaveStatus extends AppCompatActivity {
             }
         }
         else {
+            waitProgress.dismiss();
             AlertDialog dialog = new AlertDialog.Builder(LeaveStatus.this)
                     .setMessage("Please Check Your Internet Connection")
                     .setPositiveButton("Retry", null)

@@ -1,33 +1,30 @@
 package ttit.com.shuvo.ikglhrm.leaveAll;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import android.app.DatePickerDialog;
-import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import java.text.ParseException;
@@ -38,6 +35,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
@@ -50,6 +50,7 @@ import ttit.com.shuvo.ikglhrm.leaveAll.leaveApplication.ShowLeaveBalance;
 
 import static ttit.com.shuvo.ikglhrm.Login.userDesignations;
 import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -97,25 +98,21 @@ public class LeaveApplication extends AppCompatActivity {
     LinearLayout afterselecting;
     public static LinearLayout otherReasonLay;
 
-    Button leaveBalance;
+    MaterialButton leaveBalance;
     Button apply;
-    Button close;
-    LinearLayout applyButtonEnable;
 
     TextView errorLeaveDuration;
     public static TextView errorReason;
     public static TextView errorBackup;
 
     WaitProgress waitProgress = new WaitProgress();
-    private String message = null;
     private Boolean conn = false;
     private Boolean connected = false;
     private Boolean insertCon = false;
     private Boolean insertConnn = false;
     private Boolean insertedCon = false;
-//    private Connection connection;
 
-    private int mYear, mMonth, mDay, mHour, mMinute;
+    private int mYear, mMonth, mDay;
 
     String emp_id = "";
     String emp_name = "";
@@ -151,28 +148,11 @@ public class LeaveApplication extends AppCompatActivity {
     public static ArrayList<SelectAllList> allWorkBackup;
     public static ArrayList<SelectAllList> workBackupList;
 
+    Logger logger = Logger.getLogger(LeaveApplication.class.getName());
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-//        getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            Window w = getWindow();
-//            //w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-//        }
-//        if (Build.VERSION.SDK_INT < 16) {
-//            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-//                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//        }
-//        View decorView = getWindow().getDecorView();
-//// Hide the status bar.
-//        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
-//        decorView.setSystemUiVisibility(uiOptions);
-
-        Window window = getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(ContextCompat.getColor(LeaveApplication.this,R.color.secondaryColor));
         setContentView(R.layout.activity_leave_application);
 
         leaveTypeLay = findViewById(R.id.leave_type_Layout);
@@ -201,8 +181,6 @@ public class LeaveApplication extends AppCompatActivity {
 
         leaveBalance = findViewById(R.id.show_leave_balance);
         apply = findViewById(R.id.leave_new_application_button);
-        close = findViewById(R.id.leave_app_new_finish);
-        applyButtonEnable = findViewById(R.id.linearLayout50_leave_application_apply_button);
 
         errorLeaveDuration = findViewById(R.id.error_input_leave_duration);
         errorReason = findViewById(R.id.error_input_reason_leave);
@@ -234,7 +212,7 @@ public class LeaveApplication extends AppCompatActivity {
 
         emp_id = userInfoLists.get(0).getEmp_id();
 
-        if (userInfoLists.size() != 0) {
+        if (!userInfoLists.isEmpty()) {
             String firstname = userInfoLists.get(0).getUser_fname();
             String lastName = userInfoLists.get(0).getUser_lname();
             if (firstname == null) {
@@ -269,22 +247,15 @@ public class LeaveApplication extends AppCompatActivity {
                 this,R.layout.item_country,leaveAppList){
             @Override
             public boolean isEnabled(int position){
-                if(position == 0)
-                {
-                    // Disable the first item from Spinner
-                    // First item will be use for hint
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
+                // Disable the first item from Spinner
+                // First item will be use for hint
+                return position != 0;
             }
             @Override
             public View getDropDownView(int position, View convertView,
-                                        ViewGroup parent) {
+                                        @NonNull ViewGroup parent) {
                 View view = super.getDropDownView(position, convertView, parent);
-                TextView tv = (TextView) view.findViewById(R.id.tvCountry);
+                TextView tv = view.findViewById(R.id.tvCountry);
                 if(position == 0){
                     // Set the hint text color gray
                     tv.setTextColor(Color.GRAY);
@@ -307,10 +278,12 @@ public class LeaveApplication extends AppCompatActivity {
                 if(position > 0){
                     selected_application_type = (String) parent.getItemAtPosition(position);
                     dateOn.setText("");
+                    selected_date_on_from = "";
                     dateOnLay.setHint("Select Date");
                     dateOnLay.setHelperText("");
 
                     dateTo.setText("");
+                    selected_date_to = "";
                     dateToLay.setHint("Select Date");
                     dateToLay.setHelperText("");
 
@@ -323,7 +296,7 @@ public class LeaveApplication extends AppCompatActivity {
 
                         System.out.println(1);
                         afterselecting.setVisibility(View.VISIBLE);
-                        applyButtonEnable.setVisibility(View.VISIBLE);
+                        apply.setVisibility(View.VISIBLE);
                     }
 
                 }
@@ -340,22 +313,15 @@ public class LeaveApplication extends AppCompatActivity {
                 this,R.layout.item_country,leaveDurList){
             @Override
             public boolean isEnabled(int position){
-                if(position == 0)
-                {
-                    // Disable the first item from Spinner
-                    // First item will be use for hint
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
+                // Disable the first item from Spinner
+                // First item will be use for hint
+                return position != 0;
             }
             @Override
             public View getDropDownView(int position, View convertView,
-                                        ViewGroup parent) {
+                                        @NonNull ViewGroup parent) {
                 View view = super.getDropDownView(position, convertView, parent);
-                TextView tv = (TextView) view.findViewById(R.id.tvCountry);
+                TextView tv = view.findViewById(R.id.tvCountry);
                 if(position == 0){
                     // Set the hint text color gray
                     tv.setTextColor(Color.GRAY);
@@ -387,7 +353,7 @@ public class LeaveApplication extends AppCompatActivity {
                             System.out.println(selected_leave_duration_id);
                         }
                     }
-                    String value = totalDays.getText().toString();
+                    String value = Objects.requireNonNull(totalDays.getText()).toString();
                     if (!value.equals("0")) {
                         if (!selected_leave_duration_id.equals("0")) {
 
@@ -420,573 +386,552 @@ public class LeaveApplication extends AppCompatActivity {
 
 
         // DATE ON
-
-        dateOn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                {
-                    final Calendar c = Calendar.getInstance();
-                    mYear = c.get(Calendar.YEAR);
-                    mMonth = c.get(Calendar.MONTH);
-                    mDay = c.get(Calendar.DAY_OF_MONTH);
-
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                        DatePickerDialog datePickerDialog = new DatePickerDialog(LeaveApplication.this, new DatePickerDialog.OnDateSetListener() {
-                            @Override
-                            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-
-                                String monthName = "";
-                                String dayOfMonthName = "";
-                                String yearName = "";
-                                month = month + 1;
-                                if (month == 1) {
-                                    monthName = "JAN";
-                                } else if (month == 2) {
-                                    monthName = "FEB";
-                                } else if (month == 3) {
-                                    monthName = "MAR";
-                                } else if (month == 4) {
-                                    monthName = "APR";
-                                } else if (month == 5) {
-                                    monthName = "MAY";
-                                } else if (month == 6) {
-                                    monthName = "JUN";
-                                } else if (month == 7) {
-                                    monthName = "JUL";
-                                } else if (month == 8) {
-                                    monthName = "AUG";
-                                } else if (month == 9) {
-                                    monthName = "SEP";
-                                } else if (month == 10) {
-                                    monthName = "OCT";
-                                } else if (month == 11) {
-                                    monthName = "NOV";
-                                } else if (month == 12) {
-                                    monthName = "DEC";
-                                }
-
-                                if (dayOfMonth <= 9) {
-                                    dayOfMonthName = "0" + String.valueOf(dayOfMonth);
-                                } else {
-                                    dayOfMonthName = String.valueOf(dayOfMonth);
-                                }
-                                yearName  = String.valueOf(year);
-                                yearName = yearName.substring(yearName.length()-2);
-                                System.out.println(yearName);
-                                System.out.println(dayOfMonthName);
-                                dateOn.setText(dayOfMonthName + "-" + monthName + "-" + yearName);
-
-                                if (selected_application_type.equals("PRE")) {
-
-                                    String today = todayDate.getText().toString();
-                                    String updateDate = dateOn.getText().toString();
-
-                                    Date nowDate = null;
-                                    Date givenDate = null;
-
-                                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
-                                    try {
-                                        nowDate = sdf.parse(today);
-                                        givenDate = sdf.parse(updateDate);
-                                    } catch (ParseException e) {
-                                        e.printStackTrace();
-                                    }
-
-                                    if (nowDate != null && givenDate != null) {
-
-                                        if (givenDate.after(nowDate) || givenDate.equals(nowDate)) {
-
-                                            String datetoooo = "";
-                                            datetoooo = dateTo.getText().toString();
-
-                                            if (datetoooo.isEmpty()) {
-                                                dateOn.setText(dayOfMonthName + "-" + monthName + "-" + yearName);
-                                                dateOnLay.setHelperText("");
-                                                dateOnLay.setHint("Date");
-                                                totalDays.setText("0");
-                                                System.out.println("AHSE PRE");
-                                            } else {
-
-                                                Date date = null;
-                                                try {
-                                                    date = sdf.parse(datetoooo);
-                                                } catch (ParseException e) {
-                                                    e.printStackTrace();
-                                                }
-
-                                                if (date != null) {
-                                                    if (givenDate.before(date) || givenDate.equals(date)) {
-                                                        dateOn.setText(dayOfMonthName + "-" + monthName + "-" + yearName);
-                                                        dateOnLay.setHelperText("");
-                                                        dateOnLay.setHint("Date");
-                                                        System.out.println("AHSE PRE");
-                                                        long diff = date.getTime() - givenDate.getTime();
-                                                        long diffDays = diff / (24 * 60 * 60 * 1000);
-                                                        int ddd = (int) diffDays;
-                                                        ddd = ddd + 1;
-                                                        totalDays.setText(String.valueOf(ddd));
-                                                        if (selected_leave_duration_id.isEmpty() || selected_leave_duration_id.equals("0")) {
-                                                            totalDays.setText(String.valueOf(ddd));
-                                                        } else {
-                                                            Double value =  ddd - 0.5;
-                                                            totalDays.setText(String.valueOf(value));
-                                                        }
-                                                        System.out.println("Days: "+ddd);
-                                                    } else {
-                                                        dateOnLay.setHelperText("From Date should be Less than To Date");
-                                                        dateOnLay.setHint("Select Date");
-                                                        totalDays.setText("0");
-                                                        dateOnLay.setHelperTextColor(ColorStateList.valueOf(Color.RED));
-                                                        dateOn.setText("");
-                                                    }
-                                                }
-                                            }
-
-
-                                        } else {
-
-                                            dateOnLay.setHelperText("From Date never Less than Application Date");
-                                            dateOnLay.setHint("Select Date");
-                                            totalDays.setText("0");
-                                            dateOnLay.setHelperTextColor(ColorStateList.valueOf(Color.RED));
-                                            dateOn.setText("");
-                                        }
-                                    }
-                                }
-                                else if (selected_application_type.equals("POST")) {
-
-                                    String today = todayDate.getText().toString();
-                                    String updateDate = dateOn.getText().toString();
-
-                                    Date nowDate = null;
-                                    Date givenDate = null;
-
-                                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
-                                    try {
-                                        nowDate = sdf.parse(today);
-                                        givenDate = sdf.parse(updateDate);
-                                    } catch (ParseException e) {
-                                        e.printStackTrace();
-                                    }
-
-                                    if (nowDate != null && givenDate != null) {
-
-                                        if (givenDate.before(nowDate) || givenDate.equals(nowDate) ) {
-
-                                            String datetoooo = "";
-                                            datetoooo = dateTo.getText().toString();
-
-                                            if (datetoooo.isEmpty()) {
-                                                dateOn.setText(dayOfMonthName + "-" + monthName + "-" + yearName);
-                                                dateOnLay.setHelperText("");
-                                                dateOnLay.setHint("Date");
-                                                totalDays.setText("0");
-                                                System.out.println("AHSE POST");
-                                            } else {
-
-                                                Date date = null;
-                                                try {
-                                                    date = sdf.parse(datetoooo);
-                                                } catch (ParseException e) {
-                                                    e.printStackTrace();
-                                                }
-
-                                                if (date != null) {
-                                                    if (givenDate.before(date) || givenDate.equals(date)) {
-                                                        dateOn.setText(dayOfMonthName + "-" + monthName + "-" + yearName);
-                                                        dateOnLay.setHelperText("");
-                                                        dateOnLay.setHint("Date");
-                                                        System.out.println("AHSE POST");
-                                                        long diff = date.getTime() - givenDate.getTime();
-                                                        long diffDays = diff / (24 * 60 * 60 * 1000);
-                                                        int ddd = (int) diffDays;
-                                                        ddd = ddd + 1;
-                                                        totalDays.setText(String.valueOf(ddd));
-                                                        if (selected_leave_duration_id.isEmpty() || selected_leave_duration_id.equals("0")) {
-                                                            totalDays.setText(String.valueOf(ddd));
-                                                        } else {
-                                                            Double value =  ddd - 0.5;
-                                                            totalDays.setText(String.valueOf(value));
-                                                        }
-                                                        System.out.println("Days: "+ddd);
-                                                    } else {
-                                                        dateOnLay.setHelperText("From Date should be Less than To Date");
-                                                        dateOnLay.setHint("Select Date");
-                                                        totalDays.setText("0");
-                                                        dateOnLay.setHelperTextColor(ColorStateList.valueOf(Color.RED));
-                                                        dateOn.setText("");
-                                                    }
-                                                }
-                                            }
-
-
-
-                                        } else {
-                                            dateOnLay.setHelperText("From Date should be Less than Application Date");
-                                            dateOnLay.setHint("Select Date");
-                                            totalDays.setText("0");
-                                            dateOnLay.setHelperTextColor(ColorStateList.valueOf(Color.RED));
-                                            dateOn.setText("");
-                                        }
-                                    }
-                                }
-
-                            }
-                        }, mYear, mMonth, mDay);
-                        datePickerDialog.show();
-                    }
+        dateOn.setOnClickListener(v -> {
+            final Calendar c1 = Calendar.getInstance();
+            if (!selected_date_on_from.isEmpty()) {
+                SimpleDateFormat myf = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
+                Date md = null;
+                try {
+                    md = myf.parse(selected_date_on_from);
+                } catch (ParseException e) {
+                    logger.log(Level.WARNING, e.getMessage(), e);
                 }
+
+                if (md != null) {
+                    c1.setTime(md);
+                }
+            }
+            mYear = c1.get(Calendar.YEAR);
+            mMonth = c1.get(Calendar.MONTH);
+            mDay = c1.get(Calendar.DAY_OF_MONTH);
+
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                DatePickerDialog datePickerDialog = new DatePickerDialog(LeaveApplication.this, (view, year, month, dayOfMonth) -> {
+
+                    String monthName = "";
+                    String dayOfMonthName;
+                    String yearName;
+                    month = month + 1;
+                    if (month == 1) {
+                        monthName = "JAN";
+                    } else if (month == 2) {
+                        monthName = "FEB";
+                    } else if (month == 3) {
+                        monthName = "MAR";
+                    } else if (month == 4) {
+                        monthName = "APR";
+                    } else if (month == 5) {
+                        monthName = "MAY";
+                    } else if (month == 6) {
+                        monthName = "JUN";
+                    } else if (month == 7) {
+                        monthName = "JUL";
+                    } else if (month == 8) {
+                        monthName = "AUG";
+                    } else if (month == 9) {
+                        monthName = "SEP";
+                    } else if (month == 10) {
+                        monthName = "OCT";
+                    } else if (month == 11) {
+                        monthName = "NOV";
+                    } else if (month == 12) {
+                        monthName = "DEC";
+                    }
+
+                    if (dayOfMonth <= 9) {
+                        dayOfMonthName = "0" + dayOfMonth;
+                    } else {
+                        dayOfMonthName = String.valueOf(dayOfMonth);
+                    }
+                    yearName  = String.valueOf(year);
+                    yearName = yearName.substring(yearName.length()-2);
+                    System.out.println(yearName);
+                    System.out.println(dayOfMonthName);
+                    String dot = dayOfMonthName + "-" + monthName + "-" + yearName;
+                    dateOn.setText(dot);
+                    selected_date_on_from = dot;
+
+                    if (selected_application_type.equals("PRE")) {
+
+                        String today = Objects.requireNonNull(todayDate.getText()).toString();
+                        String updateDate = Objects.requireNonNull(dateOn.getText()).toString();
+
+                        Date nowDate = null;
+                        Date givenDate = null;
+
+                        SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
+                        try {
+                            nowDate = sdf.parse(today);
+                            givenDate = sdf.parse(updateDate);
+                        } catch (ParseException e) {
+                            logger.log(Level.WARNING, e.getMessage(), e);
+                        }
+
+                        if (nowDate != null && givenDate != null) {
+
+                            if (givenDate.after(nowDate) || givenDate.equals(nowDate)) {
+
+                                String datetoooo;
+                                datetoooo = Objects.requireNonNull(dateTo.getText()).toString();
+
+                                if (datetoooo.isEmpty()) {
+                                    String dot1 = dayOfMonthName + "-" + monthName + "-" + yearName;
+                                    dateOn.setText(dot1);
+                                    selected_date_on_from = dot1;
+                                    dateOnLay.setHelperText("");
+                                    dateOnLay.setHint("Date");
+                                    totalDays.setText("0");
+                                    System.out.println("AHSE PRE");
+                                } else {
+
+                                    Date date = null;
+                                    try {
+                                        date = sdf.parse(datetoooo);
+                                    } catch (ParseException e) {
+                                        logger.log(Level.WARNING, e.getMessage(), e);
+                                    }
+
+                                    if (date != null) {
+                                        if (givenDate.before(date) || givenDate.equals(date)) {
+                                            String dot2 = dayOfMonthName + "-" + monthName + "-" + yearName;
+                                            dateOn.setText(dot2);
+                                            selected_date_on_from = dot2;
+                                            dateOnLay.setHelperText("");
+                                            dateOnLay.setHint("Date");
+                                            System.out.println("AHSE PRE");
+                                            long diff = date.getTime() - givenDate.getTime();
+                                            long diffDays = diff / (24 * 60 * 60 * 1000);
+                                            int ddd = (int) diffDays;
+                                            ddd = ddd + 1;
+                                            totalDays.setText(String.valueOf(ddd));
+                                            if (selected_leave_duration_id.isEmpty() || selected_leave_duration_id.equals("0")) {
+                                                totalDays.setText(String.valueOf(ddd));
+                                            } else {
+                                                Double value =  ddd - 0.5;
+                                                totalDays.setText(String.valueOf(value));
+                                            }
+                                            System.out.println("Days: "+ddd);
+                                        } else {
+                                            dateOnLay.setHelperText("From Date should be Less than To Date");
+                                            dateOnLay.setHint("Select Date");
+                                            totalDays.setText("0");
+                                            dateOnLay.setHelperTextColor(ColorStateList.valueOf(Color.RED));
+                                            dateOn.setText("");
+                                            selected_date_on_from = "";
+                                        }
+                                    }
+                                }
+
+
+                            } else {
+
+                                dateOnLay.setHelperText("From Date never Less than Application Date");
+                                dateOnLay.setHint("Select Date");
+                                totalDays.setText("0");
+                                dateOnLay.setHelperTextColor(ColorStateList.valueOf(Color.RED));
+                                dateOn.setText("");
+                                selected_date_on_from = "";
+                            }
+                        }
+                    }
+                    else if (selected_application_type.equals("POST")) {
+
+                        String today = Objects.requireNonNull(todayDate.getText()).toString();
+                        String updateDate = Objects.requireNonNull(dateOn.getText()).toString();
+
+                        Date nowDate = null;
+                        Date givenDate = null;
+
+                        SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
+                        try {
+                            nowDate = sdf.parse(today);
+                            givenDate = sdf.parse(updateDate);
+                        } catch (ParseException e) {
+                            logger.log(Level.WARNING, e.getMessage(), e);
+                        }
+
+                        if (nowDate != null && givenDate != null) {
+
+                            if (givenDate.before(nowDate) || givenDate.equals(nowDate) ) {
+
+                                String datetoooo;
+                                datetoooo = Objects.requireNonNull(dateTo.getText()).toString();
+
+                                if (datetoooo.isEmpty()) {
+                                    String dot3 = dayOfMonthName + "-" + monthName + "-" + yearName;
+                                    dateOn.setText(dot3);
+                                    selected_date_on_from = dot3;
+                                    dateOnLay.setHelperText("");
+                                    dateOnLay.setHint("Date");
+                                    totalDays.setText("0");
+                                    System.out.println("AHSE POST");
+                                } else {
+
+                                    Date date = null;
+                                    try {
+                                        date = sdf.parse(datetoooo);
+                                    } catch (ParseException e) {
+                                        logger.log(Level.WARNING, e.getMessage(), e);
+                                    }
+
+                                    if (date != null) {
+                                        if (givenDate.before(date) || givenDate.equals(date)) {
+                                            String dot4 = dayOfMonthName + "-" + monthName + "-" + yearName;
+                                            dateOn.setText(dot4);
+                                            selected_date_on_from = dot4;
+                                            dateOnLay.setHelperText("");
+                                            dateOnLay.setHint("Date");
+                                            System.out.println("AHSE POST");
+                                            long diff = date.getTime() - givenDate.getTime();
+                                            long diffDays = diff / (24 * 60 * 60 * 1000);
+                                            int ddd = (int) diffDays;
+                                            ddd = ddd + 1;
+                                            totalDays.setText(String.valueOf(ddd));
+                                            if (selected_leave_duration_id.isEmpty() || selected_leave_duration_id.equals("0")) {
+                                                totalDays.setText(String.valueOf(ddd));
+                                            } else {
+                                                Double value =  ddd - 0.5;
+                                                totalDays.setText(String.valueOf(value));
+                                            }
+                                            System.out.println("Days: "+ddd);
+                                        } else {
+                                            dateOnLay.setHelperText("From Date should be Less than To Date");
+                                            dateOnLay.setHint("Select Date");
+                                            totalDays.setText("0");
+                                            dateOnLay.setHelperTextColor(ColorStateList.valueOf(Color.RED));
+                                            dateOn.setText("");
+                                            selected_date_on_from = "";
+                                        }
+                                    }
+                                }
+
+
+
+                            } else {
+                                dateOnLay.setHelperText("From Date should be Less than Application Date");
+                                dateOnLay.setHint("Select Date");
+                                totalDays.setText("0");
+                                dateOnLay.setHelperTextColor(ColorStateList.valueOf(Color.RED));
+                                dateOn.setText("");
+                                selected_date_on_from = "";
+                            }
+                        }
+                    }
+
+                }, mYear, mMonth, mDay);
+                datePickerDialog.show();
             }
         });
 
-        dateTo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                {
-                    final Calendar c = Calendar.getInstance();
-                    mYear = c.get(Calendar.YEAR);
-                    mMonth = c.get(Calendar.MONTH);
-                    mDay = c.get(Calendar.DAY_OF_MONTH);
-
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                        DatePickerDialog datePickerDialog = new DatePickerDialog(LeaveApplication.this, new DatePickerDialog.OnDateSetListener() {
-                            @Override
-                            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-
-                                String monthName = "";
-                                String dayOfMonthName = "";
-                                String yearName = "";
-                                month = month + 1;
-                                if (month == 1) {
-                                    monthName = "JAN";
-                                } else if (month == 2) {
-                                    monthName = "FEB";
-                                } else if (month == 3) {
-                                    monthName = "MAR";
-                                } else if (month == 4) {
-                                    monthName = "APR";
-                                } else if (month == 5) {
-                                    monthName = "MAY";
-                                } else if (month == 6) {
-                                    monthName = "JUN";
-                                } else if (month == 7) {
-                                    monthName = "JUL";
-                                } else if (month == 8) {
-                                    monthName = "AUG";
-                                } else if (month == 9) {
-                                    monthName = "SEP";
-                                } else if (month == 10) {
-                                    monthName = "OCT";
-                                } else if (month == 11) {
-                                    monthName = "NOV";
-                                } else if (month == 12) {
-                                    monthName = "DEC";
-                                }
-
-                                if (dayOfMonth <= 9) {
-                                    dayOfMonthName = "0" + String.valueOf(dayOfMonth);
-                                } else {
-                                    dayOfMonthName = String.valueOf(dayOfMonth);
-                                }
-                                yearName  = String.valueOf(year);
-                                yearName = yearName.substring(yearName.length()-2);
-                                System.out.println(yearName);
-                                System.out.println(dayOfMonthName);
-                                dateTo.setText(dayOfMonthName + "-" + monthName + "-" + yearName);
-
-                                if (selected_application_type.equals("PRE")) {
-
-                                    String today = todayDate.getText().toString();
-                                    String updateDate = dateTo.getText().toString();
-
-                                    Date nowDate = null;
-                                    Date givenDate = null;
-
-                                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
-                                    try {
-                                        nowDate = sdf.parse(today);
-                                        givenDate = sdf.parse(updateDate);
-                                    } catch (ParseException e) {
-                                        e.printStackTrace();
-                                    }
-
-                                    if (nowDate != null && givenDate != null) {
-
-                                        if (givenDate.after(nowDate) || givenDate.equals(nowDate)) {
-
-                                            String dateonnnn = "";
-                                            dateonnnn = dateOn.getText().toString();
-
-                                            if (dateonnnn.isEmpty()) {
-                                                dateTo.setText(dayOfMonthName + "-" + monthName + "-" + yearName);
-                                                dateToLay.setHelperText("");
-                                                dateToLay.setHint("Date");
-                                                totalDays.setText("0");
-                                                System.out.println("AHSE PRE");
-                                            } else {
-
-                                                Date date = null;
-                                                try {
-                                                    date = sdf.parse(dateonnnn);
-                                                } catch (ParseException e) {
-                                                    e.printStackTrace();
-                                                }
-
-                                                if (date != null) {
-
-                                                    if (givenDate.after(date) || givenDate.equals(date)) {
-                                                        dateTo.setText(dayOfMonthName + "-" + monthName + "-" + yearName);
-                                                        dateToLay.setHelperText("");
-                                                        dateToLay.setHint("Date");
-                                                        System.out.println("AHSE PRE");
-                                                        long diff = givenDate.getTime() - date.getTime();
-                                                        long diffDays = diff / (24 * 60 * 60 * 1000);
-                                                        int ddd = (int) diffDays;
-                                                        ddd = ddd + 1;
-                                                        totalDays.setText(String.valueOf(ddd));
-                                                        if (selected_leave_duration_id.isEmpty() || selected_leave_duration_id.equals("0")) {
-                                                            totalDays.setText(String.valueOf(ddd));
-                                                        } else {
-                                                            Double value =  ddd - 0.5;
-                                                            totalDays.setText(String.valueOf(value));
-                                                        }
-                                                        System.out.println("Days: "+ddd);
-                                                    } else {
-                                                        dateToLay.setHelperText("To Date should be Greater than From Date");
-                                                        dateToLay.setHint("Select Date");
-                                                        totalDays.setText("0");
-                                                        dateToLay.setHelperTextColor(ColorStateList.valueOf(Color.RED));
-                                                        dateTo.setText("");
-                                                    }
-                                                }
-                                            }
-
-                                        } else {
-
-                                            dateToLay.setHelperText("To Date never Less than Application Date");
-                                            dateToLay.setHint("Select Date");
-                                            totalDays.setText("0");
-                                            dateToLay.setHelperTextColor(ColorStateList.valueOf(Color.RED));
-                                            dateTo.setText("");
-                                        }
-                                    }
-                                }
-                                else if (selected_application_type.equals("POST")) {
-
-                                    String today = todayDate.getText().toString();
-                                    String updateDate = dateTo.getText().toString();
-
-                                    Date nowDate = null;
-                                    Date givenDate = null;
-
-                                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
-                                    try {
-                                        nowDate = sdf.parse(today);
-                                        givenDate = sdf.parse(updateDate);
-                                    } catch (ParseException e) {
-                                        e.printStackTrace();
-                                    }
-
-                                    if (nowDate != null && givenDate != null) {
-
-                                        if (givenDate.before(nowDate) || givenDate.equals(nowDate)) {
-
-                                            String dateonnnn = "";
-                                            dateonnnn = dateOn.getText().toString();
-
-                                            if (dateonnnn.isEmpty()) {
-                                                dateTo.setText(dayOfMonthName + "-" + monthName + "-" + yearName);
-                                                dateToLay.setHelperText("");
-                                                dateToLay.setHint("Date");
-                                                totalDays.setText("0");
-                                                System.out.println("AHSE POST");
-                                            } else {
-
-                                                Date date = null;
-                                                try {
-                                                    date = sdf.parse(dateonnnn);
-                                                } catch (ParseException e) {
-                                                    e.printStackTrace();
-                                                }
-
-                                                if (date != null) {
-
-                                                    if (givenDate.after(date) || givenDate.equals(date)) {
-                                                        dateTo.setText(dayOfMonthName + "-" + monthName + "-" + yearName);
-                                                        dateToLay.setHelperText("");
-                                                        dateToLay.setHint("Date");
-                                                        System.out.println("AHSE POST");
-                                                        long diff = givenDate.getTime() - date.getTime();
-                                                        long diffDays = diff / (24 * 60 * 60 * 1000);
-                                                        int ddd = (int) diffDays;
-                                                        ddd = ddd + 1;
-                                                        totalDays.setText(String.valueOf(ddd));
-                                                        if (selected_leave_duration_id.isEmpty() || selected_leave_duration_id.equals("0")) {
-                                                            totalDays.setText(String.valueOf(ddd));
-                                                        } else {
-                                                            Double value =  ddd - 0.5;
-                                                            totalDays.setText(String.valueOf(value));
-                                                        }
-                                                        System.out.println("Days: "+ddd);
-
-                                                    } else {
-                                                        dateToLay.setHelperText("To Date should be Greater than From Date");
-                                                        dateToLay.setHint("Select Date");
-                                                        totalDays.setText("0");
-                                                        dateToLay.setHelperTextColor(ColorStateList.valueOf(Color.RED));
-                                                        dateTo.setText("");
-                                                    }
-                                                }
-                                            }
-
-
-                                        } else {
-
-                                            dateToLay.setHelperText("To Date should be Less than Application Date");
-                                            dateToLay.setHint("Select Date");
-                                            totalDays.setText("0");
-                                            dateToLay.setHelperTextColor(ColorStateList.valueOf(Color.RED));
-                                            dateTo.setText("");
-                                        }
-                                    }
-                                }
-
-                            }
-                        }, mYear, mMonth, mDay);
-                        datePickerDialog.show();
-                    }
+        dateTo.setOnClickListener(v -> {
+            final Calendar c12 = Calendar.getInstance();
+            if (!selected_date_to.isEmpty()) {
+                SimpleDateFormat myf = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
+                Date md = null;
+                try {
+                    md = myf.parse(selected_date_to);
+                } catch (ParseException e) {
+                    logger.log(Level.WARNING, e.getMessage(), e);
                 }
+
+                if (md != null) {
+                    c12.setTime(md);
+                }
+            }
+            mYear = c12.get(Calendar.YEAR);
+            mMonth = c12.get(Calendar.MONTH);
+            mDay = c12.get(Calendar.DAY_OF_MONTH);
+
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                DatePickerDialog datePickerDialog = new DatePickerDialog(LeaveApplication.this, (view, year, month, dayOfMonth) -> {
+
+                    String monthName = "";
+                    String dayOfMonthName;
+                    String yearName;
+                    month = month + 1;
+                    if (month == 1) {
+                        monthName = "JAN";
+                    } else if (month == 2) {
+                        monthName = "FEB";
+                    } else if (month == 3) {
+                        monthName = "MAR";
+                    } else if (month == 4) {
+                        monthName = "APR";
+                    } else if (month == 5) {
+                        monthName = "MAY";
+                    } else if (month == 6) {
+                        monthName = "JUN";
+                    } else if (month == 7) {
+                        monthName = "JUL";
+                    } else if (month == 8) {
+                        monthName = "AUG";
+                    } else if (month == 9) {
+                        monthName = "SEP";
+                    } else if (month == 10) {
+                        monthName = "OCT";
+                    } else if (month == 11) {
+                        monthName = "NOV";
+                    } else if (month == 12) {
+                        monthName = "DEC";
+                    }
+
+                    if (dayOfMonth <= 9) {
+                        dayOfMonthName = "0" + dayOfMonth;
+                    } else {
+                        dayOfMonthName = String.valueOf(dayOfMonth);
+                    }
+                    yearName  = String.valueOf(year);
+                    yearName = yearName.substring(yearName.length()-2);
+                    System.out.println(yearName);
+                    System.out.println(dayOfMonthName);
+                    String dot = dayOfMonthName + "-" + monthName + "-" + yearName;
+                    dateTo.setText(dot);
+                    selected_date_to = dot;
+
+                    if (selected_application_type.equals("PRE")) {
+
+                        String today = Objects.requireNonNull(todayDate.getText()).toString();
+                        String updateDate = Objects.requireNonNull(dateTo.getText()).toString();
+
+                        Date nowDate = null;
+                        Date givenDate = null;
+
+                        SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
+                        try {
+                            nowDate = sdf.parse(today);
+                            givenDate = sdf.parse(updateDate);
+                        } catch (ParseException e) {
+                            logger.log(Level.WARNING, e.getMessage(), e);
+                        }
+
+                        if (nowDate != null && givenDate != null) {
+
+                            if (givenDate.after(nowDate) || givenDate.equals(nowDate)) {
+
+                                String dateonnnn;
+                                dateonnnn = Objects.requireNonNull(dateOn.getText()).toString();
+
+                                if (dateonnnn.isEmpty()) {
+                                    String dot2 = dayOfMonthName + "-" + monthName + "-" + yearName;
+                                    dateTo.setText(dot2);
+                                    selected_date_to = dot2;
+                                    dateToLay.setHelperText("");
+                                    dateToLay.setHint("Date");
+                                    totalDays.setText("0");
+                                    System.out.println("AHSE PRE");
+                                } else {
+
+                                    Date date = null;
+                                    try {
+                                        date = sdf.parse(dateonnnn);
+                                    } catch (ParseException e) {
+                                        logger.log(Level.WARNING, e.getMessage(), e);
+                                    }
+
+                                    if (date != null) {
+
+                                        if (givenDate.after(date) || givenDate.equals(date)) {
+                                            String dot3 = dayOfMonthName + "-" + monthName + "-" + yearName;
+                                            dateTo.setText(dot3);
+                                            selected_date_to = dot3;
+                                            dateToLay.setHelperText("");
+                                            dateToLay.setHint("Date");
+                                            System.out.println("AHSE PRE");
+                                            long diff = givenDate.getTime() - date.getTime();
+                                            long diffDays = diff / (24 * 60 * 60 * 1000);
+                                            int ddd = (int) diffDays;
+                                            ddd = ddd + 1;
+                                            totalDays.setText(String.valueOf(ddd));
+                                            if (selected_leave_duration_id.isEmpty() || selected_leave_duration_id.equals("0")) {
+                                                totalDays.setText(String.valueOf(ddd));
+                                            } else {
+                                                Double value =  ddd - 0.5;
+                                                totalDays.setText(String.valueOf(value));
+                                            }
+                                            System.out.println("Days: "+ddd);
+                                        } else {
+                                            dateToLay.setHelperText("To Date should be Greater than From Date");
+                                            dateToLay.setHint("Select Date");
+                                            totalDays.setText("0");
+                                            dateToLay.setHelperTextColor(ColorStateList.valueOf(Color.RED));
+                                            dateTo.setText("");
+                                            selected_date_to = "";
+                                        }
+                                    }
+                                }
+
+                            } else {
+
+                                dateToLay.setHelperText("To Date never Less than Application Date");
+                                dateToLay.setHint("Select Date");
+                                totalDays.setText("0");
+                                dateToLay.setHelperTextColor(ColorStateList.valueOf(Color.RED));
+                                dateTo.setText("");
+                                selected_date_to = "";
+                            }
+                        }
+                    }
+                    else if (selected_application_type.equals("POST")) {
+
+                        String today = Objects.requireNonNull(todayDate.getText()).toString();
+                        String updateDate = Objects.requireNonNull(dateTo.getText()).toString();
+
+                        Date nowDate = null;
+                        Date givenDate = null;
+
+                        SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
+                        try {
+                            nowDate = sdf.parse(today);
+                            givenDate = sdf.parse(updateDate);
+                        } catch (ParseException e) {
+                            logger.log(Level.WARNING, e.getMessage(), e);
+                        }
+
+                        if (nowDate != null && givenDate != null) {
+
+                            if (givenDate.before(nowDate) || givenDate.equals(nowDate)) {
+
+                                String dateonnnn;
+                                dateonnnn = Objects.requireNonNull(dateOn.getText()).toString();
+
+                                if (dateonnnn.isEmpty()) {
+                                    String dot4 = dayOfMonthName + "-" + monthName + "-" + yearName;
+                                    dateTo.setText(dot4);
+                                    selected_date_to = dot4;
+                                    dateToLay.setHelperText("");
+                                    dateToLay.setHint("Date");
+                                    totalDays.setText("0");
+                                    System.out.println("AHSE POST");
+                                } else {
+
+                                    Date date = null;
+                                    try {
+                                        date = sdf.parse(dateonnnn);
+                                    } catch (ParseException e) {
+                                        logger.log(Level.WARNING, e.getMessage(), e);
+                                    }
+
+                                    if (date != null) {
+
+                                        if (givenDate.after(date) || givenDate.equals(date)) {
+                                            String dot5 = dayOfMonthName + "-" + monthName + "-" + yearName;
+                                            dateTo.setText(dot5);
+                                            selected_date_to = dot5;
+                                            dateToLay.setHelperText("");
+                                            dateToLay.setHint("Date");
+                                            System.out.println("AHSE POST");
+                                            long diff = givenDate.getTime() - date.getTime();
+                                            long diffDays = diff / (24 * 60 * 60 * 1000);
+                                            int ddd = (int) diffDays;
+                                            ddd = ddd + 1;
+                                            totalDays.setText(String.valueOf(ddd));
+                                            if (selected_leave_duration_id.isEmpty() || selected_leave_duration_id.equals("0")) {
+                                                totalDays.setText(String.valueOf(ddd));
+                                            } else {
+                                                Double value =  ddd - 0.5;
+                                                totalDays.setText(String.valueOf(value));
+                                            }
+                                            System.out.println("Days: "+ddd);
+
+                                        } else {
+                                            dateToLay.setHelperText("To Date should be Greater than From Date");
+                                            dateToLay.setHint("Select Date");
+                                            totalDays.setText("0");
+                                            dateToLay.setHelperTextColor(ColorStateList.valueOf(Color.RED));
+                                            dateTo.setText("");
+                                            selected_date_to = "";
+                                        }
+                                    }
+                                }
+
+
+                            } else {
+
+                                dateToLay.setHelperText("To Date should be Less than Application Date");
+                                dateToLay.setHint("Select Date");
+                                totalDays.setText("0");
+                                dateToLay.setHelperTextColor(ColorStateList.valueOf(Color.RED));
+                                dateTo.setText("");
+                                selected_date_to = "";
+                            }
+                        }
+                    }
+
+                }, mYear, mMonth, mDay);
+                datePickerDialog.show();
             }
         });
 
         // Show Leave Balance
-        leaveBalance.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ShowLeaveBalance showLeaveBalance = new ShowLeaveBalance(LeaveApplication.this);
-                showLeaveBalance.show(getSupportFragmentManager(),"BALANCE");
-            }
+        leaveBalance.setOnClickListener(v -> {
+            ShowLeaveBalance showLeaveBalance = new ShowLeaveBalance(LeaveApplication.this);
+            showLeaveBalance.show(getSupportFragmentManager(),"BALANCE");
         });
 
-        leaveType.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showD = 1;
-                selectingIndivdual = leaveTypeLists;
-                SelectLeaveType selectLeaveType = new SelectLeaveType();
-                selectLeaveType.show(getSupportFragmentManager(),"LeaveType");
-            }
+        leaveType.setOnClickListener(v -> {
+            showD = 1;
+            selectingIndivdual = leaveTypeLists;
+            SelectLeaveType selectLeaveType = new SelectLeaveType();
+            selectLeaveType.show(getSupportFragmentManager(),"LeaveType");
         });
 
-        reason.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                showD = 2;
-                selectingIndivdual = allreasonLists;
-                SelectLeaveType selectLeaveType = new SelectLeaveType();
-                selectLeaveType.show(getSupportFragmentManager(),"LeaveReason");
-            }
+        reason.setOnClickListener(v -> {
+            showD = 2;
+            selectingIndivdual = allreasonLists;
+            SelectLeaveType selectLeaveType = new SelectLeaveType();
+            selectLeaveType.show(getSupportFragmentManager(),"LeaveReason");
         });
 
-        otherReason.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        otherReason.setOnClickListener(v -> {
+            leaveNumber = 1;
+            hint = Objects.requireNonNull(otherReasonInputLay.getHint()).toString();
+            text = Objects.requireNonNull(otherReason.getText()).toString();
+            DialogueText dialogueText = new DialogueText();
+            dialogueText.show(getSupportFragmentManager(),"TEXTEDIT");
 
-                leaveNumber = 1;
-                hint = otherReasonInputLay.getHint().toString();
-                text = otherReason.getText().toString();
-                DialogueText dialogueText = new DialogueText();
-                dialogueText.show(getSupportFragmentManager(),"TEXTEDIT");
-
-            }
         });
 
-        leaveAddress.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                leaveNumber = 2;
-                hint = leaveAddressLay.getHint().toString();
-                text = leaveAddress.getText().toString();
-                DialogueText dialogueText = new DialogueText();
-                dialogueText.show(getSupportFragmentManager(),"TEXTEDIT");
-            }
+        leaveAddress.setOnClickListener(v -> {
+            leaveNumber = 2;
+            hint = Objects.requireNonNull(leaveAddressLay.getHint()).toString();
+            text = Objects.requireNonNull(leaveAddress.getText()).toString();
+            DialogueText dialogueText = new DialogueText();
+            dialogueText.show(getSupportFragmentManager(),"TEXTEDIT");
         });
 
-        workBackup.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialogText_leave = 1;
-                allWorkBackup = workBackupList;
-                SelectAll selectAll = new SelectAll();
-                selectAll.show(getSupportFragmentManager(),"TEXTEDIT");
-            }
+        workBackup.setOnClickListener(v -> {
+            dialogText_leave = 1;
+            allWorkBackup = workBackupList;
+            SelectAll selectAll = new SelectAll();
+            selectAll.show(getSupportFragmentManager(),"TEXTEDIT");
         });
 
 
-        apply.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        apply.setOnClickListener(v -> {
+            date_of_today = Objects.requireNonNull(todayDate.getText()).toString();
+            selected_date_on_from = Objects.requireNonNull(dateOn.getText()).toString();
+            selected_date_to = Objects.requireNonNull(dateTo.getText()).toString();
+            selected_leave_address = Objects.requireNonNull(leaveAddress.getText()).toString();
+            selected_total_leave_days = Objects.requireNonNull(totalDays.getText()).toString();
 
-                date_of_today = todayDate.getText().toString();
-                selected_date_on_from = dateOn.getText().toString();
-                selected_date_to = dateTo.getText().toString();
-                selected_leave_address = leaveAddress.getText().toString();
-                selected_total_leave_days = totalDays.getText().toString();
+            selected_reason = Objects.requireNonNull(reason.getText()).toString();
+            if (selected_reason.equals("Select")) {
+                selected_reason = "";
+            }
 
-                selected_reason = reason.getText().toString();
-                if (selected_reason.equals("Select")) {
-                    selected_reason = "";
-                }
-
-                if (!selected_leave_type_name.isEmpty() && !selected_leave_type_id.isEmpty()) {
-                    leaveTypeLay.setHelperText("");
-                    if (!selected_date_on_from.isEmpty()) {
-                        dateOnLay.setHelperText("");
-                        if (!selected_date_to.isEmpty()) {
-                            dateToLay.setHelperText("");
-                            if (!selected_leave_duration.isEmpty() && !selected_leave_duration_id.isEmpty()) {
-                                errorLeaveDuration.setVisibility(View.GONE);
-                                if (!selected_reason.isEmpty()) {
-                                    errorReason.setVisibility(View.GONE);
-                                    if (selected_reason.equals("Others")) {
-                                        selected_reason = otherReason.getText().toString();
-                                        if (!selected_reason.isEmpty()) {
-                                            errorReason.setVisibility(View.GONE);
-                                            if (!selected_worker.isEmpty() && !selected_worker_id.isEmpty()) {
-                                                errorBackup.setVisibility(View.GONE);
-
-                                                AlertDialog.Builder builder = new AlertDialog.Builder(LeaveApplication.this);
-                                                builder.setTitle("Leave Application!")
-                                                        .setMessage("Do you want apply this leave?")
-                                                        .setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                                                            @Override
-                                                            public void onClick(DialogInterface dialog, int which) {
-
-//                                                                new InsertCheck().execute();
-                                                                insertLeaveApply();
-
-                                                            }
-                                                        })
-                                                        .setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                                                            @Override
-                                                            public void onClick(DialogInterface dialog, int which) {
-
-                                                            }
-                                                        });
-                                                AlertDialog alert = builder.create();
-                                                alert.show();
-
-                                            }
-                                            else {
-                                                errorBackup.setVisibility(View.VISIBLE);
-                                                Toast.makeText(getApplicationContext(),"Please Select Work Backup Employee",Toast.LENGTH_SHORT).show();
-                                            }
-                                        } else {
-                                            errorReason.setVisibility(View.VISIBLE);
-                                            Toast.makeText(getApplicationContext(),"Please Select Reason",Toast.LENGTH_SHORT).show();
-                                        }
-                                    } else {
+            if (!selected_leave_type_name.isEmpty() && !selected_leave_type_id.isEmpty()) {
+                leaveTypeLay.setHelperText("");
+                if (!selected_date_on_from.isEmpty()) {
+                    dateOnLay.setHelperText("");
+                    if (!selected_date_to.isEmpty()) {
+                        dateToLay.setHelperText("");
+                        if (!selected_leave_duration.isEmpty() && !selected_leave_duration_id.isEmpty()) {
+                            errorLeaveDuration.setVisibility(View.GONE);
+                            if (!selected_reason.isEmpty()) {
+                                errorReason.setVisibility(View.GONE);
+                                if (selected_reason.equals("Others")) {
+                                    selected_reason = Objects.requireNonNull(otherReason.getText()).toString();
+                                    if (!selected_reason.isEmpty()) {
                                         errorReason.setVisibility(View.GONE);
                                         if (!selected_worker.isEmpty() && !selected_worker_id.isEmpty()) {
                                             errorBackup.setVisibility(View.GONE);
@@ -994,56 +939,68 @@ public class LeaveApplication extends AppCompatActivity {
                                             AlertDialog.Builder builder = new AlertDialog.Builder(LeaveApplication.this);
                                             builder.setTitle("Leave Application!")
                                                     .setMessage("Do you want apply this leave?")
-                                                    .setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(DialogInterface dialog, int which) {
+                                                    .setPositiveButton("YES", (dialog, which) -> insertLeaveApply())
+                                                    .setNegativeButton("NO", (dialog, which) -> {
 
-//                                                            new InsertCheck().execute();
-                                                            insertLeaveApply();
-
-                                                        }
-                                                    })
-                                                    .setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(DialogInterface dialog, int which) {
-
-                                                        }
                                                     });
                                             AlertDialog alert = builder.create();
                                             alert.show();
 
-                                        } else {
+                                        }
+                                        else {
                                             errorBackup.setVisibility(View.VISIBLE);
                                             Toast.makeText(getApplicationContext(),"Please Select Work Backup Employee",Toast.LENGTH_SHORT).show();
                                         }
+                                    } else {
+                                        errorReason.setVisibility(View.VISIBLE);
+                                        Toast.makeText(getApplicationContext(),"Please Select Reason",Toast.LENGTH_SHORT).show();
                                     }
                                 } else {
-                                    errorReason.setVisibility(View.VISIBLE);
-                                    Toast.makeText(getApplicationContext(),"Please Select Reason",Toast.LENGTH_SHORT).show();
+                                    errorReason.setVisibility(View.GONE);
+                                    if (!selected_worker.isEmpty() && !selected_worker_id.isEmpty()) {
+                                        errorBackup.setVisibility(View.GONE);
+
+                                        AlertDialog.Builder builder = new AlertDialog.Builder(LeaveApplication.this);
+                                        builder.setTitle("Leave Application!")
+                                                .setMessage("Do you want apply this leave?")
+                                                .setPositiveButton("YES", (dialog, which) -> insertLeaveApply())
+                                                .setNegativeButton("NO", (dialog, which) -> {
+
+                                                });
+                                        AlertDialog alert = builder.create();
+                                        alert.show();
+
+                                    } else {
+                                        errorBackup.setVisibility(View.VISIBLE);
+                                        Toast.makeText(getApplicationContext(),"Please Select Work Backup Employee",Toast.LENGTH_SHORT).show();
+                                    }
                                 }
                             } else {
-                                errorLeaveDuration.setVisibility(View.VISIBLE);
-                                Toast.makeText(getApplicationContext(),"Please Select Leave Duration",Toast.LENGTH_SHORT).show();
+                                errorReason.setVisibility(View.VISIBLE);
+                                Toast.makeText(getApplicationContext(),"Please Select Reason",Toast.LENGTH_SHORT).show();
                             }
                         } else {
-                            dateToLay.setHelperText("Please Select Date To");
-                            Toast.makeText(getApplicationContext(),"Please Select Date To",Toast.LENGTH_SHORT).show();
+                            errorLeaveDuration.setVisibility(View.VISIBLE);
+                            Toast.makeText(getApplicationContext(),"Please Select Leave Duration",Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        dateOnLay.setHelperText("Please Select Date On/ From");
-                        Toast.makeText(getApplicationContext(),"Please Select Date On/ From",Toast.LENGTH_SHORT).show();
+                        dateToLay.setHelperText("Please Select Date To");
+                        Toast.makeText(getApplicationContext(),"Please Select Date To",Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    leaveTypeLay.setHelperText("Please Select Leave Type");
-                    Toast.makeText(getApplicationContext(),"Please Select Leave Type",Toast.LENGTH_SHORT).show();
+                    dateOnLay.setHelperText("Please Select Date On/ From");
+                    Toast.makeText(getApplicationContext(),"Please Select Date On/ From",Toast.LENGTH_SHORT).show();
                 }
+            } else {
+                leaveTypeLay.setHelperText("Please Select Leave Type");
+                Toast.makeText(getApplicationContext(),"Please Select Leave Type",Toast.LENGTH_SHORT).show();
             }
         });
 
 
-        close.setOnClickListener(new View.OnClickListener() {
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
-            public void onClick(View v) {
+            public void handleOnBackPressed() {
                 showD = 0;
                 isOtherReason = false;
                 leaveNumber = 0;
@@ -1068,28 +1025,7 @@ public class LeaveApplication extends AppCompatActivity {
 
     // ---------------------------------------------------------------------------------------------------
 
-
-    @Override
-    public void onBackPressed() {
-
-        showD = 0;
-        isOtherReason = false;
-        leaveNumber = 0;
-        dialogText_leave = 0;
-
-        hint = "";
-        text = "";
-
-        selected_leave_type_name = "";
-        selected_leave_type_id = "";
-        selected_reason = "";
-
-        selected_worker = "";
-        selected_worker_id = "";
-
-        finish();
-
-    }
+    
 
 //    public boolean isConnected() {
 //        boolean connected = false;
@@ -1113,7 +1049,7 @@ public class LeaveApplication extends AppCompatActivity {
 //            int     exitValue = ipProcess.waitFor();
 //            return (exitValue == 0);
 //        }
-//        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
+//        catch (IOException | InterruptedException e)          { logger.log(Level.WARNING, e.getMessage(), e); }
 //
 //        return false;
 //    }
@@ -1396,7 +1332,7 @@ public class LeaveApplication extends AppCompatActivity {
 //
 //            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
 //            Log.i("ERRRRR", e.getLocalizedMessage());
-//            e.printStackTrace();
+//            logger.log(Level.WARNING, e.getMessage(), e);
 //        }
 //    }
 
@@ -1411,10 +1347,10 @@ public class LeaveApplication extends AppCompatActivity {
         selectingIndivdual = new ArrayList<>();
         workBackupList = new ArrayList<>();
 
-        String leaveTypeUrl = "http://103.56.208.123:8001/apex/ttrams/leave/getLeaveType/"+emp_id+"";
-        String reasonsUrl = "http://103.56.208.123:8001/apex/ttrams/leave/getReasons";
-        String workBackupUrl = "http://103.56.208.123:8001/apex/ttrams/leave/getWorkBackupEmp/"+div_id+"/"+emp_id+"";
-        String empInfoUrl = "http://103.56.208.123:8001/apex/ttrams/attendanceUpNewReq/getEmpInfo/"+emp_id+"";
+        String leaveTypeUrl = api_url_front + "leave/getLeaveType/"+emp_id;
+        String reasonsUrl = api_url_front + "leave/getReasons";
+        String workBackupUrl = api_url_front + "leave/getWorkBackupEmp/"+div_id+"/"+emp_id;
+        String empInfoUrl = api_url_front + "attendanceUpNewReq/getEmpInfo/"+emp_id;
 
         RequestQueue requestQueue = Volley.newRequestQueue(LeaveApplication.this);
 
@@ -1440,12 +1376,12 @@ public class LeaveApplication extends AppCompatActivity {
                 updateInterface();
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateInterface();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             conn = false;
             connected = false;
             updateInterface();
@@ -1481,12 +1417,12 @@ public class LeaveApplication extends AppCompatActivity {
                 requestQueue.add(empInfoReq);
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateInterface();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             conn = false;
             connected = false;
             updateInterface();
@@ -1514,12 +1450,12 @@ public class LeaveApplication extends AppCompatActivity {
                 requestQueue.add(workBackupReq);
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateInterface();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             conn = false;
             connected = false;
             updateInterface();
@@ -1548,12 +1484,12 @@ public class LeaveApplication extends AppCompatActivity {
                 requestQueue.add(reasonReq);
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
                 updateInterface();
             }
         }, error -> {
-           error.printStackTrace();
+           logger.log(Level.WARNING, error.getMessage(), error);
            conn = false;
            connected = false;
            updateInterface();
@@ -1796,7 +1732,7 @@ public class LeaveApplication extends AppCompatActivity {
 //
 //            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
 //            Log.i("ERRRRR", e.getLocalizedMessage());
-//            e.printStackTrace();
+//            logger.log(Level.WARNING, e.getMessage(), e);
 //        }
 //    }
 
@@ -1809,7 +1745,7 @@ public class LeaveApplication extends AppCompatActivity {
 
         leaveAppCheck = "";
 
-        String url = "http://103.56.208.123:8001/apex/ttrams/leave/applyLeave";
+        String url = api_url_front + "leave/applyLeave";
 
         RequestQueue requestQueue = Volley.newRequestQueue(LeaveApplication.this);
 
@@ -1831,18 +1767,18 @@ public class LeaveApplication extends AppCompatActivity {
                 applyLeaveLayUpdate();
             }
             catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 insertCon = false;
                 applyLeaveLayUpdate();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING, error.getMessage(), error);
             insertConnn = false;
             insertCon = false;
             applyLeaveLayUpdate();
         }) {
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
+            public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
                 headers.put("P_EMP_ID",emp_id);
                 headers.put("P_LEAVE_TYPE",selected_leave_type_id);
@@ -1897,13 +1833,10 @@ public class LeaveApplication extends AppCompatActivity {
                     dialog.setCancelable(false);
                     dialog.setCanceledOnTouchOutside(false);
                     Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                    positive.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
+                    positive.setOnClickListener(v -> {
 
-                            dialog.dismiss();
-                            finish();
-                        }
+                        dialog.dismiss();
+                        finish();
                     });
                 }
                 else {
@@ -1915,13 +1848,7 @@ public class LeaveApplication extends AppCompatActivity {
                     dialog.setCancelable(false);
                     dialog.setCanceledOnTouchOutside(false);
                     Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                    positive.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-
-                            dialog.dismiss();
-                        }
-                    });
+                    positive.setOnClickListener(v -> dialog.dismiss());
                 }
 
                 insertedCon = false;

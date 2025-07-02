@@ -6,9 +6,11 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class GPXFileWriter {
-
+    static Logger logger = Logger.getLogger(GPXFileWriter.class.getName());
     private static final String XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>";
     private static final String TAG_GPX = "<gpx"
             + " xmlns=\"http://www.topografix.com/GPX/1/1\""
@@ -47,7 +49,7 @@ public class GPXFileWriter {
             fw.write("</gpx>");
             fw.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.WARNING, e.getMessage(), e);
         }
 
     }
@@ -63,7 +65,7 @@ public class GPXFileWriter {
             fw.write("</gpx>");
             fw.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.WARNING, e.getMessage(), e);
         }
     }
 

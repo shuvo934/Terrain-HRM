@@ -1,11 +1,43 @@
 package ttit.com.shuvo.ikglhrm;
 
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.CENTER_API_FRONT;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.COMPANY;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.CONTACT;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.DEPT_NAME;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.DESG_NAME;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.DESG_PRIORITY;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.DIV_ID;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.DIV_NAME;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.EMAIL;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.EMP_ID_LOGIN;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.EMP_PASSWORD;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.IS_ATT_APPROVED;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.IS_LEAVE_APPROVED;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.JOINING_DATE;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.JSD_ID_LOGIN;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.JSD_OBJECTIVE;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.JSM_CODE;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.JSM_NAME;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.LIVE_FLAG;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.LOGIN_ACTIVITY_FILE;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.LOGIN_TF;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.MyPREFERENCES;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.SOFTWARE;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.USER_F_NAME;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.USER_L_NAME;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.USER_NAME;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.WIDGET_EMP_ID;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.WIDGET_FILE;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.WIDGET_TRACKER_FLAG;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.checked;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.user_emp_code;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.user_password;
+
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -15,31 +47,30 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
-import com.rosemaryapp.amazingspinner.AmazingSpinner;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import ttit.com.shuvo.ikglhrm.dashboard.Dashboard;
 import org.json.JSONArray;
@@ -59,7 +90,6 @@ public class Login extends AppCompatActivity {
     CheckBox checkBox;
 
 //    BLOB pic;
-    ImageView imageView;
 
     String userName = "";
     String password = "";
@@ -76,54 +106,16 @@ public class Login extends AppCompatActivity {
     private Boolean noUser = false;
     private Boolean connected = false;
 
-    private Boolean getConn = false;
-    private Boolean getConnected = false;
-
 //    private Connection connection;
 //    AmazingSpinner database;
 
-
-    public static final String LOGIN_ACTIVITY_FILE = "LOGIN_ACTIVITY_FILE";
-
-    public static final String USER_NAME = "USER_NAME";
-    public static final String USER_F_NAME = "USER_F_NAME";
-    public static final String USER_L_NAME = "USER_L_NAME";
-    public static final String EMAIL = "EMAIL";
-    public static final String CONTACT = "CONTACT";
-    public static final String EMP_ID_LOGIN = "EMP_ID";
-
-    public static final String JSM_CODE = "JSM_CODE";
-    public static final String JSM_NAME = "JSM_NAME";
-    public static final String JSD_ID_LOGIN = "JSD_ID";
-    public static final String JSD_OBJECTIVE = "JSD_OBJECTIVE";
-    public static final String DEPT_NAME = "DEPT_NAME";
-    public static final String DIV_NAME = "DIV_NAME";
-    public static final String DESG_NAME = "DESG_NAME";
-    public static final String DESG_PRIORITY = "DESG_PRIORITY";
-    public static final String JOINING_DATE = "JOINING_DATE";
-    public static final String DIV_ID = "DIV_ID";
-    public static final String LOGIN_TF = "TRUE_FALSE";
-
-    public static final String IS_ATT_APPROVED = "IS_ATT_APPROVED";
-    public static final String IS_LEAVE_APPROVED = "IS_LEAVE_APPROVED";
-    public static final String COMPANY = "COMPANY";
-    public static final String SOFTWARE = "SOFTWARE";
-    public static final String LIVE_FLAG = "LIVE_FLAG";
 //    public static final String DATABASE_NAME = "DATABASE_NAME";
-
-    public static final String MyPREFERENCES = "UserPass" ;
-    public static final String user_emp_code = "nameKey";
-    public static final String user_password = "passKey";
-    public static final String checked = "trueFalse";
 
     SharedPreferences sharedpreferences;
 
     SharedPreferences sharedLogin;
 
     SharedPreferences attendanceWidgetPreferences;
-    public static final String WIDGET_FILE = "WIDGET_FILE";
-    public static final String WIDGET_EMP_ID = "WIDGET_EMP_ID";
-    public static final String WIDGET_TRACKER_FLAG = "WIDGET_TRACKER_FLAG";
 
     String getUserName = "";
     String getPassword = "";
@@ -137,36 +129,22 @@ public class Login extends AppCompatActivity {
     String emp_code = "";
     int live_loc_flag = 0;
     String tracker_flag = "";
+    String center_api = "";
+
+    ArrayList<AllUrlList> urls;
+    String text_url = "https://raw.githubusercontent.com/shuvo934/Story/refs/heads/master/hrmServers";
+
+    Logger logger = Logger.getLogger(Login.class.getName());
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-//
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            Window w = getWindow();
-//           // w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-//        }
-//        if (Build.VERSION.SDK_INT < 16) {
-//            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-//                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//        }
-//        View decorView = getWindow().getDecorView();
-//// Hide the status bar.
-//        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
-//        decorView.setSystemUiVisibility(uiOptions);
-        Window window = getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(ContextCompat.getColor(Login.this,R.color.secondaryColor));
         setContentView(R.layout.activity_login);
-
-
 
         userInfoLists = new ArrayList<>();
         userDesignations = new ArrayList<>();
 
         softName = findViewById(R.id.name_of_soft_login);
-        imageView = findViewById(R.id.image_from_db);
         user = findViewById(R.id.user_name_given);
         pass = findViewById(R.id.password_given);
         checkBox = findViewById(R.id.remember_checkbox);
@@ -225,6 +203,7 @@ public class Login extends AppCompatActivity {
                 login_failed.setVisibility(View.GONE);
             }
         });
+
         user.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -242,135 +221,112 @@ public class Login extends AppCompatActivity {
             }
         });
 
-//        new Check().execute();
-        getData();
+        user.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH ||
+                    actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT || event != null && event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER &&
+                    event.getKeyCode() == KeyEvent.KEYCODE_NAVIGATE_NEXT) {
+                if (event == null || !event.isShiftPressed()) {
+                    // the user is done typing.
+                    Log.i("Let see", "Come here");
+                    user.clearFocus();
+                    closeKeyBoard();
 
-        pass.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH ||
-                        actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT || event != null && event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER &&
-                        event.getKeyCode() == KeyEvent.KEYCODE_NAVIGATE_NEXT) {
-                    if (event == null || !event.isShiftPressed()) {
-                        // the user is done typing.
-                        Log.i("Let see", "Come here");
-                        pass.clearFocus();
-                        closeKeyBoard();
-
-                        return false; // consume.
-                    }
+                    return false; // consume.
                 }
-                return false;
+            }
+            return false;
+        });
+
+        pass.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH ||
+                    actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT || event != null && event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER &&
+                    event.getKeyCode() == KeyEvent.KEYCODE_NAVIGATE_NEXT) {
+                if (event == null || !event.isShiftPressed()) {
+                    // the user is done typing.
+                    Log.i("Let see", "Come here");
+                    pass.clearFocus();
+                    closeKeyBoard();
+
+                    return false; // consume.
+                }
+            }
+            return false;
+        });
+
+        login.setOnClickListener(v -> {
+            closeKeyBoard();
+
+            login_failed.setVisibility(View.GONE);
+            userName = Objects.requireNonNull(user.getText()).toString();
+            password = Objects.requireNonNull(pass.getText()).toString();
+
+            if (!userName.isEmpty() && !password.isEmpty()) {
+                if (!userName.equals("admin")) {
+                    dynamicLoginCheck();
+                }
+                else {
+                    Toast.makeText(getApplicationContext(), "Admin can not login to this app", Toast.LENGTH_SHORT).show();
+                }
+
+            } else {
+                Toast.makeText(getApplicationContext(), "Please Give User Name and Password", Toast.LENGTH_SHORT).show();
             }
         });
 
-        login.setOnClickListener(new View.OnClickListener() {
+        readApiText();
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
-            public void onClick(View v) {
-
-                closeKeyBoard();
-
-                login_failed.setVisibility(View.GONE);
-                userName = Objects.requireNonNull(user.getText()).toString();
-                password = Objects.requireNonNull(pass.getText()).toString();
-
-                if (!userName.isEmpty() && !password.isEmpty()) {
-                    if (!userName.equals("admin")) {
-//                        new CheckLogin().execute();
-                        loginCheck();
-                    }
-                    else {
-                        Toast.makeText(getApplicationContext(), "Admin can not login to this app", Toast.LENGTH_SHORT).show();
-                    }
-
-                } else {
-                    Toast.makeText(getApplicationContext(), "Please Give User Name and Password", Toast.LENGTH_SHORT).show();
-                }
-
+            public void handleOnBackPressed() {
+                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(Login.this);
+                builder.setTitle("EXIT!")
+                        .setIcon(R.drawable.hrm_new_round_icon_custom)
+                        .setMessage("Do you want to EXIT?")
+                        .setPositiveButton("YES", (dialog, which) -> System.exit(0))
+                        .setNegativeButton("NO", (dialog, which) -> {
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
             }
         });
     }
 
+    public void readApiText() {
+        waitProgress.show(getSupportFragmentManager(), "WaitBar");
+        waitProgress.setCancelable(false);
+        new Thread(() -> {
+            urls = new ArrayList<>();
+            try {
+                URL url = new URL(text_url);
+                HttpURLConnection conn=(HttpURLConnection) url.openConnection();
+                conn.setConnectTimeout(60000); // timing out in a minute
+                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String str;
+                while ((str = in.readLine()) != null) {
+                    urls.add(new AllUrlList(str,false));
+                }
+                in.close();
+            }
+            catch (Exception e) {
+                urls.add(new AllUrlList("http://103.56.208.123:8001/apex/ttrams/",false));
+                urls.add(new AllUrlList("http://103.56.208.123:8001/apex/mnm/",false));
+                Log.d("MyTag",e.toString());
+            }
 
-
-
-//    private void enableFileAccess() {
-//
-//        if (Build.VERSION.SDK_INT >= 23) {
-//            int REQUEST_CODE_PERMISSION_STORAGE = 100;
-//            String[] permission = {
-//                    Manifest.permission.READ_EXTERNAL_STORAGE,
-//                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-//            };
-//
-//            for (String str : permission) {
-//                if (this.checkSelfPermission(str) != PackageManager.PERMISSION_GRANTED) {
-//                    this.requestPermissions(permission, REQUEST_CODE_PERMISSION_STORAGE);
-//                    return;
-//                }
-//
-//            }
-//
-////            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-////                enableGPS();
-////            }
-//
-//
-//        }
-//    }
-
-
-
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        if (requestCode == FINE_LOCATION_ACCESS_REQUEST_CODE) {
-//            Log.i("Ekhane", "7");
-//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                Log.i("Ekhane", "8");
-//                // we have the permission
-//                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
-//                    // TODO: Consider calling
-//                    //    ActivityCompat#requestPermissions
-//                    // here to request the missing permissions, and then overriding
-//                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//                    //                                          int[] grantResults)
-//                    // to handle the case where the user grants the permission. See the documentation
-//                    // for ActivityCompat#requestPermissions for more details.
-//                    Log.i("Ekhane", "9");
-//                    return;
-//                }
-//
-//                enableFileAccess();
-//
-//            }
-//        }
-//    }
-
-
-
-    @Override
-    public void onBackPressed () {
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
-        builder.setTitle("EXIT!")
-                .setIcon(R.drawable.thrm_logo)
-                .setMessage("Do you want to EXIT?")
-                .setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-
-                        System.exit(0);
+            runOnUiThread(() -> {
+                if (urls.isEmpty()) {
+                    urls.add(new AllUrlList("http://103.56.208.123:8001/apex/ttrams/",false));
+                    urls.add(new AllUrlList("http://103.56.208.123:8001/apex/mnm/",false));
+                }
+                else {
+                    for (int i = 0; i < urls.size(); i++) {
+                        System.out.println(urls.get(i).getUrls());
                     }
-                })
-                .setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                }
+                waitProgress.dismiss();
+            });
 
-                    }
-                });
-        AlertDialog alert = builder.create();
-        alert.show();
+        }).start();
     }
 
     private void closeKeyBoard () {
@@ -867,7 +823,7 @@ public class Login extends AppCompatActivity {
 //
 //    }
 
-    public void loginCheck() {
+    public void dynamicLoginCheck() {
         waitProgress.show(getSupportFragmentManager(), "WaitBar");
         waitProgress.setCancelable(false);
         userInfoLists = new ArrayList<>();
@@ -879,8 +835,33 @@ public class Login extends AppCompatActivity {
         connected = false;
         infoConnected = false;
         userId = "";
+        CompanyName = "";
+        SoftwareName = "";
+        System.out.println("START");
 
-        String useridUrl = "http://103.56.208.123:8001/apex/ttrams/login/getUserId/"+userName+"/"+password+"";
+        checkToGetLoginData();
+    }
+
+    public void checkToGetLoginData() {
+        boolean allUpdated = false;
+        for (int i = 0; i < urls.size(); i++) {
+            allUpdated = urls.get(i).isChecked();
+            if (!urls.get(i).isChecked()) {
+                allUpdated = urls.get(i).isChecked();
+                String url = urls.get(i).getUrls();
+                System.out.println(i+" Started");
+                getLoginData(url,i);
+                break;
+            }
+        }
+        if (allUpdated) {
+            System.out.println("all clear");
+            goToDashboard();
+        }
+    }
+
+    public void getLoginData(String url, int index) {
+        String useridUrl = url + "login/getUserIdNew?user_name="+userName+"&pass="+password;
 
         RequestQueue requestQueue = Volley.newRequestQueue(Login.this);
 
@@ -895,31 +876,35 @@ public class Login extends AppCompatActivity {
                     JSONArray array = new JSONArray(items);
                     for (int i = 0; i < array.length(); i++) {
                         JSONObject userIdInfo = array.getJSONObject(i);
-                        userId = userIdInfo.getString("val");
+                        userId = userIdInfo.getString("val").equals("null") ? "" : userIdInfo.getString("val");
                     }
                 }
+
                 if (userId.isEmpty() || userId.equals("-1")) {
-                    goToDashboard();
+                    urls.get(index).setChecked(true);
+                    checkToGetLoginData();
                 }
                 else {
+                    center_api = url;
                     getEmpCode(userId);
                 }
             }
             catch (JSONException e) {
                 connected = false;
-                e.printStackTrace();
-                goToDashboard();
+                logger.log(Level.WARNING,e.getMessage(),e);
+                urls.get(index).setChecked(true);
+                checkToGetLoginData();
             }
 
         }, error -> {
             conn = false;
             connected = false;
-            error.printStackTrace();
-            goToDashboard();
+            logger.log(Level.WARNING,error.getMessage(),error);
+            urls.get(index).setChecked(true);
+            checkToGetLoginData();
         });
 
         requestQueue.add(getUserId);
-
     }
 
     public void getEmpCode(String u_id) {
@@ -927,8 +912,8 @@ public class Login extends AppCompatActivity {
         emp_id = "";
         adminConnected = false;
         noUser = false;
-        String empCodeUrl = "http://103.56.208.123:8001/apex/ttrams/login/getEmpCodebyUser/"+u_id+"";
-        String userInfoUrl = "http://103.56.208.123:8001/apex/ttrams/login/getUserInfo/"+u_id+"";
+        String empCodeUrl = center_api + "login/getEmpCodebyUser/"+u_id;
+        String userInfoUrl = center_api + "login/getUserInfo/"+u_id;
 
         RequestQueue requestQueue = Volley.newRequestQueue(Login.this);
 
@@ -943,7 +928,7 @@ public class Login extends AppCompatActivity {
                     JSONArray array = new JSONArray(items);
                     for (int i = 0; i < array.length(); i++) {
                         JSONObject userInfo = array.getJSONObject(i);
-                        String usr_name = userInfo.getString("usr_name");
+//                        String usr_name = userInfo.getString("usr_name");
                         String usr_fname = userInfo.getString("usr_fname");
                         String usr_lname = userInfo.getString("usr_lname");
                         String usr_email = userInfo.getString("usr_email");
@@ -957,13 +942,13 @@ public class Login extends AppCompatActivity {
             }
             catch (JSONException e) {
                 connected = false;
-                e.printStackTrace();
+                logger.log(Level.WARNING,e.getMessage(),e);
                 goToDashboard();
             }
         }, error -> {
             conn = false;
             connected = false;
-            error.printStackTrace();
+            logger.log(Level.WARNING,error.getMessage(),error);
             goToDashboard();
         });
 
@@ -998,14 +983,14 @@ public class Login extends AppCompatActivity {
             }
             catch (JSONException e) {
                 connected = false;
-                e.printStackTrace();
+                logger.log(Level.WARNING,e.getMessage(),e);
                 goToDashboard();
             }
 
         },error -> {
             conn = false;
             connected = false;
-            error.printStackTrace();
+            logger.log(Level.WARNING,error.getMessage(),error);
             goToDashboard();
         });
 
@@ -1013,17 +998,20 @@ public class Login extends AppCompatActivity {
     }
 
     public void getUserDetails() {
-        String designationUrl = "http://103.56.208.123:8001/apex/ttrams/login/getUserDesignations/"+emp_id+"";
-        String attendanceAppUrl = "http://103.56.208.123:8001/apex/ttrams/approval_flag/getAttendanceApproval/"+emp_code+"";
-        String leaveAppUrl = "http://103.56.208.123:8001/apex/ttrams/approval_flag/getLeaveApproval/"+emp_code+"";
-        String liveLocFlagUrl = "http://103.56.208.123:8001/apex/ttrams/utility/getLiveLocationFlag/"+emp_code+"";
-        String updateEmpFlagUrl = "http://103.56.208.123:8001/apex/ttrams/login/updateEmpFlag";
+        String designationUrl = center_api + "login/getUserDesignations/"+emp_id;
+        String attendanceAppUrl = center_api + "approval_flag/getAttendanceApproval/"+emp_code;
+        String leaveAppUrl = center_api + "approval_flag/getLeaveApproval/"+emp_code;
+        String liveLocFlagUrl = center_api + "utility/getLiveLocationFlag/"+emp_code;
+        String updateEmpFlagUrl = center_api + "login/updateEmpFlag";
+        String companyUrl = center_api + "utility/getCompanyName";
+        String softwareUrl = center_api + "utility/getSoftwareName";
 
         RequestQueue requestQueue = Volley.newRequestQueue(Login.this);
 
         StringRequest updateFlag = new StringRequest(Request.Method.POST, updateEmpFlagUrl, response -> {
             conn = true;
              try {
+                 connected = true;
                  JSONObject jsonObject = new JSONObject(response);
                  String string_out = jsonObject.getString("string_out");
                  if (string_out.equals("Successfully Created")) {
@@ -1037,22 +1025,78 @@ public class Login extends AppCompatActivity {
              }
              catch (JSONException e) {
                  connected = false;
-                 e.printStackTrace();
+                 logger.log(Level.WARNING,e.getMessage(),e);
                  goToDashboard();
              }
         }, error -> {
             conn = false;
             connected = false;
-            error.printStackTrace();
+            logger.log(Level.WARNING,error.getMessage(),error);
             goToDashboard();
         }) {
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
+            public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
                 headers.put("P_EMP_ID", emp_id);
                 return headers;
             }
         };
+
+        StringRequest getSoftwareRequest = new StringRequest(Request.Method.GET, softwareUrl, response -> {
+            conn = true;
+            try {
+                connected = true;
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject softwareInfo = array.getJSONObject(i);
+                        SoftwareName = softwareInfo.getString("lic_software_name");
+                    }
+                }
+                requestQueue.add(updateFlag);
+            }
+            catch (JSONException e) {
+                connected = false;
+                logger.log(Level.WARNING,e.getMessage(),e);
+                goToDashboard();
+            }
+        },error -> {
+            conn = false;
+            connected = false;
+            logger.log(Level.WARNING,error.getMessage(),error);
+            goToDashboard();
+        });
+
+        StringRequest getCompanyRequest = new StringRequest(Request.Method.GET, companyUrl, response -> {
+            conn = true;
+            try {
+                connected = true;
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject companyInfo = array.getJSONObject(i);
+                        CompanyName = companyInfo.getString("cim_name");
+                    }
+                }
+                requestQueue.add(getSoftwareRequest);
+            }
+            catch (JSONException e) {
+                connected = false;
+                logger.log(Level.WARNING,e.getMessage(),e);
+                goToDashboard();
+            }
+        }, error -> {
+            conn = false;
+            connected = false;
+            logger.log(Level.WARNING,error.getMessage(),error);
+            goToDashboard();
+        });
 
         StringRequest livLocFlReq = new StringRequest(Request.Method.GET, liveLocFlagUrl, response -> {
             conn = true;
@@ -1071,17 +1115,17 @@ public class Login extends AppCompatActivity {
                                 .equals("null") ? "" :livLocFlInfo.getString("emp_timeline_tracker_flag");
                     }
                 }
-                requestQueue.add(updateFlag);
+                requestQueue.add(getCompanyRequest);
             }
             catch (JSONException e) {
                 connected = false;
-                e.printStackTrace();
+                logger.log(Level.WARNING,e.getMessage(),e);
                 goToDashboard();
             }
         }, error -> {
             conn = false;
             connected = false;
-            error.printStackTrace();
+            logger.log(Level.WARNING,error.getMessage(),error);
             goToDashboard();
         });
 
@@ -1103,13 +1147,13 @@ public class Login extends AppCompatActivity {
             }
             catch (JSONException e) {
                 connected = false;
-                e.printStackTrace();
+                logger.log(Level.WARNING,e.getMessage(),e);
                 goToDashboard();
             }
         },error -> {
             conn = false;
             connected = false;
-            error.printStackTrace();
+            logger.log(Level.WARNING,error.getMessage(),error);
             goToDashboard();
         });
 
@@ -1131,13 +1175,13 @@ public class Login extends AppCompatActivity {
             }
             catch (JSONException e) {
                 connected = false;
-                e.printStackTrace();
+                logger.log(Level.WARNING,e.getMessage(),e);
                 goToDashboard();
             }
         },error -> {
             conn = false;
             connected = false;
-            error.printStackTrace();
+            logger.log(Level.WARNING,error.getMessage(),error);
             goToDashboard();
         });
 
@@ -1169,13 +1213,13 @@ public class Login extends AppCompatActivity {
             }
             catch (JSONException e) {
                 connected = false;
-                e.printStackTrace();
+                logger.log(Level.WARNING,e.getMessage(),e);
                 goToDashboard();
             }
         }, error -> {
             conn = false;
             connected = false;
-            error.printStackTrace();
+            logger.log(Level.WARNING,error.getMessage(),error);
             goToDashboard();
         });
 
@@ -1184,6 +1228,9 @@ public class Login extends AppCompatActivity {
 
     public void goToDashboard() {
         waitProgress.dismiss();
+        for (int i = 0; i < urls.size(); i++) {
+            urls.get(i).setChecked(false);
+        }
         if (conn) {
             if (connected) {
                 if (!userId.equals("-1") && !userId.isEmpty()) {
@@ -1196,6 +1243,14 @@ public class Login extends AppCompatActivity {
                         }
                         else {
                             if (infoConnected) {
+                                if (CompanyName == null) {
+                                    CompanyName = "No Name Found";
+                                }
+
+                                if (SoftwareName == null) {
+                                    SoftwareName = "Name of App";
+                                }
+
                                 if (checkBox.isChecked()) {
                                     System.out.println("Remembered");
                                     SharedPreferences.Editor editor = sharedpreferences.edit();
@@ -1209,6 +1264,12 @@ public class Login extends AppCompatActivity {
                                     editor.commit();
                                 } else {
                                     System.out.println("Not Remembered");
+                                    SharedPreferences.Editor editor = sharedpreferences.edit();
+                                    editor.remove(user_emp_code);
+                                    editor.remove(user_password);
+                                    editor.remove(checked);
+                                    editor.apply();
+                                    editor.commit();
                                 }
 
                                 SharedPreferences.Editor widgetEditor = attendanceWidgetPreferences.edit();
@@ -1227,6 +1288,7 @@ public class Login extends AppCompatActivity {
                                 editor1.remove(EMAIL);
                                 editor1.remove(CONTACT);
                                 editor1.remove(EMP_ID_LOGIN);
+                                editor1.remove(EMP_PASSWORD);
 
                                 editor1.remove(JSM_CODE);
                                 editor1.remove(JSM_NAME);
@@ -1253,8 +1315,9 @@ public class Login extends AppCompatActivity {
                                 editor1.putString(EMAIL, userInfoLists.get(0).getEmail());
                                 editor1.putString(CONTACT, userInfoLists.get(0).getContact());
                                 editor1.putString(EMP_ID_LOGIN, userInfoLists.get(0).getEmp_id());
+                                editor1.putString(EMP_PASSWORD,password);
 
-                                if (userDesignations.size() != 0) {
+                                if (!userDesignations.isEmpty()) {
                                     editor1.putString(JSM_CODE, userDesignations.get(0).getJsm_code());
                                     editor1.putString(JSM_NAME, userDesignations.get(0).getJsm_name());
                                     editor1.putString(JSD_ID_LOGIN, userDesignations.get(0).getJsd_id());
@@ -1285,6 +1348,7 @@ public class Login extends AppCompatActivity {
                                 editor1.putString(COMPANY, CompanyName);
                                 editor1.putString(SOFTWARE,SoftwareName);
                                 editor1.putInt(LIVE_FLAG,live_loc_flag);
+                                editor1.putString(CENTER_API_FRONT, center_api);
 //                                editor1.putString(DATABASE_NAME,DEFAULT_USERNAME);
                                 editor1.apply();
                                 editor1.commit();
@@ -1296,7 +1360,7 @@ public class Login extends AppCompatActivity {
                                 finish();
                             }
                             else {
-                                loginCheck();
+                                dynamicLoginCheck();
                             }
                         }
                     }
@@ -1319,7 +1383,7 @@ public class Login extends AppCompatActivity {
                 Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
                 positive.setOnClickListener(v -> {
 
-                    loginCheck();
+                    dynamicLoginCheck();
                     dialog.dismiss();
                 });
             }
@@ -1334,7 +1398,7 @@ public class Login extends AppCompatActivity {
             Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
             positive.setOnClickListener(v -> {
 
-                loginCheck();
+                dynamicLoginCheck();
                 dialog.dismiss();
             });
         }
@@ -1436,130 +1500,5 @@ public class Login extends AppCompatActivity {
 //            e.printStackTrace();
 //        }
 //    }
-
-    public void getData() {
-        waitProgress.show(getSupportFragmentManager(), "WaitBar");
-        waitProgress.setCancelable(false);
-        getConnected = false;
-        getConn = false;
-        CompanyName = "";
-        SoftwareName = "";
-        String companyUrl = "http://103.56.208.123:8001/apex/ttrams/utility/getCompanyName";
-        String softwareUrl = "http://103.56.208.123:8001/apex/ttrams/utility/getSoftwareName";
-
-        RequestQueue requestQueue = Volley.newRequestQueue(Login.this);
-
-        StringRequest getSoftwareRequest = new StringRequest(Request.Method.GET, softwareUrl, response -> {
-            try {
-                getConn = true;
-                JSONObject jsonObject = new JSONObject(response);
-                String items = jsonObject.getString("items");
-                String count = jsonObject.getString("count");
-                if (!count.equals("0")) {
-                    JSONArray array = new JSONArray(items);
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject softwareInfo = array.getJSONObject(i);
-                        SoftwareName = softwareInfo.getString("lic_software_name");
-                    }
-                }
-                getConnected = true;
-                updateInterface();
-            }
-            catch (JSONException e) {
-                getConn = false;
-                e.printStackTrace();
-                updateInterface();
-            }
-        },error -> {
-            getConn = false;
-            error.printStackTrace();
-            updateInterface();
-        });
-
-        StringRequest getCompanyRequest = new StringRequest(Request.Method.GET, companyUrl, response -> {
-            try {
-                getConn = true;
-                JSONObject jsonObject = new JSONObject(response);
-                String items = jsonObject.getString("items");
-                String count = jsonObject.getString("count");
-                if (!count.equals("0")) {
-                    JSONArray array = new JSONArray(items);
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject companyInfo = array.getJSONObject(i);
-                        CompanyName = companyInfo.getString("cim_name");
-                    }
-                }
-                requestQueue.add(getSoftwareRequest);
-            }
-            catch (JSONException e) {
-                getConn = false;
-                e.printStackTrace();
-                updateInterface();
-            }
-        }, error -> {
-            getConn = false;
-            error.printStackTrace();
-            updateInterface();
-
-        });
-
-        requestQueue.add(getCompanyRequest);
-    }
-
-    private void updateInterface() {
-        waitProgress.dismiss();
-        if (getConn) {
-            if (getConnected) {
-                if (CompanyName == null) {
-                    CompanyName = "No Name Found";
-                }
-
-                if (SoftwareName == null) {
-                    SoftwareName = "Name of App";
-                }
-                softName.setText(CompanyName);
-
-                getConnected = false;
-                getConn = false;
-            }
-            else {
-                AlertDialog dialog = new AlertDialog.Builder(Login.this)
-                        .setMessage("There is a network issue in the server. Please Try later.")
-                        .setPositiveButton("Retry", null)
-                        .show();
-
-                dialog.setCancelable(false);
-                dialog.setCanceledOnTouchOutside(false);
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        getData();
-                        dialog.dismiss();
-                    }
-                });
-            }
-        }
-        else {
-//            Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
-            AlertDialog dialog = new AlertDialog.Builder(Login.this)
-                    .setMessage("Please Check Your Internet Connection")
-                    .setPositiveButton("Retry", null)
-                    .show();
-
-            dialog.setCancelable(false);
-            dialog.setCanceledOnTouchOutside(false);
-            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    getData();
-                    dialog.dismiss();
-                }
-            });
-        }
-    }
 
 }

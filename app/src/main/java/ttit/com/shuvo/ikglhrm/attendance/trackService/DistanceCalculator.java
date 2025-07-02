@@ -22,12 +22,11 @@ public class DistanceCalculator {
                 * Math.sin(dLon / 2);
         double c = 2 * Math.asin(Math.sqrt(a));
         double valueResult = Radius * c;
-        double km = valueResult / 1;
         DecimalFormat newFormat = new DecimalFormat("####");
-        int kmInDec = Integer.valueOf(newFormat.format(km));
+        int kmInDec = Integer.parseInt(newFormat.format(valueResult));
         double meter = valueResult % 1000;
-        int meterInDec = Integer.valueOf(newFormat.format(meter));
-        Log.i("Radius Value", "" + valueResult + "   KM  " + kmInDec
+        int meterInDec = Integer.parseInt(newFormat.format(meter));
+        Log.i("Radius Value ", valueResult + "   KM  " + kmInDec
                 + " Meter   " + meterInDec);
 
         return Radius * c;
