@@ -36,9 +36,9 @@ import ttit.com.shuvo.ikglhrm.EmployeeInfo.transcript.EMPTranscript;
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
 
-import static ttit.com.shuvo.ikglhrm.Login.CompanyName;
-import static ttit.com.shuvo.ikglhrm.Login.userDesignations;
-import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.user_login.Login.CompanyName;
+import static ttit.com.shuvo.ikglhrm.user_login.Login.userDesignations;
+import static ttit.com.shuvo.ikglhrm.user_login.Login.userInfoLists;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import com.android.volley.Request;
@@ -83,8 +83,6 @@ public class EmplyeeInformation extends AppCompatActivity implements PictureChoo
 
     MaterialButton changePass;
 
-    Button back;
-
     String emp_id = "";
 
     Bitmap selectedImage;
@@ -120,16 +118,11 @@ public class EmplyeeInformation extends AppCompatActivity implements PictureChoo
         changePass = findViewById(R.id.change_password_button);
 
         if (!userInfoLists.isEmpty()) {
-            String firstname = userInfoLists.get(0).getUser_fname();
-            String lastName = userInfoLists.get(0).getUser_lname();
+            String firstname = userInfoLists.get(0).getUser_name();
             if (firstname == null) {
                 firstname = "";
             }
-            if (lastName == null) {
-                lastName = "";
-            }
-            String empFullName = firstname + " " + lastName;
-            empName.setText(empFullName);
+            empName.setText(firstname);
             emp_id = userInfoLists.get(0).getEmp_id();
         }
 
@@ -154,8 +147,6 @@ public class EmplyeeInformation extends AppCompatActivity implements PictureChoo
         }
 
         compName.setText(CompanyName);
-
-        back = findViewById(R.id.emp_info_back);
 
         personal.setOnClickListener(v -> {
             imageToLoad = false;
@@ -192,8 +183,6 @@ public class EmplyeeInformation extends AppCompatActivity implements PictureChoo
             Intent intent = new Intent(EmplyeeInformation.this, UpdatePassword.class);
             startActivity(intent);
         });
-
-        back.setOnClickListener(v -> finish());
 
         imageToLoad = true;
     }

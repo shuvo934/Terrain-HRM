@@ -26,6 +26,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.View;
+import android.view.WindowInsets;
+import android.view.WindowInsetsController;
 
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -36,6 +39,7 @@ import com.google.android.play.core.appupdate.AppUpdateOptions;
 import com.google.android.play.core.install.model.UpdateAvailability;
 
 import ttit.com.shuvo.ikglhrm.dashboard.Dashboard;
+import ttit.com.shuvo.ikglhrm.user_login.Login;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -114,6 +118,35 @@ public class MainActivity extends AppCompatActivity {
         }
     });
 
+    private void hideSystemUI() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            // Android 11+ (API 30+)
+            final WindowInsetsController insetsController = getWindow().getInsetsController();
+            if (insetsController != null) {
+                insetsController.hide(WindowInsets.Type.navigationBars() | WindowInsets.Type.statusBars());
+                insetsController.setSystemBarsBehavior(WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+            }
+        } else {
+            // Android 4.4 to 10 (API 19–29)
+            View decorView = getWindow().getDecorView();
+            decorView.setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN
+            );
+        }
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            hideSystemUI();
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -148,6 +181,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        hideSystemUI();
         perm = false;
         getAppUpdate();
 

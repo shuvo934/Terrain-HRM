@@ -1,6 +1,6 @@
 package ttit.com.shuvo.ikglhrm.payRoll;
 
-import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.user_login.Login.userInfoLists;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import android.content.Intent;

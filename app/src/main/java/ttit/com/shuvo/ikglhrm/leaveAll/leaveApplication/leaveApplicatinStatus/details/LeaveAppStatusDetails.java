@@ -22,13 +22,14 @@ import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
 import ttit.com.shuvo.ikglhrm.leaveAll.leaveBalance.LeaveBalance;
 
-import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.user_login.Login.userInfoLists;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -110,19 +111,14 @@ public class LeaveAppStatusDetails extends AppCompatActivity {
         comm = findViewById(R.id.comments_for_leave);
 
         if (!userInfoLists.isEmpty()) {
-            String firstname = userInfoLists.get(0).getUser_fname();
-            String lastName = userInfoLists.get(0).getUser_lname();
+            String firstname = userInfoLists.get(0).getUser_name();
             if (firstname == null) {
                 firstname = "";
             }
-            if (lastName == null) {
-                lastName = "";
-            }
-            String empFullName = firstname+" "+lastName;
-            name.setText(empFullName);
+            name.setText(firstname);
         }
 
-        id.setText(userInfoLists.get(0).getUserName());
+        id.setText(userInfoLists.get(0).getEmp_code());
 
         emp_id = userInfoLists.get(0).getEmp_id();
 
@@ -403,11 +399,7 @@ public class LeaveAppStatusDetails extends AppCompatActivity {
                 address.setText(leaveAddress);
                 backUp.setText(backupEmployeee);
 
-                if (comments == null) {
-                    comm.setText("");
-                } else {
-                    comm.setText(comments);
-                }
+                comm.setText(Objects.requireNonNullElse(comments, ""));
             }
             else {
                 AlertDialog dialog = new AlertDialog.Builder(LeaveAppStatusDetails.this)

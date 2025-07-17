@@ -34,7 +34,7 @@ import ttit.com.shuvo.ikglhrm.attendance.approve.dialogApproveReq.SelectApproveR
 import ttit.com.shuvo.ikglhrm.attendance.approve.dialogApproveReq.SelectApproveReqList;
 import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.DialogueText;
 
-import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.user_login.Login.userInfoLists;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import org.json.JSONArray;
@@ -176,7 +176,7 @@ public class AttendanceApprove extends AppCompatActivity {
 
         selectApproveReqLists = new ArrayList<>();
 
-        emp_code = userInfoLists.get(0).getUserName();
+        emp_code = userInfoLists.get(0).getEmp_code();
         user_id = userInfoLists.get(0).getEmp_id();
 //        user_id = "493";
 //        emp_code = "10001";
@@ -1121,47 +1121,19 @@ public class AttendanceApprove extends AppCompatActivity {
             afterSelecting.setVisibility(View.VISIBLE);
             afterSelectingButton.setVisibility(View.VISIBLE);
             if (inDataaa) {
-                if (emp_name == null) {
-                    name.setText("");
-                } else {
-                    name.setText(emp_name);
-                }
+                name.setText(Objects.requireNonNullElse(emp_name, ""));
 
-                if (emp_id == null) {
-                    empCode.setText("");
-                } else {
-                    empCode.setText(emp_id);
-                }
+                empCode.setText(Objects.requireNonNullElse(emp_id, ""));
 
-                if (app_date == null) {
-                    appDate.setText("");
-                } else {
-                    appDate.setText(app_date);
-                }
+                appDate.setText(Objects.requireNonNullElse(app_date, ""));
 
-                if (call_title == null) {
-                    title.setText("");
-                } else {
-                    title.setText(call_title);
-                }
+                title.setText(Objects.requireNonNullElse(call_title, ""));
 
-                if (req_type == null) {
-                    requestType.setText("");
-                } else {
-                    requestType.setText(req_type);
-                }
+                requestType.setText(Objects.requireNonNullElse(req_type, ""));
 
-                if (shift_update == null) {
-                    shiftUpdated.setText("");
-                } else {
-                    shiftUpdated.setText(shift_update);
-                }
+                shiftUpdated.setText(Objects.requireNonNullElse(shift_update, ""));
 
-                if (date_update == null) {
-                    dateUpdated.setText("");
-                } else {
-                    dateUpdated.setText(date_update);
-                }
+                dateUpdated.setText(Objects.requireNonNullElse(date_update, ""));
 
                 if (arr_time == null) {
                     inUpdated.setText("");
@@ -1179,35 +1151,15 @@ public class AttendanceApprove extends AppCompatActivity {
                     outLay.setVisibility(View.VISIBLE);
                 }
 
-                if (mac_in == null) {
-                    machineIn.setText("");
-                } else {
-                    machineIn.setText(mac_in);
-                }
+                machineIn.setText(Objects.requireNonNullElse(mac_in, ""));
 
-                if (mac_out == null) {
-                    machineOut.setText("");
-                } else {
-                    machineOut.setText(mac_out);
-                }
+                machineOut.setText(Objects.requireNonNullElse(mac_out, ""));
 
-                if (current_shift == null) {
-                    shift.setText("");
-                } else {
-                    shift.setText(current_shift);
-                }
+                shift.setText(Objects.requireNonNullElse(current_shift, ""));
 
-                if (reason_type == null) {
-                    reason.setText("");
-                } else {
-                    reason.setText(reason_type);
-                }
+                reason.setText(Objects.requireNonNullElse(reason_type, ""));
 
-                if (reason_desc == null) {
-                    reasonDesc.setText("");
-                } else {
-                    reasonDesc.setText(reason_desc);
-                }
+                reasonDesc.setText(Objects.requireNonNullElse(reason_desc, ""));
 
                 if (forwarded_by == null) {
                     forLay.setVisibility(View.GONE);
@@ -1217,11 +1169,7 @@ public class AttendanceApprove extends AppCompatActivity {
                     forLay.setVisibility(View.VISIBLE);
                 }
 
-                if (forward_comm == null) {
-                    forwardComm.setText("");
-                } else {
-                    forwardComm.setText(forward_comm);
-                }
+                forwardComm.setText(Objects.requireNonNullElse(forward_comm, ""));
 
                 dataIn = false;
                 inDataaa = false;

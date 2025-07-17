@@ -1,7 +1,7 @@
 package ttit.com.shuvo.ikglhrm.attendance;
 
-import static ttit.com.shuvo.ikglhrm.Login.isApproved;
-import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.user_login.Login.isApproved;
+import static ttit.com.shuvo.ikglhrm.user_login.Login.userInfoLists;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import android.content.Intent;
@@ -51,7 +51,7 @@ public class AttendanceUpdateAll extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_attendance_update_all);
 
-        userName = userInfoLists.get(0).getUserName();
+        userName = userInfoLists.get(0).getEmp_code();
 
         attUpdate = findViewById(R.id.atten_update_req);
         attReqUpdate = findViewById(R.id.attendance_update_request_upd);

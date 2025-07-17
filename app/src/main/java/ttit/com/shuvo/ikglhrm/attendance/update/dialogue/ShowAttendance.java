@@ -22,7 +22,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
 
-import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.user_login.Login.userInfoLists;
 import static ttit.com.shuvo.ikglhrm.attendance.update.AttendanceUpdate.dateToShow;
 import static ttit.com.shuvo.ikglhrm.attendance.update.AttendanceUpdate.showAttendanceNumber;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;

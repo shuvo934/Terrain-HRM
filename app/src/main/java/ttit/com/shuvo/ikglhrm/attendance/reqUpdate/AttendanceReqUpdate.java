@@ -61,7 +61,7 @@ import ttit.com.shuvo.ikglhrm.R;
 //import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.ShowAttendance;
 //import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.ShowShift;
 //
-//import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+//import static ttit.com.shuvo.ikglhrm.user_login.Login.userInfoLists;
 
 public class AttendanceReqUpdate extends AppCompatActivity {
 
@@ -254,14 +254,8 @@ public class AttendanceReqUpdate extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            Window w = getWindow();
-           // w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-        }
-        if (Build.VERSION.SDK_INT < 16) {
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        }
+        Window w = getWindow();
+        // w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         View decorView = getWindow().getDecorView();
 // Hide the status bar.
         int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;

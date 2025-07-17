@@ -8,8 +8,6 @@ import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.res.ResourcesCompat;
 
 import android.Manifest;
@@ -84,7 +82,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -107,7 +107,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import ttit.com.shuvo.ikglhrm.EmployeeInfo.EmplyeeInformation;
-import ttit.com.shuvo.ikglhrm.Login;
+import ttit.com.shuvo.ikglhrm.attendance.giveAttendance.AttendanceGive;
+import ttit.com.shuvo.ikglhrm.attendance.trackService.GPXFileWriter;
+import ttit.com.shuvo.ikglhrm.user_login.Login;
 import ttit.com.shuvo.ikglhrm.MainPage.MainMenu;
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.UserDesignation;
@@ -122,12 +124,12 @@ import ttit.com.shuvo.ikglhrm.payRoll.PayRollInfo;
 import ttit.com.shuvo.ikglhrm.payRoll.SalaryMonthList;
 import ttit.com.shuvo.ikglhrm.scheduler.Uploader;
 
-import static ttit.com.shuvo.ikglhrm.Login.CompanyName;
-import static ttit.com.shuvo.ikglhrm.Login.SoftwareName;
-import static ttit.com.shuvo.ikglhrm.Login.isApproved;
-import static ttit.com.shuvo.ikglhrm.Login.isLeaveApproved;
-import static ttit.com.shuvo.ikglhrm.Login.userDesignations;
-import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.user_login.Login.CompanyName;
+import static ttit.com.shuvo.ikglhrm.user_login.Login.SoftwareName;
+import static ttit.com.shuvo.ikglhrm.user_login.Login.isApproved;
+import static ttit.com.shuvo.ikglhrm.user_login.Login.isLeaveApproved;
+import static ttit.com.shuvo.ikglhrm.user_login.Login.userDesignations;
+import static ttit.com.shuvo.ikglhrm.user_login.Login.userInfoLists;
 import static ttit.com.shuvo.ikglhrm.scheduler.Uploader.channelId;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.CENTER_API_FRONT;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.COMPANY;
@@ -304,6 +306,8 @@ public class Dashboard extends AppCompatActivity {
     String emp_id = "";
     String emp_code = "";
     public static int trackerAvailable = 0;
+    String mob_attn_allow = "0";
+    String tr_option = "1";
 
     public static ArrayList<String> lastTenDaysXml;
 
@@ -352,12 +356,13 @@ public class Dashboard extends AppCompatActivity {
 
     ArrayList<AreaList> areaLists;
 
+    String location_file = "";
+
     Logger logger = Logger.getLogger(Dashboard.class.getName());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //getWindow().setNavigationBarColor(Color.parseColor("#f0932b"));
         setContentView(R.layout.activity_dashboard);
 
         toolbar = findViewById(R.id.toolbar);
@@ -432,7 +437,20 @@ public class Dashboard extends AppCompatActivity {
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
 //        attendanceButton.setOnTouchListener(this);
-        attendanceButton.setOnClickListener(v -> attendanceShortcutTriggered());
+        attendanceButton.setOnClickListener(v -> {
+            if (mob_attn_allow.equals("1")) {
+                attendanceShortcutTriggered();
+            }
+            else {
+                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(Dashboard.this);
+                builder.setTitle("Mobile Attendance Not Available!")
+                        .setIcon(R.drawable.hrm_new_round_icon_custom)
+                        .setMessage("We're sorry, mobile attendance is currently not enabled for your profile. Please contact your HR department if you have any questions or need further assistance.")
+                        .setPositiveButton("OK", ((dialog, which) -> dialog.dismiss()));
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
+        });
 
         Intent in = getIntent();
         loginLog_check = in.getBooleanExtra("FROMMAINMENU", true);
@@ -576,7 +594,7 @@ public class Dashboard extends AppCompatActivity {
         }
 
         emp_id = userInfoLists.get(0).getEmp_id();
-        emp_code = userInfoLists.get(0).getUserName();
+        emp_code = userInfoLists.get(0).getEmp_code();
         emp_id_for_xml = emp_id;
 
         home.setOnClickListener(v -> {
@@ -912,16 +930,11 @@ public class Dashboard extends AppCompatActivity {
         nowTimeDashboard.setTypeface(typeface);
 
         if (!userInfoLists.isEmpty()) {
-            String firstname = userInfoLists.get(0).getUser_fname();
-            String lastName = userInfoLists.get(0).getUser_lname();
+            String firstname = userInfoLists.get(0).getUser_name();
             if (firstname == null) {
                 firstname = "";
             }
-            if (lastName == null) {
-                lastName = "";
-            }
-            String empFullName = firstname + " " + lastName;
-            userName.setText(empFullName);
+            userName.setText(firstname);
         }
 
         if (!userDesignations.isEmpty()) {
@@ -2492,6 +2505,9 @@ public class Dashboard extends AppCompatActivity {
         connected = false;
         conn = false;
 
+        trackerAvailable = 0;
+        mob_attn_allow = "0";
+        tr_option = "1";
         salaryMonthLists = new ArrayList<>();
         attendanceEntry = new ArrayList<>();
         absent = "";
@@ -2557,8 +2573,34 @@ public class Dashboard extends AppCompatActivity {
         String leaveCountUrl = api_url_front + "dashboard/getLeaveAppStatusCount?emp_id=" + emp_id + "&start_date=01-JAN-" + year + "&end_date=31-DEC-" + year;
         String upLeaveUrl = api_url_front + "leave/getUpcomingLeave?emp_id=" + emp_id;
         String lastLeaveUrl = api_url_front + "leave/getLastConsumedLeave?emp_id=" + emp_id;
+        String trOptionUrl = api_url_front + "utility/getTrackerOption";
 
         RequestQueue requestQueue = Volley.newRequestQueue(Dashboard.this);
+
+        StringRequest trOptionReq = new StringRequest(Request.Method.GET, trOptionUrl, response -> {
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    JSONObject info = array.getJSONObject(0);
+                    tr_option = info.getString("tr_option")
+                            .equals("null") ? "1" : info.getString("tr_option");
+                }
+                connected = true;
+                updateInterface();
+            } catch (JSONException e) {
+                logger.log(Level.WARNING, e.getMessage(), e);
+                connected = false;
+                updateInterface();
+            }
+        }, error -> {
+            logger.log(Level.WARNING, error.getMessage(), error);
+            conn = false;
+            connected = false;
+            updateInterface();
+        });
 
         StringRequest lastLeaveReq = new StringRequest(Request.Method.GET, lastLeaveUrl, response -> {
             try {
@@ -2575,8 +2617,7 @@ public class Dashboard extends AppCompatActivity {
                     last_leave_type = info.getString("lc_name")
                             .equals("null") ? "" : info.getString("lc_name");
                 }
-                connected = true;
-                updateInterface();
+                requestQueue.add(trOptionReq);
             } catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
@@ -2677,7 +2718,6 @@ public class Dashboard extends AppCompatActivity {
             updateInterface();
         });
 
-
         StringRequest offLocReq = new StringRequest(Request.Method.GET, offLocationUrl, response -> {
             conn = true;
             try {
@@ -2776,7 +2816,7 @@ public class Dashboard extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
-                String userName = userInfoLists.get(0).getUserName();
+                String p_emp_code = userInfoLists.get(0).getEmp_code();
                 String userId = userInfoLists.get(0).getEmp_id();
                 if (userId != null) {
                     if (!userId.isEmpty()) {
@@ -2787,7 +2827,7 @@ public class Dashboard extends AppCompatActivity {
                 } else {
                     userId = "0";
                 }
-                headers.put("P_IULL_USER_ID", userName);
+                headers.put("P_IULL_USER_ID", p_emp_code);
                 headers.put("P_IULL_CLIENT_HOST_NAME", brand + " " + model);
                 headers.put("P_IULL_CLIENT_IP_ADDR", ipAddress);
                 headers.put("P_IULL_CLIENT_HOST_USER_NAME", hostUserName);
@@ -2811,6 +2851,8 @@ public class Dashboard extends AppCompatActivity {
                         trackerAvailable =
                                 Integer.parseInt(trackerInfo.getString("emp_timeline_tracker_flag")
                                         .equals("null") ? "0" : trackerInfo.getString("emp_timeline_tracker_flag"));
+                        mob_attn_allow = trackerInfo.getString("att_allow")
+                                .equals("null") ? "1" : trackerInfo.getString("att_allow");
                     }
                 }
                 if (loginLog_check) {
@@ -3374,9 +3416,6 @@ public class Dashboard extends AppCompatActivity {
                 dialog.setCanceledOnTouchOutside(false);
                 Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
                 positive.setOnClickListener(v -> {
-
-                    waitProgress.show(getSupportFragmentManager(), "WaitBar");
-                    waitProgress.setCancelable(false);
                     getAllData();
                     dialog.dismiss();
                 });
@@ -3409,9 +3448,6 @@ public class Dashboard extends AppCompatActivity {
             dialog.setCanceledOnTouchOutside(false);
             Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
             positive.setOnClickListener(v -> {
-
-                waitProgress.show(getSupportFragmentManager(), "WaitBar");
-                waitProgress.setCancelable(false);
                 getAllData();
                 dialog.dismiss();
             });
@@ -3620,7 +3656,6 @@ public class Dashboard extends AppCompatActivity {
         @Override
         public void onLocationResult(@NonNull LocationResult locationResult) {
             for (Location location : locationResult.getLocations()) {
-                System.out.println("ADADAD!!!!!A!!!");
                 Log.i("LocationFused ", location.toString());
                 SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yy, hh:mm:ss aa", Locale.ENGLISH);
                 SimpleDateFormat dftoShow = new SimpleDateFormat("hh:mm aa", Locale.ENGLISH);
@@ -3634,7 +3669,6 @@ public class Dashboard extends AppCompatActivity {
                 inTime = df.format(c);
                 timeToShow = dftoShow.format(c);
                 System.out.println("IN TIME : " + inTime);
-                //getAddress(lastLatLongitude[0].latitude,lastLatLongitude[0].longitude);
                 stopLocationUpdate();
             }
         }
@@ -3674,8 +3708,12 @@ public class Dashboard extends AppCompatActivity {
                                 .equals("null") ? null : offLocInfo.getString("machine_code");
                         String can_give = offLocInfo.getString("can_give")
                                 .equals("null") ? "0" : offLocInfo.getString("can_give");
+                        String coa_name = offLocInfo.getString("coa_name")
+                                .equals("null") ? "" : offLocInfo.getString("coa_name");
+                        String coa_address = offLocInfo.getString("coa_address")
+                                .equals("null") ? "" : offLocInfo.getString("coa_address");
 
-                        areaLists.add(new AreaList(coa_latitude,coa_longitude,coa_coverage,co_id,code,can_give.equals("1")));
+                        areaLists.add(new AreaList(coa_latitude,coa_longitude,coa_coverage,co_id,code,can_give.equals("1"),coa_name,coa_address));
                     }
                 }
                 connected = true;
@@ -3769,19 +3807,84 @@ public class Dashboard extends AppCompatActivity {
                                 checkAddress();
                             }
                             else {
-                                if (prev_distance == 0) {
-                                    getNotification("Attendance System", "You are not around your office area");
+                                if (trackerAvailable == 1) {
+                                    if (tr_option.equals("2")) {
+                                        if (machineCode.isEmpty()) {
+                                            machineCode = areaLists.get(0).getMachine_code();
+                                        }
+                                        waitProgress.dismiss();
+                                        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(Dashboard.this);
+                                        alertDialogBuilder.setTitle("Attendance System")
+                                                .setIcon(R.drawable.hrm_new_round_icon_custom)
+                                                .setMessage("You're outside of your designated location. But you have your tracking activated." +
+                                                        "\nDo you want to mark attendance and save location for your current position?")
+                                                .setPositiveButton("Yes", (dialog, which) -> {
+                                                    waitProgress.show(getSupportFragmentManager(), "WaitBar");
+                                                    waitProgress.setCancelable(false);
+                                                    dialog.dismiss();
+                                                    checkAddress();
+                                                })
+                                                .setNegativeButton("No",((dialog, which) -> dialog.dismiss()));
+
+                                        AlertDialog alert = alertDialogBuilder.create();
+                                        alert.show();
+
+                                    }
+                                    else if (tr_option.equals("1")) {
+                                        String lastLtimAttBot;
+                                        if (!out_time_dash.isEmpty() && !in_time_dash.isEmpty()) {
+                                            lastLtimAttBot = out_time_dash;
+                                        }
+                                        else if (out_time_dash.isEmpty() && !in_time_dash.isEmpty()){
+                                            lastLtimAttBot = in_time_dash;
+                                        }
+                                        else {
+                                            lastLtimAttBot = "--:--";
+                                        }
+
+                                        Date c = Calendar.getInstance().getTime();
+                                        SimpleDateFormat dfffff = new SimpleDateFormat("dd-MMMM-yyyy", Locale.ENGLISH);
+                                        String lastDateForAttBot = dfffff.format(c);
+
+                                        waitProgress.dismiss();
+                                        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(Dashboard.this);
+                                        alertDialogBuilder.setTitle("Out of Attendance Area!")
+                                                .setIcon(R.drawable.hrm_new_round_icon_custom)
+                                                .setMessage("You're not within the required location to mark attendance. But you have your tracking activated, if you want to mark attendance and start tracker you need to punch from Punch and Tracker." +
+                                                        "\nDo you want to go to Punch and Tracker?")
+                                                .setPositiveButton("Yes", (dialog, which) -> {
+                                                    dialog.dismiss();
+                                                    Intent intent = new Intent(Dashboard.this, AttendanceGive.class);
+                                                    intent.putExtra("LAST_TIME",lastLtimAttBot);
+                                                    intent.putExtra("TODAY_DATE",lastDateForAttBot);
+                                                    startActivity(intent);
+                                                })
+                                                .setNegativeButton("No",((dialog, which) -> dialog.dismiss()));
+
+                                        AlertDialog alert = alertDialogBuilder.create();
+                                        alert.show();
+                                    }
+                                    else {
+                                        getNotification("Out of Attendance Area!", "You're not within the required location to mark attendance. Please move closer to the designated area and try again.");
+                                    }
                                 }
                                 else {
-                                    getNotification("Attendance System", "You are not around your office area. You are "+prev_distance+" Meters away from office.");
+                                    if (prev_distance == 0) {
+                                        getNotification("Out of Attendance Area!", "You're not within the required location to mark attendance. Please move closer to the designated area and try again.");
+                                    }
+                                    else {
+                                        int pr_d = Math.round(prev_distance);
+                                        getNotification("Out of Attendance Area!", "You are "+pr_d+" meters away from the designated location. Please move closer to mark your attendance");
+                                    }
                                 }
                             }
                         }
                     }
                     else {
-                        getNotification("Attendance System", "You don't have any permission to give attendance from this app. Please contact with administrator");
+                        getNotification("Attendance System", "The area of office is not initialized. Please contact with HR administrator");
                     }
-                } else {
+                }
+                else {
                     getNotification("Attendance System", "Failed to get Location");
                 }
             } else {
@@ -3929,21 +4032,59 @@ public class Dashboard extends AppCompatActivity {
             if (connected) {
                 connected = false;
                 conn = false;
-                MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(Dashboard.this);
-                alertDialogBuilder.setTitle("Attendance!")
-                        .setIcon(R.drawable.hrm_new_round_icon_custom)
-                        .setMessage("Your Attendance is Recorded at " + timeToShow + ".")
-                        .setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
+                if (trackerAvailable == 1) {
+                    if (tr_option.equals("2")) {
+                        saveLocationFile();
+                        getNotification("Attendance System", "Your Attendance is Recorded at " + timeToShow + ".");
+                    }
+                    else if (tr_option.equals("1")) {
+                        String lastLtimAttBot;
+                        if (!out_time_dash.isEmpty() && !in_time_dash.isEmpty()) {
+                            lastLtimAttBot = out_time_dash;
+                        }
+                        else if (out_time_dash.isEmpty() && !in_time_dash.isEmpty()){
+                            lastLtimAttBot = in_time_dash;
+                        }
+                        else {
+                            lastLtimAttBot = "--:--";
+                        }
 
-                AlertDialog alert = alertDialogBuilder.create();
-                alert.show();
+                        Date c = Calendar.getInstance().getTime();
+                        SimpleDateFormat dfffff = new SimpleDateFormat("dd-MMMM-yyyy", Locale.ENGLISH);
+                        String lastDateForAttBot = dfffff.format(c);
 
-                getNotification("Attendance System", "Your Attendance is Recorded at " + timeToShow + ".");
+                        waitProgress.dismiss();
+                        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(Dashboard.this);
+                        alertDialogBuilder.setTitle("Attendance System!")
+                                .setIcon(R.drawable.hrm_new_round_icon_custom)
+                                .setMessage("Your Attendance is Recorded at " + timeToShow + ". " +
+                                        "\nYou have your tracking activated, if you want to start tracker you need to punch from Punch and Tracker. " +
+                                        "\nDo you want to go to Punch and Tracker?")
+                                .setPositiveButton("Yes", (dialog, which) -> {
+                                    dialog.dismiss();
+                                    Intent intent = new Intent(Dashboard.this, AttendanceGive.class);
+                                    intent.putExtra("LAST_TIME",lastLtimAttBot);
+                                    intent.putExtra("TODAY_DATE",lastDateForAttBot);
+                                    startActivity(intent);
+                                })
+                                .setNegativeButton("No",((dialog, which) -> dialog.dismiss()));
 
-            } else {
+                        AlertDialog alert = alertDialogBuilder.create();
+                        alert.show();
+                    }
+                    else {
+                        getNotification("Attendance System", "Your Attendance is Recorded at " + timeToShow + ".");
+                    }
+                }
+                else {
+                    getNotification("Attendance System", "Your Attendance is Recorded at " + timeToShow + ".");
+                }
+            }
+            else {
                 getNotification("Attendance System", "There is a network issue in the server. Please Try later.");
             }
-        } else {
+        }
+        else {
             getNotification("Attendance System", "Please Check Your Internet Connection.");
         }
     }
@@ -3951,13 +4092,79 @@ public class Dashboard extends AppCompatActivity {
     @SuppressLint("MissingPermission")
     public void getNotification(String title, String msg) {
         waitProgress.dismiss();
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, getString(R.string.att_channel_id))
-                .setSmallIcon(R.drawable.hrm_new_icon_wb)
-                .setContentTitle(title)
-                .setContentText(msg)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(Dashboard.this);
+        alertDialogBuilder.setTitle(title)
+                .setIcon(R.drawable.hrm_new_round_icon_custom)
+                .setMessage(msg)
+                .setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
 
-        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
-        notificationManagerCompat.notify(222, builder.build());
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.show();
+//        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, getString(R.string.att_channel_id))
+//                .setSmallIcon(R.drawable.hrm_new_icon_wb)
+//                .setContentTitle(title)
+//                .setContentText(msg)
+//                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+//
+//        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
+//        notificationManagerCompat.notify(222, builder.build());
+    }
+
+    private void saveLocationFile() {
+        ArrayList<String> trk = new ArrayList<>();
+
+        String wpt = "\t<wpt lat=\""+ lat +"\" lon=\""+ lon+"\">\n" +
+                "\t\t<name>TTIT</name>\n" +
+                "\t\t<time>"+timeToShow+"</time>\n"+
+                "\t</wpt>";
+        trk.add(wpt);
+
+        Date c = Calendar.getInstance().getTime();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
+
+        String fileName = sdf.format(c);
+        fileName = fileName.toUpperCase();
+        fileName = emp_id+"_"+fileName+"_track";
+
+        File myExternalFile = new File(getExternalFilesDir(null),fileName+".gpx");
+
+        if (myExternalFile.exists()) {
+            try {
+                System.out.println("EXISTING FILE");
+                String gpxFile = getExternalFilesDir(null).getPath() + File.separator +  fileName +".gpx";
+                BufferedReader bufferedReader = new BufferedReader(new FileReader(gpxFile));
+                String line;
+                String input = "";
+
+                while ((line = bufferedReader.readLine()) != null) {
+                    input += line + '\n';
+                }
+
+                bufferedReader.close();
+
+                if (input.contains("</gpx>")){
+                    System.out.println("Got It");
+                    String newInput = input.replace("</gpx>","");
+                    GPXFileWriter.upDateGpxFile("TTITGenerator",trk,myExternalFile,newInput);
+                    Toast.makeText(getApplicationContext(), "Your Attendance location has been saved", Toast.LENGTH_SHORT).show();
+                }
+            }
+            catch (IOException e) {
+                logger.log(Level.WARNING, e.getMessage(), e);
+                Toast.makeText(getApplicationContext(), "Your Attendance location could not save", Toast.LENGTH_SHORT).show();
+            }
+        }
+        else {
+            try {
+                GPXFileWriter.writeGpxFile("TTITGenerator", trk, myExternalFile);
+                Toast.makeText(getApplicationContext(), "Your Attendance location has been saved", Toast.LENGTH_SHORT).show();
+            }
+            catch (IOException e) {
+                logger.log(Level.WARNING, e.getMessage(), e);
+                Toast.makeText(getApplicationContext(), "Your Attendance location could not save", Toast.LENGTH_SHORT).show();
+            }
+        }
+
     }
 }

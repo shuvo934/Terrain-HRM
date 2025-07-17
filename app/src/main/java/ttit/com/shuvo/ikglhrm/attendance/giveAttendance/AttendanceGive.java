@@ -1,5 +1,8 @@
 package ttit.com.shuvo.ikglhrm.attendance.giveAttendance;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -9,7 +12,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.core.graphics.ColorUtils;
 
 import android.Manifest;
 import android.app.Activity;
@@ -29,7 +34,6 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.os.StrictMode;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextClock;
@@ -54,11 +58,17 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Task;
 
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -75,9 +85,13 @@ import java.util.logging.Logger;
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
 import ttit.com.shuvo.ikglhrm.attendance.giveAttendance.arraylists.AreaList;
+import ttit.com.shuvo.ikglhrm.attendance.trackService.GPXFileDecoder;
+import ttit.com.shuvo.ikglhrm.attendance.trackService.GPXFileWriter;
+import ttit.com.shuvo.ikglhrm.attendance.trackService.MarkerData;
 import ttit.com.shuvo.ikglhrm.attendance.trackService.Service;
+import ttit.com.shuvo.ikglhrm.attendance.trackService.WaypointList;
 
-import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.user_login.Login.userInfoLists;
 import static ttit.com.shuvo.ikglhrm.attendance.Attendance.live_tracking_flag;
 import static ttit.com.shuvo.ikglhrm.attendance.Attendance.tracking_flag;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
@@ -125,6 +139,9 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
     TextView todayTime;
 
     ArrayList<AreaList> areaLists;
+    String tr_option = "1";
+    ArrayList<WaypointList> wptList;
+    ArrayList<MarkerData> markerData;
 
     Logger logger = Logger.getLogger(AttendanceGive.class.getName());
 
@@ -139,7 +156,7 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
         mapFragment.getMapAsync(this);
 
         currLoc = findViewById(R.id.text_of_cu_loc);
-        currLoc.setVisibility(View.GONE);
+        currLoc.setVisibility(GONE);
         checkInTime = findViewById(R.id.check_int_time);
         chekInButton = findViewById(R.id.check_in_time_button);
         nameOfCheckIN = findViewById(R.id.name_of_punch);
@@ -164,23 +181,10 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
         digitalClock.setTypeface(typeface);
 
         todayTime.setText(today_date);
-
+        wptList = new ArrayList<>();
+        markerData = new ArrayList<>();
+        areaLists = new ArrayList<>();
 //        software.setText(SoftwareName);
-
-        if (tracking_flag == 1) {
-
-            if (isMyServiceRunning()) {
-                String tt = "PUNCH & STOP TRACKER";
-                nameOfCheckIN.setText(tt);
-            } else {
-                String tt = "PUNCH & START TRACKER";
-                nameOfCheckIN.setText(tt);
-            }
-
-        } else {
-            String  tt = "PUNCH";
-            nameOfCheckIN.setText(tt);
-        }
 
         emp_id = userInfoLists.get(0).getEmp_id();
 
@@ -283,6 +287,7 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.getUiSettings().setZoomControlsEnabled(true);
         final LatLng[] lastLatLongitude = {new LatLng(0, 0)};
 
 
@@ -296,7 +301,7 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
 
                     Log.i("LocationFused ", location.toString());
                     lastLatLongitude[0] = new LatLng(location.getLatitude(), location.getLongitude());
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLatLongitude[0], 18));
+//                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLatLongitude[0], 18));
                     System.out.println(lastLatLongitude[0]);
                     lat = String.valueOf(lastLatLongitude[0].latitude);
                     lon = String.valueOf(lastLatLongitude[0].longitude);
@@ -371,20 +376,32 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
                             machineCode = areaLists.get(0).getMachine_code();
                         }
 
-                        if (isMyServiceRunning()) {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(AttendanceGive.this);
-                            builder.setTitle("Attendance!")
-                                    .setMessage("Do you want to punch & stop your tracker?")
-                                    .setPositiveButton("YES", (dialog, which) -> checkAddress())
-                                    .setNegativeButton("NO", (dialog, which) -> {
-                                    });
-                            AlertDialog alert = builder.create();
-                            alert.show();
+                        if (tr_option.equals("1")) {
+                            if (isMyServiceRunning()) {
+                                AlertDialog.Builder builder = new AlertDialog.Builder(AttendanceGive.this);
+                                builder.setTitle("Attendance!")
+                                        .setMessage("Do you want to punch & stop your tracker?")
+                                        .setPositiveButton("YES", (dialog, which) -> checkAddress())
+                                        .setNegativeButton("NO", (dialog, which) -> {
+                                        });
+                                AlertDialog alert = builder.create();
+                                alert.show();
+                            }
+                            else {
+                                AlertDialog.Builder builder = new AlertDialog.Builder(AttendanceGive.this);
+                                builder.setTitle("Attendance!")
+                                        .setMessage("Do you want to punch & start your tracker?")
+                                        .setPositiveButton("YES", (dialog, which) -> checkAddress())
+                                        .setNegativeButton("NO", (dialog, which) -> {
+                                        });
+                                AlertDialog alert = builder.create();
+                                alert.show();
+                            }
                         }
                         else {
                             AlertDialog.Builder builder = new AlertDialog.Builder(AttendanceGive.this);
                             builder.setTitle("Attendance!")
-                                    .setMessage("Do you want to punch & start your tracker?")
+                                    .setMessage("Do you want to punch & mark location for your current position?")
                                     .setPositiveButton("YES", (dialog, which) -> checkAddress())
                                     .setNegativeButton("NO", (dialog, which) -> {
                                     });
@@ -471,22 +488,39 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
                             }
                             else {
                                 if (prev_distance == 0) {
-                                    Toast.makeText(getApplicationContext(),"You are not around your office area",Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(),"You're not within the required location to mark attendance. Please move closer to the designated area and try again.",Toast.LENGTH_SHORT).show();
                                 }
                                 else {
-                                    Toast.makeText(getApplicationContext(),"You are not around your office area. You are "+prev_distance+" Meters away from office.",Toast.LENGTH_LONG).show();
+                                    int pr_d = Math.round(prev_distance);
+                                    Toast.makeText(getApplicationContext(),"You are "+pr_d+" meters away from the designated location. Please move closer to mark your attendance",Toast.LENGTH_LONG).show();
                                 }
                             }
                         }
                     }
                 }
                 else {
-                    Toast.makeText(getApplicationContext(),"You don't have any permission to give attendance from this app. Please contact with administrator",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),"The area of office is not initialized. Please contact with HR administrator",Toast.LENGTH_LONG).show();
                 }
             }
             else {
                 Toast.makeText(getApplicationContext(),"Please wait for getting the location",Toast.LENGTH_SHORT).show();
             }
+        });
+
+        mMap.setOnMapClickListener(latLng -> {
+            refreshMarker();
+        });
+
+        mMap.setOnMarkerClickListener(marker -> {
+            refreshMarker();
+            if (marker.getZIndex() == 9999) {
+                marker.showInfoWindow();
+            }
+            else {
+                marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.location_icon_active));
+                marker.showInfoWindow();
+            }
+            return true;
         });
 
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
@@ -498,6 +532,14 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
         });
 
         getOfficeLocation();
+    }
+
+    public void refreshMarker() {
+        for (int i = 0; i < markerData.size(); i++) {
+            Marker marker = markerData.get(i).getMarker();
+            marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.location_icon));
+            marker.hideInfoWindow();
+        }
     }
 
     public void getAddress(double lat, double lng) {
@@ -517,7 +559,7 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
         }
     }
 
-    public void zoomToUserLocation(){
+    public void zoomToUserLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Log.i("Ekhane", "1");
             return;
@@ -540,83 +582,25 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
 
         for (int i = 0; i < areaLists.size(); i++) {
             if (areaLists.get(i).getLatitude() != null && areaLists.get(i).getLongitude() != null && areaLists.get(i).getCoverage() != null)  {
+                LatLng wpt = new LatLng(Double.parseDouble(areaLists.get(i).getLatitude()), Double.parseDouble(areaLists.get(i).getLongitude()));
+                mMap.addMarker(new MarkerOptions().position(wpt)
+                            .title(areaLists.get(i).getCoa_name())
+                            .snippet(areaLists.get(i).getCoa_address()).zIndex(9999)
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.office_32_icon)));
                 if (!areaLists.get(i).getCoverage().equals("0")) {
                     mMap.addCircle(new CircleOptions()
                             .center(new LatLng(Float.parseFloat(areaLists.get(i).getLatitude()), Float.parseFloat(areaLists.get(i).getLongitude())))
                             .radius(Integer.parseInt(areaLists.get(i).getCoverage()))
                             .strokeColor(getColor(R.color.primaryColor))
                             .strokeWidth(4F)
-                            .fillColor(getColor(R.color.primaryColor_generatedAlpha)));
+                            .fillColor(ColorUtils.setAlphaComponent(
+                                    ContextCompat.getColor(this, R.color.primaryColor), 50)));
                 }
             }
         }
 
 
     }
-
-//    private void enableGPS() {
-//        if (googleApiClient == null) {
-//            googleApiClient = new GoogleApiClient.Builder(this)
-//                    .addApi(LocationServices.API).addConnectionCallbacks(AttendanceGive.this)
-//                    .addOnConnectionFailedListener(AttendanceGive.this).build();
-//            googleApiClient.connect();
-//            LocationRequest locationRequest = LocationRequest.create();
-//            locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-//            locationRequest.setInterval(5 * 1000);
-//            locationRequest.setFastestInterval(1000);
-//            LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
-//                    .addLocationRequest(locationRequest);
-//
-//            // **************************
-//            builder.setAlwaysShow(true); // this is the key ingredient
-//            // **************************
-//
-//            PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi
-//                    .checkLocationSettings(googleApiClient, builder.build());
-//            result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
-//                @Override
-//                public void onResult(LocationSettingsResult result) {
-//                    final Status status = result.getStatus();
-//                    final LocationSettingsStates state = result
-//                            .getLocationSettingsStates();
-//                    switch (status.getStatusCode()) {
-//                        case LocationSettingsStatusCodes.SUCCESS:
-//                            // All location settings are satisfied. The client can
-//                            // initialize location
-//                            // requests here.
-//                            Log.i("Exit", "3");
-//                            zoomToUserLocation();
-//                            //info.setText("Done");
-//
-//                            break;
-//                        case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-//                            // Location settings are not satisfied. But could be
-//                            // fixed by showing the user
-//                            // a dialog.
-//                            Log.i("Exit", "4");
-//                            try {
-//                                // Show the dialog by calling
-//                                // startResolutionForResult(),
-//                                // and check the result in onActivityResult().
-//                                status.startResolutionForResult(AttendanceGive.this, 1000);
-//                            } catch (IntentSender.SendIntentException e) {
-//                                // Ignore the error.
-//                            }
-//                            break;
-//                        case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-//                            // Location settings are not satisfied. However, we have
-//                            // no way to fix the
-//                            // settings so we won't show the dialog.
-//                            Log.i("Exit", "5");
-//                            break;
-//                    }
-//                }
-//
-//            });
-//
-//
-//        }
-//    }
 
     private void enableGPS() {
         LocationRequest locationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 3000)
@@ -706,337 +690,6 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
         }).start();
     }
 
-//    public boolean isConnected() {
-//        boolean connected = false;
-//        boolean isMobile = false;
-//        try {
-//            ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-//            @SuppressLint("MissingPermission") NetworkInfo nInfo = cm.getActiveNetworkInfo();
-//            connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
-//            return connected;
-//        } catch (Exception e) {
-//            Log.e("Connectivity Exception", e.getMessage());
-//        }
-//        return connected;
-//    }
-//
-//    public boolean isOnline() {
-//
-//        Runtime runtime = Runtime.getRuntime();
-//        try {
-//            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
-//            int     exitValue = ipProcess.waitFor();
-//            return (exitValue == 0);
-//        }
-//        catch (IOException | InterruptedException e)          { logger.log(Level.WARNING,e.getMessage(),e); }
-//
-//        return false;
-//    }
-//
-//    public class CheckAddress extends AsyncTask<Void, Void, Void> {
-//
-//        @Override
-//        protected void onPreExecute() {
-//            super.onPreExecute();
-//            waitProgress.show(getSupportFragmentManager(),"WaitBar");
-//            waitProgress.setCancelable(false);
-//        }
-//
-//        @Override
-//        protected Void doInBackground(Void... voids) {
-//            if (isConnected() && isOnline()) {
-//                conn = true;
-//                getAddress(Double.parseDouble(lat),Double.parseDouble(lon));
-//            }
-//            else {
-//                conn = false;
-//                message = "Not Connected";
-//            }
-//            return null;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(Void aVoid) {
-//            super.onPostExecute(aVoid);
-//
-//            if (conn) {
-//                conn = false;
-//
-////                new Check().execute();
-//                giveAttendance();
-//            }
-//            else {
-//                waitProgress.dismiss();
-//                AlertDialog dialog = new AlertDialog.Builder(AttendanceGive.this)
-//                        .setMessage("Please Check Your Internet Connection")
-//                        .setPositiveButton("Retry", null)
-//                        .setNegativeButton("Cancel",null)
-//                        .show();
-//
-//                dialog.setCancelable(false);
-//                dialog.setCanceledOnTouchOutside(false);
-//                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-//                positive.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//
-//                        new CheckAddress().execute();
-//                        dialog.dismiss();
-//                    }
-//                });
-//                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-//                negative.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        dialog.dismiss();
-//
-//                    }
-//                });
-//            }
-//
-//        }
-//    }
-
-//    public class Check extends AsyncTask<Void, Void, Void> {
-//
-//        @Override
-//        protected void onPreExecute() {
-//            super.onPreExecute();
-//
-//        }
-//
-//        @Override
-//        protected Void doInBackground(Void... voids) {
-//            if (isConnected() && isOnline()) {
-//
-//                AttendanceClicked();
-//                if (connected) {
-//                    conn = true;
-//                    message= "Internet Connected";
-//                }
-//
-//            } else {
-//                conn = false;
-//                message = "Not Connected";
-//            }
-//
-//            return null;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(Void aVoid) {
-//            super.onPostExecute(aVoid);
-//
-//            waitProgress.dismiss();
-//            if (conn) {
-//                System.out.println("Ekhane Ashbe 3rd");
-//                checkInTime.setVisibility(View.VISIBLE);
-//
-//                String ss = "Your last recorded time : "+timeToShow;
-//                checkInTime.setText(ss);
-//
-//                SharedPreferences.Editor editor = preferences.edit();
-//                editor.remove(timeKey);
-//                editor.putString(timeKey,ss);
-//                editor.apply();
-//                editor.commit();
-//                String puncher = "";
-//                if (address.isEmpty()) {
-//
-//                    address = "No Address found for ("+lat+", "+lon+")";
-//                    puncher = "Punched at "+ timeToShow + " in ("+address+")";
-//                }
-//                else {
-//                    puncher = "Punched at "+ timeToShow + " in "+address;
-//                }
-//                currLoc.setText(puncher);
-//                currLoc.setVisibility(View.VISIBLE);
-//
-//                if (tracking_flag == 1) {
-//                    if (isMyServiceRunning(Service.class)) {
-//                        System.out.println("Service Stopped");
-//
-//                        stopService();
-//                        nameOfCheckIN.setText("PUNCH & START TRACKER");
-//                    } else {
-//                        System.out.println("Service Started");
-//
-//                        startService();
-//                        nameOfCheckIN.setText("PUNCH & STOP TRACKER");
-//                    }
-//                }
-//
-//
-//                AlertDialog.Builder builder = new AlertDialog.Builder(AttendanceGive.this);
-//                builder
-//                        .setMessage("Your Attendance is Recorded!")
-//                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                dialog.dismiss();
-//
-//                            }
-//                        });
-//
-//                AlertDialog alert = builder.create();
-//                alert.show();
-//
-//                conn = false;
-//                connected = false;
-//
-//
-//            }
-//            else {
-//                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
-//                AlertDialog dialog = new AlertDialog.Builder(AttendanceGive.this)
-//                        .setMessage("Please Check Your Internet Connection")
-//                        .setPositiveButton("Retry", null)
-//                        .setNegativeButton("Cancel",null)
-//                        .show();
-//
-//                dialog.setCancelable(false);
-//                dialog.setCanceledOnTouchOutside(false);
-//                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-//                positive.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//
-//                        new CheckAddress().execute();
-//                        dialog.dismiss();
-//                    }
-//                });
-//                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-//                negative.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        dialog.dismiss();
-//
-//                    }
-//                });
-//            }
-//        }
-//    }
-
-//    public class LocationGet extends AsyncTask<Void, Void, Void> {
-//
-//        @Override
-//        protected void onPreExecute() {
-//            super.onPreExecute();
-//            waitProgress.show(getSupportFragmentManager(),"WaitBar");
-//            waitProgress.setCancelable(false);
-//        }
-//
-//        @Override
-//        protected Void doInBackground(Void... voids) {
-//            if (isConnected() && isOnline()) {
-//                GettingOfficeLocation();
-//                if (connected) {
-//                    conn = true;
-//                    message= "Internet Connected";
-//                }
-//
-//            } else {
-//                conn = false;
-//                message = "Not Connected";
-//            }
-//
-//            return null;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(Void aVoid) {
-//            super.onPostExecute(aVoid);
-//
-//            waitProgress.dismiss();
-//            if (conn) {
-////                LatLng c_latLng = new LatLng(0,0);
-////                if (officeLatitude != null && officeLongitude != null) {
-////                    if (!officeLatitude.isEmpty() && !officeLongitude.isEmpty()) {
-////                        c_latLng = new LatLng(Double.parseDouble(officeLatitude),Double.parseDouble(officeLongitude));
-////                    }
-////                }
-////                MarkerOptions markerOptions = new MarkerOptions();
-////                markerOptions.position(c_latLng);
-////
-////                mMap.addMarker(markerOptions);
-////
-////                CircleOptions circleOptions = new CircleOptions();
-////                circleOptions.center(c_latLng);
-////                circleOptions.strokeWidth(4);
-////                circleOptions.strokeColor(Color.parseColor("#d95206"));
-////                circleOptions.fillColor(Color.argb(30,242,165,21));
-////                circleOptions.radius(40);
-////                mMap.addCircle(circleOptions);
-//                enableGPS();
-//
-//                conn = false;
-//                connected = false;
-//
-//
-//            }
-//            else {
-//                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
-//                AlertDialog dialog = new AlertDialog.Builder(AttendanceGive.this)
-//                        .setMessage("Please Check Your Internet Connection")
-//                        .setPositiveButton("Retry", null)
-//                        .setNegativeButton("Cancel",null)
-//                        .show();
-//
-//                dialog.setCancelable(false);
-//                dialog.setCanceledOnTouchOutside(false);
-//                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-//                positive.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//
-//                        new LocationGet().execute();
-//                        dialog.dismiss();
-//                    }
-//                });
-//                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-//                negative.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        dialog.dismiss();
-//                        finish();
-//                    }
-//                });
-//            }
-//        }
-//    }
-
-//    public void AttendanceClicked() {
-//        try {
-//            this.connection = createConnection();
-//            conn = false;
-//            connected = false;
-//
-//            Statement stmt = connection.createStatement();
-//
-//            CallableStatement callableStatement = connection.prepareCall("begin SET_EMP_ATTENDANCE(?,?,?,?,?,?); end;");
-//            callableStatement.setInt(1, Integer.parseInt(emp_id));
-//            callableStatement.setTimestamp(2, ts);
-//            callableStatement.setString(3,machineCode);
-//            callableStatement.setString(4,lat);
-//            callableStatement.setString(5,lon);
-//            callableStatement.setString(6,address);
-//
-//            callableStatement.execute();
-//
-//            callableStatement.close();
-//
-//            connected = true;
-//            connection.close();
-//
-//        }
-//        catch (Exception e) {
-//
-//            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
-//            Log.i("ERRRRR", e.getLocalizedMessage());
-//            logger.log(Level.WARNING,e.getMessage(),e);
-//        }
-//    }
-
     public void giveAttendance() {
         conn = false;
         connected = false;
@@ -1091,7 +744,7 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
         if (conn) {
             if (connected) {
                 System.out.println("Ekhane Ashbe 3rd");
-                checkInTime.setVisibility(View.VISIBLE);
+                checkInTime.setVisibility(VISIBLE);
 
                 String ss = "Your last recorded time : "+timeToShow;
                 checkInTime.setText(ss);
@@ -1103,7 +756,6 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
                 editor.commit();
                 String puncher;
                 if (address.isEmpty()) {
-
                     address = "No Address found for ("+lat+", "+lon+")";
                     puncher = "Punched at "+ timeToShow + " in ("+address+")";
                 }
@@ -1111,24 +763,30 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
                     puncher = "Punched at "+ timeToShow + " in "+address;
                 }
                 currLoc.setText(puncher);
-                currLoc.setVisibility(View.VISIBLE);
+                currLoc.setVisibility(VISIBLE);
 
                 if (tracking_flag == 1) {
-                    if (isMyServiceRunning()) {
-                        System.out.println("Service Stopped");
-
-                        stopService();
-                        String tt = "PUNCH & START TRACKER";
-                        nameOfCheckIN.setText(tt);
-                    } else {
-                        System.out.println("Service Started");
-
-                        startService();
-                        String tt = "PUNCH & STOP TRACKER";
-                        nameOfCheckIN.setText(tt);
+                    if (tr_option.equals("1")) {
+                        if (isMyServiceRunning()) {
+                            System.out.println("Service Stopped");
+                            stopService();
+                            String tt = "PUNCH & START TRACKER";
+                            nameOfCheckIN.setText(tt);
+                        } else {
+                            System.out.println("Service Started");
+                            startService();
+                            String tt = "PUNCH & STOP TRACKER";
+                            nameOfCheckIN.setText(tt);
+                        }
+                    }
+                    else {
+                        saveLocationFile();
+                        LatLng wpt = new LatLng(Double.parseDouble(lat), Double.parseDouble(lon));
+                        Marker marker = mMap.addMarker(new MarkerOptions().position(wpt).title(address).snippet(timeToShow).icon(BitmapDescriptorFactory.fromResource(R.drawable.location_icon)));
+                        int x = markerData.size();
+                        markerData.add(new MarkerData(marker,String.valueOf(x)));
                     }
                 }
-
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(AttendanceGive.this);
                 builder
@@ -1180,39 +838,6 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
         }
     }
 
-//    public void GettingOfficeLocation() {
-//        try {
-//            this.connection = createConnection();
-//            connected = false;
-//
-//            Statement stmt = connection.createStatement();
-//
-//            ResultSet resultSet = stmt.executeQuery("Select COA_LATITUDE, COA_LONGITUDE, COA_COVERAGE \n" +
-//                    "FROM\n" +
-//                    "COMPANY_OFFICE_ADDRESS, EMP_JOB_HISTORY \n" +
-//                    "WHERE \n" +
-//                    "COMPANY_OFFICE_ADDRESS.COA_ID = EMP_JOB_HISTORY.JOB_PRI_COA_ID\n" +
-//                    "AND EMP_JOB_HISTORY.JOB_EMP_ID = "+emp_id+"");
-//
-//            while (resultSet.next()) {
-//                officeLatitude = resultSet.getString(1);
-//                officeLongitude = resultSet.getString(2);
-//                coverage = resultSet.getString(3);
-//            }
-//            resultSet.close();
-//
-//            connected = true;
-//            connection.close();
-//
-//        }
-//        catch (Exception e) {
-//
-//            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
-//            Log.i("ERRRRR", e.getLocalizedMessage());
-//            logger.log(Level.WARNING,e.getMessage(),e);
-//        }
-//    }
-
     public void getOfficeLocation() {
         waitProgress.show(getSupportFragmentManager(),"WaitBar");
         waitProgress.setCancelable(false);
@@ -1220,10 +845,48 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
         connected = false;
 
         areaLists = new ArrayList<>();
+        tr_option = "1";
 
         String offLocationUrl = api_url_front + "attendance/getNewOffLatLong?emp_id="+emp_id;
+        String trOptionUrl = api_url_front + "utility/getTrackerOption";
 
         RequestQueue requestQueue = Volley.newRequestQueue(AttendanceGive.this);
+
+        StringRequest trOptionReq = new StringRequest(Request.Method.GET, trOptionUrl, response -> {
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    JSONObject info = array.getJSONObject(0);
+                    tr_option = info.getString("tr_option")
+                            .equals("null") ? "1" : info.getString("tr_option");
+                }
+                if (tracking_flag == 1) {
+                    if (tr_option.equals("2")) {
+                        getMapData();
+                    }
+                    else {
+                        connected = true;
+                        updateInfo();
+                    }
+                }
+                else {
+                    connected = true;
+                    updateInfo();
+                }
+            } catch (JSONException e) {
+                logger.log(Level.WARNING, e.getMessage(), e);
+                connected = false;
+                updateInfo();
+            }
+        }, error -> {
+            logger.log(Level.WARNING, error.getMessage(), error);
+            conn = false;
+            connected = false;
+            updateInfo();
+        });
 
         StringRequest offLocReq = new StringRequest(Request.Method.GET, offLocationUrl, response -> {
             conn = true;
@@ -1247,13 +910,16 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
                                 .equals("null") ? null : offLocInfo.getString("machine_code");
                         String can_give = offLocInfo.getString("can_give")
                                 .equals("null") ? "0" : offLocInfo.getString("can_give");
+                        String coa_name = offLocInfo.getString("coa_name")
+                                .equals("null") ? "" : offLocInfo.getString("coa_name");
+                        String coa_address = offLocInfo.getString("coa_address")
+                                .equals("null") ? "" : offLocInfo.getString("coa_address");
 
-                        areaLists.add(new AreaList(coa_latitude,coa_longitude,coa_coverage,co_id,code,can_give.equals("1")));
+                        areaLists.add(new AreaList(coa_latitude,coa_longitude,coa_coverage,co_id,code,can_give.equals("1"),coa_name,coa_address));
 
                     }
                 }
-                connected = true;
-                updateInfo();
+                requestQueue.add(trOptionReq);
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING,e.getMessage(),e);
@@ -1274,6 +940,33 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
         waitProgress.dismiss();
         if (conn) {
             if (connected) {
+                if (tracking_flag == 1) {
+                    if (tr_option.equals("1")) {
+                        if (isMyServiceRunning()) {
+                            String tt = "PUNCH & STOP TRACKER";
+                            nameOfCheckIN.setText(tt);
+                        } else {
+                            String tt = "PUNCH & START TRACKER";
+                            nameOfCheckIN.setText(tt);
+                        }
+                        autoStartIcon.setVisibility(VISIBLE);
+                    }
+                    else if (tr_option.equals("2")){
+                        String  tt = "PUNCH & MARK";
+                        nameOfCheckIN.setText(tt);
+                        autoStartIcon.setVisibility(GONE);
+                    }
+                    else {
+                        String  tt = "PUNCH";
+                        nameOfCheckIN.setText(tt);
+                        autoStartIcon.setVisibility(GONE);
+                    }
+                }
+                else {
+                    String  tt = "PUNCH";
+                    nameOfCheckIN.setText(tt);
+                    autoStartIcon.setVisibility(GONE);
+                }
                 enableGPS();
 
                 conn = false;
@@ -1322,5 +1015,128 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
                 finish();
             });
         }
+    }
+
+    public void getMapData() {
+        wptList = new ArrayList<>();
+        markerData = new ArrayList<>();
+        ArrayList<String> addresses = new ArrayList<>();
+        mMap.clear();
+        new Thread(() -> {
+            Date c = Calendar.getInstance().getTime();
+
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
+
+            String fileName = sdf.format(c);
+            fileName = fileName.toUpperCase();
+            fileName = emp_id+"_"+fileName+"_track";
+
+            File myExternalFile = new File(getExternalFilesDir(null),fileName+".gpx");
+
+            if (!myExternalFile.exists()) {
+                System.out.println("No Data Found");
+            }
+            else {
+                wptList = GPXFileDecoder.decodeWPT(myExternalFile);
+
+                if (wptList.isEmpty()) {
+                    Toast.makeText(getApplicationContext(),"Saved Location Not Found",Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    for (int i = 0; i< wptList.size(); i++) {
+                        String addss = getMapAddress(wptList.get(i).getLocation().getLatitude(), wptList.get(i).getLocation().getLongitude());
+                        addresses.add(addss);
+                    }
+                }
+            }
+            runOnUiThread(() -> {
+                for (int i = 0; i < wptList.size(); i++) {
+                    LatLng wpt = new LatLng(wptList.get(i).getLocation().getLatitude(), wptList.get(i).getLocation().getLongitude());
+                    Marker marker = mMap.addMarker(new MarkerOptions().position(wpt).title(addresses.get(i)).snippet(wptList.get(i).getTime()).icon(BitmapDescriptorFactory.fromResource(R.drawable.location_icon)));
+                    markerData.add(new MarkerData(marker,String.valueOf(i)));
+                }
+                connected = true;
+                updateInfo();
+            });
+        }).start();
+
+    }
+
+    public String getMapAddress(double lat, double lng) {
+        String adds = "";
+        Geocoder geocoder = new Geocoder(AttendanceGive.this, Locale.ENGLISH);
+        try {
+            List<Address> addresses = geocoder.getFromLocation(lat, lng, 1);
+            if (Geocoder.isPresent()) {
+                Address obj = addresses.get(0);
+                adds = obj.getAddressLine(0);
+            }
+            else {
+                adds = "";
+            }
+            return adds;
+        }
+        catch (IOException e) {
+            logger.log(Level.WARNING, e.getMessage(), e);
+            return adds;
+        }
+    }
+
+    private void saveLocationFile() {
+        ArrayList<String> trk = new ArrayList<>();
+
+        String wpt = "\t<wpt lat=\""+ lat +"\" lon=\""+ lon+"\">\n" +
+                "\t\t<name>TTIT</name>\n" +
+                "\t\t<time>"+timeToShow+"</time>\n"+
+                "\t</wpt>";
+        trk.add(wpt);
+
+        Date c = Calendar.getInstance().getTime();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
+
+        String fileName = sdf.format(c);
+        fileName = fileName.toUpperCase();
+        fileName = emp_id+"_"+fileName+"_track";
+
+        File myExternalFile = new File(getExternalFilesDir(null),fileName+".gpx");
+
+        if (myExternalFile.exists()) {
+            try {
+                System.out.println("EXISTING FILE");
+                String gpxFile = getExternalFilesDir(null).getPath() + File.separator +  fileName +".gpx";
+                BufferedReader bufferedReader = new BufferedReader(new FileReader(gpxFile));
+                String line;
+                String input = "";
+
+                while ((line = bufferedReader.readLine()) != null) {
+                    input += line + '\n';
+                }
+
+                bufferedReader.close();
+
+                if (input.contains("</gpx>")){
+                    System.out.println("Got It");
+                    String newInput = input.replace("</gpx>","");
+                    GPXFileWriter.upDateGpxFile("TTITGenerator",trk,myExternalFile,newInput);
+                    Toast.makeText(getApplicationContext(), "Your Attendance location has been saved", Toast.LENGTH_SHORT).show();
+                }
+            }
+            catch (IOException e) {
+                logger.log(Level.WARNING, e.getMessage(), e);
+                Toast.makeText(getApplicationContext(), "Your Attendance location could not save", Toast.LENGTH_SHORT).show();
+            }
+        }
+        else {
+            try {
+                GPXFileWriter.writeGpxFile("TTITGenerator", trk, myExternalFile);
+                Toast.makeText(getApplicationContext(), "Your Attendance location has been saved", Toast.LENGTH_SHORT).show();
+            }
+            catch (IOException e) {
+                logger.log(Level.WARNING, e.getMessage(), e);
+                Toast.makeText(getApplicationContext(), "Your Attendance location could not save", Toast.LENGTH_SHORT).show();
+            }
+        }
+
     }
 }

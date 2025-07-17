@@ -7,14 +7,18 @@ public class AreaList {
     private String coa_id;
     private String machine_code;
     private boolean canGive;
+    private String coa_name;
+    private String coa_address;
 
-    public AreaList(String latitude, String longitude, String coverage, String coa_id, String machine_code, boolean canGive) {
+    public AreaList(String latitude, String longitude, String coverage, String coa_id, String machine_code, boolean canGive, String coa_name, String coa_address) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.coverage = coverage;
         this.coa_id = coa_id;
         this.machine_code = machine_code;
         this.canGive = canGive;
+        this.coa_name = coa_name;
+        this.coa_address = coa_address;
     }
 
     public String getLatitude() {
@@ -63,5 +67,21 @@ public class AreaList {
 
     public void setCanGive(boolean canGive) {
         this.canGive = canGive;
+    }
+
+    public String getCoa_name() {
+        return coa_name;
+    }
+
+    public void setCoa_name(String coa_name) {
+        this.coa_name = coa_name;
+    }
+
+    public String getCoa_address() {
+        return coa_address;
+    }
+
+    public void setCoa_address(String coa_address) {
+        this.coa_address = coa_address;
     }
 }

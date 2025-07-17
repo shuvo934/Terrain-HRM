@@ -72,7 +72,7 @@ public class TimeLineActivity extends AppCompatActivity implements OnMapReadyCal
 
     boolean blobNotNull = false;
     String address = "";
-    public static ArrayList<WaypointList> wptList;
+    ArrayList<WaypointList> wptList;
 
     public static ArrayList<ArrrayFile> multiGpxList;
     Logger logger = Logger.getLogger(TimeLineActivity.class.getName());

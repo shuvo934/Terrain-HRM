@@ -13,8 +13,8 @@ import ttit.com.shuvo.ikglhrm.leaveAll.LeaveApplication;
 import ttit.com.shuvo.ikglhrm.leaveAll.leaveApplication.leaveApplicatinStatus.LeaveApplicationStatus;
 import ttit.com.shuvo.ikglhrm.leaveAll.leaveApprove.LeaveApprove;
 
-import static ttit.com.shuvo.ikglhrm.Login.isLeaveApproved;
-import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.user_login.Login.isLeaveApproved;
+import static ttit.com.shuvo.ikglhrm.user_login.Login.userInfoLists;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import com.android.volley.Request;
@@ -60,7 +60,7 @@ public class AllLeaveApplication extends AppCompatActivity {
             leaveApprove.setVisibility(View.GONE);
         }
 
-        user_id = userInfoLists.get(0).getUserName();
+        user_id = userInfoLists.get(0).getEmp_code();
 
         newApp.setOnClickListener(v -> {
             Intent intent = new Intent(AllLeaveApplication.this, LeaveApplication.class);

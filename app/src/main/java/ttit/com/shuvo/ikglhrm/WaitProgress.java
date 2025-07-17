@@ -6,30 +6,26 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDialogFragment;
 
-import ir.alirezabdn.wp7progress.WP10ProgressBar;
 import ir.alirezabdn.wp7progress.WP7ProgressBar;
 
 public class WaitProgress extends AppCompatDialogFragment {
 
 
-    private WP7ProgressBar bar;
+    WP7ProgressBar bar;
     public static AlertDialog dialog;
 
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = getActivity().getLayoutInflater();
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
 
         View view = inflater.inflate(R.layout.wait_bar, null);
         bar = view.findViewById(R.id.wp7progressBar);

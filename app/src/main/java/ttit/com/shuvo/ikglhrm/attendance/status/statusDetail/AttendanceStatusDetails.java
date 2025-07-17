@@ -21,13 +21,14 @@ import com.google.android.material.textfield.TextInputEditText;
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
 
-import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.user_login.Login.userInfoLists;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -130,18 +131,13 @@ public class AttendanceStatusDetails extends AppCompatActivity {
         intimeLay = findViewById(R.id.in_time_lay_st_dt);
         outTimeLay = findViewById(R.id.out_time_lay_st_dt);
 
-        String firstname = userInfoLists.get(0).getUser_fname();
-        String lastName = userInfoLists.get(0).getUser_lname();
+        String firstname = userInfoLists.get(0).getUser_name();
         if (firstname == null) {
             firstname = "";
         }
-        if (lastName == null) {
-            lastName = "";
-        }
-        String empFullName = firstname+" "+lastName;
-        name.setText(empFullName);
+        name.setText(firstname);
 
-        id.setText(userInfoLists.get(0).getUserName());
+        id.setText(userInfoLists.get(0).getEmp_code());
 
         emp_id = userInfoLists.get(0).getEmp_id();
 
@@ -542,11 +538,7 @@ public class AttendanceStatusDetails extends AppCompatActivity {
                     address.setText(addressOut);
                 }
 
-                if (comments == null) {
-                    comm.setText("");
-                } else {
-                    comm.setText(comments);
-                }
+                comm.setText(Objects.requireNonNullElse(comments, ""));
 
                 forwarder.setText(forwardTo);
                 appDate.setText(dateNow);

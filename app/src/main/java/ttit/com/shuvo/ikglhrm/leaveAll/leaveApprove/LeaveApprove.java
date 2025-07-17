@@ -37,7 +37,7 @@ import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.DialogueText;
 import ttit.com.shuvo.ikglhrm.leaveAll.leaveApprove.leaveAppDialogues.ForwardHistoryDial;
 import ttit.com.shuvo.ikglhrm.leaveAll.leaveApprove.leaveAppDialogues.ForwardHistoryList;
 
-import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.user_login.Login.userInfoLists;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import org.json.JSONArray;
@@ -153,7 +153,7 @@ public class LeaveApprove extends AppCompatActivity {
         fh = findViewById(R.id.forward_history_button_leave);
 
 
-        emp_code = userInfoLists.get(0).getUserName();
+        emp_code = userInfoLists.get(0).getEmp_code();
         user_id = userInfoLists.get(0).getEmp_id();
 
         leaveReqList = new ArrayList<>();
@@ -1158,65 +1158,25 @@ public class LeaveApprove extends AppCompatActivity {
                 afterSelecting.setVisibility(View.VISIBLE);
                 afterSelectingButton.setVisibility(View.VISIBLE);
 
-                if (emp_name == null) {
-                    name.setText("");
-                } else {
-                    name.setText(emp_name);
-                }
+                name.setText(Objects.requireNonNullElse(emp_name, ""));
 
-                if (emp_id == null) {
-                    empCode.setText("");
-                } else {
-                    empCode.setText(emp_id);
-                }
+                empCode.setText(Objects.requireNonNullElse(emp_id, ""));
 
-                if (app_date == null) {
-                    appDate.setText("");
-                } else {
-                    appDate.setText(app_date);
-                }
+                appDate.setText(Objects.requireNonNullElse(app_date, ""));
 
-                if (call_title == null) {
-                    title.setText("");
-                } else {
-                    title.setText(call_title);
-                }
+                title.setText(Objects.requireNonNullElse(call_title, ""));
 
-                if (leave_type == null) {
-                    leaveType.setText("");
-                } else {
-                    leaveType.setText(leave_type);
-                }
+                leaveType.setText(Objects.requireNonNullElse(leave_type, ""));
 
-                if (leave_bal == null) {
-                    leaveBalance.setText("");
-                } else {
-                    leaveBalance.setText(leave_bal);
-                }
+                leaveBalance.setText(Objects.requireNonNullElse(leave_bal, ""));
 
-                if (from_date == null) {
-                    fromDate.setText("");
-                } else {
-                    fromDate.setText(from_date);
-                }
+                fromDate.setText(Objects.requireNonNullElse(from_date, ""));
 
-                if (to_date == null) {
-                    toDate.setText("");
-                } else {
-                    toDate.setText(to_date);
-                }
+                toDate.setText(Objects.requireNonNullElse(to_date, ""));
 
-                if (total_day == null) {
-                    totalDays.setText("");
-                } else {
-                    totalDays.setText(total_day);
-                }
+                totalDays.setText(Objects.requireNonNullElse(total_day, ""));
 
-                if (reason_desc == null) {
-                    reason.setText("");
-                } else {
-                    reason.setText(reason_desc);
-                }
+                reason.setText(Objects.requireNonNullElse(reason_desc, ""));
 
                 if (forwardHistoryLists.isEmpty()) {
                     forLay.setVisibility(View.GONE);

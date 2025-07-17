@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
 
-import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.user_login.Login.userInfoLists;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import com.android.volley.Request;
@@ -82,7 +82,6 @@ public class PersonalData extends AppCompatActivity {
     String empName = "";
     String banglaName = "";
 
-    Button ok;
     Logger logger = Logger.getLogger(PersonalData.class.getName());
 
     @Override
@@ -112,8 +111,6 @@ public class PersonalData extends AppCompatActivity {
         permanentAdd = findViewById(R.id.permanent_address);
         personalAddBangla = findViewById(R.id.present_address_bangla);
         permanentAddBangla = findViewById(R.id.permanent_address_bangla);
-
-        ok = findViewById(R.id.finish_button);
 
 //        bloodGroup.setEnabled(false);
 //        groupDisplay.setEnabled(false);
@@ -165,15 +162,11 @@ public class PersonalData extends AppCompatActivity {
         ma.add("Present Address");
         ma.add("Permanent Address");
 
-        String firstname = userInfoLists.get(0).getUser_fname();
-        String lastName = userInfoLists.get(0).getUser_lname();
+        String firstname = userInfoLists.get(0).getUser_name();
         if (firstname == null) {
             firstname = "";
         }
-        if (lastName == null) {
-            lastName = "";
-        }
-        empName = firstname+" "+lastName;
+        empName = firstname;
 
         nameP.setText(empName);
 
@@ -400,7 +393,6 @@ public class PersonalData extends AppCompatActivity {
         getEmpInformation();
 
 
-        ok.setOnClickListener(v -> finish());
     }
 
 //    public boolean isConnected() {

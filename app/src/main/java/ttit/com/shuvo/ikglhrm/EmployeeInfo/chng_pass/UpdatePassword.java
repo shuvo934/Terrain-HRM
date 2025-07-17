@@ -1,6 +1,6 @@
 package ttit.com.shuvo.ikglhrm.EmployeeInfo.chng_pass;
 
-import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.user_login.Login.userInfoLists;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.EMP_PASSWORD;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.LOGIN_ACTIVITY_FILE;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.MyPREFERENCES;

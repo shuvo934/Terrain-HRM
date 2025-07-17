@@ -14,7 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
 
-import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.user_login.Login.userInfoLists;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import com.android.volley.Request;
@@ -51,42 +51,42 @@ public class FirstFragment extends Fragment {
 
 
 
-    EditText revision;
-    EditText revisionDate;
-    EditText effectedDate;
-    EditText publish;
-    EditText appointDate;
-    EditText band;
-    EditText jobNo;
-    EditText struc_des;
-    EditText func_des;
-    EditText func_des_bn;
-    EditText job_obj;
-    EditText div;
-    EditText depa;
-    EditText section;
-    EditText add_ch;
-    EditText prim_station;
-    EditText sec_station;
-    EditText proj;
-    EditText workTime;
-    EditText earlyArrival;
-    EditText ext_dep;
-    EditText temp_ch;
-    EditText e_mail;
-    EditText soft_acc;
-    EditText rem_acc;
-    EditText comp;
-    EditText dorm;
-    EditText uniform;
-    EditText apart;
+    TextView revision;
+    TextView revisionDate;
+    TextView effectedDate;
+    TextView publish;
+    TextView appointDate;
+    TextView band;
+    TextView jobNo;
+    TextView struc_des;
+    TextView func_des;
+    TextView func_des_bn;
+    TextView job_obj;
+    TextView div;
+    TextView depa;
+    TextView section;
+    TextView add_ch;
+    TextView prim_station;
+    TextView sec_station;
+    TextView proj;
+    TextView workTime;
+    TextView earlyArrival;
+    TextView ext_dep;
+    TextView temp_ch;
+    TextView e_mail;
+    TextView soft_acc;
+    TextView rem_acc;
+    TextView comp;
+    TextView dorm;
+    TextView uniform;
+    TextView apart;
 
 //    Spinner st_pos;
 //    Spinner late_accp;
 //    Spinner att_bon;
-    EditText st_pos;
-    EditText late_accp;
-    EditText att_bon;
+    TextView st_pos;
+    TextView late_accp;
+    TextView att_bon;
 
     ArrayList<String> strrPos;
     ArrayList<String> late;
@@ -135,7 +135,7 @@ public class FirstFragment extends Fragment {
 
         emp_id = userInfoLists.get(0).getEmp_id();
 
-        emp_code = userInfoLists.get(0).getUserName();
+        emp_code = userInfoLists.get(0).getEmp_code();
 
         revision = view.findViewById(R.id.revision_no_TR);
         revisionDate = view.findViewById(R.id.revision_dateee);

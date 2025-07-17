@@ -2,19 +2,11 @@ package ttit.com.shuvo.ikglhrm.attendance.att_widget;
 
 import static android.content.Context.MODE_PRIVATE;
 
-import static ttit.com.shuvo.ikglhrm.scheduler.Uploader.channelId;
 
-import android.app.PendingIntent;
-import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.view.View;
-import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
@@ -24,7 +16,6 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
 import ttit.com.shuvo.ikglhrm.R;
-import ttit.com.shuvo.ikglhrm.scheduler.MyWorker;
 
 
 public class AttWidgetReceiver extends BroadcastReceiver {

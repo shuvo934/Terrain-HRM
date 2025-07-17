@@ -39,7 +39,7 @@ import ttit.com.shuvo.ikglhrm.leaveAll.leaveApplication.AllLeaveApplication;
 import ttit.com.shuvo.ikglhrm.leaveAll.leaveBalance.LeaveBalance;
 import ttit.com.shuvo.ikglhrm.leaveAll.leaveStatus.LeaveStatus;
 
-import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.user_login.Login.userInfoLists;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import org.json.JSONArray;

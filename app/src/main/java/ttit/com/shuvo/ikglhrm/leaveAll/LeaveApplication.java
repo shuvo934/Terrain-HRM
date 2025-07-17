@@ -48,8 +48,8 @@ import ttit.com.shuvo.ikglhrm.leaveAll.leaveApplication.LeaveTypeList;
 import ttit.com.shuvo.ikglhrm.leaveAll.leaveApplication.SelectLeaveType;
 import ttit.com.shuvo.ikglhrm.leaveAll.leaveApplication.ShowLeaveBalance;
 
-import static ttit.com.shuvo.ikglhrm.Login.userDesignations;
-import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.user_login.Login.userDesignations;
+import static ttit.com.shuvo.ikglhrm.user_login.Login.userInfoLists;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import org.json.JSONArray;
@@ -213,19 +213,15 @@ public class LeaveApplication extends AppCompatActivity {
         emp_id = userInfoLists.get(0).getEmp_id();
 
         if (!userInfoLists.isEmpty()) {
-            String firstname = userInfoLists.get(0).getUser_fname();
-            String lastName = userInfoLists.get(0).getUser_lname();
+            String firstname = userInfoLists.get(0).getUser_name();
             if (firstname == null) {
                 firstname = "";
             }
-            if (lastName == null) {
-                lastName = "";
-            }
-            emp_name = firstname+" "+lastName;
+            emp_name = firstname;
             name.setText(emp_name);
         }
 
-        user_id = userInfoLists.get(0).getUserName();
+        user_id = userInfoLists.get(0).getEmp_code();
 
         div_id = userDesignations.get(0).getDiv_id();
 
@@ -243,7 +239,7 @@ public class LeaveApplication extends AppCompatActivity {
         getInfo();
 
         // Spinner Application Type
-        leaveAppAdapter = new ArrayAdapter<String>(
+        leaveAppAdapter = new ArrayAdapter<>(
                 this,R.layout.item_country,leaveAppList){
             @Override
             public boolean isEnabled(int position){
@@ -309,7 +305,7 @@ public class LeaveApplication extends AppCompatActivity {
         });
 
         // Spinner Leave Duration
-        leaveDurationAdapter = new ArrayAdapter<String>(
+        leaveDurationAdapter = new ArrayAdapter<>(
                 this,R.layout.item_country,leaveDurList){
             @Override
             public boolean isEnabled(int position){

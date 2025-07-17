@@ -1,1313 +1,1622 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/_4sdp"
+    android:layout_marginStart="@dimen/_4sdp"
+    android:layout_marginEnd="@dimen/_4sdp"
+    android:layout_marginBottom="@dimen/_4sdp"
+    android:orientation="vertical"
     tools:context=".EmployeeInfo.transcript.FirstFragment">
-
-    <!-- TODO: Update blank fragment layout -->
+    
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginBottom="5dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_marginBottom="@dimen/_3sdp"
+        android:layout_gravity="center"
+        android:weightSum="1">
 
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
+            android:textStyle="bold"
             android:layout_gravity="center"
-            android:weightSum="1">
+            android:textColor="@color/black"
+            android:layout_weight=".3"
+            android:text="Revision No "
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText"/>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:textColor="@color/black"
-                android:layout_weight=".7"
-                android:fontFamily="@font/poppins"
-                android:text="Revision No: "/>
-            <EditText
-                android:id="@+id/revision_no_TR"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:layout_gravity="center"
-                android:textStyle="bold"
-                android:layout_weight=".3"
-                android:gravity="end"
-                android:textColor="@color/mazarine_blue"
-                android:fontFamily="@font/poppins_semibold"
-                android:textSize="15sp"
-                android:enabled="false"
-                android:editable="false"
-                android:focusable="false"
-                android:inputType="textMultiLine"
-                android:importantForAutofill="no"
-                tools:ignore="LabelFor"
-                android:clickable="false"/>
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:weightSum="1"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
+            android:textStyle="bold"
             android:layout_gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:layout_weight=".7"
-                android:textColor="@color/black"
-                android:fontFamily="@font/poppins"
-                android:text="Revision Date: "/>
-            <EditText
-                android:id="@+id/revision_dateee"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:layout_weight=".3"
-                android:layout_gravity="center"
-                android:textStyle="bold"
-                android:gravity="end"
-                android:textColor="@color/mazarine_blue"
-                android:fontFamily="@font/poppins_semibold"
-                android:textSize="15sp"
-                android:enabled="false"
-                android:editable="false"
-                android:focusable="false"
-                android:inputType="textMultiLine"
-                android:clickable="false"
-                android:importantForAutofill="no"
-                tools:ignore="LabelFor" />
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
+            android:textColor="@color/black"
+            android:layout_weight=".1"
+            android:text=" : "
+            android:gravity="center"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText" />
+        
+        <TextView
+            android:id="@+id/revision_no_TR"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:weightSum="1"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
+            android:text=""
             android:layout_gravity="center"
-            android:orientation="horizontal">
+            android:textStyle="bold"
+            android:layout_weight=".6"
+            android:gravity="end"
+            android:fontFamily="@font/poppins_semibold"
+            android:textSize="@dimen/_11sdp"
+            android:textColor="@color/secondaryColor"
+            android:importantForAutofill="no"
+            tools:ignore="LabelFor"/>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:layout_weight=".7"
-                android:fontFamily="@font/poppins"
-                android:textColor="@color/black"
-                android:text="Effected Date: "/>
-            <EditText
-                android:id="@+id/effectedd_dateee"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:layout_weight=".3"
-                android:layout_gravity="center"
-                android:textStyle="bold"
-                android:editable="false"
-                android:focusable="false"
-                android:gravity="end"
-                android:textColor="@color/mazarine_blue"
-                android:fontFamily="@font/poppins_semibold"
-                android:textSize="15sp"
-                android:enabled="false"
-                android:inputType="textMultiLine"
-                android:clickable="false"
-                android:importantForAutofill="no"
-                tools:ignore="LabelFor" />
+    </LinearLayout>
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_marginBottom="@dimen/_3sdp"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:weightSum="1"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
+            android:textStyle="bold"
             android:layout_gravity="center"
-            android:orientation="horizontal">
+            android:layout_weight=".3"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText"
+            android:text="Revision Date "/>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:layout_weight=".7"
-                android:textColor="@color/black"
-                android:fontFamily="@font/poppins"
-                android:text="Publish: "/>
-            <EditText
-                android:id="@+id/publish"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:layout_weight=".3"
-                android:layout_gravity="center"
-                android:textStyle="bold"
-                android:gravity="end"
-                android:editable="false"
-                android:focusable="false"
-                android:textColor="@color/mazarine_blue"
-                android:fontFamily="@font/poppins_semibold"
-                android:textSize="15sp"
-                android:enabled="false"
-                android:inputType="textMultiLine"
-                android:clickable="false"
-                android:importantForAutofill="no"
-                tools:ignore="LabelFor" />
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:weightSum="1"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
+            android:textStyle="bold"
             android:layout_gravity="center"
-            android:orientation="horizontal">
+            android:textColor="@color/black"
+            android:layout_weight=".1"
+            android:text=" : "
+            android:gravity="center"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:layout_weight=".7"
-                android:textColor="@color/black"
-                android:fontFamily="@font/poppins"
-                android:text="Appointment Receive Date: "/>
-            <EditText
-                android:id="@+id/appointment_receive"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:layout_weight=".3"
-                android:layout_gravity="center"
-                android:textStyle="bold"
-                android:gravity="end"
-                android:editable="false"
-                android:focusable="false"
-                android:textColor="@color/mazarine_blue"
-                android:fontFamily="@font/poppins_semibold"
-                android:textSize="15sp"
-                android:enabled="false"
-                android:inputType="textMultiLine"
-                android:clickable="false"
-                android:importantForAutofill="no"
-                tools:ignore="LabelFor" />
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/revision_dateee"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:weightSum="1"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
+            android:text=""
+            android:layout_weight=".6"
             android:layout_gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:layout_weight=".7"
-                android:textColor="@color/black"
-                android:fontFamily="@font/poppins"
-                android:text="Band: "/>
-            <EditText
-                android:id="@+id/band"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:layout_weight=".3"
-                android:layout_gravity="center"
-                android:textStyle="bold"
-                android:gravity="end"
-                android:editable="false"
-                android:focusable="false"
-                android:textColor="@color/mazarine_blue"
-                android:fontFamily="@font/poppins_semibold"
-                android:textSize="15sp"
-                android:enabled="false"
-                android:inputType="textMultiLine"
-                android:clickable="false"
-                android:importantForAutofill="no"
-                tools:ignore="LabelFor" />
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="1"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:layout_gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:layout_weight=".7"
-                android:fontFamily="@font/poppins"
-                android:textColor="@color/black"
-                android:text="Job No: "/>
-            <EditText
-                android:id="@+id/job_nong"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:layout_weight=".3"
-                android:layout_gravity="center"
-                android:textStyle="bold"
-                android:gravity="end"
-                android:editable="false"
-                android:focusable="false"
-                android:textColor="@color/mazarine_blue"
-                android:fontFamily="@font/poppins_semibold"
-                android:textSize="15sp"
-                android:enabled="false"
-                android:inputType="textMultiLine"
-                android:clickable="false"
-                android:importantForAutofill="no"
-                tools:ignore="LabelFor" />
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="1"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:layout_gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:layout_weight=".7"
-                android:textColor="@color/black"
-                android:fontFamily="@font/poppins"
-                android:text="Structure Designation: "/>
-            <EditText
-                android:id="@+id/structure_designation"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:layout_weight=".3"
-                android:layout_gravity="center"
-                android:textStyle="bold"
-                android:gravity="end"
-                android:editable="false"
-                android:focusable="false"
-                android:textColor="@color/mazarine_blue"
-                android:fontFamily="@font/poppins_semibold"
-                android:textSize="15sp"
-                android:enabled="false"
-                android:inputType="textMultiLine"
-                android:clickable="false"
-                android:importantForAutofill="no"
-                tools:ignore="LabelFor" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="1"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:layout_gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:layout_weight=".7"
-                android:textColor="@color/black"
-                android:fontFamily="@font/poppins"
-                android:text="Functional Designation: "/>
-            <EditText
-                android:id="@+id/functional_designation"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:layout_weight=".3"
-                android:layout_gravity="center"
-                android:textStyle="bold"
-                android:gravity="end"
-                android:editable="false"
-                android:focusable="false"
-                android:textColor="@color/mazarine_blue"
-                android:fontFamily="@font/poppins_semibold"
-                android:textSize="15sp"
-                android:enabled="false"
-                android:inputType="textMultiLine"
-                android:clickable="false"
-                android:importantForAutofill="no"
-                tools:ignore="LabelFor" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="1"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:layout_gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:layout_weight=".7"
-                android:textColor="@color/black"
-                android:fontFamily="@font/poppins"
-                android:text="Functional Designation Bangla: "/>
-            <EditText
-                android:id="@+id/functional_designation_bn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:layout_weight=".3"
-                android:layout_gravity="center"
-                android:textStyle="bold"
-                android:gravity="end"
-                android:editable="false"
-                android:focusable="false"
-                android:textColor="@color/mazarine_blue"
-                android:fontFamily="@font/poppins_semibold"
-                android:textSize="15sp"
-                android:enabled="false"
-                android:inputType="textMultiLine"
-                android:clickable="false"
-                android:importantForAutofill="no"
-                tools:ignore="LabelFor" />
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="1"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:layout_gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:layout_weight=".7"
-                android:textColor="@color/black"
-                android:fontFamily="@font/poppins"
-                android:text="Job Objective: "/>
-            <EditText
-                android:id="@+id/job_objective"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:layout_weight=".3"
-                android:layout_gravity="center"
-                android:textStyle="bold"
-                android:gravity="end"
-                android:editable="false"
-                android:focusable="false"
-                android:textColor="@color/mazarine_blue"
-                android:fontFamily="@font/poppins_semibold"
-                android:textSize="15sp"
-                android:enabled="false"
-                android:inputType="textMultiLine"
-                android:clickable="false"
-                android:importantForAutofill="no"
-                tools:ignore="LabelFor" />
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="1"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:layout_gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:layout_weight=".7"
-                android:textColor="@color/black"
-                android:fontFamily="@font/poppins"
-                android:text="Division: "/>
-            <EditText
-                android:id="@+id/division"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:layout_weight=".3"
-                android:layout_gravity="center"
-                android:textStyle="bold"
-                android:gravity="end"
-                android:editable="false"
-                android:focusable="false"
-                android:textColor="@color/mazarine_blue"
-                android:fontFamily="@font/poppins_semibold"
-                android:textSize="15sp"
-                android:enabled="false"
-                android:inputType="textMultiLine"
-                android:clickable="false"
-                android:importantForAutofill="no"
-                tools:ignore="LabelFor" />
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="1"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:layout_gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:layout_weight=".7"
-                android:textColor="@color/black"
-                android:fontFamily="@font/poppins"
-                android:text="Department: "/>
-            <EditText
-                android:id="@+id/department"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:layout_weight=".3"
-                android:layout_gravity="center"
-                android:textStyle="bold"
-                android:gravity="end"
-                android:editable="false"
-                android:focusable="false"
-                android:textColor="@color/mazarine_blue"
-                android:fontFamily="@font/poppins_semibold"
-                android:textSize="15sp"
-                android:enabled="false"
-                android:inputType="textMultiLine"
-                android:clickable="false"
-                android:importantForAutofill="no"
-                tools:ignore="LabelFor" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="1"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:layout_gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:layout_weight=".7"
-                android:textColor="@color/black"
-                android:fontFamily="@font/poppins"
-                android:text="Section: "/>
-            <EditText
-                android:id="@+id/section"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:layout_weight=".3"
-                android:layout_gravity="center"
-                android:textStyle="bold"
-                android:gravity="end"
-                android:editable="false"
-                android:focusable="false"
-                android:textColor="@color/mazarine_blue"
-                android:fontFamily="@font/poppins_semibold"
-                android:textSize="15sp"
-                android:enabled="false"
-                android:inputType="textMultiLine"
-                android:clickable="false"
-                android:importantForAutofill="no"
-                tools:ignore="LabelFor" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="1"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:layout_gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:layout_weight=".7"
-                android:textColor="@color/black"
-                android:fontFamily="@font/poppins"
-                android:text="Additional Charge: "/>
-            <EditText
-                android:id="@+id/additional_charge"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:layout_weight=".3"
-                android:layout_gravity="center"
-                android:textStyle="bold"
-                android:gravity="end"
-                android:editable="false"
-                android:focusable="false"
-                android:textColor="@color/mazarine_blue"
-                android:fontFamily="@font/poppins_semibold"
-                android:textSize="15sp"
-                android:enabled="false"
-                android:inputType="textMultiLine"
-                android:clickable="false"
-                android:importantForAutofill="no"
-                tools:ignore="LabelFor" />
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="1"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:layout_gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:layout_weight=".7"
-                android:textColor="@color/black"
-                android:fontFamily="@font/poppins"
-                android:text="Primary Station: "/>
-            <EditText
-                android:id="@+id/primary_station"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:layout_weight=".3"
-                android:layout_gravity="center"
-                android:textStyle="bold"
-                android:gravity="end"
-                android:editable="false"
-                android:focusable="false"
-                android:textColor="@color/mazarine_blue"
-                android:fontFamily="@font/poppins_semibold"
-                android:textSize="15sp"
-                android:enabled="false"
-                android:inputType="textMultiLine"
-                android:clickable="false"
-                android:importantForAutofill="no"
-                tools:ignore="LabelFor" />
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="1"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:layout_gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:layout_weight=".7"
-                android:textColor="@color/black"
-                android:fontFamily="@font/poppins"
-                android:text="Secondary Station: "/>
-            <EditText
-                android:id="@+id/secondary_station"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:layout_weight=".3"
-                android:layout_gravity="center"
-                android:textStyle="bold"
-                android:gravity="end"
-                android:editable="false"
-                android:focusable="false"
-                android:textColor="@color/mazarine_blue"
-                android:fontFamily="@font/poppins_semibold"
-                android:textSize="15sp"
-                android:enabled="false"
-                android:inputType="textMultiLine"
-                android:clickable="false"
-                android:importantForAutofill="no"
-                tools:ignore="LabelFor" />
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="1"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:layout_gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:layout_weight=".7"
-                android:fontFamily="@font/poppins"
-                android:textColor="@color/black"
-                android:text="Project: "/>
-            <EditText
-                android:id="@+id/project"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:layout_weight=".3"
-                android:layout_gravity="center"
-                android:textStyle="bold"
-                android:gravity="end"
-                android:editable="false"
-                android:focusable="false"
-                android:textColor="@color/mazarine_blue"
-                android:fontFamily="@font/poppins_semibold"
-                android:textSize="15sp"
-                android:enabled="false"
-                android:inputType="textMultiLine"
-                android:clickable="false"
-                android:importantForAutofill="no"
-                tools:ignore="LabelFor" />
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="1"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:layout_gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:layout_weight=".7"
-                android:textColor="@color/black"
-                android:fontFamily="@font/poppins"
-                android:text="Work Time: "/>
-            <EditText
-                android:id="@+id/work_time"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:layout_weight=".3"
-                android:layout_gravity="center"
-                android:textStyle="bold"
-                android:gravity="end"
-                android:editable="false"
-                android:focusable="false"
-                android:textColor="@color/mazarine_blue"
-                android:fontFamily="@font/poppins_semibold"
-                android:textSize="15sp"
-                android:enabled="false"
-                android:inputType="textMultiLine"
-                android:clickable="false"
-                android:importantForAutofill="no"
-                tools:ignore="LabelFor" />
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="1"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:layout_gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:layout_weight=".7"
-                android:textColor="@color/black"
-                android:fontFamily="@font/poppins"
-                android:text="Early Arrival: "/>
-            <EditText
-                android:id="@+id/early_arrival"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:layout_weight=".3"
-                android:layout_gravity="center"
-                android:textStyle="bold"
-                android:gravity="end"
-                android:editable="false"
-                android:focusable="false"
-                android:textColor="@color/mazarine_blue"
-                android:fontFamily="@font/poppins_semibold"
-                android:textSize="15sp"
-                android:enabled="false"
-                android:inputType="textMultiLine"
-                android:clickable="false"
-                android:importantForAutofill="no"
-                tools:ignore="LabelFor" />
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="1"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:layout_gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:layout_weight=".7"
-                android:textColor="@color/black"
-                android:fontFamily="@font/poppins"
-                android:text="Extended Departure: "/>
-            <EditText
-                android:id="@+id/extended_dep"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:layout_weight=".3"
-                android:layout_gravity="center"
-                android:textStyle="bold"
-                android:gravity="end"
-                android:editable="false"
-                android:focusable="false"
-                android:textColor="@color/mazarine_blue"
-                android:fontFamily="@font/poppins_semibold"
-                android:textSize="15sp"
-                android:enabled="false"
-                android:inputType="textMultiLine"
-                android:clickable="false"
-                android:importantForAutofill="no"
-                tools:ignore="LabelFor" />
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="1"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:layout_gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:layout_weight=".7"
-                android:textColor="@color/black"
-                android:fontFamily="@font/poppins"
-                android:text="Temporary Charge: "/>
-            <EditText
-                android:id="@+id/temp_charge"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:layout_weight=".3"
-                android:layout_gravity="center"
-                android:textStyle="bold"
-                android:gravity="end"
-                android:editable="false"
-                android:focusable="false"
-                android:textColor="@color/mazarine_blue"
-                android:fontFamily="@font/poppins_semibold"
-                android:textSize="15sp"
-                android:enabled="false"
-                android:inputType="textMultiLine"
-                android:clickable="false"
-                android:importantForAutofill="no"
-                tools:ignore="LabelFor" />
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="1"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:layout_gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:layout_weight=".7"
-                android:textColor="@color/black"
-                android:fontFamily="@font/poppins"
-                android:text="E-Mail: "/>
-            <EditText
-                android:id="@+id/emall_E_MM"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:layout_weight=".3"
-                android:layout_gravity="center"
-                android:textStyle="bold"
-                android:gravity="end"
-                android:editable="false"
-                android:focusable="false"
-                android:textColor="@color/mazarine_blue"
-                android:fontFamily="@font/poppins_semibold"
-                android:textSize="15sp"
-                android:enabled="false"
-                android:inputType="textMultiLine"
-                android:clickable="false"
-                android:importantForAutofill="no"
-                tools:ignore="LabelFor" />
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="1"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:layout_gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:layout_weight=".7"
-                android:fontFamily="@font/poppins"
-                android:textColor="@color/black"
-                android:text="Software Access: "/>
-            <EditText
-                android:id="@+id/software_access"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:layout_weight=".3"
-                android:layout_gravity="center"
-                android:textStyle="bold"
-                android:gravity="end"
-                android:editable="false"
-                android:focusable="false"
-                android:textColor="@color/mazarine_blue"
-                android:fontFamily="@font/poppins_semibold"
-                android:textSize="15sp"
-                android:enabled="false"
-                android:inputType="textMultiLine"
-                android:clickable="false"
-                android:importantForAutofill="no"
-                tools:ignore="LabelFor" />
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="1"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:layout_gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:layout_weight=".7"
-                android:textColor="@color/black"
-                android:fontFamily="@font/poppins"
-                android:text="Remote Access: "/>
-            <EditText
-                android:id="@+id/remote_access"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:layout_weight=".3"
-                android:layout_gravity="center"
-                android:textStyle="bold"
-                android:gravity="end"
-                android:editable="false"
-                android:focusable="false"
-                android:textColor="@color/mazarine_blue"
-                android:fontFamily="@font/poppins_semibold"
-                android:textSize="15sp"
-                android:enabled="false"
-                android:inputType="textMultiLine"
-                android:clickable="false"
-                android:importantForAutofill="no"
-                tools:ignore="LabelFor" />
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="1"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:layout_gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:layout_weight=".7"
-                android:textColor="@color/black"
-                android:fontFamily="@font/poppins"
-                android:text="Computer: "/>
-            <EditText
-                android:id="@+id/computer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:layout_weight=".3"
-                android:layout_gravity="center"
-                android:textStyle="bold"
-                android:editable="false"
-                android:focusable="false"
-                android:gravity="end"
-                android:textColor="@color/mazarine_blue"
-                android:fontFamily="@font/poppins_semibold"
-                android:textSize="15sp"
-                android:enabled="false"
-                android:inputType="textMultiLine"
-                android:clickable="false"
-                android:importantForAutofill="no"
-                tools:ignore="LabelFor" />
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="1"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:layout_gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:layout_weight=".7"
-                android:textColor="@color/black"
-                android:fontFamily="@font/poppins"
-                android:text="Dormitory: "/>
-            <EditText
-                android:id="@+id/dormitory"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:layout_weight=".3"
-                android:layout_gravity="center"
-                android:textStyle="bold"
-                android:gravity="end"
-                android:editable="false"
-                android:focusable="false"
-                android:textColor="@color/mazarine_blue"
-                android:fontFamily="@font/poppins_semibold"
-                android:textSize="15sp"
-                android:enabled="false"
-                android:inputType="textMultiLine"
-                android:clickable="false"
-                android:importantForAutofill="no"
-                tools:ignore="LabelFor" />
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:weightSum="1"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_weight=".7"
-                android:layout_gravity="center"
-                android:textColor="@color/black"
-                android:fontFamily="@font/poppins"
-                android:text="Structural Position: "/>
-<!--            <Spinner-->
-<!--                android:layout_gravity="center"-->
-<!--                android:id="@+id/spinner_struc_pos"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_margin = "5dp"-->
-<!--                android:layout_weight=".3"-->
-<!--                android:clickable="false"-->
-<!--                android:background="@drawable/blue_outline"-->
-<!--                android:popupBackground="@drawable/blue_outline_white_background"-->
-<!--                android:spinnerMode="dropdown"/>-->
-            <EditText
-                android:id="@+id/spinner_struc_pos"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:layout_weight=".3"
-                android:layout_gravity="center"
-                android:textStyle="bold"
-                android:gravity="end"
-                android:editable="false"
-                android:focusable="false"
-                android:textColor="@color/mazarine_blue"
-                android:fontFamily="@font/poppins_semibold"
-                android:textSize="15sp"
-                android:enabled="false"
-                android:inputType="textMultiLine"
-                android:clickable="false"
-                android:importantForAutofill="no"
-                tools:ignore="LabelFor" />
-
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="1"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:layout_gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:layout_weight=".7"
-                android:textColor="@color/black"
-                android:fontFamily="@font/poppins"
-                android:text="Uniform: "/>
-            <EditText
-                android:id="@+id/uniform"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:layout_weight=".3"
-                android:layout_gravity="center"
-                android:textStyle="bold"
-                android:gravity="end"
-                android:editable="false"
-                android:focusable="false"
-                android:textColor="@color/mazarine_blue"
-                android:fontFamily="@font/poppins_semibold"
-                android:textSize="15sp"
-                android:enabled="false"
-                android:inputType="textMultiLine"
-                android:clickable="false"
-                android:importantForAutofill="no"
-                tools:ignore="LabelFor" />
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="1"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:layout_gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:layout_weight=".7"
-                android:textColor="@color/black"
-                android:fontFamily="@font/poppins"
-                android:text="Apartment: "/>
-            <EditText
-                android:id="@+id/apartment"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:layout_weight=".3"
-                android:layout_gravity="center"
-                android:textStyle="bold"
-                android:gravity="end"
-                android:editable="false"
-                android:focusable="false"
-                android:textColor="@color/mazarine_blue"
-                android:fontFamily="@font/poppins_semibold"
-                android:textSize="15sp"
-                android:enabled="false"
-                android:inputType="textMultiLine"
-                android:clickable="false"
-                android:importantForAutofill="no"
-                tools:ignore="LabelFor" />
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:weightSum="1"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:layout_weight=".7"
-                android:textColor="@color/black"
-                android:fontFamily="@font/poppins"
-                android:text="Late Acceptable? "/>
-<!--            <Spinner-->
-<!--                android:layout_gravity="center"-->
-<!--                android:id="@+id/spinner_late_acceptable"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_weight=".3"-->
-<!--                android:layout_margin = "5dp"-->
-<!--                android:clickable="false"-->
-<!--                android:background="@drawable/blue_outline"-->
-<!--                android:popupBackground="@drawable/blue_outline_white_background"-->
-<!--                android:spinnerMode="dropdown"/>-->
-
-            <EditText
-                android:id="@+id/spinner_late_acceptable"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:layout_weight=".3"
-                android:layout_gravity="center"
-                android:textStyle="bold"
-                android:gravity="end"
-                android:editable="false"
-                android:focusable="false"
-                android:textColor="@color/mazarine_blue"
-                android:fontFamily="@font/poppins_semibold"
-                android:textSize="15sp"
-                android:enabled="false"
-                android:inputType="textMultiLine"
-                android:clickable="false"
-                android:importantForAutofill="no"
-                tools:ignore="LabelFor" />
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:weightSum="1"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:layout_weight=".7"
-                android:textColor="@color/black"
-                android:fontFamily="@font/poppins"
-                android:text="Attendance Bonus: "/>
-<!--            <Spinner-->
-<!--                android:layout_gravity="center"-->
-<!--                android:id="@+id/spinner_att_bonus"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_weight=".3"-->
-<!--                android:layout_margin = "5dp"-->
-<!--                android:clickable="false"-->
-<!--                android:background="@drawable/blue_outline"-->
-<!--                android:popupBackground="@drawable/blue_outline_white_background"-->
-<!--                android:spinnerMode="dropdown"/>-->
-            <EditText
-                android:id="@+id/spinner_att_bonus"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:layout_weight=".3"
-                android:layout_gravity="center"
-                android:textStyle="bold"
-                android:gravity="end"
-                android:editable="false"
-                android:focusable="false"
-                android:textColor="@color/mazarine_blue"
-                android:fontFamily="@font/poppins_semibold"
-                android:textSize="15sp"
-                android:enabled="false"
-                android:inputType="textMultiLine"
-                android:clickable="false"
-                android:importantForAutofill="no"
-                tools:ignore="LabelFor" />
-
-        </LinearLayout>
-
-
+            android:textStyle="bold"
+            android:gravity="end"
+            android:textColor="@color/secondaryColor"
+            android:fontFamily="@font/poppins_semibold"
+            android:textSize="@dimen/_11sdp"
+            android:importantForAutofill="no"
+            tools:ignore="LabelFor" />
 
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_marginBottom="@dimen/_3sdp"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
 
-</FrameLayout>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_weight=".3"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText"
+            android:textColor="@color/black"
+            android:text="Effected Date"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textColor="@color/black"
+            android:layout_weight=".1"
+            android:text=" : "
+            android:gravity="center"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/effectedd_dateee"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_weight=".6"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:gravity="end"
+            android:textColor="@color/secondaryColor"
+            android:fontFamily="@font/poppins_semibold"
+            android:textSize="@dimen/_11sdp"
+            android:importantForAutofill="no"
+            tools:ignore="LabelFor" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_marginBottom="@dimen/_3sdp"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_weight=".3"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText"
+            android:text="Publish"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textColor="@color/black"
+            android:layout_weight=".1"
+            android:text=" : "
+            android:gravity="center"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/publish"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_weight=".6"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:gravity="end"
+            android:textColor="@color/secondaryColor"
+            android:fontFamily="@font/poppins_semibold"
+            android:textSize="@dimen/_11sdp"
+            android:importantForAutofill="no"
+            tools:ignore="LabelFor" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_marginBottom="@dimen/_3sdp"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_weight=".3"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText"
+            android:text="Appointment Receive Date"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textColor="@color/black"
+            android:layout_weight=".1"
+            android:text=" : "
+            android:gravity="center"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/appointment_receive"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_weight=".6"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:gravity="end"
+            android:textColor="@color/secondaryColor"
+            android:fontFamily="@font/poppins_semibold"
+            android:textSize="@dimen/_11sdp"
+            android:importantForAutofill="no"
+            tools:ignore="LabelFor" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_marginBottom="@dimen/_3sdp"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_weight=".3"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText"
+            android:text="Band"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textColor="@color/black"
+            android:layout_weight=".1"
+            android:text=" : "
+            android:gravity="center"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/band"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_weight=".6"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:gravity="end"
+            android:textColor="@color/secondaryColor"
+            android:fontFamily="@font/poppins_semibold"
+            android:textSize="@dimen/_11sdp"
+            android:importantForAutofill="no"
+            tools:ignore="LabelFor" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_marginBottom="@dimen/_3sdp"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_weight=".3"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText"
+            android:textColor="@color/black"
+            android:text="Job No"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textColor="@color/black"
+            android:layout_weight=".1"
+            android:text=" : "
+            android:gravity="center"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/job_nong"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_weight=".6"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:gravity="end"
+            android:textColor="@color/secondaryColor"
+            android:fontFamily="@font/poppins_semibold"
+            android:textSize="@dimen/_11sdp"
+            android:importantForAutofill="no"
+            tools:ignore="LabelFor" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_marginBottom="@dimen/_3sdp"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_weight=".3"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText"
+            android:text="Structure Designation"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textColor="@color/black"
+            android:layout_weight=".1"
+            android:text=" : "
+            android:gravity="center"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/structure_designation"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_weight=".6"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:gravity="end"
+            android:textColor="@color/secondaryColor"
+            android:fontFamily="@font/poppins_semibold"
+            android:textSize="@dimen/_11sdp"
+            android:importantForAutofill="no"
+            tools:ignore="LabelFor" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_marginBottom="@dimen/_3sdp"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_weight=".3"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText"
+            android:text="Functional Designation"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textColor="@color/black"
+            android:layout_weight=".1"
+            android:text=" : "
+            android:gravity="center"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/functional_designation"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_weight=".6"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:gravity="end"
+            android:textColor="@color/secondaryColor"
+            android:fontFamily="@font/poppins_semibold"
+            android:textSize="@dimen/_11sdp"
+            android:importantForAutofill="no"
+            tools:ignore="LabelFor" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_marginBottom="@dimen/_3sdp"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_weight=".3"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText"
+            android:text="Functional Designation Bangla"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textColor="@color/black"
+            android:layout_weight=".1"
+            android:text=" : "
+            android:gravity="center"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/functional_designation_bn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_weight=".6"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:gravity="end"
+            android:textColor="@color/secondaryColor"
+            android:fontFamily="@font/poppins_semibold"
+            android:textSize="@dimen/_11sdp"
+            android:importantForAutofill="no"
+            tools:ignore="LabelFor" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_marginBottom="@dimen/_3sdp"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_weight=".3"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText"
+            android:text="Job Objective"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textColor="@color/black"
+            android:layout_weight=".1"
+            android:text=" : "
+            android:gravity="center"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText" />
+        
+        <TextView
+            android:id="@+id/job_objective"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_weight=".6"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:gravity="end"
+            android:textColor="@color/secondaryColor"
+            android:fontFamily="@font/poppins_semibold"
+            android:textSize="@dimen/_11sdp"
+            android:importantForAutofill="no"
+            tools:ignore="LabelFor" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_marginBottom="@dimen/_3sdp"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_weight=".3"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText"
+            android:text="Division"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textColor="@color/black"
+            android:layout_weight=".1"
+            android:text=" : "
+            android:gravity="center"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText" />
+        
+        <TextView
+            android:id="@+id/division"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_weight=".6"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:gravity="end"
+            android:textColor="@color/secondaryColor"
+            android:fontFamily="@font/poppins_semibold"
+            android:textSize="@dimen/_11sdp"
+            android:importantForAutofill="no"
+            tools:ignore="LabelFor" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_marginBottom="@dimen/_3sdp"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_weight=".3"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText"
+            android:text="Department"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textColor="@color/black"
+            android:layout_weight=".1"
+            android:text=" : "
+            android:gravity="center"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText" />
+        
+        <TextView
+            android:id="@+id/department"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_weight=".6"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:gravity="end"
+            android:textColor="@color/secondaryColor"
+            android:fontFamily="@font/poppins_semibold"
+            android:textSize="@dimen/_11sdp"
+            android:importantForAutofill="no"
+            tools:ignore="LabelFor" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_marginBottom="@dimen/_3sdp"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_weight=".3"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText"
+            android:text="Section"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textColor="@color/black"
+            android:layout_weight=".1"
+            android:text=" : "
+            android:gravity="center"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText" />
+        
+        <TextView
+            android:id="@+id/section"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_weight=".6"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:gravity="end"
+            android:textColor="@color/secondaryColor"
+            android:fontFamily="@font/poppins_semibold"
+            android:textSize="@dimen/_11sdp"
+            android:importantForAutofill="no"
+            tools:ignore="LabelFor" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_marginBottom="@dimen/_3sdp"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_weight=".3"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText"
+            android:text="Additional Charge"/>
+        
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textColor="@color/black"
+            android:layout_weight=".1"
+            android:text=" : "
+            android:gravity="center"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText" />
+        
+        <TextView
+            android:id="@+id/additional_charge"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_weight=".6"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:gravity="end"
+            android:textColor="@color/secondaryColor"
+            android:fontFamily="@font/poppins_semibold"
+            android:textSize="@dimen/_11sdp"
+            android:importantForAutofill="no"
+            tools:ignore="LabelFor" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_marginBottom="@dimen/_3sdp"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_weight=".3"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText"
+            android:text="Primary Station"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textColor="@color/black"
+            android:layout_weight=".1"
+            android:text=" : "
+            android:gravity="center"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText" />
+        
+        <TextView
+            android:id="@+id/primary_station"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_weight=".6"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:gravity="end"
+            android:textColor="@color/secondaryColor"
+            android:fontFamily="@font/poppins_semibold"
+            android:textSize="@dimen/_11sdp"
+            android:importantForAutofill="no"
+            tools:ignore="LabelFor" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_marginBottom="@dimen/_3sdp"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_weight=".3"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText"
+            android:text="Secondary Station"/>
+        
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textColor="@color/black"
+            android:layout_weight=".1"
+            android:text=" : "
+            android:gravity="center"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText" />
+        
+        <TextView
+            android:id="@+id/secondary_station"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_weight=".6"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:gravity="end"
+            android:textColor="@color/secondaryColor"
+            android:fontFamily="@font/poppins_semibold"
+            android:textSize="@dimen/_11sdp"
+            android:importantForAutofill="no"
+            tools:ignore="LabelFor" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_marginBottom="@dimen/_3sdp"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_weight=".3"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText"
+            android:textColor="@color/black"
+            android:text="Project"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textColor="@color/black"
+            android:layout_weight=".1"
+            android:text=" : "
+            android:gravity="center"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText" />
+        
+        <TextView
+            android:id="@+id/project"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_weight=".6"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:gravity="end"
+            android:textColor="@color/secondaryColor"
+            android:fontFamily="@font/poppins_semibold"
+            android:textSize="@dimen/_11sdp"
+            android:importantForAutofill="no"
+            tools:ignore="LabelFor" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_marginBottom="@dimen/_3sdp"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_weight=".3"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText"
+            android:text="Work Time"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textColor="@color/black"
+            android:layout_weight=".1"
+            android:text=" : "
+            android:gravity="center"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText" />
+        
+        <TextView
+            android:id="@+id/work_time"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_weight=".6"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:gravity="end"
+            android:textColor="@color/secondaryColor"
+            android:fontFamily="@font/poppins_semibold"
+            android:textSize="@dimen/_11sdp"
+            android:importantForAutofill="no"
+            tools:ignore="LabelFor" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_marginBottom="@dimen/_3sdp"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_weight=".3"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText"
+            android:text="Early Arrival"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textColor="@color/black"
+            android:layout_weight=".1"
+            android:text=" : "
+            android:gravity="center"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText" />
+        
+        <TextView
+            android:id="@+id/early_arrival"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_weight=".6"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:gravity="end"
+            android:textColor="@color/secondaryColor"
+            android:fontFamily="@font/poppins_semibold"
+            android:textSize="@dimen/_11sdp"
+            android:importantForAutofill="no"
+            tools:ignore="LabelFor" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_marginBottom="@dimen/_3sdp"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_weight=".3"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText"
+            android:text="Extended Departure"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textColor="@color/black"
+            android:layout_weight=".1"
+            android:text=" : "
+            android:gravity="center"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText" />
+        
+        <TextView
+            android:id="@+id/extended_dep"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_weight=".6"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:gravity="end"
+            android:textColor="@color/secondaryColor"
+            android:fontFamily="@font/poppins_semibold"
+            android:textSize="@dimen/_11sdp"
+            android:importantForAutofill="no"
+            tools:ignore="LabelFor" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_marginBottom="@dimen/_3sdp"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_weight=".3"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText"
+            android:text="Temporary Charge"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textColor="@color/black"
+            android:layout_weight=".1"
+            android:text=" : "
+            android:gravity="center"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText" />
+        
+        <TextView
+            android:id="@+id/temp_charge"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_weight=".6"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:gravity="end"
+            android:textColor="@color/secondaryColor"
+            android:fontFamily="@font/poppins_semibold"
+            android:textSize="@dimen/_11sdp"
+            android:importantForAutofill="no"
+            tools:ignore="LabelFor" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_marginBottom="@dimen/_3sdp"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_weight=".3"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText"
+            android:text="E-Mail"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textColor="@color/black"
+            android:layout_weight=".1"
+            android:text=" : "
+            android:gravity="center"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText" />
+        
+        <TextView
+            android:id="@+id/emall_E_MM"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_weight=".6"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:gravity="end"
+            android:textColor="@color/secondaryColor"
+            android:fontFamily="@font/poppins_semibold"
+            android:textSize="@dimen/_11sdp"
+            android:importantForAutofill="no"
+            tools:ignore="LabelFor" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_marginBottom="@dimen/_3sdp"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_weight=".3"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText"
+            android:textColor="@color/black"
+            android:text="Software Access"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textColor="@color/black"
+            android:layout_weight=".1"
+            android:text=" : "
+            android:gravity="center"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText" />
+        
+        <TextView
+            android:id="@+id/software_access"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_weight=".6"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:gravity="end"
+            android:textColor="@color/secondaryColor"
+            android:fontFamily="@font/poppins_semibold"
+            android:textSize="@dimen/_11sdp"
+            android:importantForAutofill="no"
+            tools:ignore="LabelFor" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_marginBottom="@dimen/_3sdp"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_weight=".3"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText"
+            android:text="Remote Access"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textColor="@color/black"
+            android:layout_weight=".1"
+            android:text=" : "
+            android:gravity="center"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText" />
+        
+        <TextView
+            android:id="@+id/remote_access"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_weight=".6"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:gravity="end"
+            android:textColor="@color/secondaryColor"
+            android:fontFamily="@font/poppins_semibold"
+            android:textSize="@dimen/_11sdp"
+            android:importantForAutofill="no"
+            tools:ignore="LabelFor" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_marginBottom="@dimen/_3sdp"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_weight=".3"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText"
+            android:text="Computer"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textColor="@color/black"
+            android:layout_weight=".1"
+            android:text=" : "
+            android:gravity="center"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText" />
+        
+        <TextView
+            android:id="@+id/computer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_weight=".6"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:gravity="end"
+            android:textColor="@color/secondaryColor"
+            android:fontFamily="@font/poppins_semibold"
+            android:textSize="@dimen/_11sdp"
+            android:importantForAutofill="no"
+            tools:ignore="LabelFor" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_marginBottom="@dimen/_3sdp"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_weight=".3"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText"
+            android:text="Dormitory"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textColor="@color/black"
+            android:layout_weight=".1"
+            android:text=" : "
+            android:gravity="center"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText" />
+        
+        <TextView
+            android:id="@+id/dormitory"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_weight=".6"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:gravity="end"
+            android:textColor="@color/secondaryColor"
+            android:fontFamily="@font/poppins_semibold"
+            android:textSize="@dimen/_11sdp"
+            android:importantForAutofill="no"
+            tools:ignore="LabelFor" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:weightSum="1"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_marginBottom="@dimen/_3sdp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_weight=".3"
+            android:layout_gravity="center"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText"
+            android:text="Structural Position"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textColor="@color/black"
+            android:layout_weight=".1"
+            android:text=" : "
+            android:gravity="center"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText" />
+        
+        <TextView
+            android:id="@+id/spinner_struc_pos"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_weight=".6"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:gravity="end"
+            android:textColor="@color/secondaryColor"
+            android:fontFamily="@font/poppins_semibold"
+            android:textSize="@dimen/_11sdp"
+            android:importantForAutofill="no"
+            tools:ignore="LabelFor" />
+
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_marginBottom="@dimen/_3sdp"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_weight=".3"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText"
+            android:text="Uniform"/>
+        
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textColor="@color/black"
+            android:layout_weight=".1"
+            android:text=" : "
+            android:gravity="center"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText" />
+        
+        <TextView
+            android:id="@+id/uniform"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_weight=".6"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:gravity="end"
+            android:textColor="@color/secondaryColor"
+            android:fontFamily="@font/poppins_semibold"
+            android:textSize="@dimen/_11sdp"
+            android:importantForAutofill="no"
+            tools:ignore="LabelFor" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_marginBottom="@dimen/_3sdp"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_weight=".3"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText"
+            android:text="Apartment"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textColor="@color/black"
+            android:layout_weight=".1"
+            android:text=" : "
+            android:gravity="center"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText" />
+        
+        <TextView
+            android:id="@+id/apartment"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_weight=".6"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:gravity="end"
+            android:textColor="@color/secondaryColor"
+            android:fontFamily="@font/poppins_semibold"
+            android:textSize="@dimen/_11sdp"
+            android:importantForAutofill="no"
+            tools:ignore="LabelFor" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:weightSum="1"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_marginBottom="@dimen/_3sdp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_weight=".3"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText"
+            android:text="Late Acceptable? "/>
+        
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textColor="@color/black"
+            android:layout_weight=".1"
+            android:text=" : "
+            android:gravity="center"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/spinner_late_acceptable"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_weight=".6"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:gravity="end"
+            android:textColor="@color/secondaryColor"
+            android:fontFamily="@font/poppins_semibold"
+            android:textSize="@dimen/_11sdp"
+            android:importantForAutofill="no"
+            tools:ignore="LabelFor" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:weightSum="1"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_marginBottom="@dimen/_3sdp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_weight=".3"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText"
+            android:text="Attendance Bonus"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textColor="@color/black"
+            android:layout_weight=".1"
+            android:text=" : "
+            android:gravity="center"
+            android:textSize="@dimen/_10sdp"
+            android:fontFamily="@font/poppins"
+            tools:ignore="HardcodedText" />
+        
+        <TextView
+            android:id="@+id/spinner_att_bonus"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_weight=".6"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:gravity="end"
+            android:textColor="@color/secondaryColor"
+            android:fontFamily="@font/poppins_semibold"
+            android:textSize="@dimen/_11sdp"
+            android:importantForAutofill="no"
+            tools:ignore="LabelFor" />
+
+    </LinearLayout>
+
+</LinearLayout>

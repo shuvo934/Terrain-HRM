@@ -252,8 +252,12 @@ public class WidgetAttendanceWorker extends Worker {
                                 .equals("null") ? null : offLocInfo.getString("machine_code");
                         String can_give = offLocInfo.getString("can_give")
                                 .equals("null") ? "0" : offLocInfo.getString("can_give");
+                        String coa_name = offLocInfo.getString("coa_name")
+                                .equals("null") ? "" : offLocInfo.getString("coa_name");
+                        String coa_address = offLocInfo.getString("coa_address")
+                                .equals("null") ? "" : offLocInfo.getString("coa_address");
 
-                        areaLists.add(new AreaList(coa_latitude,coa_longitude,coa_coverage,co_id,code,can_give.equals("1")));
+                        areaLists.add(new AreaList(coa_latitude,coa_longitude,coa_coverage,co_id,code,can_give.equals("1"),coa_name,coa_address));
                     }
                 }
                 connected = true;

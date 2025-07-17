@@ -23,7 +23,7 @@ import ttit.com.shuvo.ikglhrm.EmployeeInfo.jobDesc.JobDescDetails;
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
 
-import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.user_login.Login.userInfoLists;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import com.android.volley.Request;
@@ -39,7 +39,6 @@ public class PerformanceApp extends AppCompatActivity {
 
 
     TextView no_gpi, no_kpi;
-    Button gpikpiFinish;
     RecyclerView gpiList;
     JobAdapter gpiAdapter;
     RecyclerView.LayoutManager layoutManager;
@@ -69,15 +68,11 @@ public class PerformanceApp extends AppCompatActivity {
         no_gpi = findViewById(R.id.no_gpi);
         no_kpi = findViewById(R.id.no_kpi);
 
-        gpikpiFinish = findViewById(R.id.gpi_kpi_finish);
-
         gpiDetails = new ArrayList<>();
         kpiDetails = new ArrayList<>();
 
         gpiList = findViewById(R.id.gpi_list);
         kpiList = findViewById(R.id.kpi_list);
-
-        getGpiKpiDetails();
 
         gpiList.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
@@ -85,18 +80,13 @@ public class PerformanceApp extends AppCompatActivity {
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(gpiList.getContext(),DividerItemDecoration.VERTICAL);
         gpiList.addItemDecoration(dividerItemDecoration);
 
-
-
         kpiList.setHasFixedSize(true);
         layoutManager1 = new LinearLayoutManager(this);
         kpiList.setLayoutManager(layoutManager1);
         DividerItemDecoration dividerItemDecoration1 = new DividerItemDecoration(kpiList.getContext(), DividerItemDecoration.VERTICAL);
         kpiList.addItemDecoration(dividerItemDecoration1);
 
-
-
-        gpikpiFinish.setOnClickListener(v -> finish());
-
+        getGpiKpiDetails();
     }
 
 //    public boolean isConnected() {

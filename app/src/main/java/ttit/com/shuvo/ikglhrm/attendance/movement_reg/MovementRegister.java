@@ -1,8 +1,7 @@
 package ttit.com.shuvo.ikglhrm.attendance.movement_reg;
 
-import static ttit.com.shuvo.ikglhrm.Login.SoftwareName;
-import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
-import static ttit.com.shuvo.ikglhrm.attendance.Attendance.live_tracking_flag;
+import static ttit.com.shuvo.ikglhrm.user_login.Login.SoftwareName;
+import static ttit.com.shuvo.ikglhrm.user_login.Login.userInfoLists;
 import static ttit.com.shuvo.ikglhrm.attendance.trackService.DistanceCalculator.CalculationByDistance;
 
 import androidx.activity.result.ActivityResult;
@@ -34,10 +33,8 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
@@ -79,20 +76,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
 
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
-import ttit.com.shuvo.ikglhrm.attendance.giveAttendance.AttendanceGive;
 import ttit.com.shuvo.ikglhrm.attendance.trackService.Service;
-import ttit.com.shuvo.ikglhrm.directoryBook.DirectoryAdapter;
-import ttit.com.shuvo.ikglhrm.directoryBook.DirectoryWithDivision;
 import ttit.com.shuvo.ikglhrm.directoryBook.TwoItemLists;
 
 public class MovementRegister extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {

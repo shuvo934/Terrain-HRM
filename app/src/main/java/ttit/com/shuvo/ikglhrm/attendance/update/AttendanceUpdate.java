@@ -49,7 +49,7 @@ import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.SelectAllList;
 import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.ShowAttendance;
 import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.ShowShift;
 
-import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.user_login.Login.userInfoLists;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import org.json.JSONArray;
@@ -321,9 +321,9 @@ public class AttendanceUpdate extends AppCompatActivity {
 
         emp_id = userInfoLists.get(0).getEmp_id();
 
-        emp_name = userInfoLists.get(0).getUser_fname() + " " + userInfoLists.get(0).getUser_lname();
+        emp_name = userInfoLists.get(0).getUser_name();
 
-        user_id = userInfoLists.get(0).getUserName();
+        user_id = userInfoLists.get(0).getEmp_code();
 
         userName.setText(emp_name);
         userID.setText(user_id);
@@ -343,7 +343,7 @@ public class AttendanceUpdate extends AppCompatActivity {
 
 
         // Location Update Spinner
-        locUpdateAdapter = new ArrayAdapter<String>(
+        locUpdateAdapter = new ArrayAdapter<>(
                 this,R.layout.item_country,onlyLocationLists){
             @Override
             public boolean isEnabled(int position){
@@ -403,7 +403,7 @@ public class AttendanceUpdate extends AppCompatActivity {
         });
 
         // Request Type Spinner
-        reqTypeAdapter = new ArrayAdapter<String>(
+        reqTypeAdapter = new ArrayAdapter<>(
                 this,R.layout.item_country,reqList){
             @Override
             public boolean isEnabled(int position){
@@ -462,7 +462,7 @@ public class AttendanceUpdate extends AppCompatActivity {
         });
 
         // Attendance Type Spinner
-        attenTypeAdapter = new ArrayAdapter<String>(
+        attenTypeAdapter = new ArrayAdapter<>(
                 this,R.layout.item_country,attenTypeList){
             @Override
             public boolean isEnabled(int position){
@@ -593,7 +593,7 @@ public class AttendanceUpdate extends AppCompatActivity {
 //        });
 
         // Reason Type Spinner
-        reasonAdapter = new ArrayAdapter<String>(
+        reasonAdapter = new ArrayAdapter<>(
                 this,R.layout.item_country,reasonName){
             @Override
             public boolean isEnabled(int position){

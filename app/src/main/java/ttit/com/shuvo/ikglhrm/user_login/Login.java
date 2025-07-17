@@ -1,4 +1,4 @@
-package ttit.com.shuvo.ikglhrm;
+package ttit.com.shuvo.ikglhrm.user_login;
 
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.CENTER_API_FRONT;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.COMPANY;
@@ -29,6 +29,7 @@ import static ttit.com.shuvo.ikglhrm.utilities.Constants.USER_NAME;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.WIDGET_EMP_ID;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.WIDGET_FILE;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.WIDGET_TRACKER_FLAG;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.checked;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.user_emp_code;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.user_password;
@@ -36,6 +37,9 @@ import static ttit.com.shuvo.ikglhrm.utilities.Constants.user_password;
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import android.content.Context;
 import android.content.Intent;
@@ -47,6 +51,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -72,12 +77,21 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import ttit.com.shuvo.ikglhrm.AllUrlList;
+import ttit.com.shuvo.ikglhrm.R;
+import ttit.com.shuvo.ikglhrm.UserDesignation;
+import ttit.com.shuvo.ikglhrm.UserInfoList;
+import ttit.com.shuvo.ikglhrm.WaitProgress;
 import ttit.com.shuvo.ikglhrm.dashboard.Dashboard;
+import ttit.com.shuvo.ikglhrm.user_login.dialoges.SelectCenterDialogue;
+import ttit.com.shuvo.ikglhrm.user_login.interfaces.CallBackListener;
+import ttit.com.shuvo.ikglhrm.user_login.model.CenterList;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Login extends AppCompatActivity {
+public class Login extends AppCompatActivity implements CallBackListener {
 
     TextInputEditText user;
     TextInputEditText pass;
@@ -121,7 +135,6 @@ public class Login extends AppCompatActivity {
     String getPassword = "";
     boolean getChecked = false;
 
-    String userId = "";
     public static ArrayList<UserInfoList> userInfoLists;
     public static ArrayList<UserDesignation> userDesignations;
 
@@ -129,10 +142,10 @@ public class Login extends AppCompatActivity {
     String emp_code = "";
     int live_loc_flag = 0;
     String tracker_flag = "";
-    String center_api = "";
 
     ArrayList<AllUrlList> urls;
     String text_url = "https://raw.githubusercontent.com/shuvo934/Story/refs/heads/master/hrmServers";
+    ArrayList<CenterList> centerLists;
 
     Logger logger = Logger.getLogger(Login.class.getName());
 
@@ -140,6 +153,31 @@ public class Login extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+//        Window window = getWindow();
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+//            WindowInsetsController insetsController = window.getInsetsController();
+//            if (insetsController != null) {
+//                insetsController.setSystemBarsAppearance(
+//                        0,
+//                        WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
+//                );
+//            }
+//        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            View decorView = window.getDecorView();
+//            int flags = decorView.getSystemUiVisibility();
+//            flags &= ~View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+//            decorView.setSystemUiVisibility(flags);
+//        }
+
+        View navScrim = findViewById(R.id.nav_bar_login);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.login_root), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
+            ViewGroup.LayoutParams lp = navScrim.getLayoutParams();
+            lp.height = systemBars.bottom;
+            navScrim.setLayoutParams(lp);
+            return insets;
+        });
 
         userInfoLists = new ArrayList<>();
         userDesignations = new ArrayList<>();
@@ -274,6 +312,8 @@ public class Login extends AppCompatActivity {
         });
 
         readApiText();
+
+//        String android_id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
@@ -834,9 +874,10 @@ public class Login extends AppCompatActivity {
         conn = false;
         connected = false;
         infoConnected = false;
-        userId = "";
+        emp_code = "";
         CompanyName = "";
         SoftwareName = "";
+        centerLists = new ArrayList<>();
         System.out.println("START");
 
         checkToGetLoginData();
@@ -856,16 +897,52 @@ public class Login extends AppCompatActivity {
         }
         if (allUpdated) {
             System.out.println("all clear");
-            goToDashboard();
+            updateLayout();
         }
     }
 
     public void getLoginData(String url, int index) {
-        String useridUrl = url + "login/getUserIdNew?user_name="+userName+"&pass="+password;
+        emp_code = "";
+        CompanyName = "";
+        emp_id = "";
+        String useridUrl = url + "login/getUserLoginData?p_mail="+userName+"&p_password="+password;
+        String companyUrl = url + "utility/getCompanyName";
 
         RequestQueue requestQueue = Volley.newRequestQueue(Login.this);
 
-        StringRequest getUserId = new StringRequest(Request.Method.GET, useridUrl, response -> {
+        StringRequest getCompanyRequest = new StringRequest(Request.Method.GET, companyUrl, response -> {
+            conn = true;
+            try {
+                connected = true;
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject companyInfo = array.getJSONObject(i);
+                        CompanyName = companyInfo.getString("cim_name").equals("null") ? "No Name Found" : companyInfo.getString("cim_name");
+                    }
+                }
+                centerLists.add(new CenterList(url,CompanyName,emp_code,emp_id));
+                urls.get(index).setChecked(true);
+                checkToGetLoginData();
+            }
+            catch (JSONException e) {
+                connected = false;
+                logger.log(Level.WARNING,e.getMessage(),e);
+                urls.get(index).setChecked(true);
+                checkToGetLoginData();
+            }
+        }, error -> {
+            conn = false;
+            connected = false;
+            logger.log(Level.WARNING,error.getMessage(),error);
+            urls.get(index).setChecked(true);
+            checkToGetLoginData();
+        });
+
+        StringRequest getUserMessage = new StringRequest(Request.Method.GET, useridUrl, response -> {
             conn = true;
             try {
                 connected = true;
@@ -876,17 +953,19 @@ public class Login extends AppCompatActivity {
                     JSONArray array = new JSONArray(items);
                     for (int i = 0; i < array.length(); i++) {
                         JSONObject userIdInfo = array.getJSONObject(i);
-                        userId = userIdInfo.getString("val").equals("null") ? "" : userIdInfo.getString("val");
+                       emp_code = userIdInfo.getString("emp_code")
+                                .equals("null") ? "" : userIdInfo.getString("emp_code");
+                       emp_id = userIdInfo.getString("emp_id")
+                                .equals("null") ? "" : userIdInfo.getString("emp_id");
                     }
                 }
 
-                if (userId.isEmpty() || userId.equals("-1")) {
+                if (emp_code.isEmpty()) {
                     urls.get(index).setChecked(true);
                     checkToGetLoginData();
                 }
                 else {
-                    center_api = url;
-                    getEmpCode(userId);
+                    requestQueue.add(getCompanyRequest);
                 }
             }
             catch (JSONException e) {
@@ -904,107 +983,183 @@ public class Login extends AppCompatActivity {
             checkToGetLoginData();
         });
 
-        requestQueue.add(getUserId);
+        requestQueue.add(getUserMessage);
     }
 
-    public void getEmpCode(String u_id) {
-        emp_code = "";
-        emp_id = "";
-        adminConnected = false;
-        noUser = false;
-        String empCodeUrl = center_api + "login/getEmpCodebyUser/"+u_id;
-        String userInfoUrl = center_api + "login/getUserInfo/"+u_id;
-
-        RequestQueue requestQueue = Volley.newRequestQueue(Login.this);
-
-        StringRequest userInfoRequest = new StringRequest(Request.Method.GET, userInfoUrl, response -> {
-            conn = true;
-            try {
-                connected = true;
-                JSONObject jsonObject = new JSONObject(response);
-                String items = jsonObject.getString("items");
-                String count = jsonObject.getString("count");
-                if (!count.equals("0")) {
-                    JSONArray array = new JSONArray(items);
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject userInfo = array.getJSONObject(i);
-//                        String usr_name = userInfo.getString("usr_name");
-                        String usr_fname = userInfo.getString("usr_fname");
-                        String usr_lname = userInfo.getString("usr_lname");
-                        String usr_email = userInfo.getString("usr_email");
-                        String usr_contact = userInfo.getString("usr_contact");
-                        String usr_emp_id = userInfo.getString("usr_emp_id");
-                        emp_id = usr_emp_id;
-                        userInfoLists.add(new UserInfoList(emp_code,usr_fname,usr_lname,usr_email,usr_contact,usr_emp_id));
-                    }
-                }
+    private void updateLayout() {
+        if (!centerLists.isEmpty()) {
+            if (centerLists.size() == 1) {
+                api_url_front = centerLists.get(0).getCenter_api();
+                emp_code = centerLists.get(0).getUser_emp_code();
+                emp_id = centerLists.get(0).getUser_emp_id();
+                CompanyName = centerLists.get(0).getCenter_name();
                 getUserDetails();
             }
-            catch (JSONException e) {
-                connected = false;
-                logger.log(Level.WARNING,e.getMessage(),e);
-                goToDashboard();
+            else {
+                waitProgress.dismiss();
+                SelectCenterDialogue selectCenterDialogue = new SelectCenterDialogue(centerLists,Login.this);
+                selectCenterDialogue.show(getSupportFragmentManager(),"CENTER");
             }
-        }, error -> {
-            conn = false;
-            connected = false;
-            logger.log(Level.WARNING,error.getMessage(),error);
-            goToDashboard();
-        });
+        }
+        else {
+            waitProgress.dismiss();
+            for (int i = 0; i < urls.size(); i++) {
+                urls.get(i).setChecked(false);
+            }
+            if (conn) {
+                if (connected) {
+                    login_failed.setVisibility(View.VISIBLE);
+                    MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(Login.this);
+                    alertDialogBuilder.setTitle("Warning!")
+                            .setIcon(R.drawable.hrm_new_round_icon_custom)
+                            .setMessage("No User Found")
+                            .setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
 
-        StringRequest empCodeRequest = new StringRequest(Request.Method.GET, empCodeUrl, response -> {
-            conn = true;
-            try {
-                connected = true;
-                JSONObject jsonObject = new JSONObject(response);
-                String items = jsonObject.getString("items");
-                String count = jsonObject.getString("count");
-                if (!count.equals("0")) {
-                    JSONArray array = new JSONArray(items);
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject empCodeInfo = array.getJSONObject(i);
-                        emp_code = empCodeInfo.getString("valu");
-                    }
-                    if (emp_code.equals("0000")) {
-                        adminConnected = true;
-                        goToDashboard();
-                    }
-                    else if (!emp_code.equals("NO USER FOUND")) {
-                        adminConnected = false;
-                        noUser = false;
-                        requestQueue.add(userInfoRequest);
-                    }
-                    else {
-                        adminConnected = false;
-                        noUser = true;
-                        goToDashboard();
-                    }
+                    AlertDialog alert = alertDialogBuilder.create();
+                    alert.show();
+                }
+                else {
+                    MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(Login.this);
+                    alertDialogBuilder.setTitle("Warning!")
+                            .setIcon(R.drawable.hrm_new_round_icon_custom)
+                            .setMessage("There is a network issue in the server. Please Try again.")
+                            .setPositiveButton("Retry", (dialog, which) -> {
+                                dynamicLoginCheck();
+                                dialog.dismiss();
+                            });
+
+                    AlertDialog alert = alertDialogBuilder.create();
+                    alert.show();
                 }
             }
-            catch (JSONException e) {
-                connected = false;
-                logger.log(Level.WARNING,e.getMessage(),e);
-                goToDashboard();
+            else {
+                MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(Login.this);
+                alertDialogBuilder.setTitle("Warning!")
+                        .setIcon(R.drawable.hrm_new_round_icon_custom)
+                        .setMessage("Server Problem or Internet Not Connected")
+                        .setPositiveButton("Retry", (dialog, which) -> {
+                            dynamicLoginCheck();
+                            dialog.dismiss();
+                        });
+
+                AlertDialog alert = alertDialogBuilder.create();
+                alert.show();
             }
-
-        },error -> {
-            conn = false;
-            connected = false;
-            logger.log(Level.WARNING,error.getMessage(),error);
-            goToDashboard();
-        });
-
-        requestQueue.add(empCodeRequest);
+        }
     }
 
+//    public void getLoginData(String url, int index) {
+//        String useridUrl = url + "login/getUserIdNew?user_name="+userName+"&pass="+password;
+//
+//        RequestQueue requestQueue = Volley.newRequestQueue(Login.this);
+//
+//        StringRequest getUserId = new StringRequest(Request.Method.GET, useridUrl, response -> {
+//            conn = true;
+//            try {
+//                connected = true;
+//                JSONObject jsonObject = new JSONObject(response);
+//                String items = jsonObject.getString("items");
+//                String count = jsonObject.getString("count");
+//                if (!count.equals("0")) {
+//                    JSONArray array = new JSONArray(items);
+//                    for (int i = 0; i < array.length(); i++) {
+//                        JSONObject userIdInfo = array.getJSONObject(i);
+//                        userId = userIdInfo.getString("val").equals("null") ? "" : userIdInfo.getString("val");
+//                    }
+//                }
+//
+//                if (userId.isEmpty() || userId.equals("-1")) {
+//                    urls.get(index).setChecked(true);
+//                    checkToGetLoginData();
+//                }
+//                else {
+//                    center_api = url;
+//                    getEmpCode(userId);
+//                }
+//            }
+//            catch (JSONException e) {
+//                connected = false;
+//                logger.log(Level.WARNING,e.getMessage(),e);
+//                urls.get(index).setChecked(true);
+//                checkToGetLoginData();
+//            }
+//
+//        }, error -> {
+//            conn = false;
+//            connected = false;
+//            logger.log(Level.WARNING,error.getMessage(),error);
+//            urls.get(index).setChecked(true);
+//            checkToGetLoginData();
+//        });
+//
+//        requestQueue.add(getUserId);
+//    }
+
+//    public void getEmpCode(String u_id) {
+//        emp_id = "";
+//        adminConnected = false;
+//        noUser = false;
+//        String empCodeUrl = center_api + "login/getEmpCodebyUser/"+u_id;
+//        String userInfoUrl = center_api + "login/getUserInfo/"+u_id;
+//
+//        RequestQueue requestQueue = Volley.newRequestQueue(Login.this);
+//
+//
+//
+//        StringRequest empCodeRequest = new StringRequest(Request.Method.GET, empCodeUrl, response -> {
+//            conn = true;
+//            try {
+//                connected = true;
+//                JSONObject jsonObject = new JSONObject(response);
+//                String items = jsonObject.getString("items");
+//                String count = jsonObject.getString("count");
+//                if (!count.equals("0")) {
+//                    JSONArray array = new JSONArray(items);
+//                    for (int i = 0; i < array.length(); i++) {
+//                        JSONObject empCodeInfo = array.getJSONObject(i);
+//                        emp_code = empCodeInfo.getString("valu");
+//                    }
+//                    if (emp_code.equals("0000")) {
+//                        adminConnected = true;
+//                        goToDashboard();
+//                    }
+//                    else if (!emp_code.equals("NO USER FOUND")) {
+//                        adminConnected = false;
+//                        noUser = false;
+//                        requestQueue.add(userInfoRequest);
+//                    }
+//                    else {
+//                        adminConnected = false;
+//                        noUser = true;
+//                        goToDashboard();
+//                    }
+//                }
+//            }
+//            catch (JSONException e) {
+//                connected = false;
+//                logger.log(Level.WARNING,e.getMessage(),e);
+//                goToDashboard();
+//            }
+//
+//        },error -> {
+//            conn = false;
+//            connected = false;
+//            logger.log(Level.WARNING,error.getMessage(),error);
+//            goToDashboard();
+//        });
+//
+//        requestQueue.add(empCodeRequest);
+//    }
+
     public void getUserDetails() {
-        String designationUrl = center_api + "login/getUserDesignations/"+emp_id;
-        String attendanceAppUrl = center_api + "approval_flag/getAttendanceApproval/"+emp_code;
-        String leaveAppUrl = center_api + "approval_flag/getLeaveApproval/"+emp_code;
-        String liveLocFlagUrl = center_api + "utility/getLiveLocationFlag/"+emp_code;
-        String updateEmpFlagUrl = center_api + "login/updateEmpFlag";
-        String companyUrl = center_api + "utility/getCompanyName";
-        String softwareUrl = center_api + "utility/getSoftwareName";
+        String userInfoUrl = api_url_front + "login/getUserInfoData?p_emp_code="+emp_code;
+        String designationUrl = api_url_front + "login/getUserDesignations/"+emp_id;
+        String attendanceAppUrl = api_url_front + "approval_flag/getAttendanceApproval/"+emp_code;
+        String leaveAppUrl = api_url_front + "approval_flag/getLeaveApproval/"+emp_code;
+//        String liveLocFlagUrl = api_url_front + "utility/getLiveLocationFlag/"+emp_code;
+        String updateEmpFlagUrl = api_url_front + "login/updateEmpFlag";
+//        String companyUrl = api_url_front + "utility/getCompanyName";
+        String softwareUrl = api_url_front + "utility/getSoftwareName";
 
         RequestQueue requestQueue = Volley.newRequestQueue(Login.this);
 
@@ -1053,7 +1208,8 @@ public class Login extends AppCompatActivity {
                     JSONArray array = new JSONArray(items);
                     for (int i = 0; i < array.length(); i++) {
                         JSONObject softwareInfo = array.getJSONObject(i);
-                        SoftwareName = softwareInfo.getString("lic_software_name");
+                        SoftwareName = softwareInfo.getString("lic_software_name")
+                                .equals("null") ? "No Name Found" : softwareInfo.getString("lic_software_name");
                     }
                 }
                 requestQueue.add(updateFlag);
@@ -1070,64 +1226,64 @@ public class Login extends AppCompatActivity {
             goToDashboard();
         });
 
-        StringRequest getCompanyRequest = new StringRequest(Request.Method.GET, companyUrl, response -> {
-            conn = true;
-            try {
-                connected = true;
-                JSONObject jsonObject = new JSONObject(response);
-                String items = jsonObject.getString("items");
-                String count = jsonObject.getString("count");
-                if (!count.equals("0")) {
-                    JSONArray array = new JSONArray(items);
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject companyInfo = array.getJSONObject(i);
-                        CompanyName = companyInfo.getString("cim_name");
-                    }
-                }
-                requestQueue.add(getSoftwareRequest);
-            }
-            catch (JSONException e) {
-                connected = false;
-                logger.log(Level.WARNING,e.getMessage(),e);
-                goToDashboard();
-            }
-        }, error -> {
-            conn = false;
-            connected = false;
-            logger.log(Level.WARNING,error.getMessage(),error);
-            goToDashboard();
-        });
+//        StringRequest getCompanyRequest = new StringRequest(Request.Method.GET, companyUrl, response -> {
+//            conn = true;
+//            try {
+//                connected = true;
+//                JSONObject jsonObject = new JSONObject(response);
+//                String items = jsonObject.getString("items");
+//                String count = jsonObject.getString("count");
+//                if (!count.equals("0")) {
+//                    JSONArray array = new JSONArray(items);
+//                    for (int i = 0; i < array.length(); i++) {
+//                        JSONObject companyInfo = array.getJSONObject(i);
+//                        CompanyName = companyInfo.getString("cim_name");
+//                    }
+//                }
+//                requestQueue.add(getSoftwareRequest);
+//            }
+//            catch (JSONException e) {
+//                connected = false;
+//                logger.log(Level.WARNING,e.getMessage(),e);
+//                goToDashboard();
+//            }
+//        }, error -> {
+//            conn = false;
+//            connected = false;
+//            logger.log(Level.WARNING,error.getMessage(),error);
+//            goToDashboard();
+//        });
 
-        StringRequest livLocFlReq = new StringRequest(Request.Method.GET, liveLocFlagUrl, response -> {
-            conn = true;
-            try {
-                connected = true;
-                JSONObject jsonObject = new JSONObject(response);
-                String items = jsonObject.getString("items");
-                String count = jsonObject.getString("count");
-                if (!count.equals("0")) {
-                    JSONArray array = new JSONArray(items);
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject livLocFlInfo = array.getJSONObject(i);
-                        live_loc_flag = Integer.parseInt(livLocFlInfo.getString("emp_live_loc_tracker_flag")
-                                .equals("null") ? "0" : livLocFlInfo.getString("emp_live_loc_tracker_flag"));
-                        tracker_flag = livLocFlInfo.getString("emp_timeline_tracker_flag")
-                                .equals("null") ? "" :livLocFlInfo.getString("emp_timeline_tracker_flag");
-                    }
-                }
-                requestQueue.add(getCompanyRequest);
-            }
-            catch (JSONException e) {
-                connected = false;
-                logger.log(Level.WARNING,e.getMessage(),e);
-                goToDashboard();
-            }
-        }, error -> {
-            conn = false;
-            connected = false;
-            logger.log(Level.WARNING,error.getMessage(),error);
-            goToDashboard();
-        });
+//        StringRequest livLocFlReq = new StringRequest(Request.Method.GET, liveLocFlagUrl, response -> {
+//            conn = true;
+//            try {
+//                connected = true;
+//                JSONObject jsonObject = new JSONObject(response);
+//                String items = jsonObject.getString("items");
+//                String count = jsonObject.getString("count");
+//                if (!count.equals("0")) {
+//                    JSONArray array = new JSONArray(items);
+//                    for (int i = 0; i < array.length(); i++) {
+//                        JSONObject livLocFlInfo = array.getJSONObject(i);
+//                        live_loc_flag = Integer.parseInt(livLocFlInfo.getString("emp_live_loc_tracker_flag")
+//                                .equals("null") ? "0" : livLocFlInfo.getString("emp_live_loc_tracker_flag"));
+//                        tracker_flag = livLocFlInfo.getString("emp_timeline_tracker_flag")
+//                                .equals("null") ? "" :livLocFlInfo.getString("emp_timeline_tracker_flag");
+//                    }
+//                }
+//                requestQueue.add(getCompanyRequest);
+//            }
+//            catch (JSONException e) {
+//                connected = false;
+//                logger.log(Level.WARNING,e.getMessage(),e);
+//                goToDashboard();
+//            }
+//        }, error -> {
+//            conn = false;
+//            connected = false;
+//            logger.log(Level.WARNING,error.getMessage(),error);
+//            goToDashboard();
+//        });
 
         StringRequest leaveAppReq = new StringRequest(Request.Method.GET, leaveAppUrl, response -> {
             conn = true;
@@ -1143,7 +1299,7 @@ public class Login extends AppCompatActivity {
                         isLeaveApproved = leaveAppInfo.getInt("l_val");
                     }
                 }
-                requestQueue.add(livLocFlReq);
+                requestQueue.add(getSoftwareRequest);
             }
             catch (JSONException e) {
                 connected = false;
@@ -1196,16 +1352,27 @@ public class Login extends AppCompatActivity {
                     JSONArray array = new JSONArray(items);
                     for (int i = 0; i < array.length(); i++) {
                         JSONObject desigInfo = array.getJSONObject(i);
-                        String jsm_code = desigInfo.getString("jsm_code");
-                        String temp_title = desigInfo.getString("temp_title");
-                        String jsd_id = desigInfo.getString("jsd_id");
-                        String jsd_objective = desigInfo.getString("jsd_objective");
-                        String dept_name = desigInfo.getString("dept_name");
-                        String divm_name = desigInfo.getString("divm_name");
-                        String desig_name = desigInfo.getString("desig_name");
-                        String desig_priority = desigInfo.getString("desig_priority");
-                        String joiningdate = desigInfo.getString("joiningdate");
-                        String divm_id = desigInfo.getString("divm_id");
+                        String jsm_code = desigInfo.getString("jsm_code")
+                                .equals("null") ? "" : desigInfo.getString("jsm_code");
+                        String temp_title = desigInfo.getString("temp_title")
+                                .equals("null") ? "" : desigInfo.getString("temp_title");
+                        String jsd_id = desigInfo.getString("jsd_id")
+                                .equals("null") ? "" : desigInfo.getString("jsd_id");
+                        String jsd_objective = desigInfo.getString("jsd_objective")
+                                .equals("null") ? "" : desigInfo.getString("jsd_objective");
+                        String dept_name = desigInfo.getString("dept_name")
+                                .equals("null") ? "" : desigInfo.getString("dept_name");
+                        String divm_name = desigInfo.getString("divm_name")
+                                .equals("null") ? "" : desigInfo.getString("divm_name");
+                        String desig_name = desigInfo.getString("desig_name")
+                                .equals("null") ? "" : desigInfo.getString("desig_name");
+                        String desig_priority = desigInfo.getString("desig_priority")
+                                .equals("null") ? "" : desigInfo.getString("desig_priority");
+                        String joiningdate = desigInfo.getString("joiningdate")
+                                .equals("null") ? "" : desigInfo.getString("joiningdate");
+                        String divm_id = desigInfo.getString("divm_id")
+                                .equals("null") ? "" : desigInfo.getString("divm_id");
+
                         userDesignations.add(new UserDesignation(jsm_code,temp_title,jsd_id,jsd_objective,dept_name,divm_name,desig_name,desig_priority,joiningdate,divm_id));
                     }
                 }
@@ -1223,7 +1390,49 @@ public class Login extends AppCompatActivity {
             goToDashboard();
         });
 
-        requestQueue.add(designationRequest);
+        StringRequest userInfoRequest = new StringRequest(Request.Method.GET, userInfoUrl, response -> {
+            conn = true;
+            try {
+                connected = true;
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject userInfo = array.getJSONObject(i);
+                        String usr_name = userInfo.getString("emp_name")
+                                .equals("null") ? "" : userInfo.getString("emp_name");
+                        String usr_n_name = userInfo.getString("emp_nick_name")
+                                .equals("null") ? "" : userInfo.getString("emp_nick_name");
+                        String usr_email = userInfo.getString("emp_email")
+                                .equals("null") ? "" : userInfo.getString("emp_email");
+                        String usr_contact = userInfo.getString("emp_contact")
+                                .equals("null") ? "" : userInfo.getString("emp_contact");
+                        String usr_emp_id = userInfo.getString("emp_id")
+                                .equals("null") ? "" : userInfo.getString("emp_id");
+                        live_loc_flag = Integer.parseInt(userInfo.getString("emp_live_loc_tracker_flag")
+                                .equals("null") ? "0" : userInfo.getString("emp_live_loc_tracker_flag"));
+                        tracker_flag = userInfo.getString("emp_timeline_tracker_flag")
+                                .equals("null") ? "" :userInfo.getString("emp_timeline_tracker_flag");
+                        userInfoLists.add(new UserInfoList(emp_code,usr_name,usr_n_name,usr_email,usr_contact,usr_emp_id));
+                    }
+                }
+                requestQueue.add(designationRequest);
+            }
+            catch (JSONException e) {
+                connected = false;
+                logger.log(Level.WARNING,e.getMessage(),e);
+                goToDashboard();
+            }
+        }, error -> {
+            conn = false;
+            connected = false;
+            logger.log(Level.WARNING,error.getMessage(),error);
+            goToDashboard();
+        });
+
+        requestQueue.add(userInfoRequest);
     }
 
     public void goToDashboard() {
@@ -1233,140 +1442,117 @@ public class Login extends AppCompatActivity {
         }
         if (conn) {
             if (connected) {
-                if (!userId.equals("-1") && !userId.isEmpty()) {
-                    if (adminConnected) {
-                        Toast.makeText(getApplicationContext(),"Admin can not access this app.",Toast.LENGTH_SHORT).show();
+                if (infoConnected) {
+                    if (checkBox.isChecked()) {
+                        System.out.println("Remembered");
+                        SharedPreferences.Editor editor = sharedpreferences.edit();
+                        editor.remove(user_emp_code);
+                        editor.remove(user_password);
+                        editor.remove(checked);
+                        editor.putString(user_emp_code,userName);
+                        editor.putString(user_password,password);
+                        editor.putBoolean(checked,true);
+                        editor.apply();
+                        editor.commit();
+                    } else {
+                        System.out.println("Not Remembered");
+                        SharedPreferences.Editor editor = sharedpreferences.edit();
+                        editor.remove(user_emp_code);
+                        editor.remove(user_password);
+                        editor.remove(checked);
+                        editor.apply();
+                        editor.commit();
                     }
-                    else {
-                        if (noUser) {
-                            Toast.makeText(getApplicationContext(),"No User Found.",Toast.LENGTH_SHORT).show();
-                        }
-                        else {
-                            if (infoConnected) {
-                                if (CompanyName == null) {
-                                    CompanyName = "No Name Found";
-                                }
 
-                                if (SoftwareName == null) {
-                                    SoftwareName = "Name of App";
-                                }
+                    SharedPreferences.Editor widgetEditor = attendanceWidgetPreferences.edit();
+                    widgetEditor.remove(WIDGET_EMP_ID);
+                    widgetEditor.remove(WIDGET_TRACKER_FLAG);
 
-                                if (checkBox.isChecked()) {
-                                    System.out.println("Remembered");
-                                    SharedPreferences.Editor editor = sharedpreferences.edit();
-                                    editor.remove(user_emp_code);
-                                    editor.remove(user_password);
-                                    editor.remove(checked);
-                                    editor.putString(user_emp_code,userName);
-                                    editor.putString(user_password,password);
-                                    editor.putBoolean(checked,true);
-                                    editor.apply();
-                                    editor.commit();
-                                } else {
-                                    System.out.println("Not Remembered");
-                                    SharedPreferences.Editor editor = sharedpreferences.edit();
-                                    editor.remove(user_emp_code);
-                                    editor.remove(user_password);
-                                    editor.remove(checked);
-                                    editor.apply();
-                                    editor.commit();
-                                }
+                    widgetEditor.putString(WIDGET_EMP_ID, userInfoLists.get(0).getEmp_id());
+                    widgetEditor.putString(WIDGET_TRACKER_FLAG, tracker_flag);
+                    widgetEditor.apply();
+                    widgetEditor.commit();
 
-                                SharedPreferences.Editor widgetEditor = attendanceWidgetPreferences.edit();
-                                widgetEditor.remove(WIDGET_EMP_ID);
-                                widgetEditor.remove(WIDGET_TRACKER_FLAG);
+                    SharedPreferences.Editor editor1 = sharedLogin.edit();
+                    editor1.remove(USER_NAME);
+                    editor1.remove(USER_F_NAME);
+                    editor1.remove(USER_L_NAME);
+                    editor1.remove(EMAIL);
+                    editor1.remove(CONTACT);
+                    editor1.remove(EMP_ID_LOGIN);
+                    editor1.remove(EMP_PASSWORD);
 
-                                widgetEditor.putString(WIDGET_EMP_ID, userInfoLists.get(0).getEmp_id());
-                                widgetEditor.putString(WIDGET_TRACKER_FLAG, tracker_flag);
-                                widgetEditor.apply();
-                                widgetEditor.commit();
+                    editor1.remove(JSM_CODE);
+                    editor1.remove(JSM_NAME);
+                    editor1.remove(JSD_ID_LOGIN);
+                    editor1.remove(JSD_OBJECTIVE);
+                    editor1.remove(DEPT_NAME);
+                    editor1.remove(DIV_NAME);
+                    editor1.remove(DESG_NAME);
+                    editor1.remove(DESG_PRIORITY);
+                    editor1.remove(JOINING_DATE);
+                    editor1.remove(DIV_ID);
+                    editor1.remove(LOGIN_TF);
 
-                                SharedPreferences.Editor editor1 = sharedLogin.edit();
-                                editor1.remove(USER_NAME);
-                                editor1.remove(USER_F_NAME);
-                                editor1.remove(USER_L_NAME);
-                                editor1.remove(EMAIL);
-                                editor1.remove(CONTACT);
-                                editor1.remove(EMP_ID_LOGIN);
-                                editor1.remove(EMP_PASSWORD);
-
-                                editor1.remove(JSM_CODE);
-                                editor1.remove(JSM_NAME);
-                                editor1.remove(JSD_ID_LOGIN);
-                                editor1.remove(JSD_OBJECTIVE);
-                                editor1.remove(DEPT_NAME);
-                                editor1.remove(DIV_NAME);
-                                editor1.remove(DESG_NAME);
-                                editor1.remove(DESG_PRIORITY);
-                                editor1.remove(JOINING_DATE);
-                                editor1.remove(DIV_ID);
-                                editor1.remove(LOGIN_TF);
-
-                                editor1.remove(IS_ATT_APPROVED);
-                                editor1.remove(IS_LEAVE_APPROVED);
-                                editor1.remove(COMPANY);
-                                editor1.remove(SOFTWARE);
-                                editor1.remove(LIVE_FLAG);
+                    editor1.remove(IS_ATT_APPROVED);
+                    editor1.remove(IS_LEAVE_APPROVED);
+                    editor1.remove(COMPANY);
+                    editor1.remove(SOFTWARE);
+                    editor1.remove(LIVE_FLAG);
 //                                editor1.remove(DATABASE_NAME);
 
-                                editor1.putString(USER_NAME, userInfoLists.get(0).getUserName());
-                                editor1.putString(USER_F_NAME, userInfoLists.get(0).getUser_fname());
-                                editor1.putString(USER_L_NAME, userInfoLists.get(0).getUser_lname());
-                                editor1.putString(EMAIL, userInfoLists.get(0).getEmail());
-                                editor1.putString(CONTACT, userInfoLists.get(0).getContact());
-                                editor1.putString(EMP_ID_LOGIN, userInfoLists.get(0).getEmp_id());
-                                editor1.putString(EMP_PASSWORD,password);
+                    editor1.putString(USER_NAME, userInfoLists.get(0).getEmp_code());
+                    editor1.putString(USER_F_NAME, userInfoLists.get(0).getUser_name());
+                    editor1.putString(USER_L_NAME, userInfoLists.get(0).getUser_nick_name());
+                    editor1.putString(EMAIL, userInfoLists.get(0).getEmail());
+                    editor1.putString(CONTACT, userInfoLists.get(0).getContact());
+                    editor1.putString(EMP_ID_LOGIN, userInfoLists.get(0).getEmp_id());
+                    editor1.putString(EMP_PASSWORD,password);
 
-                                if (!userDesignations.isEmpty()) {
-                                    editor1.putString(JSM_CODE, userDesignations.get(0).getJsm_code());
-                                    editor1.putString(JSM_NAME, userDesignations.get(0).getJsm_name());
-                                    editor1.putString(JSD_ID_LOGIN, userDesignations.get(0).getJsd_id());
-                                    editor1.putString(JSD_OBJECTIVE, userDesignations.get(0).getJsd_objective());
-                                    editor1.putString(DEPT_NAME, userDesignations.get(0).getDept_name());
-                                    editor1.putString(DIV_NAME, userDesignations.get(0).getDiv_name());
-                                    editor1.putString(DESG_NAME, userDesignations.get(0).getDesg_name());
-                                    editor1.putString(DESG_PRIORITY, userDesignations.get(0).getDesg_priority());
-                                    editor1.putString(JOINING_DATE, userDesignations.get(0).getJoining_date());
-                                    editor1.putString(DIV_ID, userDesignations.get(0).getDiv_id());
-                                } else {
-                                    editor1.putString(JSM_CODE, null);
-                                    editor1.putString(JSM_NAME, null);
-                                    editor1.putString(JSD_ID_LOGIN, null);
-                                    editor1.putString(JSD_OBJECTIVE, null);
-                                    editor1.putString(DEPT_NAME, null);
-                                    editor1.putString(DIV_NAME, null);
-                                    editor1.putString(DESG_NAME, null);
-                                    editor1.putString(DESG_PRIORITY, null);
-                                    editor1.putString(JOINING_DATE, null);
-                                    editor1.putString(DIV_ID, null);
-                                }
-
-                                editor1.putBoolean(LOGIN_TF,true);
-
-                                editor1.putInt(IS_ATT_APPROVED, isApproved);
-                                editor1.putInt(IS_LEAVE_APPROVED, isLeaveApproved);
-                                editor1.putString(COMPANY, CompanyName);
-                                editor1.putString(SOFTWARE,SoftwareName);
-                                editor1.putInt(LIVE_FLAG,live_loc_flag);
-                                editor1.putString(CENTER_API_FRONT, center_api);
-//                                editor1.putString(DATABASE_NAME,DEFAULT_USERNAME);
-                                editor1.apply();
-                                editor1.commit();
-
-
-                                Toast.makeText(getApplicationContext(), "Login Successful", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(getApplicationContext(), Dashboard.class);
-                                startActivity(intent);
-                                finish();
-                            }
-                            else {
-                                dynamicLoginCheck();
-                            }
-                        }
+                    if (!userDesignations.isEmpty()) {
+                        editor1.putString(JSM_CODE, userDesignations.get(0).getJsm_code());
+                        editor1.putString(JSM_NAME, userDesignations.get(0).getJsm_name());
+                        editor1.putString(JSD_ID_LOGIN, userDesignations.get(0).getJsd_id());
+                        editor1.putString(JSD_OBJECTIVE, userDesignations.get(0).getJsd_objective());
+                        editor1.putString(DEPT_NAME, userDesignations.get(0).getDept_name());
+                        editor1.putString(DIV_NAME, userDesignations.get(0).getDiv_name());
+                        editor1.putString(DESG_NAME, userDesignations.get(0).getDesg_name());
+                        editor1.putString(DESG_PRIORITY, userDesignations.get(0).getDesg_priority());
+                        editor1.putString(JOINING_DATE, userDesignations.get(0).getJoining_date());
+                        editor1.putString(DIV_ID, userDesignations.get(0).getDiv_id());
+                    } else {
+                        editor1.putString(JSM_CODE, null);
+                        editor1.putString(JSM_NAME, null);
+                        editor1.putString(JSD_ID_LOGIN, null);
+                        editor1.putString(JSD_OBJECTIVE, null);
+                        editor1.putString(DEPT_NAME, null);
+                        editor1.putString(DIV_NAME, null);
+                        editor1.putString(DESG_NAME, null);
+                        editor1.putString(DESG_PRIORITY, null);
+                        editor1.putString(JOINING_DATE, null);
+                        editor1.putString(DIV_ID, null);
                     }
+
+                    editor1.putBoolean(LOGIN_TF,true);
+
+                    editor1.putInt(IS_ATT_APPROVED, isApproved);
+                    editor1.putInt(IS_LEAVE_APPROVED, isLeaveApproved);
+                    editor1.putString(COMPANY, CompanyName);
+                    editor1.putString(SOFTWARE,SoftwareName);
+                    editor1.putInt(LIVE_FLAG,live_loc_flag);
+                    editor1.putString(CENTER_API_FRONT, api_url_front);
+//                                editor1.putString(DATABASE_NAME,DEFAULT_USERNAME);
+                    editor1.apply();
+                    editor1.commit();
+
+
+                    Toast.makeText(getApplicationContext(), "Login Successful", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getApplicationContext(), Dashboard.class);
+                    startActivity(intent);
+                    finish();
                 }
                 else {
-                    login_failed.setVisibility(View.VISIBLE);
+                    dynamicLoginCheck();
                 }
                 conn = false;
                 connected = false;
@@ -1375,33 +1561,41 @@ public class Login extends AppCompatActivity {
                 noUser = false;
             }
             else {
-                AlertDialog dialog = new AlertDialog.Builder(Login.this)
+                MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(Login.this);
+                alertDialogBuilder.setTitle("Warning!")
+                        .setIcon(R.drawable.hrm_new_round_icon_custom)
                         .setMessage("There is a network issue in the server. Please Try later.")
-                        .setPositiveButton("Retry", null)
-                        .show();
-
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(v -> {
-
-                    dynamicLoginCheck();
-                    dialog.dismiss();
-                });
+                        .setPositiveButton("Retry", (dialog, which) -> {
+                            dynamicLoginCheck();
+                            dialog.dismiss();
+                        });
+                AlertDialog alert = alertDialogBuilder.create();
+                alert.show();
             }
         }
         else {
-            Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
-            AlertDialog dialog = new AlertDialog.Builder(Login.this)
+            MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(Login.this);
+            alertDialogBuilder.setTitle("Warning!")
+                    .setIcon(R.drawable.hrm_new_round_icon_custom)
                     .setMessage("Please Check Your Internet Connection")
-                    .setPositiveButton("Retry", null)
-                    .show();
-
-            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(v -> {
-
-                dynamicLoginCheck();
-                dialog.dismiss();
-            });
+                    .setPositiveButton("Retry", (dialog, which) -> {
+                        dynamicLoginCheck();
+                        dialog.dismiss();
+                    });
+            AlertDialog alert = alertDialogBuilder.create();
+            alert.show();
         }
+    }
+
+    @Override
+    public void onDismiss(int position) {
+        api_url_front = centerLists.get(position).getCenter_api();
+        emp_code = centerLists.get(position).getUser_emp_code();
+        emp_id = centerLists.get(position).getUser_emp_id();
+        CompanyName = centerLists.get(position).getCenter_name();
+        waitProgress.show(getSupportFragmentManager(), "WaitBar");
+        waitProgress.setCancelable(false);
+        getUserDetails();
     }
 
 //    public void GettingData () {

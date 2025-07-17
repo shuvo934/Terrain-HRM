@@ -3,11 +3,11 @@
     <item
         android:id="@+id/my_info_menu"
         android:title="Profile"
-        android:icon="@drawable/user_info_noc"/>
+        android:icon="@drawable/profile_user"/>
     <item
         android:id="@+id/attendance_menu"
         android:title="Attendance"
-        android:icon="@drawable/attendance_noc"/>
+        android:icon="@drawable/biometric_identification"/>
     <item
         android:id="@+id/fab"
         android:title=""
@@ -15,9 +15,9 @@
     <item
         android:id="@+id/leave_menu"
         android:title="Leave"
-        android:icon="@drawable/leave_noc"/>
+        android:icon="@drawable/leave_nw"/>
     <item
         android:id="@+id/pay_roll_menu"
         android:title="PayRoll"
-        android:icon="@drawable/payroll_noc"/>
+        android:icon="@drawable/money"/>
 </menu>

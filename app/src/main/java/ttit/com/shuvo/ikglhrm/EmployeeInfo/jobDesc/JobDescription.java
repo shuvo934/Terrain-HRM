@@ -25,7 +25,7 @@ import java.util.logging.Logger;
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
 
-import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.user_login.Login.userInfoLists;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import com.android.volley.Request;
@@ -36,7 +36,6 @@ import com.android.volley.toolbox.Volley;
 public class JobDescription extends AppCompatActivity {
 
     TextView no_job;
-    Button jobFinish;
     RecyclerView job_list;
     JobAdapter jobAdapter;
     RecyclerView.LayoutManager layoutManager;
@@ -46,7 +45,6 @@ public class JobDescription extends AppCompatActivity {
     WaitProgress waitProgress = new WaitProgress();
     private Boolean conn = false;
     private Boolean connected = false;
-
 
     String emp_id = "";
 
@@ -60,7 +58,6 @@ public class JobDescription extends AppCompatActivity {
         emp_id = userInfoLists.get(0).getEmp_id();
         no_job = findViewById(R.id.no_job);
         job_list = findViewById(R.id.job_desc_list);
-        jobFinish = findViewById(R.id.job_finish);
 
         jobDescDetails = new ArrayList<>();
 
@@ -71,11 +68,6 @@ public class JobDescription extends AppCompatActivity {
         job_list.setLayoutManager(layoutManager);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(job_list.getContext(),DividerItemDecoration.VERTICAL);
         job_list.addItemDecoration(dividerItemDecoration);
-
-
-
-        jobFinish.setOnClickListener(v -> finish());
-
     }
 
     public void getJobDescription() {

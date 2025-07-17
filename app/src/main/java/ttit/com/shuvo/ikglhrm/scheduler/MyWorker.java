@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.os.Environment;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -25,6 +24,8 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import ttit.com.shuvo.ikglhrm.R;
 
@@ -32,7 +33,6 @@ import static android.content.Context.MODE_PRIVATE;
 import static ttit.com.shuvo.ikglhrm.scheduler.Uploader.channelId;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
@@ -72,6 +72,8 @@ public class MyWorker extends Worker {
 
 
     public static final String TASK_DESC_EMP_ID = "task_desc";
+
+    Logger logger = Logger.getLogger(MyWorker.class.getName());
 
     public MyWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
 
@@ -151,7 +153,7 @@ public class MyWorker extends Worker {
 //            int     exitValue = ipProcess.waitFor();
 //            return (exitValue == 0);
 //        }
-//        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
+//        catch (IOException | InterruptedException e)          { logger.log(Level.WARNING, e.getMessage(), e); }
 //
 //        return false;
 //    }
@@ -472,7 +474,7 @@ public class MyWorker extends Worker {
 //
 //            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
 //            Log.i("ERRRRR", e.getLocalizedMessage());
-//            e.printStackTrace();
+//            logger.log(Level.WARNING, e.getMessage(), e);
 //        }
 //    }
 
@@ -517,13 +519,13 @@ public class MyWorker extends Worker {
                 }
             } catch (JSONException e) {
                 connected = false;
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 notifyUser();
             }
         }, error -> {
             conn = false;
             connected = false;
-            error.printStackTrace();
+            logger.log(Level.WARNING,error.getMessage(),error);
             notifyUser();
         });
 
@@ -559,13 +561,13 @@ public class MyWorker extends Worker {
 
             } catch (JSONException e) {
                 connected = false;
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 notifyUser();
             }
         }, error -> {
             conn = false;
             connected = false;
-            error.printStackTrace();
+            logger.log(Level.WARNING,error.getMessage(),error);
             notifyUser();
         });
 
@@ -608,7 +610,7 @@ public class MyWorker extends Worker {
                     try {
                         bytes = method(blobFile);
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        logger.log(Level.WARNING, e.getMessage(), e);
                     }
                     updatedFiles.add(stringFIle);
                 }
@@ -645,25 +647,25 @@ public class MyWorker extends Worker {
                     notifyUser();
                 }
             } catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 System.out.println("EKHANE ASHE 0");
                 connected = false;
                 notifyUser();
             }
         }, error -> {
-            error.printStackTrace();
+            logger.log(Level.WARNING,error.getMessage(),error);
             System.out.println("EKHANE ASHE -1");
             conn = false;
             connected = false;
             notifyUser();
         }) {
             @Override
-            public byte[] getBody() throws AuthFailureError {
+            public byte[] getBody() {
                 return bytes;
             }
 
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
+            public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
                 if (blobFile.exists()) {
                     headers.put("P_ELR_ACTIVE", "1");

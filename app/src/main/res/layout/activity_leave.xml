@@ -1,500 +1,513 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_color"
-    android:orientation="vertical"
+    android:background="@color/primaryColor"
+    android:fitsSystemWindows="true"
     tools:context=".leaveAll.Leave">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/background_color">
-
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:cardElevation="0dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginBottom="@dimen/_5sdp"
-            app:shapeAppearanceOverlay="@style/BottomRoundedCard"
-            app:cardBackgroundColor="@color/primaryVariant"/>
-
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardElevation="@dimen/_2sdp"
-            android:layout_marginBottom="@dimen/_10sdp"
-            android:gravity="center_vertical"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:shapeAppearanceOverlay="@style/BottomRoundedCard"
-            app:cardBackgroundColor="@color/primaryColor">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="@dimen/_15sdp"
-                android:paddingBottom="@dimen/_15sdp"
-                android:paddingStart="@dimen/_15sdp"
-                android:paddingEnd="@dimen/_15sdp">
-
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:layout_width="@dimen/_30sdp"
-                    android:layout_height="@dimen/_30sdp"
-                    android:id="@+id/terrain_logo2"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/hrm_new_round_icon_custom"
-                    tools:ignore="ContentDescription"
-                    app:civ_border_width="@dimen/_1sdp"
-                    app:civ_border_color="@color/white"/>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_12sdp"
-                    android:layout_marginEnd="@dimen/_8sdp"
-                    android:layout_toEndOf="@+id/terrain_logo2"
-                    android:layout_alignParentEnd="true"
-                    android:textColor="@color/white"
-                    android:layout_centerVertical="true"
-                    android:paddingTop="@dimen/_2sdp"
-                    android:paddingBottom="0dp"
-                    android:textSize="@dimen/_15sdp"
-                    android:text="Leave"
-                    android:fontFamily="@font/poppins_bold"
-                    tools:ignore="HardcodedText" />
-
-            </RelativeLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/_4sdp"
-        android:layout_marginBottom="@dimen/_8sdp">
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
+        android:background="@color/background_color"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:background="@color/background_color">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:cardElevation="0dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginBottom="@dimen/_5sdp"
+                app:shapeAppearanceOverlay="@style/BottomRoundedCard"
+                app:cardBackgroundColor="@color/primaryVariant"/>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardElevation="@dimen/_2sdp"
+                android:layout_marginBottom="@dimen/_10sdp"
+                android:gravity="center_vertical"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:shapeAppearanceOverlay="@style/BottomRoundedCard"
+                app:cardBackgroundColor="@color/primaryColor">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/_15sdp"
+                    android:paddingBottom="@dimen/_15sdp"
+                    android:paddingStart="@dimen/_15sdp"
+                    android:paddingEnd="@dimen/_15sdp">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:layout_width="@dimen/_30sdp"
+                        android:layout_height="@dimen/_30sdp"
+                        android:id="@+id/terrain_logo2"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/hrm_new_round_icon_custom"
+                        tools:ignore="ContentDescription"
+                        app:civ_border_width="@dimen/_1sdp"
+                        app:civ_border_color="@color/white"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_12sdp"
+                        android:layout_marginEnd="@dimen/_8sdp"
+                        android:layout_toEndOf="@+id/terrain_logo2"
+                        android:layout_alignParentEnd="true"
+                        android:textColor="@color/white"
+                        android:layout_centerVertical="true"
+                        android:paddingTop="@dimen/_2sdp"
+                        android:paddingBottom="0dp"
+                        android:textSize="@dimen/_15sdp"
+                        android:text="Leave"
+                        android:fontFamily="@font/poppins_bold"
+                        tools:ignore="HardcodedText" />
+
+                </RelativeLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:layout_marginBottom="@dimen/_8sdp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="3">
+                android:orientation="vertical">
 
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/_80sdp"
-                    android:layout_weight="1"
-                    app:cardBackgroundColor="@color/white"
-                    app:cardElevation="@dimen/_2sdp"
-                    app:cardCornerRadius="@dimen/_10sdp"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="3">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/_80sdp"
+                        android:layout_weight="1"
+                        app:cardBackgroundColor="@color/white"
+                        app:cardElevation="@dimen/_2sdp"
+                        app:cardCornerRadius="@dimen/_10sdp"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:layout_marginStart="@dimen/_8sdp"
+                        android:layout_marginBottom="@dimen/_8sdp"
+                        android:layout_marginEnd="@dimen/_4sdp">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <TextView
+                                android:id="@+id/total_text_leave"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:layout_alignParentTop="true"
+                                android:fontFamily="@font/poppins_bold"
+                                android:text="TOTAL"
+                                android:textColor="@color/black"
+                                android:gravity="center"
+                                android:textSize="@dimen/_9sdp"
+                                android:layout_marginTop="@dimen/_15sdp"
+                                android:layout_marginStart="@dimen/_4sdp"
+                                android:layout_marginEnd="@dimen/_4sdp"
+                                android:layout_marginBottom="@dimen/_4sdp"
+                                android:textStyle="bold"
+                                tools:ignore="HardcodedText" />
+
+                            <TextView
+                                android:id="@+id/total_leave_count_leave"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_centerHorizontal="true"
+                                android:layout_below="@+id/total_text_leave"
+                                android:layout_alignParentBottom="true"
+                                android:fontFamily="@font/poppins_bold"
+                                android:text="0"
+                                android:textColor="@color/dark_gray"
+                                android:gravity="center"
+                                android:textSize="@dimen/_13sdp"
+                                android:layout_marginStart="@dimen/_4sdp"
+                                android:layout_marginEnd="@dimen/_4sdp"
+                                android:layout_marginBottom="@dimen/_10sdp"
+                                android:textStyle="bold"
+                                tools:ignore="HardcodedText" />
+
+                        </RelativeLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/_80sdp"
+                        android:layout_weight="1"
+                        app:cardBackgroundColor="@color/white"
+                        app:cardElevation="@dimen/_2sdp"
+                        app:cardCornerRadius="@dimen/_10sdp"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:layout_marginStart="@dimen/_4sdp"
+                        android:layout_marginBottom="@dimen/_8sdp"
+                        android:layout_marginEnd="@dimen/_4sdp">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <TextView
+                                android:id="@+id/used_text_leave"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:layout_alignParentTop="true"
+                                android:fontFamily="@font/poppins_bold"
+                                android:text="USED"
+                                android:textColor="@color/black"
+                                android:gravity="center"
+                                android:textSize="@dimen/_9sdp"
+                                android:layout_marginTop="@dimen/_15sdp"
+                                android:layout_marginStart="@dimen/_4sdp"
+                                android:layout_marginEnd="@dimen/_4sdp"
+                                android:layout_marginBottom="@dimen/_4sdp"
+                                android:textStyle="bold"
+                                tools:ignore="HardcodedText" />
+
+                            <TextView
+                                android:id="@+id/used_leave_leave"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_centerHorizontal="true"
+                                android:layout_below="@+id/used_text_leave"
+                                android:layout_alignParentBottom="true"
+                                android:fontFamily="@font/poppins_bold"
+                                android:text="0"
+                                android:textColor="@color/secondaryColor"
+                                android:gravity="center"
+                                android:textSize="@dimen/_13sdp"
+                                android:layout_marginStart="@dimen/_4sdp"
+                                android:layout_marginEnd="@dimen/_4sdp"
+                                android:layout_marginBottom="@dimen/_10sdp"
+                                android:textStyle="bold"
+                                tools:ignore="HardcodedText" />
+
+                        </RelativeLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/_80sdp"
+                        android:layout_weight="1"
+                        app:cardBackgroundColor="@color/white"
+                        app:cardElevation="@dimen/_2sdp"
+                        app:cardCornerRadius="@dimen/_10sdp"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:layout_marginStart="@dimen/_4sdp"
+                        android:layout_marginBottom="@dimen/_8sdp"
+                        android:layout_marginEnd="@dimen/_8sdp">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <TextView
+                                android:id="@+id/remaining_text_leave"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:layout_alignParentTop="true"
+                                android:fontFamily="@font/poppins_bold"
+                                android:text="REMAINING"
+                                android:textColor="@color/black"
+                                android:gravity="center"
+                                android:textSize="@dimen/_9sdp"
+                                android:layout_marginTop="@dimen/_15sdp"
+                                android:layout_marginStart="@dimen/_4sdp"
+                                android:layout_marginEnd="@dimen/_4sdp"
+                                android:layout_marginBottom="@dimen/_4sdp"
+                                android:textStyle="bold"
+                                tools:ignore="HardcodedText" />
+
+                            <TextView
+                                android:id="@+id/remaining_leave_leave"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_centerHorizontal="true"
+                                android:layout_below="@+id/remaining_text_leave"
+                                android:layout_alignParentBottom="true"
+                                android:fontFamily="@font/poppins_bold"
+                                android:text="0"
+                                android:textColor="@color/green_sea"
+                                android:gravity="center"
+                                android:textSize="@dimen/_13sdp"
+                                android:layout_marginStart="@dimen/_4sdp"
+                                android:layout_marginEnd="@dimen/_4sdp"
+                                android:layout_marginBottom="@dimen/_10sdp"
+                                android:textStyle="bold"
+                                tools:ignore="HardcodedText" />
+
+                        </RelativeLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                </LinearLayout>
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_220sdp"
+                    android:padding="@dimen/_8sdp"
+                    app:cardCornerRadius="@dimen/_8sdp"
                     android:layout_marginTop="@dimen/_4sdp"
                     android:layout_marginStart="@dimen/_8sdp"
                     android:layout_marginBottom="@dimen/_8sdp"
-                    android:layout_marginEnd="@dimen/_4sdp">
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    app:cardElevation="@dimen/_3sdp"
+                    android:background="@color/white">
 
-                    <RelativeLayout
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
 
-                        <TextView
-                            android:id="@+id/total_text_leave"
+                        <RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_centerHorizontal="true"
-                            android:layout_alignParentTop="true"
-                            android:fontFamily="@font/poppins_bold"
-                            android:text="TOTAL"
-                            android:textColor="@color/black"
-                            android:gravity="center"
-                            android:textSize="@dimen/_9sdp"
-                            android:layout_marginTop="@dimen/_15sdp"
+                            android:layout_marginTop="@dimen/_4sdp"
                             android:layout_marginStart="@dimen/_4sdp"
                             android:layout_marginEnd="@dimen/_4sdp"
-                            android:layout_marginBottom="@dimen/_4sdp"
-                            android:textStyle="bold"
-                            tools:ignore="HardcodedText" />
+                            android:gravity="end">
 
-                        <TextView
-                            android:id="@+id/total_leave_count_leave"
+                            <TextView
+                                android:id="@+id/refresh_graph_leave"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/_4sdp"
+                                android:text=""
+                                android:fontFamily="@font/be_vietnam_pro"
+                                android:textSize="@dimen/_10sdp"
+                                android:textStyle="bold"
+                                android:gravity="end"
+                                android:layout_marginStart="@dimen/_4sdp"
+                                android:textColor="@color/secondaryColor"
+                                android:layout_centerVertical="true"
+                                android:layout_toStartOf="@+id/arrow_of_month_leave"
+                                android:layout_gravity="center"/>
+
+                            <ImageView
+                                android:id="@+id/arrow_of_month_leave"
+                                android:layout_width="@dimen/_17sdp"
+                                android:layout_height="@dimen/_17sdp"
+                                android:src="@drawable/arrow_drop_down_24"
+                                app:tint="@color/secondaryColor"
+                                android:layout_marginEnd="@dimen/_4sdp"
+                                android:layout_centerVertical="true"
+                                android:layout_alignParentEnd="true"
+                                tools:ignore="ContentDescription" />
+
+                        </RelativeLayout>
+
+                        <com.github.mikephil.charting.charts.BarChart
+                            android:id="@+id/multi_bar_chart"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_centerHorizontal="true"
-                            android:layout_below="@+id/total_text_leave"
-                            android:layout_alignParentBottom="true"
-                            android:fontFamily="@font/poppins_bold"
-                            android:text="0"
-                            android:textColor="@color/dark_gray"
-                            android:gravity="center"
-                            android:textSize="@dimen/_13sdp"
+                            android:layout_marginBottom="@dimen/_10sdp"
+                            android:layout_marginStart="@dimen/_4sdp"
+                            android:layout_marginEnd="@dimen/_4sdp" />
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/leave_balance_sheet"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/_8sdp"
+                    app:cardCornerRadius="@dimen/_8sdp"
+                    android:layout_marginStart="@dimen/_8sdp"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:layout_marginBottom="@dimen/_4sdp"
+                    app:cardElevation="@dimen/_3sdp"
+                    android:background="@color/white">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/design_4"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:weightSum="10">
+
+                        <ImageView
+                            android:layout_width="0dp"
+                            android:layout_height="@dimen/_25sdp"
+                            android:layout_weight="3"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:layout_marginBottom="@dimen/_4sdp"
+                            android:src="@drawable/leave_balance"
+                            app:tint="@color/primaryColor"
+                            tools:ignore="ContentDescription" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="7"
                             android:layout_marginStart="@dimen/_4sdp"
                             android:layout_marginEnd="@dimen/_4sdp"
-                            android:layout_marginBottom="@dimen/_10sdp"
+                            android:layout_marginTop="@dimen/_12sdp"
+                            android:layout_marginBottom="@dimen/_12sdp"
+                            android:fontFamily="@font/be_vietnam_pro_bold"
+                            android:gravity="start"
+                            android:text="Leave Balance"
+                            android:textColor="@color/black"
                             android:textStyle="bold"
+                            android:paddingStart="@dimen/_2sdp"
+                            android:paddingEnd="@dimen/_2sdp"
+                            android:paddingBottom="@dimen/_3sdp"
                             tools:ignore="HardcodedText" />
 
-                    </RelativeLayout>
+                    </LinearLayout>
 
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.card.MaterialCardView
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/_80sdp"
-                    android:layout_weight="1"
-                    app:cardBackgroundColor="@color/white"
-                    app:cardElevation="@dimen/_2sdp"
-                    app:cardCornerRadius="@dimen/_10sdp"
-                    android:layout_marginTop="@dimen/_4sdp"
-                    android:layout_marginStart="@dimen/_4sdp"
-                    android:layout_marginBottom="@dimen/_8sdp"
-                    android:layout_marginEnd="@dimen/_4sdp">
+                    android:id="@+id/leave_application"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/_8sdp"
+                    app:cardCornerRadius="@dimen/_8sdp"
+                    android:layout_marginStart="@dimen/_8sdp"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:layout_marginBottom="@dimen/_4sdp"
+                    app:cardElevation="@dimen/_3sdp"
+                    android:background="@color/white">
 
-                    <RelativeLayout
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/design_4"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:weightSum="10">
 
-                        <TextView
-                            android:id="@+id/used_text_leave"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_centerHorizontal="true"
-                            android:layout_alignParentTop="true"
-                            android:fontFamily="@font/poppins_bold"
-                            android:text="USED"
-                            android:textColor="@color/black"
-                            android:gravity="center"
-                            android:textSize="@dimen/_9sdp"
-                            android:layout_marginTop="@dimen/_15sdp"
-                            android:layout_marginStart="@dimen/_4sdp"
-                            android:layout_marginEnd="@dimen/_4sdp"
+                        <ImageView
+                            android:layout_width="0dp"
+                            android:layout_height="@dimen/_25sdp"
+                            android:layout_weight="3"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="@dimen/_4sdp"
                             android:layout_marginBottom="@dimen/_4sdp"
-                            android:textStyle="bold"
-                            tools:ignore="HardcodedText" />
+                            android:src="@drawable/leave_applic"
+                            app:tint="@color/primaryColor"
+                            tools:ignore="ContentDescription" />
 
                         <TextView
-                            android:id="@+id/used_leave_leave"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_centerHorizontal="true"
-                            android:layout_below="@+id/used_text_leave"
-                            android:layout_alignParentBottom="true"
-                            android:fontFamily="@font/poppins_bold"
-                            android:text="0"
-                            android:textColor="@color/secondaryColor"
-                            android:gravity="center"
-                            android:textSize="@dimen/_13sdp"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="7"
                             android:layout_marginStart="@dimen/_4sdp"
                             android:layout_marginEnd="@dimen/_4sdp"
-                            android:layout_marginBottom="@dimen/_10sdp"
+                            android:layout_marginTop="@dimen/_12sdp"
+                            android:layout_marginBottom="@dimen/_12sdp"
+                            android:fontFamily="@font/be_vietnam_pro_bold"
+                            android:gravity="start"
+                            android:text="Leave Application"
+                            android:textColor="@color/black"
                             android:textStyle="bold"
+                            android:paddingStart="@dimen/_2sdp"
+                            android:paddingEnd="@dimen/_2sdp"
+                            android:paddingBottom="@dimen/_3sdp"
                             tools:ignore="HardcodedText" />
 
-                    </RelativeLayout>
+                    </LinearLayout>
 
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.card.MaterialCardView
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/_80sdp"
-                    android:layout_weight="1"
-                    app:cardBackgroundColor="@color/white"
-                    app:cardElevation="@dimen/_2sdp"
-                    app:cardCornerRadius="@dimen/_10sdp"
-                    android:layout_marginTop="@dimen/_4sdp"
-                    android:layout_marginStart="@dimen/_4sdp"
+                    android:id="@+id/leave_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/_8sdp"
+                    app:cardCornerRadius="@dimen/_8sdp"
+                    android:layout_marginStart="@dimen/_8sdp"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:layout_marginTop="@dimen/_12sdp"
                     android:layout_marginBottom="@dimen/_8sdp"
-                    android:layout_marginEnd="@dimen/_8sdp">
+                    app:cardElevation="@dimen/_3sdp"
+                    android:background="@color/white">
 
-                    <RelativeLayout
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/design_4"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:weightSum="10">
 
-                        <TextView
-                            android:id="@+id/remaining_text_leave"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_centerHorizontal="true"
-                            android:layout_alignParentTop="true"
-                            android:fontFamily="@font/poppins_bold"
-                            android:text="REMAINING"
-                            android:textColor="@color/black"
-                            android:gravity="center"
-                            android:textSize="@dimen/_9sdp"
-                            android:layout_marginTop="@dimen/_15sdp"
-                            android:layout_marginStart="@dimen/_4sdp"
-                            android:layout_marginEnd="@dimen/_4sdp"
+                        <ImageView
+                            android:layout_width="0dp"
+                            android:layout_height="@dimen/_25sdp"
+                            android:layout_weight="3"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="@dimen/_4sdp"
                             android:layout_marginBottom="@dimen/_4sdp"
-                            android:textStyle="bold"
-                            tools:ignore="HardcodedText" />
+                            android:src="@drawable/leave_status"
+                            app:tint="@color/primaryColor"
+                            tools:ignore="ContentDescription" />
 
                         <TextView
-                            android:id="@+id/remaining_leave_leave"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_centerHorizontal="true"
-                            android:layout_below="@+id/remaining_text_leave"
-                            android:layout_alignParentBottom="true"
-                            android:fontFamily="@font/poppins_bold"
-                            android:text="0"
-                            android:textColor="@color/green_sea"
-                            android:gravity="center"
-                            android:textSize="@dimen/_13sdp"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="7"
                             android:layout_marginStart="@dimen/_4sdp"
                             android:layout_marginEnd="@dimen/_4sdp"
-                            android:layout_marginBottom="@dimen/_10sdp"
+                            android:layout_marginTop="@dimen/_12sdp"
+                            android:layout_marginBottom="@dimen/_12sdp"
+                            android:fontFamily="@font/be_vietnam_pro_bold"
+                            android:gravity="start"
+                            android:text="Leave Status"
+                            android:textColor="@color/black"
                             android:textStyle="bold"
+                            android:paddingStart="@dimen/_2sdp"
+                            android:paddingEnd="@dimen/_2sdp"
+                            android:paddingBottom="@dimen/_3sdp"
                             tools:ignore="HardcodedText" />
 
-                    </RelativeLayout>
+                    </LinearLayout>
 
                 </com.google.android.material.card.MaterialCardView>
 
             </LinearLayout>
 
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_220sdp"
-                android:padding="@dimen/_8sdp"
-                app:cardCornerRadius="@dimen/_8sdp"
-                android:layout_marginTop="@dimen/_4sdp"
-                android:layout_marginStart="@dimen/_8sdp"
-                android:layout_marginBottom="@dimen/_8sdp"
-                android:layout_marginEnd="@dimen/_8sdp"
-                app:cardElevation="@dimen/_3sdp"
-                android:background="@color/white">
+        </ScrollView>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
+    </LinearLayout>
 
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_4sdp"
-                        android:layout_marginStart="@dimen/_4sdp"
-                        android:layout_marginEnd="@dimen/_4sdp"
-                        android:gravity="end">
-
-                        <TextView
-                            android:id="@+id/refresh_graph_leave"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="@dimen/_4sdp"
-                            android:text=""
-                            android:fontFamily="@font/be_vietnam_pro"
-                            android:textSize="@dimen/_10sdp"
-                            android:textStyle="bold"
-                            android:gravity="end"
-                            android:layout_marginStart="@dimen/_4sdp"
-                            android:textColor="@color/secondaryColor"
-                            android:layout_centerVertical="true"
-                            android:layout_toStartOf="@+id/arrow_of_month_leave"
-                            android:layout_gravity="center"/>
-
-                        <ImageView
-                            android:id="@+id/arrow_of_month_leave"
-                            android:layout_width="@dimen/_17sdp"
-                            android:layout_height="@dimen/_17sdp"
-                            android:src="@drawable/arrow_drop_down_24"
-                            app:tint="@color/secondaryColor"
-                            android:layout_marginEnd="@dimen/_4sdp"
-                            android:layout_centerVertical="true"
-                            android:layout_alignParentEnd="true"
-                            tools:ignore="ContentDescription" />
-
-                    </RelativeLayout>
-
-                    <com.github.mikephil.charting.charts.BarChart
-                        android:id="@+id/multi_bar_chart"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginBottom="@dimen/_10sdp"
-                        android:layout_marginStart="@dimen/_4sdp"
-                        android:layout_marginEnd="@dimen/_4sdp" />
-
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/leave_balance_sheet"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/_8sdp"
-                app:cardCornerRadius="@dimen/_8sdp"
-                android:layout_marginStart="@dimen/_8sdp"
-                android:layout_marginEnd="@dimen/_8sdp"
-                android:layout_marginTop="@dimen/_12sdp"
-                android:layout_marginBottom="@dimen/_4sdp"
-                app:cardElevation="@dimen/_3sdp"
-                android:background="@color/white">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/design_4"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:weightSum="10">
-
-                    <ImageView
-                        android:layout_width="0dp"
-                        android:layout_height="@dimen/_25sdp"
-                        android:layout_weight="3"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="@dimen/_4sdp"
-                        android:layout_marginBottom="@dimen/_4sdp"
-                        android:src="@drawable/leave_balance"
-                        app:tint="@color/primaryColor"
-                        tools:ignore="ContentDescription" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="7"
-                        android:layout_marginStart="@dimen/_4sdp"
-                        android:layout_marginEnd="@dimen/_4sdp"
-                        android:layout_marginTop="@dimen/_12sdp"
-                        android:layout_marginBottom="@dimen/_12sdp"
-                        android:fontFamily="@font/be_vietnam_pro_bold"
-                        android:gravity="start"
-                        android:text="Leave Balance"
-                        android:textColor="@color/black"
-                        android:textStyle="bold"
-                        android:paddingStart="@dimen/_2sdp"
-                        android:paddingEnd="@dimen/_2sdp"
-                        android:paddingBottom="@dimen/_3sdp"
-                        tools:ignore="HardcodedText" />
-
-                </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/leave_application"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/_8sdp"
-                app:cardCornerRadius="@dimen/_8sdp"
-                android:layout_marginStart="@dimen/_8sdp"
-                android:layout_marginEnd="@dimen/_8sdp"
-                android:layout_marginTop="@dimen/_12sdp"
-                android:layout_marginBottom="@dimen/_4sdp"
-                app:cardElevation="@dimen/_3sdp"
-                android:background="@color/white">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/design_4"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:weightSum="10">
-
-                    <ImageView
-                        android:layout_width="0dp"
-                        android:layout_height="@dimen/_25sdp"
-                        android:layout_weight="3"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="@dimen/_4sdp"
-                        android:layout_marginBottom="@dimen/_4sdp"
-                        android:src="@drawable/leave_applic"
-                        app:tint="@color/primaryColor"
-                        tools:ignore="ContentDescription" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="7"
-                        android:layout_marginStart="@dimen/_4sdp"
-                        android:layout_marginEnd="@dimen/_4sdp"
-                        android:layout_marginTop="@dimen/_12sdp"
-                        android:layout_marginBottom="@dimen/_12sdp"
-                        android:fontFamily="@font/be_vietnam_pro_bold"
-                        android:gravity="start"
-                        android:text="Leave Application"
-                        android:textColor="@color/black"
-                        android:textStyle="bold"
-                        android:paddingStart="@dimen/_2sdp"
-                        android:paddingEnd="@dimen/_2sdp"
-                        android:paddingBottom="@dimen/_3sdp"
-                        tools:ignore="HardcodedText" />
-
-                </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/leave_status"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/_8sdp"
-                app:cardCornerRadius="@dimen/_8sdp"
-                android:layout_marginStart="@dimen/_8sdp"
-                android:layout_marginEnd="@dimen/_8sdp"
-                android:layout_marginTop="@dimen/_12sdp"
-                android:layout_marginBottom="@dimen/_8sdp"
-                app:cardElevation="@dimen/_3sdp"
-                android:background="@color/white">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/design_4"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:weightSum="10">
-
-                    <ImageView
-                        android:layout_width="0dp"
-                        android:layout_height="@dimen/_25sdp"
-                        android:layout_weight="3"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="@dimen/_4sdp"
-                        android:layout_marginBottom="@dimen/_4sdp"
-                        android:src="@drawable/leave_status"
-                        app:tint="@color/primaryColor"
-                        tools:ignore="ContentDescription" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="7"
-                        android:layout_marginStart="@dimen/_4sdp"
-                        android:layout_marginEnd="@dimen/_4sdp"
-                        android:layout_marginTop="@dimen/_12sdp"
-                        android:layout_marginBottom="@dimen/_12sdp"
-                        android:fontFamily="@font/be_vietnam_pro_bold"
-                        android:gravity="start"
-                        android:text="Leave Status"
-                        android:textColor="@color/black"
-                        android:textStyle="bold"
-                        android:paddingStart="@dimen/_2sdp"
-                        android:paddingEnd="@dimen/_2sdp"
-                        android:paddingBottom="@dimen/_3sdp"
-                        tools:ignore="HardcodedText" />
-
-                </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-        </LinearLayout>
-
-    </ScrollView>
-
-</LinearLayout>
+</RelativeLayout>

@@ -26,6 +26,7 @@ import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -49,7 +50,7 @@ import ttit.com.shuvo.ikglhrm.attendance.giveAttendance.AttendanceGive;
 import ttit.com.shuvo.ikglhrm.attendance.report.AttendanceReport;
 import ttit.com.shuvo.ikglhrm.dashboard.Dashboard;
 
-import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.user_login.Login.userInfoLists;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import org.json.JSONArray;
@@ -97,6 +98,7 @@ public class Attendance extends AppCompatActivity {
     String lastLtimAttBot = "";
     String off_end_time = "";
     String off_start_time = "";
+    String mob_attn_allow = "0";
 
     String absent = "";
     String present = "";
@@ -181,10 +183,21 @@ public class Attendance extends AppCompatActivity {
         });
 
         attGive.setOnClickListener(v -> {
-            Intent intent = new Intent(Attendance.this, AttendanceGive.class);
-            intent.putExtra("LAST_TIME",lastLtimAttBot);
-            intent.putExtra("TODAY_DATE",lastDateForAttBot);
-            startActivity(intent);
+            if (mob_attn_allow.equals("1")) {
+                Intent intent = new Intent(Attendance.this, AttendanceGive.class);
+                intent.putExtra("LAST_TIME",lastLtimAttBot);
+                intent.putExtra("TODAY_DATE",lastDateForAttBot);
+                startActivity(intent);
+            }
+            else {
+                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(Attendance.this);
+                builder.setTitle("Mobile Attendance Not Available!")
+                        .setIcon(R.drawable.hrm_new_round_icon_custom)
+                        .setMessage("We're sorry, mobile attendance is currently not enabled for your profile. Please contact your HR department if you have any questions or need further assistance.")
+                        .setPositiveButton("OK", ((dialog, which) -> dialog.dismiss()));
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
         });
 
 //        movReg.setOnClickListener(v -> {
@@ -203,7 +216,7 @@ public class Attendance extends AppCompatActivity {
 
 
         emp_id = userInfoLists.get(0).getEmp_id();
-        emp_code = userInfoLists.get(0).getUserName();
+        emp_code = userInfoLists.get(0).getEmp_code();
 
         Date c = Calendar.getInstance().getTime();
 
@@ -269,23 +282,7 @@ public class Attendance extends AppCompatActivity {
 
         pieChart.animateXY(1000, 1000);
 
-//        PieData data = new PieData(dataSet);
-//
-////        dataSet.setValueFormatter(new PercentFormatter(pieChart));
-//        dataSet.setHighlightEnabled(true);
-//        dataSet.setValueTextSize(12);
-//        dataSet.setValueTextColor(Color.BLACK);
-//        dataSet.setColors(ColorTemplate.createColors(piecolors));
-
-//        pieChart.setUsePercentValues(true);
-
-
-//        pieChart.setData(data);
-//        pieChart.invalidate();
-
-//        new Check().execute();
         getAttendanceGraph();
-
 
         refresh.setOnClickListener(v -> {
 
@@ -1344,13 +1341,44 @@ public class Attendance extends AppCompatActivity {
         lastLtimAttBot = "";
         off_end_time = "";
         off_start_time = "";
+        mob_attn_allow = "0";
 
         conn = false;
         connected = false;
 
         String todayAttDataUrl = api_url_front + "attendance/getTodayAttData/"+emp_id+"/"+lastDateForAttBot;
+        String url = api_url_front + "utility/getMobAttAllowOption?emp_id="+emp_id;
 
         RequestQueue requestQueue = Volley.newRequestQueue(Attendance.this);
+
+        StringRequest req = new StringRequest(Request.Method.GET, url, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject trackerInfo = array.getJSONObject(i);
+                        mob_attn_allow = trackerInfo.getString("att_allow")
+                                .equals("null") ? "1" : trackerInfo.getString("att_allow");
+                    }
+                }
+                connected = true;
+                updateLayout();
+            }
+            catch (JSONException e) {
+                connected = false;
+                logger.log(Level.WARNING, e.getMessage(), e);
+                updateLayout();
+            }
+        }, error -> {
+            conn = false;
+            connected = false;
+            logger.log(Level.WARNING, error.getMessage(), error);
+            updateLayout();
+        });
 
         StringRequest todayAttReq = new StringRequest(Request.Method.GET,todayAttDataUrl, response -> {
             conn = true;
@@ -1372,8 +1400,7 @@ public class Attendance extends AppCompatActivity {
                                 .equals("null") ? "" : todayAttDataInfo.getString("dac_end_time");
                     }
                 }
-                connected = true;
-                updateLayout();
+                requestQueue.add(req);
             }
             catch (JSONException e) {
                 connected = false;
@@ -1610,6 +1637,13 @@ public class Attendance extends AppCompatActivity {
                 else {
                     String t = "Punch In/Out";
                     attGive.setText(t);
+                }
+
+                if (mob_attn_allow.equals("1")) {
+                    attGive.setBackgroundColor(getColor(R.color.primaryColor));
+                }
+                else {
+                    attGive.setBackgroundColor(getColor(R.color.dark_gray));
                 }
 
                 conn = false;

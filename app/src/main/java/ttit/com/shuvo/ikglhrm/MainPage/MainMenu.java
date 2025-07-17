@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import ttit.com.shuvo.ikglhrm.EmployeeInfo.EmplyeeInformation;
-import ttit.com.shuvo.ikglhrm.Login;
+import ttit.com.shuvo.ikglhrm.user_login.Login;
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.attendance.Attendance;
 import ttit.com.shuvo.ikglhrm.attendance.trackService.Service;
@@ -31,12 +31,12 @@ import ttit.com.shuvo.ikglhrm.leaveAll.Leave;
 import ttit.com.shuvo.ikglhrm.payRoll.PayRollInfo;
 import ttit.com.shuvo.ikglhrm.scheduler.Uploader;
 
-import static ttit.com.shuvo.ikglhrm.Login.CompanyName;
-import static ttit.com.shuvo.ikglhrm.Login.SoftwareName;
-import static ttit.com.shuvo.ikglhrm.Login.isApproved;
-import static ttit.com.shuvo.ikglhrm.Login.isLeaveApproved;
-import static ttit.com.shuvo.ikglhrm.Login.userDesignations;
-import static ttit.com.shuvo.ikglhrm.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.user_login.Login.CompanyName;
+import static ttit.com.shuvo.ikglhrm.user_login.Login.SoftwareName;
+import static ttit.com.shuvo.ikglhrm.user_login.Login.isApproved;
+import static ttit.com.shuvo.ikglhrm.user_login.Login.isLeaveApproved;
+import static ttit.com.shuvo.ikglhrm.user_login.Login.userDesignations;
+import static ttit.com.shuvo.ikglhrm.user_login.Login.userInfoLists;
 import static ttit.com.shuvo.ikglhrm.dashboard.Dashboard.alarmManager;
 import static ttit.com.shuvo.ikglhrm.dashboard.Dashboard.selectedImage;
 import static ttit.com.shuvo.ikglhrm.dashboard.Dashboard.trackerAvailable;
@@ -196,16 +196,11 @@ public class MainMenu extends AppCompatActivity {
         }
 
         if (!userInfoLists.isEmpty()) {
-            String firstname = userInfoLists.get(0).getUser_fname();
-            String lastName = userInfoLists.get(0).getUser_lname();
+            String firstname = userInfoLists.get(0).getUser_name();
             if (firstname == null) {
                 firstname = "";
             }
-            if (lastName == null) {
-                lastName = "";
-            }
-            String empFullName = firstname+" "+lastName;
-            userName.setText(empFullName);
+            userName.setText(firstname);
         }
 
         if (!userDesignations.isEmpty()) {
