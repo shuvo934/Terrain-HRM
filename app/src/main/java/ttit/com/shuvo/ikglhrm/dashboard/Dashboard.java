@@ -63,10 +63,7 @@ import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofenceStatusCodes;
-import com.google.android.gms.location.GeofencingClient;
-import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
@@ -79,16 +76,14 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.sql.Timestamp;
@@ -137,6 +132,7 @@ import static ttit.com.shuvo.ikglhrm.utilities.Constants.CONTACT;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.DEPT_NAME;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.DESG_NAME;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.DESG_PRIORITY;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.DISTANCE;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.DIV_ID;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.DIV_NAME;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.EMAIL;
@@ -156,6 +152,8 @@ import static ttit.com.shuvo.ikglhrm.utilities.Constants.LOGIN_TF;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.SCHEDULING_EMP_ID;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.SCHEDULING_FILE;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.SOFTWARE;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.STOPPED_TIME;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.TOTAL_TIME;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.TRIGGERING;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.USER_F_NAME;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.USER_L_NAME;
@@ -186,9 +184,9 @@ public class Dashboard extends AppCompatActivity {
 
     SharedPreferences geoSharedData;
     final String GEO_FILE = "GEO_ACTIVE_FILE";
-    final String GEO_ALL_DATA = "GEO_ALL_DATA";
-    Gson gson = new Gson();
-    String json = "";
+//    final String GEO_ALL_DATA = "GEO_ALL_DATA";
+//    Gson gson = new Gson();
+//    String json = "";
 
     ArrayList<GeoLocationList> geoLocationLists;
 
@@ -279,7 +277,6 @@ public class Dashboard extends AppCompatActivity {
     BarChart salaryChart;
 
     ArrayList<BarEntry> salaryValue;
-    ArrayList<String> year;
 
     ArrayList<SalaryMonthList> months;
     ArrayList<SalaryMonthList> salaryMonthLists;
@@ -355,8 +352,14 @@ public class Dashboard extends AppCompatActivity {
     boolean onResumeLoad = true;
 
     ArrayList<AreaList> areaLists;
+    ArrayList<String> lastTenDaysFromSQL;
+    int dateCount = 0;
+    ArrayList<String> lastTenDays;
+    SharedPreferences sharedPreferencesDA;
+    ArrayList<String> updatedXml;
+    ArrayList<String> updatedFiles;
 
-    String location_file = "";
+//    String location_file = "";
 
     Logger logger = Logger.getLogger(Dashboard.class.getName());
 
@@ -608,6 +611,7 @@ public class Dashboard extends AppCompatActivity {
         cal.add(Calendar.DAY_OF_YEAR, -12);
 
         lastTenDaysXml = new ArrayList<>();
+        lastTenDaysFromSQL = new ArrayList<>();
 
         for (int i = 0; i < 10; i++) {
             cal.add(Calendar.DAY_OF_YEAR, +1);
@@ -690,18 +694,6 @@ public class Dashboard extends AppCompatActivity {
                                 alarmManager.cancel(pendingIntent);
                             }
 
-
-//                        if (Build.VERSION.SDK_INT < 16) {
-//
-//                            window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-//                                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//                        }
-//                        else {
-//
-//                            // Hide Status Bar.
-//                            int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
-//                            decorView.setSystemUiVisibility(uiOptions);
-//                        }
                             Intent intent = new Intent(Dashboard.this, Login.class);
                             startActivity(intent);
                             finish();
@@ -785,18 +777,6 @@ public class Dashboard extends AppCompatActivity {
                                 alarmManager.cancel(pendingIntent);
                             }
 
-
-//                        if (Build.VERSION.SDK_INT < 16) {
-//
-//                            window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-//                                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//                        }
-//                        else {
-//
-//                            // Hide Status Bar.
-//                            int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
-//                            decorView.setSystemUiVisibility(uiOptions);
-//                        }
                             Intent intent = new Intent(Dashboard.this, Login.class);
                             startActivity(intent);
                             finish();
@@ -951,6 +931,25 @@ public class Dashboard extends AppCompatActivity {
             department.setText(deptName);
         }
 
+        lastTenDays = new ArrayList<>();
+        updatedXml = new ArrayList<>();
+        updatedFiles = new ArrayList<>();
+
+        Calendar cal = GregorianCalendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.DAY_OF_YEAR, -11);
+
+        for (int i = 0 ; i < 10 ;i ++) {
+            cal.add(Calendar.DAY_OF_YEAR, +1);
+            Date calTime = cal.getTime();
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
+            String ddd = simpleDateFormat.format(calTime);
+
+            ddd = ddd.toUpperCase();
+            System.out.println(ddd);
+            lastTenDays.add(ddd);
+        }
+
 //        appName.setText(SoftwareName);
         comp.setText(CompanyName);
 
@@ -992,38 +991,38 @@ public class Dashboard extends AppCompatActivity {
         LeaveInit();
     }
 
-    private void setGeoEvent() {
-        json = geoSharedData.getString(GEO_ALL_DATA, "");
-        Type type = new TypeToken<ArrayList<GeoLocationList>>() {
-        }.getType();
-        ArrayList<GeoLocationList> savedLocationLists = gson.fromJson(json, type);
-
-        if (savedLocationLists != null) {
-            geoSwitch.setChecked(!savedLocationLists.isEmpty());
-        } else {
-            geoSwitch.setChecked(false);
-        }
-
-        geoSwitch.setOnClickListener(view -> {
-            if (geoSwitch.isChecked()) {
-                boolean gps = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-                if (gps) {
-                    addGeoFence();
-                } else {
-                    Toast.makeText(this, "Your GPS Provider is disabled. Please enable it and try again", Toast.LENGTH_SHORT).show();
-                    geoSwitch.setChecked(false);
-                }
-            } else {
-                boolean gps = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-                if (gps) {
-                    removeGeoFence();
-                } else {
-                    Toast.makeText(this, "Your GPS Provider is disabled. Please enable it and try again", Toast.LENGTH_SHORT).show();
-                    geoSwitch.setChecked(true);
-                }
-            }
-        });
-    }
+//    private void setGeoEvent() {
+//        json = geoSharedData.getString(GEO_ALL_DATA, "");
+//        Type type = new TypeToken<ArrayList<GeoLocationList>>() {
+//        }.getType();
+//        ArrayList<GeoLocationList> savedLocationLists = gson.fromJson(json, type);
+//
+//        if (savedLocationLists != null) {
+//            geoSwitch.setChecked(!savedLocationLists.isEmpty());
+//        } else {
+//            geoSwitch.setChecked(false);
+//        }
+//
+//        geoSwitch.setOnClickListener(view -> {
+//            if (geoSwitch.isChecked()) {
+//                boolean gps = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+//                if (gps) {
+//                    addGeoFence();
+//                } else {
+//                    Toast.makeText(this, "Your GPS Provider is disabled. Please enable it and try again", Toast.LENGTH_SHORT).show();
+//                    geoSwitch.setChecked(false);
+//                }
+//            } else {
+//                boolean gps = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+//                if (gps) {
+//                    removeGeoFence();
+//                } else {
+//                    Toast.makeText(this, "Your GPS Provider is disabled. Please enable it and try again", Toast.LENGTH_SHORT).show();
+//                    geoSwitch.setChecked(true);
+//                }
+//            }
+//        });
+//    }
 
     @Override
     protected void onResume() {
@@ -1158,8 +1157,6 @@ public class Dashboard extends AppCompatActivity {
         salaryChart.getAxisLeft().setDrawGridLines(true);
 
         salaryValue = new ArrayList<>();
-
-        year = new ArrayList<>();
 
         XAxis xAxis = salaryChart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
@@ -2524,15 +2521,12 @@ public class Dashboard extends AppCompatActivity {
         earn = new ArrayList<>();
         shortCode = new ArrayList<>();
         geoLocationLists = new ArrayList<>();
+        lastTenDaysFromSQL = new ArrayList<>();
+        dateCount = 0;
 
         in_time_dash = "";
         out_time_dash = "";
         end_time_dash = "";
-        Date c = Calendar.getInstance().getTime();
-        SimpleDateFormat dfffff = new SimpleDateFormat("dd-MMMM-yyyy", Locale.ENGLISH);
-        SimpleDateFormat yearFrm = new SimpleDateFormat("yyyy", Locale.ENGLISH);
-        String lastDateForAttBot = dfffff.format(c);
-        String year = yearFrm.format(c);
 
         pending_leave_count = "0";
         approved_leave_count = "0";
@@ -2565,6 +2559,422 @@ public class Dashboard extends AppCompatActivity {
         String attendDataUrl = api_url_front + "dashboard/getAttendanceData/" + beginDate + "/" + lastDate + "/" + emp_id;
         String leaveDataUrl = api_url_front + "dashboard/getLeaveData/" + emp_id + "/" + leaveDate;
         String trackerFlagUrl = api_url_front + "utility/getTrackerFlag/" + emp_id;
+
+        RequestQueue requestQueue = Volley.newRequestQueue(Dashboard.this);
+
+        StringRequest trackerFlagReq = new StringRequest(Request.Method.GET, trackerFlagUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject trackerInfo = array.getJSONObject(i);
+                        trackerAvailable =
+                                Integer.parseInt(trackerInfo.getString("emp_timeline_tracker_flag")
+                                        .equals("null") ? "0" : trackerInfo.getString("emp_timeline_tracker_flag"));
+                        mob_attn_allow = trackerInfo.getString("att_allow")
+                                .equals("null") ? "1" : trackerInfo.getString("att_allow");
+                    }
+                }
+                if (trackerAvailable == 1) {
+                    getEmpData();
+                }
+                else {
+                    getDashboardDetailsData();
+                }
+            } catch (JSONException e) {
+                connected = false;
+                logger.log(Level.WARNING, e.getMessage(), e);
+                updateInterface();
+            }
+        }, error -> {
+            conn = false;
+            connected = false;
+            logger.log(Level.WARNING, error.getMessage(), error);
+            updateInterface();
+        });
+
+        StringRequest leaveDataReq = new StringRequest(Request.Method.GET, leaveDataUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject leaveInfo = array.getJSONObject(i);
+//                        String lbem_emp_id = leaveInfo.getString("lbem_emp_id");
+                        String lc_short_code = leaveInfo.getString("lc_short_code");
+                        String balance_all = leaveInfo.getString("balance");
+                        String quantity = leaveInfo.getString("quantity");
+                        if (!quantity.equals("null") && !quantity.equals("NULL")) {
+                            if (!quantity.equals("0")) {
+                                balance.add(new BarEntry(i, Float.parseFloat(balance_all), i));
+                                earn.add(new BarEntry(i, Float.parseFloat(quantity), i));
+                                shortCode.add(lc_short_code);
+                            }
+                        }
+                    }
+                }
+                requestQueue.add(trackerFlagReq);
+
+            } catch (JSONException e) {
+                connected = false;
+                logger.log(Level.WARNING, e.getMessage(), e);
+                updateInterface();
+            }
+        }, error -> {
+            conn = false;
+            connected = false;
+            logger.log(Level.WARNING, error.getMessage(), error);
+            updateInterface();
+        });
+
+        StringRequest attendDataReq = new StringRequest(Request.Method.GET, attendDataUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject attendanceInfo = array.getJSONObject(i);
+                        absent = attendanceInfo.getString("absent");
+                        present = attendanceInfo.getString("present");
+                        leave = attendanceInfo.getString("leave");
+                        holiday = attendanceInfo.getString("holiday_weekend");
+                        late = attendanceInfo.getString("late_count");
+                        early = attendanceInfo.getString("early_count");
+                    }
+                    requestQueue.add(leaveDataReq);
+                } else {
+                    connected = false;
+                    updateInterface();
+                }
+            } catch (JSONException e) {
+                connected = false;
+                logger.log(Level.WARNING, e.getMessage(), e);
+                updateInterface();
+            }
+        }, error -> {
+            conn = false;
+            connected = false;
+            logger.log(Level.WARNING, error.getMessage(), error);
+            updateInterface();
+        });
+
+        StringRequest salaryMonthReq = new StringRequest(Request.Method.GET, salaryDataUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject salaryMonthInfo = array.getJSONObject(i);
+                        String mon_name = salaryMonthInfo.getString("mon_name");
+                        String net_salary = salaryMonthInfo.getString("net_salary");
+                        salaryMonthLists.add(new SalaryMonthList(mon_name, net_salary));
+                    }
+                }
+                requestQueue.add(attendDataReq);
+            } catch (JSONException e) {
+                connected = false;
+                logger.log(Level.WARNING, e.getMessage(), e);
+                updateInterface();
+            }
+        }, error -> {
+            conn = false;
+            connected = false;
+            logger.log(Level.WARNING, error.getMessage(), error);
+            updateInterface();
+        });
+
+        StringRequest empFlagCheckReq = new StringRequest(Request.Method.GET, empFlagUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject info = array.getJSONObject(i);
+
+                        String emp_flag = info.getString("emp_flag")
+                                .equals("null") ? "" : info.getString("emp_flag");
+
+                        System.out.println(emp_flag);
+                        checkEmpFlag = emp_flag.equals("0");
+                    }
+                }
+                System.out.println(checkEmpFlag);
+                if (checkEmpFlag) {
+                    requestQueue.add(salaryMonthReq);
+                } else {
+                    connected = true;
+                    updateInterface();
+                }
+            } catch (JSONException e) {
+                connected = false;
+                logger.log(Level.WARNING, e.getMessage(), e);
+                updateInterface();
+            }
+        }, error -> {
+            conn = false;
+            connected = false;
+            logger.log(Level.WARNING, error.getMessage(), error);
+            updateInterface();
+        });
+
+        requestQueue.add(empFlagCheckReq);
+    }
+
+    public void getEmpData() {
+        final int[] job_id = {0};
+        final String[] coa_id = {""};
+        final String[] divm_id = {""};
+        final String[] dept_id = {""};
+        conn = false;
+        connected = false;
+
+        String empDataUrl = api_url_front + "attendance/getEmpData/"+emp_id;
+
+        RequestQueue requestQueue = Volley.newRequestQueue(Dashboard.this);
+
+        StringRequest empDataReq = new StringRequest(Request.Method.GET, empDataUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject empDataInfo = array.getJSONObject(i);
+                        job_id[0] = empDataInfo.getInt("emp_job_id");
+                        coa_id[0] = empDataInfo.getString("job_pri_coa_id");
+                        divm_id[0] = empDataInfo.getString("jsm_divm_id");
+                        dept_id[0] = empDataInfo.getString("jsm_dept_id");
+                    }
+                    getTrackerUploadDate(job_id[0],coa_id[0],divm_id[0],dept_id[0]);
+                }
+                else {
+                    connected = false;
+                    getDashboardDetailsData();
+                }
+            }
+            catch (JSONException e) {
+                connected = false;
+                logger.log(Level.WARNING, e.getMessage(), e);
+                getDashboardDetailsData();
+            }
+        }, error -> {
+            conn = false;
+            connected = false;
+            logger.log(Level.WARNING, error.getMessage(), error);
+            getDashboardDetailsData();
+        });
+
+        requestQueue.add(empDataReq);
+
+    }
+
+    public void getTrackerUploadDate(int job_id, String coa_id, String divm_id, String dept_id) {
+        lastTenDaysFromSQL = new ArrayList<>();
+        conn = false;
+        connected = false;
+
+        String trackerDataUrl = api_url_front + "attendance/getTrackUploadedDate/"+emp_id;
+
+        RequestQueue requestQueue = Volley.newRequestQueue(Dashboard.this);
+
+        StringRequest trackerDataReq = new StringRequest(Request.Method.GET, trackerDataUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject trackerDataInfo = array.getJSONObject(i);
+                        String elr_date = trackerDataInfo.getString("elr_date");
+                        lastTenDaysFromSQL.add(elr_date);
+                    }
+                }
+                dateCount = 0;
+                getTrackerDate(job_id,coa_id,divm_id,dept_id);
+
+            }
+            catch (JSONException e) {
+                connected = false;
+                logger.log(Level.WARNING, e.getMessage(), e);
+                getDashboardDetailsData();
+            }
+        },error -> {
+            conn = false;
+            connected = false;
+            logger.log(Level.WARNING, error.getMessage(), error);
+            getDashboardDetailsData();
+        });
+
+        requestQueue.add(trackerDataReq);
+
+    }
+
+    public void getTrackerDate(int job_id, String coa_id, String divm_id, String dept_id) {
+        boolean noDatetoUp = true;
+        for (int i = 0; i < lastTenDays.size(); i++) {
+            boolean dateFound = false;
+            String date = lastTenDays.get(i);
+
+            for (int j = 0; j < lastTenDaysFromSQL.size(); j++) {
+                if (date.equals(lastTenDaysFromSQL.get(j))) {
+                    dateFound = true;
+                    System.out.println(date);
+                }
+            }
+            if (!dateFound) {
+                noDatetoUp = false;
+                String fileName = emp_id+"_"+date+"_track";
+
+                FILE_OF_DAILY_ACTIVITY = fileName;
+
+                sharedPreferencesDA = getSharedPreferences(FILE_OF_DAILY_ACTIVITY, MODE_PRIVATE);
+
+                String dist = sharedPreferencesDA.getString(DISTANCE,null);
+                String totalTime = sharedPreferencesDA.getString(TOTAL_TIME,null);
+                String stoppedTime = sharedPreferencesDA.getString(STOPPED_TIME,null);
+
+                String stringFIle = getExternalFilesDir(null).getPath() + File.separator +  fileName +".gpx";
+
+                File blobFile = new File(stringFIle);
+
+                updatedXml.add(fileName);
+                byte[] bytes = null;
+                if (blobFile.exists()) {
+                    dateCount++;
+                    try {
+                        bytes = method(blobFile);
+                    } catch (IOException e) {
+                        logger.log(Level.WARNING, e.getMessage(), e);
+                    }
+                    updatedFiles.add(stringFIle);
+                }
+                uploadEmpTrackerFile(job_id,coa_id,divm_id,dept_id,date,bytes, blobFile,fileName,dist,totalTime,stoppedTime);
+                break;
+            }
+            else {
+                System.out.println("Ei "+date +" database e ase");
+            }
+        }
+        if (noDatetoUp) {
+            getDashboardDetailsData();
+        }
+    }
+
+    public static byte[] method(File file) throws IOException {
+        FileInputStream fl = new FileInputStream(file);
+        byte[] arr = new byte[(int) file.length()];
+        fl.read(arr);
+        fl.close();
+        return arr;
+    }
+
+    public void uploadEmpTrackerFile(int job_id, String coa_id, String divm_id, String dept_id, String date, byte[] bytes, File blobFile, String fileName, String dist, String totalTime, String stoppedTime) {
+
+        String uploadFileUrl = api_url_front + "attendance/uploadTrackerFile";
+
+        RequestQueue requestQueue = Volley.newRequestQueue(Dashboard.this);
+
+        StringRequest uploadReq = new StringRequest(Request.Method.POST, uploadFileUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String string_out = jsonObject.getString("string_out");
+                System.out.println(string_out);
+                if (string_out.equals("Successfully Created")) {
+                    lastTenDaysFromSQL.add(date);
+                    getTrackerDate(job_id,coa_id,divm_id,dept_id);
+                }
+                else {
+                    System.out.println("EKHANE ASHE 3");
+                    connected = false;
+                    getDashboardDetailsData();
+                }
+            }
+            catch (JSONException e) {
+                logger.log(Level.WARNING, e.getMessage(), e);
+                System.out.println("EKHANE ASHE 0");
+                connected = false;
+                getDashboardDetailsData();
+            }
+        },error -> {
+            logger.log(Level.WARNING, error.getMessage(), error);
+            System.out.println("EKHANE ASHE -1");
+            conn = false;
+            connected = false;
+            getDashboardDetailsData();
+        }){
+            @Override
+            public byte[] getBody() {
+                return bytes;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                if (blobFile.exists()) {
+                    headers.put("P_ELR_ACTIVE","1");
+                    headers.put("P_ELR_FILE_NAME",fileName);
+                    headers.put("P_ELR_MIMETYPE","application/gpx+xml");
+                    headers.put("P_ELR_FILETYPE",".gpx");
+                }
+                else {
+                    headers.put("P_ELR_ACTIVE","0");
+                    headers.put("P_ELR_FILE_NAME",null);
+                    headers.put("P_ELR_MIMETYPE",null);
+                    headers.put("P_ELR_FILETYPE",null);
+                }
+                headers.put("P_ELR_EMP_ID",emp_id);
+                headers.put("P_ELR_JOB_ID",String.valueOf(job_id));
+                headers.put("P_ELR_COA_ID",coa_id);
+                headers.put("P_ELR_DIVM_ID",divm_id);
+                headers.put("P_ELR_DEPT_ID",dept_id);
+                headers.put("P_ELR_DATE",date);
+                headers.put("P_ELR_USER",emp_code);
+                headers.put("P_TOTAL_DISTANCE_KM",dist);
+                headers.put("P_TOTAL_TIME",totalTime);
+                headers.put("P_TOTAL_STOPPED_TIME",stoppedTime);
+                return headers;
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/binary";
+            }
+        };
+
+        requestQueue.add(uploadReq);
+    }
+
+    public void getDashboardDetailsData() {
+        conn = false;
+        connected = false;
+
+        Date c = Calendar.getInstance().getTime();
+        SimpleDateFormat dfffff = new SimpleDateFormat("dd-MMMM-yyyy", Locale.ENGLISH);
+        SimpleDateFormat yearFrm = new SimpleDateFormat("yyyy", Locale.ENGLISH);
+        String lastDateForAttBot = dfffff.format(c);
+        String year = yearFrm.format(c);
+
         String loginLogUrl = api_url_front + "dashboard/loginLog";
 //        String userImageUrl = api_url_front + "utility/getUserImage/" + emp_code;
         String userImageUrl = api_url_front + "utility/getProfilePic?p_emp_id=" + emp_id;
@@ -2838,177 +3248,11 @@ public class Dashboard extends AppCompatActivity {
             }
         };
 
-        StringRequest trackerFlagReq = new StringRequest(Request.Method.GET, trackerFlagUrl, response -> {
-            conn = true;
-            try {
-                JSONObject jsonObject = new JSONObject(response);
-                String items = jsonObject.getString("items");
-                String count = jsonObject.getString("count");
-                if (!count.equals("0")) {
-                    JSONArray array = new JSONArray(items);
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject trackerInfo = array.getJSONObject(i);
-                        trackerAvailable =
-                                Integer.parseInt(trackerInfo.getString("emp_timeline_tracker_flag")
-                                        .equals("null") ? "0" : trackerInfo.getString("emp_timeline_tracker_flag"));
-                        mob_attn_allow = trackerInfo.getString("att_allow")
-                                .equals("null") ? "1" : trackerInfo.getString("att_allow");
-                    }
-                }
-                if (loginLog_check) {
-                    requestQueue.add(loginLogReq);
-                } else {
-                    requestQueue.add(imageReq);
-                }
-            } catch (JSONException e) {
-                connected = false;
-                logger.log(Level.WARNING, e.getMessage(), e);
-                updateInterface();
-            }
-        }, error -> {
-            conn = false;
-            connected = false;
-            logger.log(Level.WARNING, error.getMessage(), error);
-            updateInterface();
-        });
-
-        StringRequest leaveDataReq = new StringRequest(Request.Method.GET, leaveDataUrl, response -> {
-            conn = true;
-            try {
-                JSONObject jsonObject = new JSONObject(response);
-                String items = jsonObject.getString("items");
-                String count = jsonObject.getString("count");
-                if (!count.equals("0")) {
-                    JSONArray array = new JSONArray(items);
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject leaveInfo = array.getJSONObject(i);
-//                        String lbem_emp_id = leaveInfo.getString("lbem_emp_id");
-                        String lc_short_code = leaveInfo.getString("lc_short_code");
-                        String balance_all = leaveInfo.getString("balance");
-                        String quantity = leaveInfo.getString("quantity");
-                        if (!quantity.equals("null") && !quantity.equals("NULL")) {
-                            if (!quantity.equals("0")) {
-                                balance.add(new BarEntry(i, Float.parseFloat(balance_all), i));
-                                earn.add(new BarEntry(i, Float.parseFloat(quantity), i));
-                                shortCode.add(lc_short_code);
-                            }
-                        }
-                    }
-                }
-                requestQueue.add(trackerFlagReq);
-
-            } catch (JSONException e) {
-                connected = false;
-                logger.log(Level.WARNING, e.getMessage(), e);
-                updateInterface();
-            }
-        }, error -> {
-            conn = false;
-            connected = false;
-            logger.log(Level.WARNING, error.getMessage(), error);
-            updateInterface();
-        });
-
-        StringRequest attendDataReq = new StringRequest(Request.Method.GET, attendDataUrl, response -> {
-            conn = true;
-            try {
-                JSONObject jsonObject = new JSONObject(response);
-                String items = jsonObject.getString("items");
-                String count = jsonObject.getString("count");
-                if (!count.equals("0")) {
-                    JSONArray array = new JSONArray(items);
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject attendanceInfo = array.getJSONObject(i);
-                        absent = attendanceInfo.getString("absent");
-                        present = attendanceInfo.getString("present");
-                        leave = attendanceInfo.getString("leave");
-                        holiday = attendanceInfo.getString("holiday_weekend");
-                        late = attendanceInfo.getString("late_count");
-                        early = attendanceInfo.getString("early_count");
-                    }
-                    requestQueue.add(leaveDataReq);
-                } else {
-                    connected = false;
-                    updateInterface();
-                }
-            } catch (JSONException e) {
-                connected = false;
-                logger.log(Level.WARNING, e.getMessage(), e);
-                updateInterface();
-            }
-        }, error -> {
-            conn = false;
-            connected = false;
-            logger.log(Level.WARNING, error.getMessage(), error);
-            updateInterface();
-        });
-
-        StringRequest salaryMonthReq = new StringRequest(Request.Method.GET, salaryDataUrl, response -> {
-            conn = true;
-            try {
-                JSONObject jsonObject = new JSONObject(response);
-                String items = jsonObject.getString("items");
-                String count = jsonObject.getString("count");
-                if (!count.equals("0")) {
-                    JSONArray array = new JSONArray(items);
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject salaryMonthInfo = array.getJSONObject(i);
-                        String mon_name = salaryMonthInfo.getString("mon_name");
-                        String net_salary = salaryMonthInfo.getString("net_salary");
-                        salaryMonthLists.add(new SalaryMonthList(mon_name, net_salary));
-                    }
-                }
-                requestQueue.add(attendDataReq);
-            } catch (JSONException e) {
-                connected = false;
-                logger.log(Level.WARNING, e.getMessage(), e);
-                updateInterface();
-            }
-        }, error -> {
-            conn = false;
-            connected = false;
-            logger.log(Level.WARNING, error.getMessage(), error);
-            updateInterface();
-        });
-
-        StringRequest empFlagCheckReq = new StringRequest(Request.Method.GET, empFlagUrl, response -> {
-            conn = true;
-            try {
-                JSONObject jsonObject = new JSONObject(response);
-                String items = jsonObject.getString("items");
-                String count = jsonObject.getString("count");
-                if (!count.equals("0")) {
-                    JSONArray array = new JSONArray(items);
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject info = array.getJSONObject(i);
-
-                        String emp_flag = info.getString("emp_flag")
-                                .equals("null") ? "" : info.getString("emp_flag");
-
-                        System.out.println(emp_flag);
-                        checkEmpFlag = emp_flag.equals("0");
-                    }
-                }
-                System.out.println(checkEmpFlag);
-                if (checkEmpFlag) {
-                    requestQueue.add(salaryMonthReq);
-                } else {
-                    connected = true;
-                    updateInterface();
-                }
-            } catch (JSONException e) {
-                connected = false;
-                logger.log(Level.WARNING, e.getMessage(), e);
-                updateInterface();
-            }
-        }, error -> {
-            conn = false;
-            connected = false;
-            logger.log(Level.WARNING, error.getMessage(), error);
-            updateInterface();
-        });
-
-        requestQueue.add(empFlagCheckReq);
+        if (loginLog_check) {
+            requestQueue.add(loginLogReq);
+        } else {
+            requestQueue.add(imageReq);
+        }
     }
 
     public void updateInterface() {
@@ -3328,6 +3572,57 @@ public class Dashboard extends AppCompatActivity {
                     else {
                         userImage.setImageResource(R.drawable.profile);
                     }
+
+                    if (dateCount > 0) {
+
+                        if (!updatedFiles.isEmpty()) {
+                            for (int i = 0; i < updatedFiles.size(); i++) {
+                                String stringFile = updatedFiles.get(i);
+                                File blobFile = new File(stringFile);
+                                if (blobFile.exists()) {
+                                    boolean deleted = blobFile.delete();
+                                    if (deleted) {
+                                        System.out.println("Deleted");
+                                    }
+                                }
+                            }
+                        }
+
+                        if (!updatedXml.isEmpty()) {
+                            for (int i = 0 ; i < updatedXml.size(); i++) {
+
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                    File dir = new File(getApplicationInfo().dataDir, "shared_prefs/" + updatedXml.get(i)+ ".xml");
+                                    if(dir.exists()) {
+                                        getSharedPreferences(updatedXml.get(i), MODE_PRIVATE).edit().clear().apply();
+                                        boolean ddd = dir.delete();
+                                        System.out.println(ddd);
+                                    } else {
+                                        System.out.println(false);
+                                    }
+                                }
+                            }
+                        }
+
+                        if (dateCount == 1) {
+                            AlertDialog dialog = new AlertDialog.Builder(Dashboard.this)
+                                    .setTitle("Tracking Service!")
+                                    .setMessage(dateCount + " File Uploaded")
+                                    .setPositiveButton("OK",null)
+                                    .show();
+                            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                            positive.setOnClickListener(v -> dialog.dismiss());
+                        } else {
+                            AlertDialog dialog = new AlertDialog.Builder(Dashboard.this)
+                                    .setTitle("Tracking Service!")
+                                    .setMessage(dateCount + " Files Uploaded")
+                                    .setPositiveButton("OK",null)
+                                    .show();
+                            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                            positive.setOnClickListener(v -> dialog.dismiss());
+                        }
+
+                    }
                     conn = false;
                     connected = false;
                     checkEmpFlag = false;
@@ -3470,115 +3765,115 @@ public class Dashboard extends AppCompatActivity {
         }
     }
 
-    public void removeGeoFence() {
-        json = geoSharedData.getString(GEO_ALL_DATA, "");
-        Type type = new TypeToken<ArrayList<GeoLocationList>>() {
-        }.getType();
-        ArrayList<GeoLocationList> savedLocationLists = gson.fromJson(json, type);
-
-        GeofencingClient geofencingClient = LocationServices.getGeofencingClient(this);
-
-        if (savedLocationLists != null) {
-            if (!savedLocationLists.isEmpty()) {
-
-                ArrayList<String> ids = new ArrayList<>();
-                for (int i = 0; i < savedLocationLists.size(); i++) {
-                    String id = savedLocationLists.get(i).getGeo_id();
-                    ids.add(id);
-                }
-                geofencingClient.removeGeofences(ids)
-                        .addOnSuccessListener(unused -> Toast.makeText(getApplicationContext(), "Auto Attendance Stopped Successfully", Toast.LENGTH_SHORT).show())
-                        .addOnFailureListener(e -> {
-                            String errorMessage = getErrorString(e);
-                            Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_SHORT).show();
-                        });
-            }
-        }
-
-        SharedPreferences.Editor editor1 = geoSharedData.edit();
-        editor1.remove(GEO_ALL_DATA);
-        editor1.apply();
-        editor1.commit();
-    }
-
-    public void addGeoFence() {
-        GeofencingClient geofencingClient = LocationServices.getGeofencingClient(this);
-
-        ArrayList<Geofence> geofenceList = new ArrayList<>();
-
-        ArrayList<GeoLocationList> newLocationLists = new ArrayList<>();
-
-        for (int i = 0; i < geoLocationLists.size(); i++) {
-            String lat = geoLocationLists.get(i).getGeo_lat();
-            String lng = geoLocationLists.get(i).getGeo_lng();
-            String org_radius = geoLocationLists.get(i).getGeo_radius();
-            String radius = geoLocationLists.get(i).getGeo_radius();
-            String c_id = geoLocationLists.get(i).getCoa_id();
-
-            LatLng latLng;
-
-            if (!lat.isEmpty() && !lng.isEmpty()) {
-                latLng = new LatLng(Double.parseDouble(lat), Double.parseDouble(lng));
-                String req_id = "geo_" + emp_id + "_" + c_id + "_" + i;
-                if (radius.isEmpty()) {
-                    radius = "0";
-                } else if (Float.parseFloat(radius) > 100) {
-                    float radius_1 = (Float.parseFloat(radius) - 100);
-                    radius = String.valueOf(radius_1);
-                }
-                float rad = Float.parseFloat(radius);
-
-                Geofence geofence = new Geofence.Builder()
-                        .setCircularRegion(latLng.latitude, latLng.longitude, rad)
-                        .setRequestId(req_id)
-                        .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT)
-                        .setLoiteringDelay(120000)
-                        .setExpirationDuration(Geofence.NEVER_EXPIRE)
-                        .build();
-
-                geofenceList.add(geofence);
-                newLocationLists.add(new GeoLocationList(req_id, lat, lng, org_radius, c_id));
-            }
-        }
-
-        if (!geofenceList.isEmpty()) {
-            GeofencingRequest geofencingRequest;
-            try {
-                geofencingRequest = new GeofencingRequest.Builder()
-                        .addGeofences(geofenceList)
-                        .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
-                        .build();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-
-            Intent intent = new Intent(Dashboard.this, GeofenceBroadcastReceiver.class);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1120, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                return;
-            }
-            geofencingClient.addGeofences(geofencingRequest, pendingIntent)
-                    .addOnSuccessListener(unused -> {
-                        Toast.makeText(getApplicationContext(), "Auto Attendance Started Successfully", Toast.LENGTH_SHORT).show();
-                        System.out.println("HOISE");
-                    })
-                    .addOnFailureListener(e -> {
-                        System.out.println(e.getLocalizedMessage());
-                        String errorMsg = getErrorString(e);
-                        Toast.makeText(getApplicationContext(), errorMsg, Toast.LENGTH_SHORT).show();
-                        System.out.println("HOI NAI");
-                    });
-        }
-
-        json = gson.toJson(newLocationLists);
-
-        SharedPreferences.Editor editor1 = geoSharedData.edit();
-        editor1.remove(GEO_ALL_DATA);
-        editor1.putString(GEO_ALL_DATA, json);
-        editor1.apply();
-        editor1.commit();
-    }
+//    public void removeGeoFence() {
+//        json = geoSharedData.getString(GEO_ALL_DATA, "");
+//        Type type = new TypeToken<ArrayList<GeoLocationList>>() {
+//        }.getType();
+//        ArrayList<GeoLocationList> savedLocationLists = gson.fromJson(json, type);
+//
+//        GeofencingClient geofencingClient = LocationServices.getGeofencingClient(this);
+//
+//        if (savedLocationLists != null) {
+//            if (!savedLocationLists.isEmpty()) {
+//
+//                ArrayList<String> ids = new ArrayList<>();
+//                for (int i = 0; i < savedLocationLists.size(); i++) {
+//                    String id = savedLocationLists.get(i).getGeo_id();
+//                    ids.add(id);
+//                }
+//                geofencingClient.removeGeofences(ids)
+//                        .addOnSuccessListener(unused -> Toast.makeText(getApplicationContext(), "Auto Attendance Stopped Successfully", Toast.LENGTH_SHORT).show())
+//                        .addOnFailureListener(e -> {
+//                            String errorMessage = getErrorString(e);
+//                            Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_SHORT).show();
+//                        });
+//            }
+//        }
+//
+//        SharedPreferences.Editor editor1 = geoSharedData.edit();
+//        editor1.remove(GEO_ALL_DATA);
+//        editor1.apply();
+//        editor1.commit();
+//    }
+//
+//    public void addGeoFence() {
+//        GeofencingClient geofencingClient = LocationServices.getGeofencingClient(this);
+//
+//        ArrayList<Geofence> geofenceList = new ArrayList<>();
+//
+//        ArrayList<GeoLocationList> newLocationLists = new ArrayList<>();
+//
+//        for (int i = 0; i < geoLocationLists.size(); i++) {
+//            String lat = geoLocationLists.get(i).getGeo_lat();
+//            String lng = geoLocationLists.get(i).getGeo_lng();
+//            String org_radius = geoLocationLists.get(i).getGeo_radius();
+//            String radius = geoLocationLists.get(i).getGeo_radius();
+//            String c_id = geoLocationLists.get(i).getCoa_id();
+//
+//            LatLng latLng;
+//
+//            if (!lat.isEmpty() && !lng.isEmpty()) {
+//                latLng = new LatLng(Double.parseDouble(lat), Double.parseDouble(lng));
+//                String req_id = "geo_" + emp_id + "_" + c_id + "_" + i;
+//                if (radius.isEmpty()) {
+//                    radius = "0";
+//                } else if (Float.parseFloat(radius) > 100) {
+//                    float radius_1 = (Float.parseFloat(radius) - 100);
+//                    radius = String.valueOf(radius_1);
+//                }
+//                float rad = Float.parseFloat(radius);
+//
+//                Geofence geofence = new Geofence.Builder()
+//                        .setCircularRegion(latLng.latitude, latLng.longitude, rad)
+//                        .setRequestId(req_id)
+//                        .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT)
+//                        .setLoiteringDelay(120000)
+//                        .setExpirationDuration(Geofence.NEVER_EXPIRE)
+//                        .build();
+//
+//                geofenceList.add(geofence);
+//                newLocationLists.add(new GeoLocationList(req_id, lat, lng, org_radius, c_id));
+//            }
+//        }
+//
+//        if (!geofenceList.isEmpty()) {
+//            GeofencingRequest geofencingRequest;
+//            try {
+//                geofencingRequest = new GeofencingRequest.Builder()
+//                        .addGeofences(geofenceList)
+//                        .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
+//                        .build();
+//            } catch (Exception e) {
+//                throw new RuntimeException(e);
+//            }
+//
+//            Intent intent = new Intent(Dashboard.this, GeofenceBroadcastReceiver.class);
+//            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1120, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+//
+//            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//                return;
+//            }
+//            geofencingClient.addGeofences(geofencingRequest, pendingIntent)
+//                    .addOnSuccessListener(unused -> {
+//                        Toast.makeText(getApplicationContext(), "Auto Attendance Started Successfully", Toast.LENGTH_SHORT).show();
+//                        System.out.println("HOISE");
+//                    })
+//                    .addOnFailureListener(e -> {
+//                        System.out.println(e.getLocalizedMessage());
+//                        String errorMsg = getErrorString(e);
+//                        Toast.makeText(getApplicationContext(), errorMsg, Toast.LENGTH_SHORT).show();
+//                        System.out.println("HOI NAI");
+//                    });
+//        }
+//
+//        json = gson.toJson(newLocationLists);
+//
+//        SharedPreferences.Editor editor1 = geoSharedData.edit();
+//        editor1.remove(GEO_ALL_DATA);
+//        editor1.putString(GEO_ALL_DATA, json);
+//        editor1.apply();
+//        editor1.commit();
+//    }
 
     public String getErrorString(Exception e) {
         if (e instanceof ApiException) {

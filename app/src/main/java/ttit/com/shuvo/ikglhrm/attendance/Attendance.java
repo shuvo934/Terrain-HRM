@@ -51,6 +51,10 @@ import ttit.com.shuvo.ikglhrm.attendance.report.AttendanceReport;
 import ttit.com.shuvo.ikglhrm.dashboard.Dashboard;
 
 import static ttit.com.shuvo.ikglhrm.user_login.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.DISTANCE;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.FILE_OF_DAILY_ACTIVITY;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.STOPPED_TIME;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.TOTAL_TIME;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import org.json.JSONArray;
@@ -117,10 +121,6 @@ public class Attendance extends AppCompatActivity {
     ArrayList<PieEntry> NoOfEmp;
 
     SharedPreferences sharedPreferencesDA;
-    public static String FILE_OF_DAILY_ACTIVITY = "";
-    public static  String DISTANCE = "DISTANCE";
-    public static  String TOTAL_TIME = "TOTAL_TIME";
-    public static  String STOPPED_TIME = "STOPPED_TIME";
 
     Logger logger = Logger.getLogger(Attendance.class.getName());
 
