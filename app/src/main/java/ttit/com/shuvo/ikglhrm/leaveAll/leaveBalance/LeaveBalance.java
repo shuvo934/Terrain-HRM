@@ -10,12 +10,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.textfield.TextInputEditText;
+import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -80,27 +82,43 @@ public class LeaveBalance extends AppCompatActivity {
 
         leaveBalanceLists = new ArrayList<>();
 
-        if (!userInfoLists.isEmpty()) {
-            String firstname = userInfoLists.get(0).getUser_name();
-            if (firstname == null) {
-                firstname = "";
+        if (userInfoLists == null) {
+            restart("Could Not Get Employee Data. Please Restart the App.");
+        }
+        else {
+            if (userInfoLists.isEmpty()) {
+                restart("Could Not Get Employee Data. Please Restart the App.");
             }
-            name.setText(firstname);
-            emp_id = userInfoLists.get(0).getEmp_id();
+            else {
+                String firstname = userInfoLists.get(0).getUser_name();
+                if (firstname == null) {
+                    firstname = "";
+                }
+                name.setText(firstname);
+                emp_id = userInfoLists.get(0).getEmp_id();
+            }
         }
 
-        if (!userDesignations.isEmpty()) {
-            String jsmName = userDesignations.get(0).getJsm_name();
-            if (jsmName == null) {
-                jsmName = "";
+        if (userDesignations == null) {
+            restart("Could Not Get Employee Data. Please Restart the App.");
+        }
+        else {
+            if (userDesignations.isEmpty()) {
+                restart("Could Not Get Employee Data. Please Restart the App.");
             }
+            else {
+                String jsmName = userDesignations.get(0).getJsm_name();
+                if (jsmName == null) {
+                    jsmName = "";
+                }
 
-            String joinDate = userDesignations.get(0).getJoining_date();
-            if (joinDate == null) {
-                joinDate = "";
+                String joinDate = userDesignations.get(0).getJoining_date();
+                if (joinDate == null) {
+                    joinDate = "";
+                }
+                title.setText(jsmName);
+                join.setText(joinDate);
             }
-            title.setText(jsmName);
-            join.setText(joinDate);
         }
 
         Date c = Calendar.getInstance().getTime();
@@ -406,6 +424,16 @@ public class LeaveBalance extends AppCompatActivity {
                 dialog.dismiss();
                 finish();
             });
+        }
+    }
+
+    public void restart(String msg) {
+        try {
+            ProcessPhoenix.triggerRebirth(getApplicationContext());
+        }
+        catch (Exception e) {
+            Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
+            System.exit(0);
         }
     }
 }

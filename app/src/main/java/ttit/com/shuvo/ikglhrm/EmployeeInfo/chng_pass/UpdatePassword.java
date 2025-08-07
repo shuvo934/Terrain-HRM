@@ -106,11 +106,11 @@ public class UpdatePassword extends AppCompatActivity {
         emp_password = sharedpreferences.getString(EMP_PASSWORD,"");
 
         if (userInfoLists == null) {
-            restart("Could Not Get Doctor Data. Please Restart the App.");
+            restart("Could Not Get Employee Data. Please Restart the App.");
         }
         else {
             if (userInfoLists.isEmpty()) {
-                restart("Could Not Get Doctor Data. Please Restart the App.");
+                restart("Could Not Get Employee Data. Please Restart the App.");
             }
             else {
                 usr_mail = userInfoLists.get(0).getEmail();

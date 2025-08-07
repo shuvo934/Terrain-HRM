@@ -2,5 +2,6 @@
 <network-security-config>
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">103.56.208.123</domain>
+        <domain includeSubdomains="true">grameenphone.filter.ncnd.mobi</domain>
     </domain-config>
 </network-security-config>

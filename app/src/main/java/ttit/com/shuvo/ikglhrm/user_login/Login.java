@@ -116,8 +116,6 @@ public class Login extends AppCompatActivity implements CallBackListener {
 //    private String message = null;
     private Boolean conn = false;
     private Boolean infoConnected = false;
-    private Boolean adminConnected = false;
-    private Boolean noUser = false;
     private Boolean connected = false;
 
 //    private Connection connection;
@@ -148,6 +146,7 @@ public class Login extends AppCompatActivity implements CallBackListener {
     ArrayList<CenterList> centerLists;
 
     Logger logger = Logger.getLogger(Login.class.getName());
+    String parsing_message = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -930,6 +929,7 @@ public class Login extends AppCompatActivity implements CallBackListener {
             }
             catch (JSONException e) {
                 connected = false;
+                parsing_message = e.getLocalizedMessage();
                 logger.log(Level.WARNING,e.getMessage(),e);
                 urls.get(index).setChecked(true);
                 checkToGetLoginData();
@@ -937,6 +937,7 @@ public class Login extends AppCompatActivity implements CallBackListener {
         }, error -> {
             conn = false;
             connected = false;
+            parsing_message = error.getLocalizedMessage();
             logger.log(Level.WARNING,error.getMessage(),error);
             urls.get(index).setChecked(true);
             checkToGetLoginData();
@@ -1019,10 +1020,18 @@ public class Login extends AppCompatActivity implements CallBackListener {
                     alert.show();
                 }
                 else {
+                    if (parsing_message != null) {
+                        if (parsing_message.isEmpty() || parsing_message.equals("null")) {
+                            parsing_message = "Server problem or Internet not connected";
+                        }
+                    }
+                    else {
+                        parsing_message = "Server problem or Internet not connected";
+                    }
                     MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(Login.this);
                     alertDialogBuilder.setTitle("Warning!")
                             .setIcon(R.drawable.hrm_new_round_icon_custom)
-                            .setMessage("There is a network issue in the server. Please Try again.")
+                            .setMessage("Error Message: "+parsing_message+".\n"+"Please try again.")
                             .setPositiveButton("Retry", (dialog, which) -> {
                                 dynamicLoginCheck();
                                 dialog.dismiss();
@@ -1033,10 +1042,18 @@ public class Login extends AppCompatActivity implements CallBackListener {
                 }
             }
             else {
+                if (parsing_message != null) {
+                    if (parsing_message.isEmpty() || parsing_message.equals("null")) {
+                        parsing_message = "Server problem or Internet not connected";
+                    }
+                }
+                else {
+                    parsing_message = "Server problem or Internet not connected";
+                }
                 MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(Login.this);
                 alertDialogBuilder.setTitle("Warning!")
                         .setIcon(R.drawable.hrm_new_round_icon_custom)
-                        .setMessage("Server Problem or Internet Not Connected")
+                        .setMessage("Error Message: "+parsing_message+".\n"+"Please try again.")
                         .setPositiveButton("Retry", (dialog, which) -> {
                             dynamicLoginCheck();
                             dialog.dismiss();
@@ -1180,12 +1197,14 @@ public class Login extends AppCompatActivity implements CallBackListener {
              }
              catch (JSONException e) {
                  connected = false;
+                 parsing_message = e.getLocalizedMessage();
                  logger.log(Level.WARNING,e.getMessage(),e);
                  goToDashboard();
              }
         }, error -> {
             conn = false;
             connected = false;
+            parsing_message = error.getLocalizedMessage();
             logger.log(Level.WARNING,error.getMessage(),error);
             goToDashboard();
         }) {
@@ -1216,12 +1235,14 @@ public class Login extends AppCompatActivity implements CallBackListener {
             }
             catch (JSONException e) {
                 connected = false;
+                parsing_message = e.getLocalizedMessage();
                 logger.log(Level.WARNING,e.getMessage(),e);
                 goToDashboard();
             }
         },error -> {
             conn = false;
             connected = false;
+            parsing_message = error.getLocalizedMessage();
             logger.log(Level.WARNING,error.getMessage(),error);
             goToDashboard();
         });
@@ -1303,12 +1324,14 @@ public class Login extends AppCompatActivity implements CallBackListener {
             }
             catch (JSONException e) {
                 connected = false;
+                parsing_message = e.getLocalizedMessage();
                 logger.log(Level.WARNING,e.getMessage(),e);
                 goToDashboard();
             }
         },error -> {
             conn = false;
             connected = false;
+            parsing_message = error.getLocalizedMessage();
             logger.log(Level.WARNING,error.getMessage(),error);
             goToDashboard();
         });
@@ -1331,12 +1354,14 @@ public class Login extends AppCompatActivity implements CallBackListener {
             }
             catch (JSONException e) {
                 connected = false;
+                parsing_message = e.getLocalizedMessage();
                 logger.log(Level.WARNING,e.getMessage(),e);
                 goToDashboard();
             }
         },error -> {
             conn = false;
             connected = false;
+            parsing_message = error.getLocalizedMessage();
             logger.log(Level.WARNING,error.getMessage(),error);
             goToDashboard();
         });
@@ -1380,12 +1405,14 @@ public class Login extends AppCompatActivity implements CallBackListener {
             }
             catch (JSONException e) {
                 connected = false;
+                parsing_message = e.getLocalizedMessage();
                 logger.log(Level.WARNING,e.getMessage(),e);
                 goToDashboard();
             }
         }, error -> {
             conn = false;
             connected = false;
+            parsing_message = error.getLocalizedMessage();
             logger.log(Level.WARNING,error.getMessage(),error);
             goToDashboard();
         });
@@ -1422,12 +1449,14 @@ public class Login extends AppCompatActivity implements CallBackListener {
             }
             catch (JSONException e) {
                 connected = false;
+                parsing_message = e.getLocalizedMessage();
                 logger.log(Level.WARNING,e.getMessage(),e);
                 goToDashboard();
             }
         }, error -> {
             conn = false;
             connected = false;
+            parsing_message = error.getLocalizedMessage();
             logger.log(Level.WARNING,error.getMessage(),error);
             goToDashboard();
         });
@@ -1556,15 +1585,21 @@ public class Login extends AppCompatActivity implements CallBackListener {
                 }
                 conn = false;
                 connected = false;
-                adminConnected = false;
                 infoConnected = false;
-                noUser = false;
             }
             else {
+                if (parsing_message != null) {
+                    if (parsing_message.isEmpty() || parsing_message.equals("null")) {
+                        parsing_message = "Server problem or Internet not connected";
+                    }
+                }
+                else {
+                    parsing_message = "Server problem or Internet not connected";
+                }
                 MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(Login.this);
                 alertDialogBuilder.setTitle("Warning!")
                         .setIcon(R.drawable.hrm_new_round_icon_custom)
-                        .setMessage("There is a network issue in the server. Please Try later.")
+                        .setMessage("Error Message: "+parsing_message+".\n"+"Please try again.")
                         .setPositiveButton("Retry", (dialog, which) -> {
                             dynamicLoginCheck();
                             dialog.dismiss();
@@ -1574,10 +1609,18 @@ public class Login extends AppCompatActivity implements CallBackListener {
             }
         }
         else {
+            if (parsing_message != null) {
+                if (parsing_message.isEmpty() || parsing_message.equals("null")) {
+                    parsing_message = "Server problem or Internet not connected";
+                }
+            }
+            else {
+                parsing_message = "Server problem or Internet not connected";
+            }
             MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(Login.this);
             alertDialogBuilder.setTitle("Warning!")
                     .setIcon(R.drawable.hrm_new_round_icon_custom)
-                    .setMessage("Please Check Your Internet Connection")
+                    .setMessage("Error Message: "+parsing_message+".\n"+"Please try again.")
                     .setPositiveButton("Retry", (dialog, which) -> {
                         dynamicLoginCheck();
                         dialog.dismiss();

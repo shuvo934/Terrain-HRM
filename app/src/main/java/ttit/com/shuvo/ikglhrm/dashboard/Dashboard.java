@@ -61,9 +61,7 @@ import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.LargeValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
-import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.GeofenceStatusCodes;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
@@ -76,6 +74,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -362,6 +361,7 @@ public class Dashboard extends AppCompatActivity {
 //    String location_file = "";
 
     Logger logger = Logger.getLogger(Dashboard.class.getName());
+    String parsing_message = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -1404,12 +1404,14 @@ public class Dashboard extends AppCompatActivity {
             } catch (JSONException e) {
                 connected = false;
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 updateSalaryGraph();
             }
         }, error -> {
             conn = false;
             connected = false;
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             updateSalaryGraph();
         });
 
@@ -1474,28 +1476,37 @@ public class Dashboard extends AppCompatActivity {
                 conn = false;
                 connected = false;
             } else {
-                AlertDialog dialog = new AlertDialog.Builder(Dashboard.this)
-                        .setMessage("There is a network issue in the server. Please Try later")
-                        .setPositiveButton("Retry", null)
-                        .setNegativeButton("Cancel", null)
-                        .show();
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(v -> {
-                    getSalaryGraph();
-                    dialog.dismiss();
-                });
+                alertMessageSalaryGr();
             }
         } else {
-            AlertDialog dialog = new AlertDialog.Builder(Dashboard.this)
-                    .setMessage("Please Check Your Internet Connection")
-                    .setPositiveButton("Retry", null)
-                    .setNegativeButton("Cancel", null)
-                    .show();
-            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(v -> {
-                getSalaryGraph();
-                dialog.dismiss();
-            });
+            alertMessageSalaryGr();
+        }
+    }
+
+    public void alertMessageSalaryGr() {
+        if (parsing_message != null) {
+            if (parsing_message.isEmpty() || parsing_message.equals("null")) {
+                parsing_message = "Server problem or Internet not connected";
+            }
+        }
+        else {
+            parsing_message = "Server problem or Internet not connected";
+        }
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(Dashboard.this);
+        alertDialogBuilder.setTitle("Error!")
+                .setMessage("Error Message: "+parsing_message+".\n"+"Please try again.")
+                .setPositiveButton("Retry", (dialog, which) -> {
+                    getSalaryGraph();
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Cancel",(dialog, which) -> dialog.dismiss());
+
+        AlertDialog alert = alertDialogBuilder.create();
+        try {
+            alert.show();
+        }
+        catch (Exception e) {
+            restart("App is paused for a long time. Please Start the app again.");
         }
     }
 
@@ -1629,13 +1640,15 @@ public class Dashboard extends AppCompatActivity {
             } catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
                 connected = false;
-                updateInterface();
+                parsing_message = e.getLocalizedMessage();
+                updateAttendanceGraph();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             conn = false;
             connected = false;
-            updateInterface();
+            updateAttendanceGraph();
         });
 
         StringRequest attendDataReq = new StringRequest(Request.Method.GET, attendDataUrl, response -> {
@@ -1655,21 +1668,20 @@ public class Dashboard extends AppCompatActivity {
                         late = attendanceInfo.getString("late_count");
                         early = attendanceInfo.getString("early_count");
                     }
-                    connected = true;
-                    requestQueue.add(todayAttReq);
-                } else {
-                    connected = false;
-                    updateAttendanceGraph();
                 }
+                connected = true;
+                requestQueue.add(todayAttReq);
             } catch (JSONException e) {
                 connected = false;
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 updateAttendanceGraph();
             }
         }, error -> {
             conn = false;
             connected = false;
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             updateAttendanceGraph();
         });
 
@@ -1791,30 +1803,37 @@ public class Dashboard extends AppCompatActivity {
                 conn = false;
                 connected = false;
             } else {
-                AlertDialog dialog = new AlertDialog.Builder(Dashboard.this)
-                        .setMessage("There is a network issue in the server. Please Try later")
-                        .setPositiveButton("Retry", null)
-                        .setNegativeButton("Cancel", null)
-                        .show();
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(v -> {
-
-                    getAttendanceGraph();
-                    dialog.dismiss();
-                });
+                alertMessageAttendanceGr();
             }
         } else {
-            AlertDialog dialog = new AlertDialog.Builder(Dashboard.this)
-                    .setMessage("Please Check Your Internet Connection")
-                    .setPositiveButton("Retry", null)
-                    .setNegativeButton("Cancel", null)
-                    .show();
-            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(v -> {
+            alertMessageAttendanceGr();
+        }
+    }
 
-                getAttendanceGraph();
-                dialog.dismiss();
-            });
+    public void alertMessageAttendanceGr() {
+        if (parsing_message != null) {
+            if (parsing_message.isEmpty() || parsing_message.equals("null")) {
+                parsing_message = "Server problem or Internet not connected";
+            }
+        }
+        else {
+            parsing_message = "Server problem or Internet not connected";
+        }
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(Dashboard.this);
+        alertDialogBuilder.setTitle("Error!")
+                .setMessage("Error Message: "+parsing_message+".\n"+"Please try again.")
+                .setPositiveButton("Retry", (dialog, which) -> {
+                    getAttendanceGraph();
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Cancel",(dialog, which) -> dialog.dismiss());
+
+        AlertDialog alert = alertDialogBuilder.create();
+        try {
+            alert.show();
+        }
+        catch (Exception e) {
+            restart("App is paused for a long time. Please Start the app again.");
         }
     }
 
@@ -1931,6 +1950,7 @@ public class Dashboard extends AppCompatActivity {
         RequestQueue requestQueue = Volley.newRequestQueue(Dashboard.this);
 
         StringRequest lastLeaveReq = new StringRequest(Request.Method.GET, lastLeaveUrl, response -> {
+            conn = true;
             try {
                 JSONObject jsonObject = new JSONObject(response);
                 String items = jsonObject.getString("items");
@@ -1949,17 +1969,20 @@ public class Dashboard extends AppCompatActivity {
                 updateLeaveGraph();
             } catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateLeaveGraph();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             conn = false;
             connected = false;
             updateLeaveGraph();
         });
 
         StringRequest upLeaveReq = new StringRequest(Request.Method.GET, upLeaveUrl, response -> {
+            conn = true;
             try {
                 JSONObject jsonObject = new JSONObject(response);
                 String items = jsonObject.getString("items");
@@ -1974,20 +1997,24 @@ public class Dashboard extends AppCompatActivity {
                     upcoming_leave_type = info.getString("lc_name")
                             .equals("null") ? "" : info.getString("lc_name");
                 }
+                connected = true;
                 requestQueue.add(lastLeaveReq);
             } catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateLeaveGraph();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             conn = false;
             connected = false;
             updateLeaveGraph();
         });
 
         StringRequest leaveCountReq = new StringRequest(Request.Method.GET, leaveCountUrl, response -> {
+            conn = true;
             try {
                 JSONObject jsonObject = new JSONObject(response);
                 String items = jsonObject.getString("items");
@@ -2004,14 +2031,17 @@ public class Dashboard extends AppCompatActivity {
                                 .equals("null") ? "0" : todayAttDataInfo.getString("rejected");
                     }
                 }
+                connected = true;
                 requestQueue.add(upLeaveReq);
             } catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateLeaveGraph();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             conn = false;
             connected = false;
             updateLeaveGraph();
@@ -2020,6 +2050,7 @@ public class Dashboard extends AppCompatActivity {
         StringRequest leaveDataReq = new StringRequest(Request.Method.GET, leaveDataUrl, response -> {
             conn = true;
             try {
+                connected = true;
                 JSONObject jsonObject = new JSONObject(response);
                 String items = jsonObject.getString("items");
                 String count = jsonObject.getString("count");
@@ -2044,12 +2075,14 @@ public class Dashboard extends AppCompatActivity {
             } catch (JSONException e) {
                 connected = false;
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 updateLeaveGraph();
             }
         }, error -> {
             conn = false;
             connected = false;
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             updateLeaveGraph();
         });
 
@@ -2167,32 +2200,37 @@ public class Dashboard extends AppCompatActivity {
                 conn = false;
                 connected = false;
             } else {
-                AlertDialog dialog = new AlertDialog.Builder(Dashboard.this)
-                        .setMessage("There is a network issue in the server. Please Try later")
-                        .setPositiveButton("Retry", null)
-                        .setNegativeButton("Cancel", null)
-                        .show();
-
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(v -> {
-
-                    getLeaveGraph();
-                    dialog.dismiss();
-                });
+                alertMessageLeaveGr();
             }
         } else {
-            AlertDialog dialog = new AlertDialog.Builder(Dashboard.this)
-                    .setMessage("Please Check Your Internet Connection")
-                    .setPositiveButton("Retry", null)
-                    .setNegativeButton("Cancel", null)
-                    .show();
+            alertMessageLeaveGr();
+        }
+    }
 
-            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(v -> {
+    public void alertMessageLeaveGr() {
+        if (parsing_message != null) {
+            if (parsing_message.isEmpty() || parsing_message.equals("null")) {
+                parsing_message = "Server problem or Internet not connected";
+            }
+        }
+        else {
+            parsing_message = "Server problem or Internet not connected";
+        }
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(Dashboard.this);
+        alertDialogBuilder.setTitle("Error!")
+                .setMessage("Error Message: "+parsing_message+".\n"+"Please try again.")
+                .setPositiveButton("Retry", (dialog, which) -> {
+                    getLeaveGraph();
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Cancel",(dialog, which) -> dialog.dismiss());
 
-                getLeaveGraph();
-                dialog.dismiss();
-            });
+        AlertDialog alert = alertDialogBuilder.create();
+        try {
+            alert.show();
+        }
+        catch (Exception e) {
+            restart("App is paused for a long time. Please Start the app again.");
         }
     }
 
@@ -2588,12 +2626,14 @@ public class Dashboard extends AppCompatActivity {
             } catch (JSONException e) {
                 connected = false;
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 updateInterface();
             }
         }, error -> {
             conn = false;
             connected = false;
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             updateInterface();
         });
 
@@ -2625,12 +2665,14 @@ public class Dashboard extends AppCompatActivity {
             } catch (JSONException e) {
                 connected = false;
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 updateInterface();
             }
         }, error -> {
             conn = false;
             connected = false;
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             updateInterface();
         });
 
@@ -2651,20 +2693,19 @@ public class Dashboard extends AppCompatActivity {
                         late = attendanceInfo.getString("late_count");
                         early = attendanceInfo.getString("early_count");
                     }
-                    requestQueue.add(leaveDataReq);
-                } else {
-                    connected = false;
-                    updateInterface();
                 }
+                requestQueue.add(leaveDataReq);
             } catch (JSONException e) {
                 connected = false;
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 updateInterface();
             }
         }, error -> {
             conn = false;
             connected = false;
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             updateInterface();
         });
 
@@ -2687,12 +2728,14 @@ public class Dashboard extends AppCompatActivity {
             } catch (JSONException e) {
                 connected = false;
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 updateInterface();
             }
         }, error -> {
             conn = false;
             connected = false;
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             updateInterface();
         });
 
@@ -2724,12 +2767,14 @@ public class Dashboard extends AppCompatActivity {
             } catch (JSONException e) {
                 connected = false;
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 updateInterface();
             }
         }, error -> {
             conn = false;
             connected = false;
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             updateInterface();
         });
 
@@ -2988,6 +3033,7 @@ public class Dashboard extends AppCompatActivity {
         RequestQueue requestQueue = Volley.newRequestQueue(Dashboard.this);
 
         StringRequest trOptionReq = new StringRequest(Request.Method.GET, trOptionUrl, response -> {
+            conn = true;
             try {
                 JSONObject jsonObject = new JSONObject(response);
                 String items = jsonObject.getString("items");
@@ -3002,17 +3048,20 @@ public class Dashboard extends AppCompatActivity {
                 updateInterface();
             } catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateInterface();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             conn = false;
             connected = false;
             updateInterface();
         });
 
         StringRequest lastLeaveReq = new StringRequest(Request.Method.GET, lastLeaveUrl, response -> {
+            conn = true;
             try {
                 JSONObject jsonObject = new JSONObject(response);
                 String items = jsonObject.getString("items");
@@ -3030,17 +3079,20 @@ public class Dashboard extends AppCompatActivity {
                 requestQueue.add(trOptionReq);
             } catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateInterface();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             conn = false;
             connected = false;
             updateInterface();
         });
 
         StringRequest upLeaveReq = new StringRequest(Request.Method.GET, upLeaveUrl, response -> {
+            conn = true;
             try {
                 JSONObject jsonObject = new JSONObject(response);
                 String items = jsonObject.getString("items");
@@ -3058,17 +3110,20 @@ public class Dashboard extends AppCompatActivity {
                 requestQueue.add(lastLeaveReq);
             } catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateInterface();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             conn = false;
             connected = false;
             updateInterface();
         });
 
         StringRequest leaveCountReq = new StringRequest(Request.Method.GET, leaveCountUrl, response -> {
+            conn = true;
             try {
                 JSONObject jsonObject = new JSONObject(response);
                 String items = jsonObject.getString("items");
@@ -3088,17 +3143,20 @@ public class Dashboard extends AppCompatActivity {
                 requestQueue.add(upLeaveReq);
             } catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateInterface();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             conn = false;
             connected = false;
             updateInterface();
         });
 
         StringRequest todayAttReq = new StringRequest(Request.Method.GET, todayAttDataUrl, response -> {
+            conn = true;
             try {
                 JSONObject jsonObject = new JSONObject(response);
                 String items = jsonObject.getString("items");
@@ -3118,11 +3176,13 @@ public class Dashboard extends AppCompatActivity {
                 requestQueue.add(leaveCountReq);
             } catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateInterface();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             conn = false;
             connected = false;
             updateInterface();
@@ -3150,11 +3210,13 @@ public class Dashboard extends AppCompatActivity {
 
             } catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateInterface();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             conn = false;
             connected = false;
             updateInterface();
@@ -3191,12 +3253,14 @@ public class Dashboard extends AppCompatActivity {
             } catch (JSONException e) {
                 connected = false;
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 updateInterface();
             }
         }, error -> {
             conn = false;
             connected = false;
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             updateInterface();
         });
 
@@ -3209,11 +3273,13 @@ public class Dashboard extends AppCompatActivity {
                     requestQueue.add(imageReq);
                 } else {
                     connected = false;
+                    parsing_message = string_out;
                     updateInterface();
                 }
 
             } catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateInterface();
             }
@@ -3221,6 +3287,7 @@ public class Dashboard extends AppCompatActivity {
             conn = false;
             connected = false;
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             updateInterface();
         }) {
             @Override
@@ -3701,22 +3768,31 @@ public class Dashboard extends AppCompatActivity {
                 }
             }
             else {
-                AlertDialog dialog = new AlertDialog.Builder(Dashboard.this)
-                        .setMessage("There is a network issue in the server. Please Try later")
-                        .setPositiveButton("Retry", null)
-                        .setNegativeButton("Cancel", null)
-                        .show();
+                alertMessageAll();
+            }
+        }
+        else {
+            alertMessageAll();
+        }
+    }
 
-                dialog.setCancelable(false);
-                dialog.setCanceledOnTouchOutside(false);
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(v -> {
+    public void alertMessageAll() {
+        if (parsing_message != null) {
+            if (parsing_message.isEmpty() || parsing_message.equals("null")) {
+                parsing_message = "Server problem or Internet not connected";
+            }
+        }
+        else {
+            parsing_message = "Server problem or Internet not connected";
+        }
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(Dashboard.this);
+        alertDialogBuilder.setTitle("Error!")
+                .setMessage("Error Message: "+parsing_message+".\n"+"Please try again.")
+                .setPositiveButton("Retry", (dialog, which) -> {
                     getAllData();
                     dialog.dismiss();
-                });
-
-                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setOnClickListener(v -> {
+                })
+                .setNegativeButton("Cancel",(dialog, which) -> {
                     if (loginLog_check) {
                         userInfoLists.clear();
                         userDesignations.clear();
@@ -3730,38 +3806,15 @@ public class Dashboard extends AppCompatActivity {
                         dialog.dismiss();
                     }
                 });
-            }
+
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.setCancelable(false);
+        alert.setCanceledOnTouchOutside(false);
+        try {
+            alert.show();
         }
-        else {
-            AlertDialog dialog = new AlertDialog.Builder(Dashboard.this)
-                    .setMessage("Please Check Your Internet Connection")
-                    .setPositiveButton("Retry", null)
-                    .setNegativeButton("Cancel", null)
-                    .show();
-
-            dialog.setCancelable(false);
-            dialog.setCanceledOnTouchOutside(false);
-            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(v -> {
-                getAllData();
-                dialog.dismiss();
-            });
-
-            Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-            negative.setOnClickListener(v -> {
-                if (loginLog_check) {
-                    userInfoLists.clear();
-                    userDesignations.clear();
-                    userInfoLists = new ArrayList<>();
-                    userDesignations = new ArrayList<>();
-                    isApproved = 0;
-                    isLeaveApproved = 0;
-                    dialog.dismiss();
-                    finish();
-                } else {
-                    dialog.dismiss();
-                }
-            });
+        catch (Exception e) {
+            restart("App is paused for a long time. Please Start the app again.");
         }
     }
 
@@ -3875,25 +3928,25 @@ public class Dashboard extends AppCompatActivity {
 //        editor1.commit();
 //    }
 
-    public String getErrorString(Exception e) {
-        if (e instanceof ApiException) {
-            ApiException apiException = (ApiException) e;
-            switch (apiException.getStatusCode()) {
-                case GeofenceStatusCodes
-                             .GEOFENCE_NOT_AVAILABLE:
-                    return "GEOFENCE NOT AVAILABLE";
-                case GeofenceStatusCodes
-                             .GEOFENCE_TOO_MANY_GEOFENCES:
-                    return "TOO MANY GEOFENCES";
-                case GeofenceStatusCodes
-                             .GEOFENCE_TOO_MANY_PENDING_INTENTS:
-                    return "TOO MANY PENDING INTENTS";
-                case GeofenceStatusCodes.GEOFENCE_INSUFFICIENT_LOCATION_PERMISSION:
-                    return "INSUFFICIENT PERMISSIONS";
-            }
-        }
-        return e.getLocalizedMessage();
-    }
+//    public String getErrorString(Exception e) {
+//        if (e instanceof ApiException) {
+//            ApiException apiException = (ApiException) e;
+//            switch (apiException.getStatusCode()) {
+//                case GeofenceStatusCodes
+//                             .GEOFENCE_NOT_AVAILABLE:
+//                    return "GEOFENCE NOT AVAILABLE";
+//                case GeofenceStatusCodes
+//                             .GEOFENCE_TOO_MANY_GEOFENCES:
+//                    return "TOO MANY GEOFENCES";
+//                case GeofenceStatusCodes
+//                             .GEOFENCE_TOO_MANY_PENDING_INTENTS:
+//                    return "TOO MANY PENDING INTENTS";
+//                case GeofenceStatusCodes.GEOFENCE_INSUFFICIENT_LOCATION_PERMISSION:
+//                    return "INSUFFICIENT PERMISSIONS";
+//            }
+//        }
+//        return e.getLocalizedMessage();
+//    }
 
     public void attendanceShortcutTriggered() {
         attendanceWidgetPreferences = getSharedPreferences(WIDGET_FILE, MODE_PRIVATE);
@@ -4015,11 +4068,13 @@ public class Dashboard extends AppCompatActivity {
                 updateInfo();
             } catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateInfo();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             conn = false;
             connected = false;
             updateInfo();
@@ -4183,10 +4238,26 @@ public class Dashboard extends AppCompatActivity {
                     getNotification("Attendance System", "Failed to get Location");
                 }
             } else {
-                getNotification("Attendance System", "There is a network issue in the server. Please Try later.");
+                if (parsing_message != null) {
+                    if (parsing_message.isEmpty() || parsing_message.equals("null")) {
+                        parsing_message = "Server problem or Internet not connected";
+                    }
+                }
+                else {
+                    parsing_message = "Server problem or Internet not connected";
+                }
+                getNotification("Attendance System", "Error Message: "+parsing_message+".\n"+"Please try again.");
             }
         } else {
-            getNotification("Attendance System", "Please Check Your Internet Connection.");
+            if (parsing_message != null) {
+                if (parsing_message.isEmpty() || parsing_message.equals("null")) {
+                    parsing_message = "Server problem or Internet not connected";
+                }
+            }
+            else {
+                parsing_message = "Server problem or Internet not connected";
+            }
+            getNotification("Attendance System", "Error Message: "+parsing_message+".\n"+"Please try again.");
         }
     }
 
@@ -4293,15 +4364,18 @@ public class Dashboard extends AppCompatActivity {
                 } else {
                     System.out.println(string_out);
                     connected = false;
+                    parsing_message = string_out;
                 }
                 updateLayout();
             } catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateLayout();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             conn = false;
             connected = false;
             updateLayout();
@@ -4376,11 +4450,27 @@ public class Dashboard extends AppCompatActivity {
                 }
             }
             else {
-                getNotification("Attendance System", "There is a network issue in the server. Please Try later.");
+                if (parsing_message != null) {
+                    if (parsing_message.isEmpty() || parsing_message.equals("null")) {
+                        parsing_message = "Server problem or Internet not connected";
+                    }
+                }
+                else {
+                    parsing_message = "Server problem or Internet not connected";
+                }
+                getNotification("Attendance System", "Error Message: "+parsing_message+".\n"+"Please try again.");
             }
         }
         else {
-            getNotification("Attendance System", "Please Check Your Internet Connection.");
+            if (parsing_message != null) {
+                if (parsing_message.isEmpty() || parsing_message.equals("null")) {
+                    parsing_message = "Server problem or Internet not connected";
+                }
+            }
+            else {
+                parsing_message = "Server problem or Internet not connected";
+            }
+            getNotification("Attendance System", "Error Message: "+parsing_message+".\n"+"Please try again.");
         }
     }
 
@@ -4461,5 +4551,15 @@ public class Dashboard extends AppCompatActivity {
             }
         }
 
+    }
+
+    public void restart(String msg) {
+        try {
+            ProcessPhoenix.triggerRebirth(getApplicationContext());
+        }
+        catch (Exception e) {
+            Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
+            System.exit(0);
+        }
     }
 }
