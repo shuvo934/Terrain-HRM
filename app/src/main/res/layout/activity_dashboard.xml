@@ -456,7 +456,8 @@
                             android:textColor="@color/primaryColor"
                             android:paddingStart="@dimen/_8sdp"
                             android:paddingEnd="@dimen/_8sdp"
-                            android:paddingTop="@dimen/_1sdp"/>
+                            android:paddingTop="@dimen/_1sdp"
+                            tools:ignore="HardcodedText" />
 
                     </com.google.android.material.card.MaterialCardView>
 
@@ -490,8 +491,8 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/poppins_bold"
                         android:layout_marginStart="@dimen/_2sdp"
-                        android:format12Hour="hh:mm a"
-                        android:format24Hour="hh:mm a"
+                        android:format12Hour="hh:mm:ss a"
+                        android:format24Hour="hh:mm:ss a"
                         android:textStyle="bold"
                         android:text=""
                         android:gravity="center"

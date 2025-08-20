@@ -842,7 +842,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:weightSum="1.5"
             android:visibility="gone"
             android:layout_marginBottom="@dimen/_8sdp"
             android:layout_alignParentStart="true"
@@ -851,10 +850,10 @@
 
             <Button
                 android:id="@+id/approve_button_leave"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_weight=".5"
+                android:layout_weight="1"
                 android:layout_marginTop="@dimen/_4sdp"
                 android:layout_marginBottom="@dimen/_4sdp"
                 android:layout_marginStart="@dimen/_8sdp"
@@ -870,10 +869,10 @@
 
             <Button
                 android:id="@+id/forward_button_leave"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_weight=".5"
+                android:layout_weight="1"
                 android:layout_marginStart="@dimen/_8sdp"
                 android:layout_marginTop="@dimen/_4sdp"
                 android:layout_marginBottom="@dimen/_4sdp"
@@ -889,10 +888,10 @@
 
             <Button
                 android:id="@+id/reject_button_leave"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_weight=".5"
+                android:layout_weight="1"
                 android:layout_marginStart="@dimen/_8sdp"
                 android:layout_marginEnd="@dimen/_8sdp"
                 android:layout_marginTop="@dimen/_4sdp"

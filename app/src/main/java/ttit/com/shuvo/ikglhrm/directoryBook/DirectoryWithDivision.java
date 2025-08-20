@@ -16,14 +16,16 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.jakewharton.processphoenix.ProcessPhoenix;
 import com.rosemaryapp.amazingspinner.AmazingSpinner;
 
 import java.util.ArrayList;
@@ -84,6 +86,7 @@ public class DirectoryWithDivision extends AppCompatActivity {
     ArrayList<TwoItemLists> desLists;
 
     Logger logger = Logger.getLogger(DirectoryWithDivision.class.getName());
+    String parsing_message = "";
 
 
     @Override
@@ -107,8 +110,28 @@ public class DirectoryWithDivision extends AppCompatActivity {
         depLists = new ArrayList<>();
         desLists = new ArrayList<>();
 
-        emp_id = userInfoLists.get(0).getEmp_id();
-        div_id = userDesignations.get(0).getDiv_id();
+        if (userInfoLists == null) {
+            restart("Could Not Get Employee Data. Please Restart the App.");
+        }
+        else {
+            if (userInfoLists.isEmpty()) {
+                restart("Could Not Get Employee Data. Please Restart the App.");
+            }
+            else {
+                emp_id = userInfoLists.get(0).getEmp_id();
+            }
+        }
+        if (userDesignations == null) {
+            restart("Could Not Get Employee Data. Please Restart the App.");
+        }
+        else {
+            if (userDesignations.isEmpty()) {
+                restart("Could Not Get Employee Data. Please Restart the App.");
+            }
+            else {
+                div_id = userDesignations.get(0).getDiv_id();
+            }
+        }
 
         directoryView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
@@ -900,15 +923,18 @@ public class DirectoryWithDivision extends AppCompatActivity {
                         idofALl.add(emp_id_new);
                     }
                 }
+                connected = true;
                 getPhoneLists(idofALl);
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateLay();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             conn = false;
             connected = false;
             updateLay();
@@ -934,11 +960,13 @@ public class DirectoryWithDivision extends AppCompatActivity {
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateLay();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             conn = false;
             connected = false;
             updateLay();
@@ -965,11 +993,13 @@ public class DirectoryWithDivision extends AppCompatActivity {
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateLay();
             }
         }, error -> {
            logger.log(Level.WARNING, error.getMessage(), error);
+           parsing_message = error.getLocalizedMessage();
            conn = false;
            connected = false;
            updateLay();
@@ -1016,11 +1046,13 @@ public class DirectoryWithDivision extends AppCompatActivity {
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateLay();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             conn = false;
             connected = false;
             updateLay();
@@ -1066,49 +1098,44 @@ public class DirectoryWithDivision extends AppCompatActivity {
 
             }
             else {
-                AlertDialog dialog = new AlertDialog.Builder(DirectoryWithDivision.this)
-                        .setMessage("There is a network issue in the server. Please Try later")
-                        .setPositiveButton("Retry", null)
-                        .setNegativeButton("Cancel", null)
-                        .show();
-
-                dialog.setCancelable(false);
-                dialog.setCanceledOnTouchOutside(false);
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(v -> {
-
-                    getFirstData();
-                    dialog.dismiss();
-                });
-
-                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setOnClickListener(v -> {
-                    dialog.dismiss();
-                    finish();
-                });
+                alertMessage();
             }
         }
         else {
-            AlertDialog dialog = new AlertDialog.Builder(DirectoryWithDivision.this)
-                    .setMessage("Please Check Your Internet Connection")
-                    .setPositiveButton("Retry", null)
-                    .setNegativeButton("Cancel", null)
-                    .show();
+            alertMessage();
+        }
+    }
 
-            dialog.setCancelable(false);
-            dialog.setCanceledOnTouchOutside(false);
-            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(v -> {
+    public void alertMessage() {
+        if (parsing_message != null) {
+            if (parsing_message.isEmpty() || parsing_message.equals("null")) {
+                parsing_message = "Server problem or Internet not connected";
+            }
+        }
+        else {
+            parsing_message = "Server problem or Internet not connected";
+        }
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(DirectoryWithDivision.this);
+        alertDialogBuilder.setTitle("System Warning!")
+                .setIcon(R.drawable.hrm_new_round_icon_custom)
+                .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
+                .setPositiveButton("Retry", (dialog, which) -> {
+                    getFirstData();
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Cancel",(dialog, which) -> {
+                    dialog.dismiss();
+                    finish();
+                });
 
-                getFirstData();
-                dialog.dismiss();
-            });
-
-            Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-            negative.setOnClickListener(v -> {
-                dialog.dismiss();
-                finish();
-            });
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.setCancelable(false);
+        alert.setCanceledOnTouchOutside(false);
+        try {
+            alert.show();
+        }
+        catch (Exception e) {
+            restart("App is paused for a long time. Please Start the app again.");
         }
     }
 
@@ -1262,11 +1289,13 @@ public class DirectoryWithDivision extends AppCompatActivity {
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateAfterSelectingDiv();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             conn = false;
             connected = false;
             updateAfterSelectingDiv();
@@ -1292,11 +1321,13 @@ public class DirectoryWithDivision extends AppCompatActivity {
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateAfterSelectingDiv();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             conn = false;
             connected = false;
             updateAfterSelectingDiv();
@@ -1343,11 +1374,13 @@ public class DirectoryWithDivision extends AppCompatActivity {
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateAfterSelectingDiv();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             conn = false;
             connected = false;
             updateAfterSelectingDiv();
@@ -1388,43 +1421,39 @@ public class DirectoryWithDivision extends AppCompatActivity {
 
             }
             else {
-                AlertDialog dialog = new AlertDialog.Builder(DirectoryWithDivision.this)
-                        .setMessage("There is a network issue in the server. Please Try later")
-                        .setPositiveButton("Retry", null)
-                        .setNegativeButton("Cancel", null)
-                        .show();
-
-                dialog.setCancelable(false);
-                dialog.setCanceledOnTouchOutside(false);
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(v -> {
-
-                    getDivisionWiseDepData();
-                    dialog.dismiss();
-                });
-
-                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setOnClickListener(v -> dialog.dismiss());
+                alertMessageDivDep();
             }
         }
         else {
-            AlertDialog dialog = new AlertDialog.Builder(DirectoryWithDivision.this)
-                    .setMessage("Please Check Your Internet Connection")
-                    .setPositiveButton("Retry", null)
-                    .setNegativeButton("Cancel", null)
-                    .show();
+            alertMessageDivDep();
+        }
+    }
 
-            dialog.setCancelable(false);
-            dialog.setCanceledOnTouchOutside(false);
-            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(v -> {
+    public void alertMessageDivDep() {
+        if (parsing_message != null) {
+            if (parsing_message.isEmpty() || parsing_message.equals("null")) {
+                parsing_message = "Server problem or Internet not connected";
+            }
+        }
+        else {
+            parsing_message = "Server problem or Internet not connected";
+        }
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(DirectoryWithDivision.this);
+        alertDialogBuilder.setTitle("System Warning!")
+                .setIcon(R.drawable.hrm_new_round_icon_custom)
+                .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
+                .setPositiveButton("Retry", (dialog, which) -> {
+                    getDivisionWiseDepData();
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Cancel",(dialog, which) -> dialog.dismiss());
 
-                getDivisionWiseDepData();
-                dialog.dismiss();
-            });
-
-            Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-            negative.setOnClickListener(v -> dialog.dismiss());
+        AlertDialog alert = alertDialogBuilder.create();
+        try {
+            alert.show();
+        }
+        catch (Exception e) {
+            restart("App is paused for a long time. Please Start the app again.");
         }
     }
 
@@ -1516,11 +1545,13 @@ public class DirectoryWithDivision extends AppCompatActivity {
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateAfterSelectingDEP();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             conn = false;
             connected = false;
             updateAfterSelectingDEP();
@@ -1546,44 +1577,49 @@ public class DirectoryWithDivision extends AppCompatActivity {
                 desSpinner.setAdapter(arrayAdapter);
             }
             else {
-                AlertDialog dialog = new AlertDialog.Builder(DirectoryWithDivision.this)
-                        .setMessage("There is a network issue in the server. Please Try later")
-                        .setPositiveButton("Retry", null)
-                        .setNegativeButton("Cancel", null)
-                        .show();
-
-                dialog.setCancelable(false);
-                dialog.setCanceledOnTouchOutside(false);
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(v -> {
-
-                    getDesignations();
-                    dialog.dismiss();
-                });
-
-                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setOnClickListener(v -> dialog.dismiss());
+                alertMessageDes();
             }
         }
         else {
-            AlertDialog dialog = new AlertDialog.Builder(DirectoryWithDivision.this)
-                    .setMessage("Please Check Your Internet Connection")
-                    .setPositiveButton("Retry", null)
-                    .setNegativeButton("Cancel", null)
-                    .show();
-
-            dialog.setCancelable(false);
-            dialog.setCanceledOnTouchOutside(false);
-            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(v -> {
-
-                getDesignations();
-                dialog.dismiss();
-            });
-
-            Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-            negative.setOnClickListener(v -> dialog.dismiss());
+            alertMessageDes();
         }
     }
 
+    public void alertMessageDes() {
+        if (parsing_message != null) {
+            if (parsing_message.isEmpty() || parsing_message.equals("null")) {
+                parsing_message = "Server problem or Internet not connected";
+            }
+        }
+        else {
+            parsing_message = "Server problem or Internet not connected";
+        }
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(DirectoryWithDivision.this);
+        alertDialogBuilder.setTitle("System Warning!")
+                .setIcon(R.drawable.hrm_new_round_icon_custom)
+                .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
+                .setPositiveButton("Retry", (dialog, which) -> {
+                    getDesignations();
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Cancel",(dialog, which) -> dialog.dismiss());
+
+        AlertDialog alert = alertDialogBuilder.create();
+        try {
+            alert.show();
+        }
+        catch (Exception e) {
+            restart("App is paused for a long time. Please Start the app again.");
+        }
+    }
+
+    public void restart(String msg) {
+        try {
+            ProcessPhoenix.triggerRebirth(getApplicationContext());
+        }
+        catch (Exception e) {
+            Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
+            System.exit(0);
+        }
+    }
 }

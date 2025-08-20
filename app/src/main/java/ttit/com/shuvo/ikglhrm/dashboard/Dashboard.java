@@ -2,6 +2,7 @@ package ttit.com.shuvo.ikglhrm.dashboard;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
@@ -12,6 +13,7 @@ import androidx.core.content.res.ResourcesCompat;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.NotificationChannel;
@@ -19,6 +21,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -31,11 +34,12 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.os.Handler;
 import android.os.Looper;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextClock;
@@ -61,13 +65,18 @@ import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.LargeValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.Priority;
+import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -363,6 +372,42 @@ public class Dashboard extends AppCompatActivity {
     Logger logger = Logger.getLogger(Dashboard.class.getName());
     String parsing_message = "";
 
+    Handler timerHandler = new Handler();
+    long startTime = 0;
+    Runnable timerRunnable = new Runnable() {
+
+        @Override
+        public void run() {
+            long millis = System.currentTimeMillis() - startTime;
+            int seconds = (int) (millis / 1000);
+            int minutes = seconds / 60;
+            seconds = seconds % 60;
+            System.out.println(minutes+" : "+seconds);
+//            timerAttendance.cancel();
+//            timerAttendance.start();
+            getAttendanceTime();
+
+            timerHandler.postDelayed(this, 60000);
+        }
+    };
+
+//    TextView timerText;
+//    CountDownTimer timerAttendance = new CountDownTimer(60000, 1000) {
+//        @Override
+//        public void onTick(long millisUntilFinished) {
+//            Log.d("Timer", "Seconds left: " + millisUntilFinished / 1000);
+//            String tt = String.valueOf(millisUntilFinished / 1000);
+//            tt = tt+"s";
+//            timerText.setText(tt);
+//        }
+//
+//        @Override
+//        public void onFinish() {
+//            String tt = "0s";
+//            timerText.setText(tt);
+//        }
+//    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -395,6 +440,7 @@ public class Dashboard extends AppCompatActivity {
 
         refreshAttendance = findViewById(R.id.refresh_graph_attendance_dashboard);
 
+//        timerText = findViewById(R.id.timer_text_attendance);
         nowDateDashboard = findViewById(R.id.now_date_time_dashboard);
         nowTimeDashboard = findViewById(R.id.text_clock_dashboard);
         inTimeDashboard = findViewById(R.id.in_time_attendance_dashboard);
@@ -628,6 +674,7 @@ public class Dashboard extends AppCompatActivity {
             if (isMyServiceRunning()) {
                 MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(Dashboard.this);
                 builder.setMessage("Your Tracking Service is running. You can not Log Out while Running this Service!")
+                        .setIcon(R.drawable.hrm_new_round_icon_custom)
                         .setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
                 AlertDialog alert = builder.create();
                 alert.show();
@@ -711,6 +758,7 @@ public class Dashboard extends AppCompatActivity {
             if (isMyServiceRunning()) {
                 MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(Dashboard.this);
                 builder.setMessage("Your Tracking Service is running. You can not Log Out while Running this Service!")
+                        .setIcon(R.drawable.hrm_new_round_icon_custom)
                         .setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
                 AlertDialog alert = builder.create();
                 alert.show();
@@ -1030,6 +1078,25 @@ public class Dashboard extends AppCompatActivity {
         if (onResumeLoad) {
             onResumeLoad = false;
             getAllData();
+        }
+        try{
+            startTime = System.currentTimeMillis();
+            timerHandler.postDelayed(timerRunnable, 0);
+        }
+        catch (Exception e) {
+            restart("App is paused for a long time. Please Start the app again.");
+        }
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        try{
+            timerHandler.removeCallbacks(timerRunnable);
+        }
+        catch (Exception e) {
+            restart("App is paused for a long time. Please Start the app again.");
         }
     }
 
@@ -1493,8 +1560,9 @@ public class Dashboard extends AppCompatActivity {
             parsing_message = "Server problem or Internet not connected";
         }
         MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(Dashboard.this);
-        alertDialogBuilder.setTitle("Error!")
-                .setMessage("Error Message: "+parsing_message+".\n"+"Please try again.")
+        alertDialogBuilder.setTitle("System Warning!")
+                .setIcon(R.drawable.hrm_new_round_icon_custom)
+                .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
                 .setPositiveButton("Retry", (dialog, which) -> {
                     getSalaryGraph();
                     dialog.dismiss();
@@ -1820,8 +1888,9 @@ public class Dashboard extends AppCompatActivity {
             parsing_message = "Server problem or Internet not connected";
         }
         MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(Dashboard.this);
-        alertDialogBuilder.setTitle("Error!")
-                .setMessage("Error Message: "+parsing_message+".\n"+"Please try again.")
+        alertDialogBuilder.setTitle("System Warning!")
+                .setIcon(R.drawable.hrm_new_round_icon_custom)
+                .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
                 .setPositiveButton("Retry", (dialog, which) -> {
                     getAttendanceGraph();
                     dialog.dismiss();
@@ -2217,8 +2286,9 @@ public class Dashboard extends AppCompatActivity {
             parsing_message = "Server problem or Internet not connected";
         }
         MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(Dashboard.this);
-        alertDialogBuilder.setTitle("Error!")
-                .setMessage("Error Message: "+parsing_message+".\n"+"Please try again.")
+        alertDialogBuilder.setTitle("System Warning!")
+                .setIcon(R.drawable.hrm_new_round_icon_custom)
+                .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
                 .setPositiveButton("Retry", (dialog, which) -> {
                     getLeaveGraph();
                     dialog.dismiss();
@@ -3322,6 +3392,54 @@ public class Dashboard extends AppCompatActivity {
         }
     }
 
+    public void getAttendanceTime() {
+        in_time_dash = "";
+        out_time_dash = "";
+        end_time_dash = "";
+        Date c = Calendar.getInstance().getTime();
+        SimpleDateFormat dfffff = new SimpleDateFormat("dd-MMMM-yyyy", Locale.ENGLISH);
+        String lastDateForAttBot = dfffff.format(c);
+        RequestQueue requestQueue = Volley.newRequestQueue(Dashboard.this);
+
+        String todayAttDataUrl = api_url_front + "attendance/getTodayAttData/" + emp_id + "/" + lastDateForAttBot;
+
+        StringRequest todayAttReq = new StringRequest(Request.Method.GET, todayAttDataUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject todayAttDataInfo = array.getJSONObject(i);
+                        in_time_dash = todayAttDataInfo.getString("dac_in_date_time")
+                                .equals("null") ? "" : todayAttDataInfo.getString("dac_in_date_time");
+                        out_time_dash = todayAttDataInfo.getString("dac_out_date_time")
+                                .equals("null") ? "" : todayAttDataInfo.getString("dac_out_date_time");
+                        end_time_dash = todayAttDataInfo.getString("dac_end_time")
+                                .equals("null") ? "" : todayAttDataInfo.getString("dac_end_time");
+                    }
+                }
+
+                inTimeDashboard.setText(in_time_dash);
+                outTimeDashboard.setText(out_time_dash);
+                if (!in_time_dash.isEmpty()) {
+                    String work_hours = calculateWorkingHours(in_time_dash, out_time_dash, end_time_dash);
+                    workHoursDashboard.setText(work_hours);
+                }
+
+            } catch (JSONException e) {
+                logger.log(Level.WARNING, e.getMessage(), e);
+            }
+        }, error -> {
+            logger.log(Level.WARNING, error.getMessage(), error);
+        });
+
+        requestQueue.add(todayAttReq);
+
+    }
+
     public void updateInterface() {
         waitProgress.dismiss();
         if (conn) {
@@ -3671,22 +3789,31 @@ public class Dashboard extends AppCompatActivity {
                             }
                         }
 
+                        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(Dashboard.this);
                         if (dateCount == 1) {
-                            AlertDialog dialog = new AlertDialog.Builder(Dashboard.this)
-                                    .setTitle("Tracking Service!")
+                            alertDialogBuilder.setTitle("Tracking Service!")
+                                    .setIcon(R.drawable.hrm_new_round_icon_custom)
                                     .setMessage(dateCount + " File Uploaded")
-                                    .setPositiveButton("OK",null)
-                                    .show();
-                            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                            positive.setOnClickListener(v -> dialog.dismiss());
+                                    .setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
+                            AlertDialog alert = alertDialogBuilder.create();
+                            try {
+                                alert.show();
+                            }
+                            catch (Exception e) {
+                                restart("App is paused for a long time. Please Start the app again.");
+                            }
                         } else {
-                            AlertDialog dialog = new AlertDialog.Builder(Dashboard.this)
-                                    .setTitle("Tracking Service!")
+                            alertDialogBuilder.setTitle("Tracking Service!")
+                                    .setIcon(R.drawable.hrm_new_round_icon_custom)
                                     .setMessage(dateCount + " Files Uploaded")
-                                    .setPositiveButton("OK",null)
-                                    .show();
-                            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                            positive.setOnClickListener(v -> dialog.dismiss());
+                                    .setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
+                            AlertDialog alert = alertDialogBuilder.create();
+                            try {
+                                alert.show();
+                            }
+                            catch (Exception e) {
+                                restart("App is paused for a long time. Please Start the app again.");
+                            }
                         }
 
                     }
@@ -3698,6 +3825,7 @@ public class Dashboard extends AppCompatActivity {
                 else {
                     MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(Dashboard.this)
                             .setTitle("FORCED LOGOUT!")
+                            .setIcon(R.drawable.hrm_new_round_icon_custom)
                             .setMessage("Some Important Data have been changed according to your profile. That's why you have been forced logout from application. To continue please login again.")
                             .setPositiveButton("OK", (dialogInterface, i) -> {
                                 userInfoLists.clear();
@@ -3786,8 +3914,9 @@ public class Dashboard extends AppCompatActivity {
             parsing_message = "Server problem or Internet not connected";
         }
         MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(Dashboard.this);
-        alertDialogBuilder.setTitle("Error!")
-                .setMessage("Error Message: "+parsing_message+".\n"+"Please try again.")
+        alertDialogBuilder.setTitle("System Warning!")
+                .setIcon(R.drawable.hrm_new_round_icon_custom)
+                .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
                 .setPositiveButton("Retry", (dialog, which) -> {
                     getAllData();
                     dialog.dismiss();
@@ -3988,7 +4117,95 @@ public class Dashboard extends AppCompatActivity {
         if (gps) {
             startLocationUpdates();
         } else {
-            getNotification("Attendance System", "Your GPS is disabled. Please enable it and try again.");
+            waitProgress.dismiss();
+            MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(Dashboard.this);
+            alertDialogBuilder.setTitle("Attendance System")
+                    .setIcon(R.drawable.hrm_new_round_icon_custom)
+                    .setMessage("Your GPS/Location Service is disabled. You need to turn on your GPS/Location Service to give Attendance. Do you want to enable it and record Attendance?")
+                    .setPositiveButton("Yes",(dialog, which) -> enableGPS())
+                    .setNegativeButton("No",(dialog, which) -> dialog.dismiss());
+
+            AlertDialog alert = alertDialogBuilder.create();
+            alert.show();
+        }
+    }
+
+    private void enableGPS() {
+        LocationRequest locationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 3000)
+                .setWaitForAccurateLocation(false)
+                .setMinUpdateIntervalMillis(1000)
+                .setMaxUpdateDelayMillis(2000)
+                .build();
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(locationRequest);
+
+        SettingsClient client = LocationServices.getSettingsClient(this);
+        Task<LocationSettingsResponse> task = client.checkLocationSettings(builder.build());
+
+        task.addOnSuccessListener(this, locationSettingsResponse -> {});
+
+        task.addOnFailureListener(this, e -> {
+            if (e instanceof ResolvableApiException) {
+                // Location settings are not satisfied, but this can be fixed
+                // by showing the user a dialog.
+                try {
+                    // Show the dialog by calling startResolutionForResult(),
+                    // and check the result in onActivityResult().
+                    ResolvableApiException resolvable = (ResolvableApiException) e;
+                    resolvable.startResolutionForResult(Dashboard.this,
+                            1987);
+                } catch (IntentSender.SendIntentException sendEx) {
+                    // Ignore the error.
+                }
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1987) {
+            if (resultCode == Activity.RESULT_OK) {
+                waitProgress.show(getSupportFragmentManager(), "WaitBar");
+                waitProgress.setCancelable(false);
+                fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getApplicationContext());
+
+                locationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 3000)
+                        .setWaitForAccurateLocation(false)
+                        .setMinUpdateIntervalMillis(1000)
+                        .setMaxUpdateDelayMillis(1500)
+                        .build();
+
+                new CountDownTimer(15000, 1000) { // 10 sec, tick every 1 sec
+                    public void onTick(long millisUntilFinished) {
+                        Log.d("Timer", "Seconds left: " + millisUntilFinished / 1000);
+
+                        boolean gps = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+                        if (gps) {
+                            cancel();
+                            startLocationUpdates();
+                        }
+                    }
+
+                    public void onFinish() {
+                        waitProgress.dismiss();
+                        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(Dashboard.this);
+                        alertDialogBuilder.setTitle("Attendance System")
+                                .setIcon(R.drawable.hrm_new_round_icon_custom)
+                                .setMessage("Your GPS/Location Service is still disabled. Please enable it from System Settings and try again to record Attendance.")
+                                .setPositiveButton("OK",(dialog, which) -> dialog.dismiss());
+
+                        AlertDialog alert = alertDialogBuilder.create();
+                        alert.show();
+                        Log.d("Timer", "Done!");
+                    }
+                }.start();
+
+                Log.i("Hoise ", "1");
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                Log.i("Hoise ", "2");
+            }
         }
     }
 

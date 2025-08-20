@@ -25,8 +25,11 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.jakewharton.processphoenix.ProcessPhoenix;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -149,6 +152,7 @@ public class LeaveApplication extends AppCompatActivity {
     public static ArrayList<SelectAllList> workBackupList;
 
     Logger logger = Logger.getLogger(LeaveApplication.class.getName());
+    String parsing_message = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -210,20 +214,36 @@ public class LeaveApplication extends AppCompatActivity {
         leaveAppList.add("PRE");
         leaveAppList.add("POST");
 
-        emp_id = userInfoLists.get(0).getEmp_id();
-
-        if (!userInfoLists.isEmpty()) {
-            String firstname = userInfoLists.get(0).getUser_name();
-            if (firstname == null) {
-                firstname = "";
+        if (userInfoLists == null) {
+            restart("Could Not Get Employee Data. Please Restart the App.");
+        }
+        else {
+            if (userInfoLists.isEmpty()) {
+                restart("Could Not Get Employee Data. Please Restart the App.");
             }
-            emp_name = firstname;
-            name.setText(emp_name);
+            else {
+                emp_id = userInfoLists.get(0).getEmp_id();
+                String firstname = userInfoLists.get(0).getUser_name();
+                if (firstname == null) {
+                    firstname = "";
+                }
+                emp_name = firstname;
+                name.setText(emp_name);
+                user_id = userInfoLists.get(0).getEmp_code();
+            }
         }
 
-        user_id = userInfoLists.get(0).getEmp_code();
-
-        div_id = userDesignations.get(0).getDiv_id();
+        if (userDesignations == null) {
+            restart("Could Not Get Employee Data. Please Restart the App.");
+        }
+        else {
+            if (userDesignations.isEmpty()) {
+                restart("Could Not Get Employee Data. Please Restart the App.");
+            }
+            else {
+                div_id = userDesignations.get(0).getDiv_id();
+            }
+        }
 
         idEmployee.setText(user_id);
 
@@ -932,15 +952,22 @@ public class LeaveApplication extends AppCompatActivity {
                                         if (!selected_worker.isEmpty() && !selected_worker_id.isEmpty()) {
                                             errorBackup.setVisibility(View.GONE);
 
-                                            AlertDialog.Builder builder = new AlertDialog.Builder(LeaveApplication.this);
+                                            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(LeaveApplication.this);
                                             builder.setTitle("Leave Application!")
+                                                    .setIcon(R.drawable.hrm_new_round_icon_custom)
                                                     .setMessage("Do you want apply this leave?")
-                                                    .setPositiveButton("YES", (dialog, which) -> insertLeaveApply())
-                                                    .setNegativeButton("NO", (dialog, which) -> {
-
-                                                    });
+                                                    .setPositiveButton("YES", (dialog, which) -> {
+                                                        dialog.dismiss();
+                                                        insertLeaveApply();
+                                                    })
+                                                    .setNegativeButton("NO", (dialog, which) -> dialog.dismiss());
                                             AlertDialog alert = builder.create();
-                                            alert.show();
+                                            try {
+                                                alert.show();
+                                            }
+                                            catch (Exception e) {
+                                                restart("App is paused for a long time. Please Start the app again.");
+                                            }
 
                                         }
                                         else {
@@ -956,15 +983,22 @@ public class LeaveApplication extends AppCompatActivity {
                                     if (!selected_worker.isEmpty() && !selected_worker_id.isEmpty()) {
                                         errorBackup.setVisibility(View.GONE);
 
-                                        AlertDialog.Builder builder = new AlertDialog.Builder(LeaveApplication.this);
+                                        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(LeaveApplication.this);
                                         builder.setTitle("Leave Application!")
+                                                .setIcon(R.drawable.hrm_new_round_icon_custom)
                                                 .setMessage("Do you want apply this leave?")
-                                                .setPositiveButton("YES", (dialog, which) -> insertLeaveApply())
-                                                .setNegativeButton("NO", (dialog, which) -> {
-
-                                                });
+                                                .setPositiveButton("YES", (dialog, which) -> {
+                                                    dialog.dismiss();
+                                                    insertLeaveApply();
+                                                })
+                                                .setNegativeButton("NO", (dialog, which) -> dialog.dismiss());
                                         AlertDialog alert = builder.create();
-                                        alert.show();
+                                        try {
+                                            alert.show();
+                                        }
+                                        catch (Exception e) {
+                                            restart("App is paused for a long time. Please Start the app again.");
+                                        }
 
                                     } else {
                                         errorBackup.setVisibility(View.VISIBLE);
@@ -1373,11 +1407,13 @@ public class LeaveApplication extends AppCompatActivity {
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateInterface();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             conn = false;
             connected = false;
             updateInterface();
@@ -1414,11 +1450,13 @@ public class LeaveApplication extends AppCompatActivity {
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateInterface();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             conn = false;
             connected = false;
             updateInterface();
@@ -1447,11 +1485,13 @@ public class LeaveApplication extends AppCompatActivity {
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateInterface();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             conn = false;
             connected = false;
             updateInterface();
@@ -1481,11 +1521,13 @@ public class LeaveApplication extends AppCompatActivity {
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateInterface();
             }
         }, error -> {
            logger.log(Level.WARNING, error.getMessage(), error);
+           parsing_message = error.getLocalizedMessage();
            conn = false;
            connected = false;
            updateInterface();
@@ -1501,47 +1543,44 @@ public class LeaveApplication extends AppCompatActivity {
                 allreasonLists.add(new LeaveTypeList("9999", "Others"));
             }
             else {
-                AlertDialog dialog = new AlertDialog.Builder(LeaveApplication.this)
-                        .setMessage("There is a network issue in the server. Please Try later.")
-                        .setPositiveButton("Retry", null)
-                        .setNegativeButton("Cancel",null)
-                        .show();
-
-                dialog.setCancelable(false);
-                dialog.setCanceledOnTouchOutside(false);
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(v -> {
-
-                    getInfo();
-                    dialog.dismiss();
-                });
-                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setOnClickListener(v -> {
-                    dialog.dismiss();
-                    finish();
-                });
+                alertMessage();
             }
         }
         else {
-            AlertDialog dialog = new AlertDialog.Builder(LeaveApplication.this)
-                    .setMessage("Please Check Your Internet Connection")
-                    .setPositiveButton("Retry", null)
-                    .setNegativeButton("Cancel",null)
-                    .show();
+            alertMessage();
+        }
+    }
 
-            dialog.setCancelable(false);
-            dialog.setCanceledOnTouchOutside(false);
-            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(v -> {
+    public void alertMessage() {
+        if (parsing_message != null) {
+            if (parsing_message.isEmpty() || parsing_message.equals("null")) {
+                parsing_message = "Server problem or Internet not connected";
+            }
+        }
+        else {
+            parsing_message = "Server problem or Internet not connected";
+        }
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(LeaveApplication.this);
+        alertDialogBuilder.setTitle("System Warning!")
+                .setIcon(R.drawable.hrm_new_round_icon_custom)
+                .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
+                .setPositiveButton("Retry", (dialog, which) -> {
+                    getInfo();
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Cancel",(dialog, which) -> {
+                    dialog.dismiss();
+                    finish();
+                });
 
-                getInfo();
-                dialog.dismiss();
-            });
-            Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-            negative.setOnClickListener(v -> {
-                dialog.dismiss();
-                finish();
-            });
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.setCancelable(false);
+        alert.setCanceledOnTouchOutside(false);
+        try {
+            alert.show();
+        }
+        catch (Exception e) {
+            restart("App is paused for a long time. Please Start the app again.");
         }
     }
 
@@ -1758,17 +1797,20 @@ public class LeaveApplication extends AppCompatActivity {
                 }
                 else {
                     System.out.println(string_out);
+                    parsing_message = string_out;
                     insertCon = false;
                 }
                 applyLeaveLayUpdate();
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 insertCon = false;
                 applyLeaveLayUpdate();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             insertConnn = false;
             insertCon = false;
             applyLeaveLayUpdate();
@@ -1821,30 +1863,41 @@ public class LeaveApplication extends AppCompatActivity {
 
                     System.out.println("INSERTED");
 
-                    AlertDialog dialog = new AlertDialog.Builder(LeaveApplication.this)
-                            .setMessage("Applied Successfully")
-                            .setPositiveButton("OK", null)
-                            .show();
+                    MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(LeaveApplication.this);
+                    alertDialogBuilder.setTitle("Success!")
+                            .setIcon(R.drawable.hrm_new_round_icon_custom)
+                            .setMessage("Leave Applied Successfully")
+                            .setPositiveButton("OK", (dialog, which) -> {
+                                dialog.dismiss();
+                                finish();
+                            });
 
-                    dialog.setCancelable(false);
-                    dialog.setCanceledOnTouchOutside(false);
-                    Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                    positive.setOnClickListener(v -> {
-
-                        dialog.dismiss();
-                        finish();
-                    });
+                    AlertDialog alert = alertDialogBuilder.create();
+                    alert.setCancelable(false);
+                    alert.setCanceledOnTouchOutside(false);
+                    try {
+                        alert.show();
+                    }
+                    catch (Exception e) {
+                        restart("App is paused for a long time. Please Start the app again.");
+                    }
                 }
                 else {
-                    AlertDialog dialog = new AlertDialog.Builder(LeaveApplication.this)
+                    MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(LeaveApplication.this);
+                    alertDialogBuilder.setTitle("Warning!")
+                            .setIcon(R.drawable.hrm_new_round_icon_custom)
                             .setMessage(leaveAppCheck)
-                            .setPositiveButton("OK", null)
-                            .show();
+                            .setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
 
-                    dialog.setCancelable(false);
-                    dialog.setCanceledOnTouchOutside(false);
-                    Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                    positive.setOnClickListener(v -> dialog.dismiss());
+                    AlertDialog alert = alertDialogBuilder.create();
+                    alert.setCancelable(false);
+                    alert.setCanceledOnTouchOutside(false);
+                    try {
+                        alert.show();
+                    }
+                    catch (Exception e) {
+                        restart("App is paused for a long time. Please Start the app again.");
+                    }
                 }
 
                 insertedCon = false;
@@ -1852,34 +1905,49 @@ public class LeaveApplication extends AppCompatActivity {
                 insertConnn = false;
             }
             else {
-                AlertDialog dialog = new AlertDialog.Builder(LeaveApplication.this)
-                        .setMessage("There is a network issue in the server. Please Try later.")
-                        .setPositiveButton("Retry", null)
-                        .setNegativeButton("Cancel",null)
-                        .show();
-
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(v -> {
-
-                    insertLeaveApply();
-                    dialog.dismiss();
-                });
+                alertMessageAL();
             }
         }
         else {
-            AlertDialog dialog = new AlertDialog.Builder(LeaveApplication.this)
-                    .setMessage("Please Check Your Internet Connection")
-                    .setPositiveButton("Retry", null)
-                    .setNegativeButton("Cancel",null)
-                    .show();
-
-            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(v -> {
-
-                insertLeaveApply();
-                dialog.dismiss();
-            });
+            alertMessageAL();
         }
     }
 
+    public void alertMessageAL() {
+        if (parsing_message != null) {
+            if (parsing_message.isEmpty() || parsing_message.equals("null")) {
+                parsing_message = "Server problem or Internet not connected";
+            }
+        }
+        else {
+            parsing_message = "Server problem or Internet not connected";
+        }
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(LeaveApplication.this);
+        alertDialogBuilder.setTitle("System Warning!")
+                .setIcon(R.drawable.hrm_new_round_icon_custom)
+                .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
+                .setPositiveButton("Retry", (dialog, which) -> {
+                    insertLeaveApply();
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Cancel",(dialog, which) -> dialog.dismiss());
+
+        AlertDialog alert = alertDialogBuilder.create();
+        try {
+            alert.show();
+        }
+        catch (Exception e) {
+            restart("App is paused for a long time. Please Start the app again.");
+        }
+    }
+
+    public void restart(String msg) {
+        try {
+            ProcessPhoenix.triggerRebirth(getApplicationContext());
+        }
+        catch (Exception e) {
+            Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
+            System.exit(0);
+        }
+    }
 }

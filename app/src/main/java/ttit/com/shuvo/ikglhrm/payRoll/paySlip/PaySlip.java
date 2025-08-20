@@ -7,9 +7,9 @@ import androidx.cardview.widget.CardView;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -17,8 +17,10 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.github.dewinjm.monthyearpicker.MonthFormat;
 import com.github.dewinjm.monthyearpicker.MonthYearPickerDialogFragment;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -152,6 +154,7 @@ public class PaySlip extends AppCompatActivity {
     private Boolean connected = false;
 
     Logger logger = Logger.getLogger(PaySlip.class.getName());
+    String parsing_message = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -215,42 +218,55 @@ public class PaySlip extends AppCompatActivity {
         accountNo = findViewById(R.id.account_number_pay_slip);
         bankName = findViewById(R.id.bank_name_pay_slip);
 
-        emp_id = userInfoLists.get(0).getEmp_id();
-
-        if (!userInfoLists.isEmpty()) {
-            String firstname = userInfoLists.get(0).getUser_name();
-            if (firstname == null) {
-                firstname = "";
-            }
-            emp_name = firstname;
-            user_id = userInfoLists.get(0).getEmp_code();
-
+        if (userInfoLists == null) {
+            restart("Could Not Get Employee Data. Please Restart the App.");
         }
-
-        if (!userDesignations.isEmpty()) {
-            str_DES = userDesignations.get(0).getJsm_name();
-            if (str_DES == null) {
-                str_DES = "";
+        else {
+            if (userInfoLists.isEmpty()) {
+                restart("Could Not Get Employee Data. Please Restart the App.");
             }
-            ban = userDesignations.get(0).getDesg_priority();
-            if (ban == null) {
-                ban = "";
-            }
-            job_pos = userDesignations.get(0).getDesg_name();
-            if (job_pos == null) {
-                job_pos = "";
-            }
-            div = userDesignations.get(0).getDiv_name();
-            if (div == null) {
-                div = "";
-            }
-            dep = userDesignations.get(0).getDept_name();
-            if (dep == null) {
-                dep = "";
+            else {
+                emp_id = userInfoLists.get(0).getEmp_id();
+                String firstname = userInfoLists.get(0).getUser_name();
+                if (firstname == null) {
+                    firstname = "";
+                }
+                emp_name = firstname;
+                user_id = userInfoLists.get(0).getEmp_code();
+                email_name = userInfoLists.get(0).getEmail();
             }
         }
 
-        email_name = userInfoLists.get(0).getEmail();
+        if (userDesignations == null) {
+            restart("Could Not Get Employee Data. Please Restart the App.");
+        }
+        else {
+            if (userDesignations.isEmpty()) {
+                restart("Could Not Get Employee Data. Please Restart the App.");
+            }
+            else {
+                str_DES = userDesignations.get(0).getJsm_name();
+                if (str_DES == null) {
+                    str_DES = "";
+                }
+                ban = userDesignations.get(0).getDesg_priority();
+                if (ban == null) {
+                    ban = "";
+                }
+                job_pos = userDesignations.get(0).getDesg_name();
+                if (job_pos == null) {
+                    job_pos = "";
+                }
+                div = userDesignations.get(0).getDiv_name();
+                if (div == null) {
+                    div = "";
+                }
+                dep = userDesignations.get(0).getDept_name();
+                if (dep == null) {
+                    dep = "";
+                }
+            }
+        }
 
 
 //        selectMonth.setOnClickListener(v -> {
@@ -989,11 +1005,13 @@ public class PaySlip extends AppCompatActivity {
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateInterface();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             conn = false;
             connected = false;
             updateInterface();
@@ -1018,11 +1036,13 @@ public class PaySlip extends AppCompatActivity {
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateInterface();
             }
         }, error -> {
            logger.log(Level.WARNING, error.getMessage(), error);
+           parsing_message = error.getLocalizedMessage();
            conn = false;
            connected = false;
            updateInterface();
@@ -1054,11 +1074,13 @@ public class PaySlip extends AppCompatActivity {
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateInterface();
             }
         }, error -> {
            logger.log(Level.WARNING, error.getMessage(), error);
+           parsing_message = error.getLocalizedMessage();
            conn = false;
            connected = false;
            updateInterface();
@@ -1175,47 +1197,54 @@ public class PaySlip extends AppCompatActivity {
                 bankName.setText(bank);
             }
             else {
-                AlertDialog dialog = new AlertDialog.Builder(PaySlip.this)
-                        .setMessage("There is a network issue in the server. Please Try later.")
-                        .setPositiveButton("Retry", null)
-                        .setNegativeButton("Cancel",null)
-                        .show();
-
-                dialog.setCancelable(false);
-                dialog.setCanceledOnTouchOutside(false);
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(v -> {
-
-                    getPaySlipData();
-                    dialog.dismiss();
-                });
-                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setOnClickListener(v -> {
-                    dialog.dismiss();
-                    finish();
-                });
+                alertMessage();
             }
         }
         else {
-            AlertDialog dialog = new AlertDialog.Builder(PaySlip.this)
-                    .setMessage("Please Check Your Internet Connection")
-                    .setPositiveButton("Retry", null)
-                    .setNegativeButton("Cancel",null)
-                    .show();
+            alertMessage();
+        }
+    }
 
-            dialog.setCancelable(false);
-            dialog.setCanceledOnTouchOutside(false);
-            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(v -> {
+    public void alertMessage() {
+        if (parsing_message != null) {
+            if (parsing_message.isEmpty() || parsing_message.equals("null")) {
+                parsing_message = "Server problem or Internet not connected";
+            }
+        }
+        else {
+            parsing_message = "Server problem or Internet not connected";
+        }
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(PaySlip.this);
+        alertDialogBuilder.setTitle("System Warning!")
+                .setIcon(R.drawable.hrm_new_round_icon_custom)
+                .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
+                .setPositiveButton("Retry", (dialog, which) -> {
+                    getPaySlipData();
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Cancel",(dialog, which) -> {
+                    dialog.dismiss();
+                    finish();
+                });
 
-                getPaySlipData();
-                dialog.dismiss();
-            });
-            Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-            negative.setOnClickListener(v -> {
-                dialog.dismiss();
-                finish();
-            });
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.setCancelable(false);
+        alert.setCanceledOnTouchOutside(false);
+        try {
+            alert.show();
+        }
+        catch (Exception e) {
+            restart("App is paused for a long time. Please Start the app again.");
+        }
+    }
+
+    public void restart(String msg) {
+        try {
+            ProcessPhoenix.triggerRebirth(getApplicationContext());
+        }
+        catch (Exception e) {
+            Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
+            System.exit(0);
         }
     }
 }

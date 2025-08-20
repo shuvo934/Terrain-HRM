@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +23,7 @@ import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import java.text.ParseException;
@@ -78,6 +78,7 @@ public class Leave extends AppCompatActivity {
     TextView remainLeave;
 
     Logger logger = Logger.getLogger(Leave.class.getName());
+    String parsing_message = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -653,12 +654,14 @@ public class Leave extends AppCompatActivity {
             catch (JSONException e) {
                 connected = false;
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 updateLeaveData();
             }
         }, error -> {
             conn = false;
             connected = false;
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             updateLeaveData();
         });
 
@@ -690,12 +693,14 @@ public class Leave extends AppCompatActivity {
             catch (JSONException e) {
                 connected = false;
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 updateLeaveData();
             }
         }, error -> {
             conn = false;
             connected = false;
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             updateLeaveData();
         });
 
@@ -776,47 +781,44 @@ public class Leave extends AppCompatActivity {
                 }
             }
             else {
-                AlertDialog dialog = new AlertDialog.Builder(Leave.this)
-                        .setMessage("There is a network issue in the server. Please Try later.")
-                        .setPositiveButton("Retry", null)
-                        .setNegativeButton("Cancel", null)
-                        .show();
-
-                dialog.setCancelable(false);
-                dialog.setCanceledOnTouchOutside(false);
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(v -> {
-                    getLeaveData();
-                    dialog.dismiss();
-                });
-
-                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setOnClickListener(v -> {
-                    dialog.dismiss();
-                    finish();
-                });
+                alertMessageData();
             }
         }
         else {
-            AlertDialog dialog = new AlertDialog.Builder(Leave.this)
-                    .setMessage("Please Check Your Internet Connection")
-                    .setPositiveButton("Retry", null)
-                    .setNegativeButton("Cancel", null)
-                    .show();
+            alertMessageData();
+        }
+    }
 
-            dialog.setCancelable(false);
-            dialog.setCanceledOnTouchOutside(false);
-            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(v -> {
-                getLeaveData();
-                dialog.dismiss();
-            });
+    public void alertMessageData() {
+        if (parsing_message != null) {
+            if (parsing_message.isEmpty() || parsing_message.equals("null")) {
+                parsing_message = "Server problem or Internet not connected";
+            }
+        }
+        else {
+            parsing_message = "Server problem or Internet not connected";
+        }
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(Leave.this);
+        alertDialogBuilder.setTitle("System Warning!")
+                .setIcon(R.drawable.hrm_new_round_icon_custom)
+                .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
+                .setPositiveButton("Retry", (dialog, which) -> {
+                    getLeaveData();
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Cancel",(dialog, which) -> {
+                    dialog.dismiss();
+                    finish();
+                });
 
-            Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-            negative.setOnClickListener(v -> {
-                dialog.dismiss();
-                finish();
-            });
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.setCancelable(false);
+        alert.setCanceledOnTouchOutside(false);
+        try {
+            alert.show();
+        }
+        catch (Exception e) {
+            restart("App is paused for a long time. Please Start the app again.");
         }
     }
 
@@ -870,12 +872,14 @@ public class Leave extends AppCompatActivity {
             catch (JSONException e) {
                 connected = false;
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 updateLeaveGraph();
             }
         }, error -> {
             conn = false;
             connected = false;
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             updateLeaveGraph();
         });
 
@@ -943,47 +947,44 @@ public class Leave extends AppCompatActivity {
                 }
             }
             else {
-                AlertDialog dialog = new AlertDialog.Builder(Leave.this)
-                        .setMessage("There is a network issue in the server. Please Try later.")
-                        .setPositiveButton("Retry", null)
-                        .setNegativeButton("Cancel", null)
-                        .show();
-
-                dialog.setCancelable(false);
-                dialog.setCanceledOnTouchOutside(false);
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(v -> {
-                    getLeaveGraph();
-                    dialog.dismiss();
-                });
-
-                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setOnClickListener(v -> {
-                    dialog.dismiss();
-                    finish();
-                });
+                alertMessageLGR();
             }
         }
         else {
-            AlertDialog dialog = new AlertDialog.Builder(Leave.this)
-                    .setMessage("Please Check Your Internet Connection")
-                    .setPositiveButton("Retry", null)
-                    .setNegativeButton("Cancel", null)
-                    .show();
+            alertMessageLGR();
+        }
+    }
 
-            dialog.setCancelable(false);
-            dialog.setCanceledOnTouchOutside(false);
-            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(v -> {
-                getLeaveGraph();
-                dialog.dismiss();
-            });
+    public void alertMessageLGR() {
+        if (parsing_message != null) {
+            if (parsing_message.isEmpty() || parsing_message.equals("null")) {
+                parsing_message = "Server problem or Internet not connected";
+            }
+        }
+        else {
+            parsing_message = "Server problem or Internet not connected";
+        }
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(Leave.this);
+        alertDialogBuilder.setTitle("System Warning!")
+                .setIcon(R.drawable.hrm_new_round_icon_custom)
+                .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
+                .setPositiveButton("Retry", (dialog, which) -> {
+                    getLeaveGraph();
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Cancel",(dialog, which) -> {
+                    dialog.dismiss();
+                    finish();
+                });
 
-            Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-            negative.setOnClickListener(v -> {
-                dialog.dismiss();
-                finish();
-            });
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.setCancelable(false);
+        alert.setCanceledOnTouchOutside(false);
+        try {
+            alert.show();
+        }
+        catch (Exception e) {
+            restart("App is paused for a long time. Please Start the app again.");
         }
     }
 

@@ -9,15 +9,18 @@ import android.graphics.Color;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
+import com.jakewharton.processphoenix.ProcessPhoenix;
+
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
 
@@ -94,6 +97,7 @@ public class AttendanceStatusDetails extends AppCompatActivity {
     TextView appRej;
 
     Logger logger = Logger.getLogger(AttendanceStatusDetails.class.getName());
+    String parsing_message = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,15 +135,25 @@ public class AttendanceStatusDetails extends AppCompatActivity {
         intimeLay = findViewById(R.id.in_time_lay_st_dt);
         outTimeLay = findViewById(R.id.out_time_lay_st_dt);
 
-        String firstname = userInfoLists.get(0).getUser_name();
-        if (firstname == null) {
-            firstname = "";
+        if (userInfoLists == null) {
+            restart("Could Not Get Employee Data. Please Restart the App.");
         }
-        name.setText(firstname);
+        else {
+            if (userInfoLists.isEmpty()) {
+                restart("Could Not Get Employee Data. Please Restart the App.");
+            }
+            else {
+                String firstname = userInfoLists.get(0).getUser_name();
+                if (firstname == null) {
+                    firstname = "";
+                }
+                name.setText(firstname);
 
-        id.setText(userInfoLists.get(0).getEmp_code());
+                id.setText(userInfoLists.get(0).getEmp_code());
 
-        emp_id = userInfoLists.get(0).getEmp_id();
+                emp_id = userInfoLists.get(0).getEmp_id();
+            }
+        }
 
         Intent intent = getIntent();
         request = intent.getStringExtra("Request");
@@ -468,11 +482,13 @@ public class AttendanceStatusDetails extends AppCompatActivity {
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateLayout();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             conn = false;
             connected = false;
             updateLayout();
@@ -506,11 +522,13 @@ public class AttendanceStatusDetails extends AppCompatActivity {
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateLayout();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             conn = false;
             connected = false;
             updateLayout();
@@ -544,47 +562,54 @@ public class AttendanceStatusDetails extends AppCompatActivity {
                 appDate.setText(dateNow);
             }
             else {
-                AlertDialog dialog = new AlertDialog.Builder(AttendanceStatusDetails.this)
-                        .setMessage("There is a network issue in the server. Please Try later.")
-                        .setPositiveButton("Retry", null)
-                        .setNegativeButton("Cancel",null)
-                        .show();
-
-                dialog.setCancelable(false);
-                dialog.setCanceledOnTouchOutside(false);
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(v -> {
-
-                    getAttendanceStatusDetails();
-                    dialog.dismiss();
-                });
-                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setOnClickListener(v -> {
-                    dialog.dismiss();
-                    finish();
-                });
+                alertMessage();
             }
         }
         else {
-            AlertDialog dialog = new AlertDialog.Builder(AttendanceStatusDetails.this)
-                    .setMessage("Please Check Your Internet Connection")
-                    .setPositiveButton("Retry", null)
-                    .setNegativeButton("Cancel",null)
-                    .show();
+            alertMessage();
+        }
+    }
 
-            dialog.setCancelable(false);
-            dialog.setCanceledOnTouchOutside(false);
-            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(v -> {
+    public void alertMessage() {
+        if (parsing_message != null) {
+            if (parsing_message.isEmpty() || parsing_message.equals("null")) {
+                parsing_message = "Server problem or Internet not connected";
+            }
+        }
+        else {
+            parsing_message = "Server problem or Internet not connected";
+        }
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(AttendanceStatusDetails.this);
+        alertDialogBuilder.setTitle("System Warning!")
+                .setIcon(R.drawable.hrm_new_round_icon_custom)
+                .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
+                .setPositiveButton("Retry", (dialog, which) -> {
+                    getAttendanceStatusDetails();
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Cancel",(dialog, which) -> {
+                    dialog.dismiss();
+                    finish();
+                });
 
-                getAttendanceStatusDetails();
-                dialog.dismiss();
-            });
-            Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-            negative.setOnClickListener(v -> {
-                dialog.dismiss();
-                finish();
-            });
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.setCancelable(false);
+        alert.setCanceledOnTouchOutside(false);
+        try {
+            alert.show();
+        }
+        catch (Exception e) {
+            restart("App is paused for a long time. Please Start the app again.");
+        }
+    }
+
+    public void restart(String msg) {
+        try {
+            ProcessPhoenix.triggerRebirth(getApplicationContext());
+        }
+        catch (Exception e) {
+            Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
+            System.exit(0);
         }
     }
 }

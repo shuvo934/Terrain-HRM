@@ -1029,9 +1029,9 @@ public class Login extends AppCompatActivity implements CallBackListener {
                         parsing_message = "Server problem or Internet not connected";
                     }
                     MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(Login.this);
-                    alertDialogBuilder.setTitle("Warning!")
+                    alertDialogBuilder.setTitle("System Warning!")
                             .setIcon(R.drawable.hrm_new_round_icon_custom)
-                            .setMessage("Error Message: "+parsing_message+".\n"+"Please try again.")
+                            .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
                             .setPositiveButton("Retry", (dialog, which) -> {
                                 dynamicLoginCheck();
                                 dialog.dismiss();
@@ -1051,9 +1051,9 @@ public class Login extends AppCompatActivity implements CallBackListener {
                     parsing_message = "Server problem or Internet not connected";
                 }
                 MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(Login.this);
-                alertDialogBuilder.setTitle("Warning!")
+                alertDialogBuilder.setTitle("System Warning!")
                         .setIcon(R.drawable.hrm_new_round_icon_custom)
-                        .setMessage("Error Message: "+parsing_message+".\n"+"Please try again.")
+                        .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
                         .setPositiveButton("Retry", (dialog, which) -> {
                             dynamicLoginCheck();
                             dialog.dismiss();
@@ -1597,9 +1597,9 @@ public class Login extends AppCompatActivity implements CallBackListener {
                     parsing_message = "Server problem or Internet not connected";
                 }
                 MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(Login.this);
-                alertDialogBuilder.setTitle("Warning!")
+                alertDialogBuilder.setTitle("System Warning!")
                         .setIcon(R.drawable.hrm_new_round_icon_custom)
-                        .setMessage("Error Message: "+parsing_message+".\n"+"Please try again.")
+                        .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
                         .setPositiveButton("Retry", (dialog, which) -> {
                             dynamicLoginCheck();
                             dialog.dismiss();
@@ -1618,9 +1618,9 @@ public class Login extends AppCompatActivity implements CallBackListener {
                 parsing_message = "Server problem or Internet not connected";
             }
             MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(Login.this);
-            alertDialogBuilder.setTitle("Warning!")
+            alertDialogBuilder.setTitle("System Warning!")
                     .setIcon(R.drawable.hrm_new_round_icon_custom)
-                    .setMessage("Error Message: "+parsing_message+".\n"+"Please try again.")
+                    .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
                     .setPositiveButton("Retry", (dialog, which) -> {
                         dynamicLoginCheck();
                         dialog.dismiss();

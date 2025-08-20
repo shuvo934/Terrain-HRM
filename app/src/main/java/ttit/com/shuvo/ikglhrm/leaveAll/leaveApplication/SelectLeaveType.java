@@ -68,6 +68,7 @@ public class SelectLeaveType extends AppCompatDialogFragment implements LeaveTyp
 
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
+        setCancelable(false);
 
         lists = new ArrayList<>();
 

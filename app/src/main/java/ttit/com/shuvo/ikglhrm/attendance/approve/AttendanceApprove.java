@@ -1,5 +1,8 @@
 package ttit.com.shuvo.ikglhrm.attendance.approve;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,8 +20,10 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -134,9 +139,11 @@ public class AttendanceApprove extends AppCompatActivity {
     String nowUpdateDate = "";
     String jobEmail = "";
 
+    String f_count = "0";
 //    int req_status_count = 0;
 
     Logger logger = Logger.getLogger(AttendanceApprove.class.getName());
+    String parsing_message = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,8 +183,18 @@ public class AttendanceApprove extends AppCompatActivity {
 
         selectApproveReqLists = new ArrayList<>();
 
-        emp_code = userInfoLists.get(0).getEmp_code();
-        user_id = userInfoLists.get(0).getEmp_id();
+        if (userInfoLists == null) {
+            restart("Could Not Get Employee Data. Please Restart the App.");
+        }
+        else {
+            if (userInfoLists.isEmpty()) {
+                restart("Could Not Get Employee Data. Please Restart the App.");
+            }
+            else {
+                emp_code = userInfoLists.get(0).getEmp_code();
+                user_id = userInfoLists.get(0).getEmp_id();
+            }
+        }
 //        user_id = "493";
 //        emp_code = "10001";
 //        new Check().execute();
@@ -222,8 +239,9 @@ public class AttendanceApprove extends AppCompatActivity {
 //                text = comments.getText().toString();
 //                new ApproveCheck().execute();
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(AttendanceApprove.this);
-            builder.setTitle("Approve Request!")
+            MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(AttendanceApprove.this);
+            alertDialogBuilder.setTitle("Approve Request!")
+                    .setIcon(R.drawable.hrm_new_round_icon_custom)
                     .setMessage("Do you want approve this request?")
                     .setPositiveButton("YES", (dialog, which) -> {
 
@@ -232,19 +250,23 @@ public class AttendanceApprove extends AppCompatActivity {
 //                                new ApproveCheck().execute();
                         approveAttReq();
                     })
-                    .setNegativeButton("NO", (dialog, which) -> {
-
-                    });
-            AlertDialog alert = builder.create();
-            alert.show();
+                    .setNegativeButton("NO", (dialog, which) -> dialog.dismiss());
+            AlertDialog alert = alertDialogBuilder.create();
+            try {
+                alert.show();
+            }
+            catch (Exception e) {
+                restart("App is paused for a long time. Please Start the app again.");
+            }
         });
 
         reject.setOnClickListener(v -> {
 //                text = comments.getText().toString();
 //                new RejectCheck().execute();
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(AttendanceApprove.this);
-            builder.setTitle("Reject Request!")
+            MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(AttendanceApprove.this);
+            alertDialogBuilder.setTitle("Reject Request!")
+                    .setIcon(R.drawable.hrm_new_round_icon_custom)
                     .setMessage("Do you want reject this request?")
                     .setPositiveButton("YES", (dialog, which) -> {
 
@@ -253,11 +275,14 @@ public class AttendanceApprove extends AppCompatActivity {
 //                                new RejectCheck().execute();
                         rejectAttReq();
                     })
-                    .setNegativeButton("NO", (dialog, which) -> {
-
-                    });
-            AlertDialog alert = builder.create();
-            alert.show();
+                    .setNegativeButton("NO", (dialog, which) -> dialog.dismiss());
+            AlertDialog alert = alertDialogBuilder.create();
+            try {
+                alert.show();
+            }
+            catch (Exception e) {
+                restart("App is paused for a long time. Please Start the app again.");
+            }
         });
 
         forward.setOnClickListener(v -> {
@@ -798,10 +823,34 @@ public class AttendanceApprove extends AppCompatActivity {
         connected = false;
 
         selectApproveReqLists = new ArrayList<>();
+        f_count = "0";
 
         String url = api_url_front + "attendanceUpdateReq/getRequestList/"+emp_code;
+        String c_url = api_url_front + "forwardReq/getForwardCount?p_emp_id="+user_id;
 
         RequestQueue requestQueue = Volley.newRequestQueue(AttendanceApprove.this);
+
+        StringRequest countReq = new StringRequest(Request.Method.GET, c_url, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                f_count = jsonObject.getString("p_count").equals("null") ? "0" : jsonObject.getString("p_count");
+                connected = true;
+                updateInterface();
+            }
+            catch (JSONException e) {
+                logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
+                connected = false;
+                updateInterface();
+            }
+        }, error -> {
+            logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
+            conn = false;
+            connected = false;
+            updateInterface();
+        });
 
         StringRequest reqListReq = new StringRequest(Request.Method.GET, url, response -> {
             conn = true;
@@ -825,16 +874,17 @@ public class AttendanceApprove extends AppCompatActivity {
                                 darm_date_new,darm_update_date_new,darm_id_new,darm_emp_id_new));
                     }
                 }
-                connected = true;
-                updateInterface();
+                requestQueue.add(countReq);
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateInterface();
             }
         }, error -> {
            logger.log(Level.WARNING, error.getMessage(), error);
+           parsing_message = error.getLocalizedMessage();
            conn = false;
            connected = false;
            updateInterface();
@@ -853,52 +903,54 @@ public class AttendanceApprove extends AppCompatActivity {
                     fromAttApp = 1;
                     SelectApproveReq selectRequest = new SelectApproveReq();
                     selectRequest.show(getSupportFragmentManager(),"Request");
+
+                    if (f_count.equals("0") || f_count.isEmpty()) {
+                        forward.setVisibility(GONE);
+                    }
+                    else {
+                        forward.setVisibility(VISIBLE);
+                    }
                 }
             }
             else {
-                AlertDialog dialog = new AlertDialog.Builder(AttendanceApprove.this)
-                        .setMessage("There is a network issue in the server. Please Try later.")
-                        .setPositiveButton("Retry", null)
-                        .setNegativeButton("Cancel",null)
-                        .show();
-
-                dialog.setCancelable(false);
-                dialog.setCanceledOnTouchOutside(false);
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(v -> {
-
-                    getRequestList();
-                    dialog.dismiss();
-                });
-
-                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setOnClickListener(v -> {
-                    dialog.dismiss();
-                    finish();
-                });
+                alertMessageRL();
             }
         }
         else {
-            AlertDialog dialog = new AlertDialog.Builder(AttendanceApprove.this)
-                    .setMessage("Please Check Your Internet Connection")
-                    .setPositiveButton("Retry", null)
-                    .setNegativeButton("Cancel",null)
-                    .show();
+            alertMessageRL();
+        }
+    }
 
-            dialog.setCancelable(false);
-            dialog.setCanceledOnTouchOutside(false);
-            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(v -> {
+    public void alertMessageRL() {
+        if (parsing_message != null) {
+            if (parsing_message.isEmpty() || parsing_message.equals("null")) {
+                parsing_message = "Server problem or Internet not connected";
+            }
+        }
+        else {
+            parsing_message = "Server problem or Internet not connected";
+        }
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(AttendanceApprove.this);
+        alertDialogBuilder.setTitle("System Warning!")
+                .setIcon(R.drawable.hrm_new_round_icon_custom)
+                .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
+                .setPositiveButton("Retry", (dialog, which) -> {
+                    getRequestList();
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Cancel",(dialog, which) -> {
+                    dialog.dismiss();
+                    finish();
+                });
 
-                getRequestList();
-                dialog.dismiss();
-            });
-
-            Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-            negative.setOnClickListener(v -> {
-                dialog.dismiss();
-                finish();
-            });
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.setCancelable(false);
+        alert.setCanceledOnTouchOutside(false);
+        try {
+            alert.show();
+        }
+        catch (Exception e) {
+            restart("App is paused for a long time. Please Start the app again.");
         }
     }
 
@@ -1102,11 +1154,13 @@ public class AttendanceApprove extends AppCompatActivity {
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 inDataaa = false;
                 updateLayout();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             dataIn = false;
             inDataaa = false;
             updateLayout();
@@ -1118,9 +1172,9 @@ public class AttendanceApprove extends AppCompatActivity {
     private void updateLayout() {
         waitProgress.dismiss();
         if (dataIn) {
-            afterSelecting.setVisibility(View.VISIBLE);
-            afterSelectingButton.setVisibility(View.VISIBLE);
             if (inDataaa) {
+                afterSelecting.setVisibility(VISIBLE);
+                afterSelectingButton.setVisibility(VISIBLE);
                 name.setText(Objects.requireNonNullElse(emp_name, ""));
 
                 empCode.setText(Objects.requireNonNullElse(emp_id, ""));
@@ -1137,18 +1191,18 @@ public class AttendanceApprove extends AppCompatActivity {
 
                 if (arr_time == null) {
                     inUpdated.setText("");
-                    inLay.setVisibility(View.GONE);
+                    inLay.setVisibility(GONE);
                 } else {
                     inUpdated.setText(arr_time);
-                    inLay.setVisibility(View.VISIBLE);
+                    inLay.setVisibility(VISIBLE);
                 }
 
                 if (dep_time == null) {
                     outUpdated.setText("");
-                    outLay.setVisibility(View.GONE);
+                    outLay.setVisibility(GONE);
                 } else {
                     outUpdated.setText(dep_time);
-                    outLay.setVisibility(View.VISIBLE);
+                    outLay.setVisibility(VISIBLE);
                 }
 
                 machineIn.setText(Objects.requireNonNullElse(mac_in, ""));
@@ -1162,11 +1216,11 @@ public class AttendanceApprove extends AppCompatActivity {
                 reasonDesc.setText(Objects.requireNonNullElse(reason_desc, ""));
 
                 if (forwarded_by == null) {
-                    forLay.setVisibility(View.GONE);
+                    forLay.setVisibility(GONE);
                     forwardedBy.setText("");
                 } else {
                     forwardedBy.setText(forwarded_by);
-                    forLay.setVisibility(View.VISIBLE);
+                    forLay.setVisibility(VISIBLE);
                 }
 
                 forwardComm.setText(Objects.requireNonNullElse(forward_comm, ""));
@@ -1175,49 +1229,44 @@ public class AttendanceApprove extends AppCompatActivity {
                 inDataaa = false;
             }
             else {
-                AlertDialog dialog = new AlertDialog.Builder(AttendanceApprove.this)
-                        .setMessage("There is a network issue in the server. Please Try later.")
-                        .setPositiveButton("Retry", null)
-                        .setNegativeButton("Cancel",null)
-                        .show();
-
-                dialog.setCancelable(false);
-                dialog.setCanceledOnTouchOutside(false);
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(v -> {
-
-                    getData();
-                    dialog.dismiss();
-                });
-
-                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setOnClickListener(v -> {
-                    dialog.dismiss();
-                    finish();
-                });
+                alertMessageData();
             }
         }
         else {
-            AlertDialog dialog = new AlertDialog.Builder(AttendanceApprove.this)
-                    .setMessage("Please Check Your Internet Connection")
-                    .setPositiveButton("Retry", null)
-                    .setNegativeButton("Cancel",null)
-                    .show();
+            alertMessageData();
+        }
+    }
 
-            dialog.setCancelable(false);
-            dialog.setCanceledOnTouchOutside(false);
-            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(v -> {
+    public void alertMessageData() {
+        if (parsing_message != null) {
+            if (parsing_message.isEmpty() || parsing_message.equals("null")) {
+                parsing_message = "Server problem or Internet not connected";
+            }
+        }
+        else {
+            parsing_message = "Server problem or Internet not connected";
+        }
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(AttendanceApprove.this);
+        alertDialogBuilder.setTitle("System Warning!")
+                .setIcon(R.drawable.hrm_new_round_icon_custom)
+                .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
+                .setPositiveButton("Retry", (dialog, which) -> {
+                    getData();
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Cancel",(dialog, which) -> {
+                    dialog.dismiss();
+                    finish();
+                });
 
-                getData();
-                dialog.dismiss();
-            });
-
-            Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-            negative.setOnClickListener(v -> {
-                dialog.dismiss();
-                finish();
-            });
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.setCancelable(false);
+        alert.setCanceledOnTouchOutside(false);
+        try {
+            alert.show();
+        }
+        catch (Exception e) {
+            restart("App is paused for a long time. Please Start the app again.");
         }
     }
 
@@ -1357,17 +1406,20 @@ public class AttendanceApprove extends AppCompatActivity {
                 }
                 else {
                     System.out.println(string_out);
+                    parsing_message = string_out;
                     isApprovedChecked = false;
                 }
                 updateApprovedReq();
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 isApprovedChecked = false;
                 updateApprovedReq();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             appppppprrrrr = false;
             isApprovedChecked = false;
             updateApprovedReq();
@@ -1414,11 +1466,13 @@ public class AttendanceApprove extends AppCompatActivity {
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 isApprovedChecked = false;
                 updateApprovedReq();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             appppppprrrrr = false;
             isApprovedChecked = false;
             updateApprovedReq();
@@ -1438,19 +1492,24 @@ public class AttendanceApprove extends AppCompatActivity {
                     selectApproveReqLists = new ArrayList<>();
                     System.out.println("INSERTED");
 
-                    AlertDialog dialog = new AlertDialog.Builder(AttendanceApprove.this)
+                    MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(AttendanceApprove.this);
+                    alertDialogBuilder.setTitle("Success!")
+                            .setIcon(R.drawable.hrm_new_round_icon_custom)
                             .setMessage("Request Approved Successfully")
-                            .setPositiveButton("OK", null)
-                            .show();
+                            .setPositiveButton("OK", (dialog, which) -> {
+                                dialog.dismiss();
+                                finish();
+                            });
 
-                    dialog.setCancelable(false);
-                    dialog.setCanceledOnTouchOutside(false);
-                    Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                    positive.setOnClickListener(v -> {
-
-                        dialog.dismiss();
-                        finish();
-                    });
+                    AlertDialog alert = alertDialogBuilder.create();
+                    alert.setCancelable(false);
+                    alert.setCanceledOnTouchOutside(false);
+                    try {
+                        alert.show();
+                    }
+                    catch (Exception e) {
+                        restart("App is paused for a long time. Please Start the app again.");
+                    }
 
                 }
                 else {
@@ -1462,35 +1521,39 @@ public class AttendanceApprove extends AppCompatActivity {
                 isApprovedChecked = false;
             }
             else {
-                AlertDialog dialog = new AlertDialog.Builder(AttendanceApprove.this)
-                        .setMessage("There is a network issue in the server. Please Try later.")
-                        .setPositiveButton("Retry", null)
-                        .setNegativeButton("Cancel",null)
-                        .show();
-
-
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(v -> {
-
-                    approveAttReq();
-                    dialog.dismiss();
-                });
+                alertMessageAR();
             }
         }
         else {
-            AlertDialog dialog = new AlertDialog.Builder(AttendanceApprove.this)
-                    .setMessage("Please Check Your Internet Connection")
-                    .setPositiveButton("Retry", null)
-                    .setNegativeButton("Cancel",null)
-                    .show();
+            alertMessageAR();
+        }
+    }
 
+    public void alertMessageAR() {
+        if (parsing_message != null) {
+            if (parsing_message.isEmpty() || parsing_message.equals("null")) {
+                parsing_message = "Server problem or Internet not connected";
+            }
+        }
+        else {
+            parsing_message = "Server problem or Internet not connected";
+        }
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(AttendanceApprove.this);
+        alertDialogBuilder.setTitle("System Warning!")
+                .setIcon(R.drawable.hrm_new_round_icon_custom)
+                .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
+                .setPositiveButton("Retry", (dialog, which) -> {
+                    approveAttReq();
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Cancel",(dialog, which) -> dialog.dismiss());
 
-            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(v -> {
-
-                approveAttReq();
-                dialog.dismiss();
-            });
+        AlertDialog alert = alertDialogBuilder.create();
+        try {
+            alert.show();
+        }
+        catch (Exception e) {
+            restart("App is paused for a long time. Please Start the app again.");
         }
     }
 
@@ -1623,16 +1686,20 @@ public class AttendanceApprove extends AppCompatActivity {
                 }
                 else {
                     System.out.println(string_out);
+                    parsing_message = string_out;
                     isRejectedChecked = false;
                 }
                 updateRejectedReq();
             }
             catch (JSONException e) {
+                logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 isRejectedChecked = false;
                 updateRejectedReq();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             rrreeejjjeecctt = false;
             isRejectedChecked = false;
             updateRejectedReq();
@@ -1677,11 +1744,13 @@ public class AttendanceApprove extends AppCompatActivity {
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 isRejectedChecked = false;
                 updateRejectedReq();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             rrreeejjjeecctt = false;
             isRejectedChecked = false;
             updateRejectedReq();
@@ -1701,19 +1770,24 @@ public class AttendanceApprove extends AppCompatActivity {
                     selectApproveReqLists = new ArrayList<>();
                     System.out.println("INSERTED");
 
-                    AlertDialog dialog = new AlertDialog.Builder(AttendanceApprove.this)
+                    MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(AttendanceApprove.this);
+                    alertDialogBuilder.setTitle("Success!")
+                            .setIcon(R.drawable.hrm_new_round_icon_custom)
                             .setMessage("Request Rejected Successfully")
-                            .setPositiveButton("OK", null)
-                            .show();
+                            .setPositiveButton("OK", (dialog, which) -> {
+                                dialog.dismiss();
+                                finish();
+                            });
 
-                    dialog.setCancelable(false);
-                    dialog.setCanceledOnTouchOutside(false);
-                    Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                    positive.setOnClickListener(v -> {
-
-                        dialog.dismiss();
-                        finish();
-                    });
+                    AlertDialog alert = alertDialogBuilder.create();
+                    alert.setCancelable(false);
+                    alert.setCanceledOnTouchOutside(false);
+                    try {
+                        alert.show();
+                    }
+                    catch (Exception e) {
+                        restart("App is paused for a long time. Please Start the app again.");
+                    }
 
                 }
                 else {
@@ -1725,33 +1799,49 @@ public class AttendanceApprove extends AppCompatActivity {
                 isRejectedChecked = false;
             }
             else {
-                AlertDialog dialog = new AlertDialog.Builder(AttendanceApprove.this)
-                        .setMessage("There is a network issue in the server. Please Try later.")
-                        .setPositiveButton("Retry", null)
-                        .setNegativeButton("Cancel",null)
-                        .show();
-
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(v -> {
-
-                    rejectAttReq();
-                    dialog.dismiss();
-                });
+                alertMessageLR();
             }
         }
         else {
-            AlertDialog dialog = new AlertDialog.Builder(AttendanceApprove.this)
-                    .setMessage("Please Check Your Internet Connection")
-                    .setPositiveButton("Retry", null)
-                    .setNegativeButton("Cancel",null)
-                    .show();
+            alertMessageLR();
+        }
+    }
 
-            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(v -> {
+    public void alertMessageLR() {
+        if (parsing_message != null) {
+            if (parsing_message.isEmpty() || parsing_message.equals("null")) {
+                parsing_message = "Server problem or Internet not connected";
+            }
+        }
+        else {
+            parsing_message = "Server problem or Internet not connected";
+        }
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(AttendanceApprove.this);
+        alertDialogBuilder.setTitle("System Warning!")
+                .setIcon(R.drawable.hrm_new_round_icon_custom)
+                .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
+                .setPositiveButton("Retry", (dialog, which) -> {
+                    rejectAttReq();
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Cancel",(dialog, which) -> dialog.dismiss());
 
-                rejectAttReq();
-                dialog.dismiss();
-            });
+        AlertDialog alert = alertDialogBuilder.create();
+        try {
+            alert.show();
+        }
+        catch (Exception e) {
+            restart("App is paused for a long time. Please Start the app again.");
+        }
+    }
+
+    public void restart(String msg) {
+        try {
+            ProcessPhoenix.triggerRebirth(getApplicationContext());
+        }
+        catch (Exception e) {
+            Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
+            System.exit(0);
         }
     }
 }

@@ -9,9 +9,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -24,8 +24,10 @@ import com.applandeo.materialcalendarview.exceptions.OutOfDateRangeException;
 import com.github.dewinjm.monthyearpicker.MonthFormat;
 import com.github.dewinjm.monthyearpicker.MonthYearPickerDialogFragment;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -78,6 +80,7 @@ public class LeaveStatus extends AppCompatActivity {
 
     ArrayList<EmpLeaveDateList> empLeaveDateLists;
     Logger logger = Logger.getLogger(LeaveStatus.class.getName());
+    String parsing_message = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,27 +94,41 @@ public class LeaveStatus extends AppCompatActivity {
 
         calendarView = findViewById(R.id.calendarView_new);
 
-        emp_id = userInfoLists.get(0).getEmp_id();
-
-        if (!userInfoLists.isEmpty()) {
-            String firstname = userInfoLists.get(0).getUser_name();
-            if (firstname == null) {
-                firstname = "";
+        if (userInfoLists == null) {
+            restart("Could Not Get Employee Data. Please Restart the App.");
+        }
+        else {
+            if (userInfoLists.isEmpty()) {
+                restart("Could Not Get Employee Data. Please Restart the App.");
             }
-            emp_name = firstname;
+            else {
+                emp_id = userInfoLists.get(0).getEmp_id();
+                String firstname = userInfoLists.get(0).getUser_name();
+                if (firstname == null) {
+                    firstname = "";
+                }
+                emp_name = firstname;
+                user_id = userInfoLists.get(0).getEmp_code();
+            }
         }
 
-        user_id = userInfoLists.get(0).getEmp_code();
-
-        if (!userDesignations.isEmpty()) {
-            desg = userDesignations.get(0).getJsm_name();
-            if (desg == null) {
-                desg = "";
+        if (userDesignations == null) {
+            restart("Could Not Get Employee Data. Please Restart the App.");
+        }
+        else {
+            if (userDesignations.isEmpty()) {
+                restart("Could Not Get Employee Data. Please Restart the App.");
             }
+            else {
+                desg = userDesignations.get(0).getJsm_name();
+                if (desg == null) {
+                    desg = "";
+                }
 
-            dept = userDesignations.get(0).getDept_name();
-            if (dept == null) {
-                dept = "";
+                dept = userDesignations.get(0).getDept_name();
+                if (dept == null) {
+                    dept = "";
+                }
             }
         }
 
@@ -447,11 +464,13 @@ public class LeaveStatus extends AppCompatActivity {
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING,e.getMessage(),e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateLay();
             }
         }, error -> {
             logger.log(Level.WARNING,error.getMessage(),error);
+            parsing_message = error.getLocalizedMessage();
             conn = false;
             connected = false;
             updateLay();
@@ -546,50 +565,55 @@ public class LeaveStatus extends AppCompatActivity {
             }
             else {
                 waitProgress.dismiss();
-                AlertDialog dialog = new AlertDialog.Builder(LeaveStatus.this)
-                        .setMessage("There is a network issue in the server. Please Try later.")
-                        .setPositiveButton("Retry", null)
-                        .setNegativeButton("Cancel",null)
-                        .show();
-
-                dialog.setCancelable(false);
-                dialog.setCanceledOnTouchOutside(false);
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(v -> {
-
-                    getStatus();
-                    dialog.dismiss();
-                });
-
-                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setOnClickListener(v -> {
-                    dialog.dismiss();
-                    finish();
-                });
+                alertMessage();
             }
         }
         else {
             waitProgress.dismiss();
-            AlertDialog dialog = new AlertDialog.Builder(LeaveStatus.this)
-                    .setMessage("Please Check Your Internet Connection")
-                    .setPositiveButton("Retry", null)
-                    .setNegativeButton("Cancel",null)
-                    .show();
+            alertMessage();
+        }
+    }
 
-            dialog.setCancelable(false);
-            dialog.setCanceledOnTouchOutside(false);
-            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(v -> {
+    public void alertMessage() {
+        if (parsing_message != null) {
+            if (parsing_message.isEmpty() || parsing_message.equals("null")) {
+                parsing_message = "Server problem or Internet not connected";
+            }
+        }
+        else {
+            parsing_message = "Server problem or Internet not connected";
+        }
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(LeaveStatus.this);
+        alertDialogBuilder.setTitle("System Warning!")
+                .setIcon(R.drawable.hrm_new_round_icon_custom)
+                .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
+                .setPositiveButton("Retry", (dialog, which) -> {
+                    getStatus();
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Cancel",(dialog, which) -> {
+                    dialog.dismiss();
+                    finish();
+                });
 
-                getStatus();
-                dialog.dismiss();
-            });
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.setCancelable(false);
+        alert.setCanceledOnTouchOutside(false);
+        try {
+            alert.show();
+        }
+        catch (Exception e) {
+            restart("App is paused for a long time. Please Start the app again.");
+        }
+    }
 
-            Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-            negative.setOnClickListener(v -> {
-                dialog.dismiss();
-                finish();
-            });
+    public void restart(String msg) {
+        try {
+            ProcessPhoenix.triggerRebirth(getApplicationContext());
+        }
+        catch (Exception e) {
+            Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
+            System.exit(0);
         }
     }
 }

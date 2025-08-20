@@ -26,8 +26,10 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -114,10 +116,10 @@ public class AttendanceUpdate extends AppCompatActivity {
     public static ArrayList<SelectAllList> selectAllLists;
     public static ArrayList<SelectAllList> allShiftDetails;
 
-    public static ArrayList<SelectAllList> allApproverDivision;
-    public static ArrayList<SelectAllList> allApproverWithoutDiv;
-    public static ArrayList<SelectAllList> allApproverEmp;
-    public static ArrayList<SelectAllList> allSelectedApprover;
+//    ArrayList<SelectAllList> allApproverDivision;
+//    ArrayList<SelectAllList> allApproverWithoutDiv;
+//    ArrayList<SelectAllList> allApproverEmp;
+    ArrayList<SelectAllList> allSelectedApprover;
 
 //    public static ArrayList<ApproverList> approverDivision;
 //    public static ArrayList<ApproverList> approverWithoutDivision;
@@ -187,10 +189,10 @@ public class AttendanceUpdate extends AppCompatActivity {
     public static int number = 0;
     public static String text = "";
 
-    String desig_priority = "";
-    String divm_id = "";
-    String approval_band = "";
-    int count_approv_emp = 0;
+//    String desig_priority = "";
+//    String divm_id = "";
+//    String approval_band = "";
+//    int count_approv_emp = 0;
 
 
 //    String darm_id = "";
@@ -211,6 +213,7 @@ public class AttendanceUpdate extends AppCompatActivity {
     String calling_title = "";
 
     Logger logger = Logger.getLogger(AttendanceUpdate.class.getName());
+    String parsing_message = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -270,9 +273,9 @@ public class AttendanceUpdate extends AppCompatActivity {
         selectAllLists = new ArrayList<>();
 
         allShiftDetails = new ArrayList<>();
-        allApproverDivision = new ArrayList<>();
-        allApproverWithoutDiv = new ArrayList<>();
-        allApproverEmp = new ArrayList<>();
+//        allApproverDivision = new ArrayList<>();
+//        allApproverWithoutDiv = new ArrayList<>();
+//        allApproverEmp = new ArrayList<>();
         allSelectedApprover = new ArrayList<>();
 
 //        approverDivision = new ArrayList<>();
@@ -319,11 +322,21 @@ public class AttendanceUpdate extends AppCompatActivity {
             attenTypeList.add(attendanceReqTypes.get(i).getAttendance_req_details());
         }
 
-        emp_id = userInfoLists.get(0).getEmp_id();
+        if (userInfoLists == null) {
+            restart("Could Not Get Employee Data. Please Restart the App.");
+        }
+        else {
+            if (userInfoLists.isEmpty()) {
+                restart("Could Not Get Employee Data. Please Restart the App.");
+            }
+            else {
+                emp_id = userInfoLists.get(0).getEmp_id();
 
-        emp_name = userInfoLists.get(0).getUser_name();
+                emp_name = userInfoLists.get(0).getUser_name();
 
-        user_id = userInfoLists.get(0).getEmp_code();
+                user_id = userInfoLists.get(0).getEmp_code();
+            }
+        }
 
         userName.setText(emp_name);
         userID.setText(user_id);
@@ -1092,15 +1105,22 @@ public class AttendanceUpdate extends AppCompatActivity {
                                     if (!selected_approver_id.isEmpty()) {
                                         errorApprover.setVisibility(View.GONE);
 
-                                        AlertDialog.Builder builder = new AlertDialog.Builder(AttendanceUpdate.this);
-                                        builder.setTitle("Attendance Update Request!")
+                                        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(AttendanceUpdate.this);
+                                        alertDialogBuilder.setTitle("Attendance Update Request!")
+                                                .setIcon(R.drawable.hrm_new_round_icon_custom)
                                                 .setMessage("Do you want send this request?")
-                                                .setPositiveButton("YES", (dialog, which) -> insertReq())
-                                                .setNegativeButton("NO", (dialog, which) -> {
-
-                                                });
-                                        AlertDialog alert = builder.create();
-                                        alert.show();
+                                                .setPositiveButton("YES", (dialog, which) -> {
+                                                    insertReq();
+                                                    dialog.dismiss();
+                                                })
+                                                .setNegativeButton("NO", (dialog, which) -> dialog.dismiss());
+                                        AlertDialog alert = alertDialogBuilder.create();
+                                        try {
+                                            alert.show();
+                                        }
+                                        catch (Exception e) {
+                                            restart("App is paused for a long time. Please Start the app again.");
+                                        }
 
 
 
@@ -1883,180 +1903,187 @@ public class AttendanceUpdate extends AppCompatActivity {
         locUpdateLists = new ArrayList<>();
         allShiftDetails = new ArrayList<>();
 
-        allApproverDivision = new ArrayList<>();
-        allApproverWithoutDiv = new ArrayList<>();
-        allApproverEmp = new ArrayList<>();
+//        allApproverDivision = new ArrayList<>();
+//        allApproverWithoutDiv = new ArrayList<>();
+//        allApproverEmp = new ArrayList<>();
         allSelectedApprover = new ArrayList<>();
 
         String companyOfficeUrl = api_url_front + "attendanceUpNewReq/getCompanyOffice";
         String shiftsUrl = api_url_front + "attendanceUpNewReq/getShiftLists";
         String empInfoUrl = api_url_front + "attendanceUpNewReq/getEmpInfo/"+emp_id;
-        String forwardListsWithDivUrl = api_url_front + "attendanceUpNewReq/getForward_ApproverListWithDiv/"+emp_id;
-        String forwardWithoutDivUrl = api_url_front + "attendanceUpNewReq/getFor_AppListWIthoutDiv/"+emp_id;
-        String forwardAllUrl = api_url_front + "attendanceUpNewReq/getAllFor_AppList/"+emp_id;
-        String desigPriorUrl = api_url_front + "forwardReq/getDesigPriority/"+emp_id;
+        String forward_approver_url = api_url_front + "attendanceUpNewReq/getApproverList?p_emp_id="+emp_id;
+//        String forwardListsWithDivUrl = api_url_front + "attendanceUpNewReq/getForward_ApproverListWithDiv/"+emp_id;
+//        String forwardWithoutDivUrl = api_url_front + "attendanceUpNewReq/getFor_AppListWIthoutDiv/"+emp_id;
+//        String forwardAllUrl = api_url_front + "attendanceUpNewReq/getAllFor_AppList/"+emp_id;
+//        String desigPriorUrl = api_url_front + "forwardReq/getDesigPriority/"+emp_id;
 
         RequestQueue requestQueue = Volley.newRequestQueue(AttendanceUpdate.this);
 
-        StringRequest desigPriorReq = new StringRequest(Request.Method.GET, desigPriorUrl, response -> {
+//        StringRequest desigPriorReq = new StringRequest(Request.Method.GET, desigPriorUrl, response -> {
+//            conn = true;
+//            try {
+//                JSONObject jsonObject = new JSONObject(response);
+//                String items = jsonObject.getString("items");
+//                String count = jsonObject.getString("count");
+//                if (!count.equals("0")) {
+//                    JSONArray array = new JSONArray(items);
+//                    for (int i = 0; i < array.length(); i++) {
+//                        JSONObject desigPrInfo = array.getJSONObject(i);
+//                        desig_priority  = desigPrInfo.getString("desig_priority")
+//                                .equals("null") ? "" : desigPrInfo.getString("desig_priority");
+//                        divm_id = desigPrInfo.getString("jsm_divm_id")
+//                                .equals("null") ? "" : desigPrInfo.getString("jsm_divm_id");
+//
+//                        System.out.println("designation1: " + desig_priority);
+//                    }
+//                }
+//
+//                if (!desig_priority.isEmpty()) {
+//                    System.out.println("designation2: " + desig_priority);
+//                    getForwarderApproverList();
+//                }
+//                else {
+//                    connected = true;
+//                    updateLay();
+//                }
+//            }
+//            catch (JSONException e) {
+//                logger.log(Level.WARNING, e.getMessage(), e);
+//                parsing_message = e.getLocalizedMessage();
+//                connected = false;
+//                updateLay();
+//            }
+//        }, error -> {
+//            logger.log(Level.WARNING, error.getMessage(), error);
+//            parsing_message = error.getLocalizedMessage();
+//            conn = false;
+//            connected = false;
+//            updateLay();
+//        });
+//
+//        StringRequest forwardAllReq = new StringRequest(Request.Method.GET, forwardAllUrl, response -> {
+//            conn = true;
+//            try {
+//                JSONObject jsonObject = new JSONObject(response);
+//                String items = jsonObject.getString("items");
+//                String count = jsonObject.getString("count");
+//                if (!count.equals("0")) {
+//                    JSONArray array = new JSONArray(items);
+//                    for (int i = 0; i < array.length(); i++) {
+//                        JSONObject forwardInfo = array.getJSONObject(i);
+//
+//                        String emp_id_new = forwardInfo.getString("emp_id")
+//                                .equals("null") ? "" : forwardInfo.getString("emp_id");
+//                        String emp_name_new  = forwardInfo.getString("emp_name")
+//                                .equals("null") ? "" : forwardInfo.getString("emp_name");
+//                        String job_calling_title_new = forwardInfo.getString("job_calling_title")
+//                                .equals("null") ? "" : forwardInfo.getString("job_calling_title");
+//                        String jsm_name_new = forwardInfo.getString("jsm_name")
+//                                .equals("null") ? "" : forwardInfo.getString("jsm_name");
+//                        String divm_name_new = forwardInfo.getString("divm_name")
+//                                .equals("null") ? "" : forwardInfo.getString("divm_name");
+//
+//                        allApproverEmp.add(new SelectAllList(emp_id_new,emp_name_new,job_calling_title_new,
+//                                jsm_name_new,divm_name_new));
+//                    }
+//                }
+//                requestQueue.add(desigPriorReq);
+//            }
+//            catch (JSONException e) {
+//                logger.log(Level.WARNING, e.getMessage(), e);
+//                parsing_message = e.getLocalizedMessage();
+//                connected = false;
+//                updateLay();
+//            }
+//        }, error -> {
+//            logger.log(Level.WARNING, error.getMessage(), error);
+//            parsing_message = error.getLocalizedMessage();
+//            conn = false;
+//            connected = false;
+//            updateLay();
+//        });
+//
+//        StringRequest forwardWithoutDivReq = new StringRequest(Request.Method.GET, forwardWithoutDivUrl, response -> {
+//            conn = true;
+//            try {
+//                JSONObject jsonObject = new JSONObject(response);
+//                String items = jsonObject.getString("items");
+//                String count = jsonObject.getString("count");
+//                if (!count.equals("0")) {
+//
+//                    JSONArray array = new JSONArray(items);
+//                    for (int i = 0; i < array.length(); i++) {
+//                        JSONObject forwardInfo = array.getJSONObject(i);
+//
+//                        String emp_id_new = forwardInfo.getString("emp_id")
+//                                .equals("null") ? "" : forwardInfo.getString("emp_id");
+//                        String emp_name_new  = forwardInfo.getString("emp_name")
+//                                .equals("null") ? "" : forwardInfo.getString("emp_name");
+//                        String job_calling_title_new = forwardInfo.getString("job_calling_title")
+//                                .equals("null") ? "" : forwardInfo.getString("job_calling_title");
+//                        String jsm_name_new = forwardInfo.getString("jsm_name")
+//                                .equals("null") ? "" : forwardInfo.getString("jsm_name");
+//                        String divm_name_new = forwardInfo.getString("divm_name")
+//                                .equals("null") ? "" : forwardInfo.getString("divm_name");
+//
+//                        allApproverWithoutDiv.add(new SelectAllList(emp_id_new,emp_name_new,job_calling_title_new,
+//                                jsm_name_new,divm_name_new));
+//                    }
+//                }
+//
+//                requestQueue.add(forwardAllReq);
+//            }
+//            catch (JSONException e) {
+//                logger.log(Level.WARNING, e.getMessage(), e);
+//                parsing_message = e.getLocalizedMessage();
+//                connected = false;
+//                updateLay();
+//            }
+//        }, error -> {
+//            logger.log(Level.WARNING, error.getMessage(), error);
+//            parsing_message = error.getLocalizedMessage();
+//            conn = false;
+//            connected = false;
+//            updateLay();
+//        });
+
+        StringRequest forwardApproverReq = new StringRequest(Request.Method.GET, forward_approver_url, response -> {
             conn = true;
             try {
                 JSONObject jsonObject = new JSONObject(response);
-                String items = jsonObject.getString("items");
-                String count = jsonObject.getString("count");
-                if (!count.equals("0")) {
-                    JSONArray array = new JSONArray(items);
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject desigPrInfo = array.getJSONObject(i);
-                        desig_priority  = desigPrInfo.getString("desig_priority")
-                                .equals("null") ? "" : desigPrInfo.getString("desig_priority");
-                        divm_id = desigPrInfo.getString("jsm_divm_id")
-                                .equals("null") ? "" : desigPrInfo.getString("jsm_divm_id");
+                String items = jsonObject.getString("p_data_list");
+                JSONArray array = new JSONArray(items);
+                for (int i = 0; i < array.length(); i++) {
+                    JSONObject forwardInfo = array.getJSONObject(i);
 
-                        System.out.println("designation1: " + desig_priority);
-                    }
+                    String emp_id_new = forwardInfo.getString("emp_id")
+                            .equals("null") ? "" : forwardInfo.getString("emp_id");
+                    String emp_name_new  = forwardInfo.getString("emp_name")
+                            .equals("null") ? "" : forwardInfo.getString("emp_name");
+                    String job_calling_title_new = forwardInfo.getString("job_calling_title")
+                            .equals("null") ? "" : forwardInfo.getString("job_calling_title");
+                    String jsm_name_new = forwardInfo.getString("jsm_name")
+                            .equals("null") ? "" : forwardInfo.getString("jsm_name");
+                    String divm_name_new = forwardInfo.getString("divm_name")
+                            .equals("null") ? "" : forwardInfo.getString("divm_name");
+
+
+                    allSelectedApprover.add(new SelectAllList(emp_id_new,emp_name_new,job_calling_title_new,
+                            jsm_name_new,divm_name_new));
                 }
 
-                if (!desig_priority.isEmpty()) {
-                    System.out.println("designation2: " + desig_priority);
-                    getForwarderApproverList();
-                }
-                else {
-                    connected = true;
-                    updateLay();
-                }
+                connected = true;
+                updateLay();
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateLay();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
-            conn = false;
-            connected = false;
-            updateLay();
-        });
-
-        StringRequest forwardAllReq = new StringRequest(Request.Method.GET, forwardAllUrl, response -> {
-            conn = true;
-            try {
-                JSONObject jsonObject = new JSONObject(response);
-                String items = jsonObject.getString("items");
-                String count = jsonObject.getString("count");
-                if (!count.equals("0")) {
-                    JSONArray array = new JSONArray(items);
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject forwardInfo = array.getJSONObject(i);
-
-                        String emp_id_new = forwardInfo.getString("emp_id")
-                                .equals("null") ? "" : forwardInfo.getString("emp_id");
-                        String emp_name_new  = forwardInfo.getString("emp_name")
-                                .equals("null") ? "" : forwardInfo.getString("emp_name");
-                        String job_calling_title_new = forwardInfo.getString("job_calling_title")
-                                .equals("null") ? "" : forwardInfo.getString("job_calling_title");
-                        String jsm_name_new = forwardInfo.getString("jsm_name")
-                                .equals("null") ? "" : forwardInfo.getString("jsm_name");
-                        String divm_name_new = forwardInfo.getString("divm_name")
-                                .equals("null") ? "" : forwardInfo.getString("divm_name");
-
-                        allApproverEmp.add(new SelectAllList(emp_id_new,emp_name_new,job_calling_title_new,
-                                jsm_name_new,divm_name_new));
-                    }
-                }
-                requestQueue.add(desigPriorReq);
-            }
-            catch (JSONException e) {
-                logger.log(Level.WARNING, e.getMessage(), e);
-                connected = false;
-                updateLay();
-            }
-        }, error -> {
-            logger.log(Level.WARNING, error.getMessage(), error);
-            conn = false;
-            connected = false;
-            updateLay();
-        });
-
-        StringRequest forwardWithoutDivReq = new StringRequest(Request.Method.GET, forwardWithoutDivUrl, response -> {
-            conn = true;
-            try {
-                JSONObject jsonObject = new JSONObject(response);
-                String items = jsonObject.getString("items");
-                String count = jsonObject.getString("count");
-                if (!count.equals("0")) {
-
-                    JSONArray array = new JSONArray(items);
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject forwardInfo = array.getJSONObject(i);
-
-                        String emp_id_new = forwardInfo.getString("emp_id")
-                                .equals("null") ? "" : forwardInfo.getString("emp_id");
-                        String emp_name_new  = forwardInfo.getString("emp_name")
-                                .equals("null") ? "" : forwardInfo.getString("emp_name");
-                        String job_calling_title_new = forwardInfo.getString("job_calling_title")
-                                .equals("null") ? "" : forwardInfo.getString("job_calling_title");
-                        String jsm_name_new = forwardInfo.getString("jsm_name")
-                                .equals("null") ? "" : forwardInfo.getString("jsm_name");
-                        String divm_name_new = forwardInfo.getString("divm_name")
-                                .equals("null") ? "" : forwardInfo.getString("divm_name");
-
-                        allApproverWithoutDiv.add(new SelectAllList(emp_id_new,emp_name_new,job_calling_title_new,
-                                jsm_name_new,divm_name_new));
-                    }
-                }
-
-                requestQueue.add(forwardAllReq);
-            }
-            catch (JSONException e) {
-                logger.log(Level.WARNING, e.getMessage(), e);
-                connected = false;
-                updateLay();
-            }
-        }, error -> {
-            logger.log(Level.WARNING, error.getMessage(), error);
-            conn = false;
-            connected = false;
-            updateLay();
-        });
-
-        StringRequest forwardWithDivReq = new StringRequest(Request.Method.GET, forwardListsWithDivUrl, response -> {
-            conn = true;
-            try {
-                JSONObject jsonObject = new JSONObject(response);
-                String items = jsonObject.getString("items");
-                String count = jsonObject.getString("count");
-                if (!count.equals("0")) {
-                    JSONArray array = new JSONArray(items);
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject forwardInfo = array.getJSONObject(i);
-
-                        String emp_id_new = forwardInfo.getString("emp_id")
-                                .equals("null") ? "" : forwardInfo.getString("emp_id");
-                        String emp_name_new  = forwardInfo.getString("emp_name")
-                                .equals("null") ? "" : forwardInfo.getString("emp_name");
-                        String job_calling_title_new = forwardInfo.getString("job_calling_title")
-                                .equals("null") ? "" : forwardInfo.getString("job_calling_title");
-                        String jsm_name_new = forwardInfo.getString("jsm_name")
-                                .equals("null") ? "" : forwardInfo.getString("jsm_name");
-                        String divm_name_new = forwardInfo.getString("divm_name")
-                                .equals("null") ? "" : forwardInfo.getString("divm_name");
-
-
-                        allApproverDivision.add(new SelectAllList(emp_id_new,emp_name_new,job_calling_title_new,
-                                jsm_name_new,divm_name_new));
-                    }
-                }
-
-                requestQueue.add(forwardWithoutDivReq);
-            }
-            catch (JSONException e) {
-                logger.log(Level.WARNING, e.getMessage(), e);
-                connected = false;
-                updateLay();
-            }
-        }, error -> {
-            logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             conn = false;
             connected = false;
             updateLay();
@@ -2080,15 +2107,17 @@ public class AttendanceUpdate extends AppCompatActivity {
                     }
                 }
 
-                requestQueue.add(forwardWithDivReq);
+                requestQueue.add(forwardApproverReq);
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateLay();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             conn = false;
             connected = false;
             updateLay();
@@ -2121,11 +2150,13 @@ public class AttendanceUpdate extends AppCompatActivity {
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateLay();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             conn = false;
             connected = false;
             updateLay();
@@ -2151,11 +2182,13 @@ public class AttendanceUpdate extends AppCompatActivity {
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateLay();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             conn = false;
             connected = false;
             updateLay();
@@ -2164,123 +2197,131 @@ public class AttendanceUpdate extends AppCompatActivity {
         requestQueue.add(comOffReq);
     }
 
-    public void getForwarderApproverList() {
-
-        String approvalBandUrl = api_url_front + "forwardReq/getApprovalBand/"+desig_priority;
-        String countApp1Url = api_url_front + "forwardReq/getCountApprovEmp/"+divm_id+"/"+desig_priority;
-        String countApp2Url = api_url_front + "forwardReq/getCountApprovEmp_2/"+desig_priority;
-
-        RequestQueue requestQueue = Volley.newRequestQueue(AttendanceUpdate.this);
-
-        StringRequest countApp2Req = new StringRequest(Request.Method.GET, countApp2Url, response -> {
-            conn = true;
-            try {
-                JSONObject jsonObject = new JSONObject(response);
-                String items = jsonObject.getString("items");
-                String count = jsonObject.getString("count");
-                if (!count.equals("0")) {
-                    JSONArray array = new JSONArray(items);
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject cApp2Info = array.getJSONObject(i);
-                        count_approv_emp = cApp2Info.getInt("cc2");
-                    }
-                }
-
-                if (count_approv_emp <= 0) {
-                    //selectedApproverList = approverWithoutDivision;
-                    allSelectedApprover = allApproverWithoutDiv;
-                } else {
-                    // selectedApproverList = approverEmployee;
-                    allSelectedApprover = allApproverEmp;
-                }
-
-                connected = true;
-                updateLay();
-
-            }
-            catch (JSONException e) {
-                logger.log(Level.WARNING, e.getMessage(), e);
-                connected = false;
-                updateLay();
-            }
-        }, error -> {
-            logger.log(Level.WARNING, error.getMessage(), error);
-            conn = false;
-            connected = false;
-            updateLay();
-        });
-
-        StringRequest countApp1Req = new StringRequest(Request.Method.GET, countApp1Url, response -> {
-            conn = true;
-            try {
-                JSONObject jsonObject = new JSONObject(response);
-                String items = jsonObject.getString("items");
-                String count = jsonObject.getString("count");
-                if (!count.equals("0")) {
-                    JSONArray array = new JSONArray(items);
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject cApp1Info = array.getJSONObject(i);
-                        count_approv_emp = cApp1Info.getInt("cc");
-                    }
-                }
-                if (count_approv_emp <= 0) {
-                    requestQueue.add(countApp2Req);
-                }
-                else {
-                    allSelectedApprover = allApproverDivision;
-                    connected = true;
-                    updateLay();
-                }
-            }
-            catch (JSONException e) {
-                logger.log(Level.WARNING, e.getMessage(), e);
-                connected = false;
-                updateLay();
-            }
-        }, error -> {
-            logger.log(Level.WARNING, error.getMessage(), error);
-            conn = false;
-            connected = false;
-            updateLay();
-        });
-
-        StringRequest appBandReq = new StringRequest(Request.Method.GET, approvalBandUrl, response -> {
-            conn = true;
-            try {
-                JSONObject jsonObject = new JSONObject(response);
-                String items = jsonObject.getString("items");
-                String count = jsonObject.getString("count");
-                if (!count.equals("0")) {
-                    JSONArray array = new JSONArray(items);
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject appBandInfo = array.getJSONObject(i);
-                        approval_band = appBandInfo.getString("lah_approval_band")
-                                .equals("null") ? "" : appBandInfo.getString("lah_approval_band");
-
-                    }
-                }
-                if (!approval_band.isEmpty()) {
-                    requestQueue.add(countApp1Req);
-                }
-                else {
-                    connected = true;
-                    updateLay();
-                }
-            }
-            catch (JSONException e) {
-                logger.log(Level.WARNING, e.getMessage(), e);
-                connected = false;
-                updateLay();
-            }
-        }, error -> {
-            logger.log(Level.WARNING, error.getMessage(), error);
-            conn = false;
-            connected = false;
-            updateLay();
-        });
-
-        requestQueue.add(appBandReq);
-    }
+//    public void getForwarderApproverList() {
+//        conn = false;
+//        connected = false;
+//
+//        String approvalBandUrl = api_url_front + "forwardReq/getApprovalBand/"+desig_priority;
+//        String countApp1Url = api_url_front + "forwardReq/getCountApprovEmp/"+divm_id+"/"+desig_priority;
+//        String countApp2Url = api_url_front + "forwardReq/getCountApprovEmp_2/"+desig_priority;
+//
+//        RequestQueue requestQueue = Volley.newRequestQueue(AttendanceUpdate.this);
+//
+//        StringRequest countApp2Req = new StringRequest(Request.Method.GET, countApp2Url, response -> {
+//            conn = true;
+//            try {
+//                JSONObject jsonObject = new JSONObject(response);
+//                String items = jsonObject.getString("items");
+//                String count = jsonObject.getString("count");
+//                if (!count.equals("0")) {
+//                    JSONArray array = new JSONArray(items);
+//                    for (int i = 0; i < array.length(); i++) {
+//                        JSONObject cApp2Info = array.getJSONObject(i);
+//                        count_approv_emp = cApp2Info.getInt("cc2");
+//                    }
+//                }
+//
+//                if (count_approv_emp <= 0) {
+//                    //selectedApproverList = approverWithoutDivision;
+//                    allSelectedApprover = allApproverWithoutDiv;
+//                } else {
+//                    // selectedApproverList = approverEmployee;
+//                    allSelectedApprover = allApproverEmp;
+//                }
+//
+//                connected = true;
+//                updateLay();
+//
+//            }
+//            catch (JSONException e) {
+//                logger.log(Level.WARNING, e.getMessage(), e);
+//                parsing_message = e.getLocalizedMessage();
+//                connected = false;
+//                updateLay();
+//            }
+//        }, error -> {
+//            logger.log(Level.WARNING, error.getMessage(), error);
+//            parsing_message = error.getLocalizedMessage();
+//            conn = false;
+//            connected = false;
+//            updateLay();
+//        });
+//
+//        StringRequest countApp1Req = new StringRequest(Request.Method.GET, countApp1Url, response -> {
+//            conn = true;
+//            try {
+//                JSONObject jsonObject = new JSONObject(response);
+//                String items = jsonObject.getString("items");
+//                String count = jsonObject.getString("count");
+//                if (!count.equals("0")) {
+//                    JSONArray array = new JSONArray(items);
+//                    for (int i = 0; i < array.length(); i++) {
+//                        JSONObject cApp1Info = array.getJSONObject(i);
+//                        count_approv_emp = cApp1Info.getInt("cc");
+//                    }
+//                }
+//                if (count_approv_emp <= 0) {
+//                    requestQueue.add(countApp2Req);
+//                }
+//                else {
+//                    allSelectedApprover = allApproverDivision;
+//                    connected = true;
+//                    updateLay();
+//                }
+//            }
+//            catch (JSONException e) {
+//                logger.log(Level.WARNING, e.getMessage(), e);
+//                parsing_message = e.getLocalizedMessage();
+//                connected = false;
+//                updateLay();
+//            }
+//        }, error -> {
+//            logger.log(Level.WARNING, error.getMessage(), error);
+//            parsing_message = error.getLocalizedMessage();
+//            conn = false;
+//            connected = false;
+//            updateLay();
+//        });
+//
+//        StringRequest appBandReq = new StringRequest(Request.Method.GET, approvalBandUrl, response -> {
+//            conn = true;
+//            try {
+//                JSONObject jsonObject = new JSONObject(response);
+//                String items = jsonObject.getString("items");
+//                String count = jsonObject.getString("count");
+//                if (!count.equals("0")) {
+//                    JSONArray array = new JSONArray(items);
+//                    for (int i = 0; i < array.length(); i++) {
+//                        JSONObject appBandInfo = array.getJSONObject(i);
+//                        approval_band = appBandInfo.getString("lah_approval_band")
+//                                .equals("null") ? "" : appBandInfo.getString("lah_approval_band");
+//
+//                    }
+//                }
+//                if (!approval_band.isEmpty()) {
+//                    requestQueue.add(countApp1Req);
+//                }
+//                else {
+//                    connected = true;
+//                    updateLay();
+//                }
+//            }
+//            catch (JSONException e) {
+//                logger.log(Level.WARNING, e.getMessage(), e);
+//                parsing_message = e.getLocalizedMessage();
+//                connected = false;
+//                updateLay();
+//            }
+//        }, error -> {
+//            logger.log(Level.WARNING, error.getMessage(), error);
+//            parsing_message = error.getLocalizedMessage();
+//            conn = false;
+//            connected = false;
+//            updateLay();
+//        });
+//
+//        requestQueue.add(appBandReq);
+//    }
 
     public void updateLay() {
         waitProgress.dismiss();
@@ -2297,49 +2338,44 @@ public class AttendanceUpdate extends AppCompatActivity {
                 connected = false;
             }
             else {
-                AlertDialog dialog = new AlertDialog.Builder(AttendanceUpdate.this)
-                        .setMessage("There is a network issue in the server. Please Try later.")
-                        .setPositiveButton("Retry", null)
-                        .setNegativeButton("Cancel", null)
-                        .show();
-
-                dialog.setCancelable(false);
-                dialog.setCanceledOnTouchOutside(false);
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(v -> {
-
-                    getDataInfo();
-                    dialog.dismiss();
-                });
-
-                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setOnClickListener(v -> {
-                    dialog.dismiss();
-                    finish();
-                });
+                alertMessage();
             }
         }
         else {
-            AlertDialog dialog = new AlertDialog.Builder(AttendanceUpdate.this)
-                    .setMessage("Please Check Your Internet Connection")
-                    .setPositiveButton("Retry", null)
-                    .setNegativeButton("Cancel", null)
-                    .show();
+            alertMessage();
+        }
+    }
 
-            dialog.setCancelable(false);
-            dialog.setCanceledOnTouchOutside(false);
-            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(v -> {
+    public void alertMessage() {
+        if (parsing_message != null) {
+            if (parsing_message.isEmpty() || parsing_message.equals("null")) {
+                parsing_message = "Server problem or Internet not connected";
+            }
+        }
+        else {
+            parsing_message = "Server problem or Internet not connected";
+        }
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(AttendanceUpdate.this);
+        alertDialogBuilder.setTitle("System Warning!")
+                .setIcon(R.drawable.hrm_new_round_icon_custom)
+                .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
+                .setPositiveButton("Retry", (dialog, which) -> {
+                    getDataInfo();
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Cancel",(dialog, which) -> {
+                    dialog.dismiss();
+                    finish();
+                });
 
-                getDataInfo();
-                dialog.dismiss();
-            });
-
-            Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-            negative.setOnClickListener(v -> {
-                dialog.dismiss();
-                finish();
-            });
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.setCancelable(false);
+        alert.setCanceledOnTouchOutside(false);
+        try {
+            alert.show();
+        }
+        catch (Exception e) {
+            restart("App is paused for a long time. Please Start the app again.");
         }
     }
 
@@ -2411,11 +2447,13 @@ public class AttendanceUpdate extends AppCompatActivity {
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 machineCon = false;
                 updateMachine();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             machineConnn = false;
             machineCon = false;
             updateMachine();
@@ -2437,49 +2475,44 @@ public class AttendanceUpdate extends AppCompatActivity {
                 machineCon = false;
             }
             else {
-                AlertDialog dialog = new AlertDialog.Builder(AttendanceUpdate.this)
-                        .setMessage("There is a network issue in the server. Please Try later.")
-                        .setPositiveButton("Retry", null)
-                        .setNegativeButton("Cancel",null)
-                        .show();
-
-                dialog.setCancelable(false);
-                dialog.setCanceledOnTouchOutside(false);
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(v -> {
-
-                    getMachineData();
-                    dialog.dismiss();
-                });
-
-                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setOnClickListener(v -> {
-                    dialog.dismiss();
-                    finish();
-                });
+                alertMessageMD();
             }
         }
         else {
-            AlertDialog dialog = new AlertDialog.Builder(AttendanceUpdate.this)
-                    .setMessage("Please Check Your Internet Connection")
-                    .setPositiveButton("Retry", null)
-                    .setNegativeButton("Cancel",null)
-                    .show();
+            alertMessageMD();
+        }
+    }
 
-            dialog.setCancelable(false);
-            dialog.setCanceledOnTouchOutside(false);
-            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(v -> {
+    public void alertMessageMD() {
+        if (parsing_message != null) {
+            if (parsing_message.isEmpty() || parsing_message.equals("null")) {
+                parsing_message = "Server problem or Internet not connected";
+            }
+        }
+        else {
+            parsing_message = "Server problem or Internet not connected";
+        }
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(AttendanceUpdate.this);
+        alertDialogBuilder.setTitle("System Warning!")
+                .setIcon(R.drawable.hrm_new_round_icon_custom)
+                .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
+                .setPositiveButton("Retry", (dialog, which) -> {
+                    getMachineData();
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Cancel",(dialog, which) -> {
+                    dialog.dismiss();
+                    finish();
+                });
 
-                getMachineData();
-                dialog.dismiss();
-            });
-
-            Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-            negative.setOnClickListener(v -> {
-                dialog.dismiss();
-                finish();
-            });
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.setCancelable(false);
+        alert.setCanceledOnTouchOutside(false);
+        try {
+            alert.show();
+        }
+        catch (Exception e) {
+            restart("App is paused for a long time. Please Start the app again.");
         }
     }
 
@@ -2552,11 +2585,13 @@ public class AttendanceUpdate extends AppCompatActivity {
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 reasonCon = false;
                 updateReason();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             reasonConnnn = false;
             reasonCon = false;
             updateReason();
@@ -2589,49 +2624,44 @@ public class AttendanceUpdate extends AppCompatActivity {
                 reasonCon = false;
             }
             else {
-                AlertDialog dialog = new AlertDialog.Builder(AttendanceUpdate.this)
-                        .setMessage("There is a network issue in the server. Please Try later.")
-                        .setPositiveButton("Retry", null)
-                        .setNegativeButton("Cancel",null)
-                        .show();
-
-                dialog.setCancelable(false);
-                dialog.setCanceledOnTouchOutside(false);
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(v -> {
-
-                    getReasonData();
-                    dialog.dismiss();
-                });
-
-                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setOnClickListener(v -> {
-                    dialog.dismiss();
-                    finish();
-                });
+                alertMessageRD();
             }
         }
         else {
-            AlertDialog dialog = new AlertDialog.Builder(AttendanceUpdate.this)
-                    .setMessage("Please Check Your Internet Connection")
-                    .setPositiveButton("Retry", null)
-                    .setNegativeButton("Cancel",null)
-                    .show();
+            alertMessageRD();
+        }
+    }
 
-            dialog.setCancelable(false);
-            dialog.setCanceledOnTouchOutside(false);
-            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(v -> {
+    public void alertMessageRD() {
+        if (parsing_message != null) {
+            if (parsing_message.isEmpty() || parsing_message.equals("null")) {
+                parsing_message = "Server problem or Internet not connected";
+            }
+        }
+        else {
+            parsing_message = "Server problem or Internet not connected";
+        }
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(AttendanceUpdate.this);
+        alertDialogBuilder.setTitle("System Warning!")
+                .setIcon(R.drawable.hrm_new_round_icon_custom)
+                .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
+                .setPositiveButton("Retry", (dialog, which) -> {
+                    getReasonData();
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Cancel",(dialog, which) -> {
+                    dialog.dismiss();
+                    finish();
+                });
 
-                getReasonData();
-                dialog.dismiss();
-            });
-
-            Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-            negative.setOnClickListener(v -> {
-                dialog.dismiss();
-                finish();
-            });
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.setCancelable(false);
+        alert.setCanceledOnTouchOutside(false);
+        try {
+            alert.show();
+        }
+        catch (Exception e) {
+            restart("App is paused for a long time. Please Start the app again.");
         }
     }
 
@@ -2827,16 +2857,20 @@ public class AttendanceUpdate extends AppCompatActivity {
                 }
                 else {
                     System.out.println(string_out);
+                    parsing_message = string_out;
                     insertCon = false;
                 }
                 updateInsertLay();
             }
             catch (JSONException e) {
+                logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 insertCon = false;
                 updateInsertLay();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             insertConnn = false;
             insertCon = false;
             updateInsertLay();
@@ -2878,62 +2912,75 @@ public class AttendanceUpdate extends AppCompatActivity {
                     selected_approver_id = "";
                     System.out.println("INSERTED");
 
-                    AlertDialog dialog = new AlertDialog.Builder(AttendanceUpdate.this)
+                    MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(AttendanceUpdate.this);
+                    alertDialogBuilder.setTitle("Success!")
+                            .setIcon(R.drawable.hrm_new_round_icon_custom)
                             .setMessage("Request Sent Successfully")
-                            .setPositiveButton("OK", null)
-                            .show();
+                            .setPositiveButton("OK", (dialog, which) -> {
+                                dialog.dismiss();
+                                finish();
+                            });
 
-                    dialog.setCancelable(false);
-                    dialog.setCanceledOnTouchOutside(false);
-                    Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                    positive.setOnClickListener(v -> {
-
-                        dialog.dismiss();
-                        finish();
-                    });
+                    AlertDialog alert = alertDialogBuilder.create();
+                    alert.setCancelable(false);
+                    alert.setCanceledOnTouchOutside(false);
+                    try {
+                        alert.show();
+                    }
+                    catch (Exception e) {
+                        restart("App is paused for a long time. Please Start the app again.");
+                    }
                 }
                 else {
                     Toast.makeText(getApplicationContext(), "Failed to Send Request.", Toast.LENGTH_SHORT).show();
                 }
             }
             else {
-                AlertDialog dialog = new AlertDialog.Builder(AttendanceUpdate.this)
-                        .setMessage("There is a network issue in the server. Please Try later.")
-                        .setPositiveButton("Retry", null)
-                        .setNegativeButton("Cancel", null)
-                        .show();
-
-                dialog.setCancelable(false);
-                dialog.setCanceledOnTouchOutside(false);
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(v -> {
-
-                    insertReq();
-                    dialog.dismiss();
-                });
-
-                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setOnClickListener(v -> dialog.dismiss());
+                alertMessageInsert();
             }
         }
         else {
-            AlertDialog dialog = new AlertDialog.Builder(AttendanceUpdate.this)
-                    .setMessage("Please Check Your Internet Connection")
-                    .setPositiveButton("Retry", null)
-                    .setNegativeButton("Cancel", null)
-                    .show();
+            alertMessageInsert();
+        }
+    }
 
-            dialog.setCancelable(false);
-            dialog.setCanceledOnTouchOutside(false);
-            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(v -> {
+    public void alertMessageInsert() {
+        if (parsing_message != null) {
+            if (parsing_message.isEmpty() || parsing_message.equals("null")) {
+                parsing_message = "Server problem or Internet not connected";
+            }
+        }
+        else {
+            parsing_message = "Server problem or Internet not connected";
+        }
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(AttendanceUpdate.this);
+        alertDialogBuilder.setTitle("System Warning!")
+                .setIcon(R.drawable.hrm_new_round_icon_custom)
+                .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
+                .setPositiveButton("Retry", (dialog, which) -> {
+                    insertReq();
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Cancel",(dialog, which) -> dialog.dismiss());
 
-                insertReq();
-                dialog.dismiss();
-            });
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.setCancelable(false);
+        alert.setCanceledOnTouchOutside(false);
+        try {
+            alert.show();
+        }
+        catch (Exception e) {
+            restart("App is paused for a long time. Please Start the app again.");
+        }
+    }
 
-            Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-            negative.setOnClickListener(v -> dialog.dismiss());
+    public void restart(String msg) {
+        try {
+            ProcessPhoenix.triggerRebirth(getApplicationContext());
+        }
+        catch (Exception e) {
+            Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
+            System.exit(0);
         }
     }
 

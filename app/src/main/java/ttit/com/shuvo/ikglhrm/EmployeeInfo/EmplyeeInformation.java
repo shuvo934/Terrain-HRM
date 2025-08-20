@@ -18,7 +18,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,6 +48,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.jakewharton.processphoenix.ProcessPhoenix;
 import com.yalantis.ucrop.UCrop;
 
 import org.json.JSONArray;
@@ -117,33 +117,49 @@ public class EmplyeeInformation extends AppCompatActivity implements PictureChoo
 
         changePass = findViewById(R.id.change_password_button);
 
-        if (!userInfoLists.isEmpty()) {
-            String firstname = userInfoLists.get(0).getUser_name();
-            if (firstname == null) {
-                firstname = "";
+        if (userInfoLists == null) {
+            restart("Could Not Get Employee Data. Please Restart the App.");
+        }
+        else {
+            if (userInfoLists.isEmpty()) {
+                restart("Could Not Get Employee Data. Please Restart the App.");
             }
-            empName.setText(firstname);
-            emp_id = userInfoLists.get(0).getEmp_id();
+            else {
+                String firstname = userInfoLists.get(0).getUser_name();
+                if (firstname == null) {
+                    firstname = "";
+                }
+                empName.setText(firstname);
+                emp_id = userInfoLists.get(0).getEmp_id();
+            }
         }
 
-        if (!userDesignations.isEmpty()) {
-            String jsmName = userDesignations.get(0).getDesg_name();
-            if (jsmName == null) {
-                jsmName = "";
+        if (userDesignations == null) {
+            restart("Could Not Get Employee Data. Please Restart the App.");
+        }
+        else {
+            if (userDesignations.isEmpty()) {
+                restart("Could Not Get Employee Data. Please Restart the App.");
             }
-            empDesignation.setText(jsmName);
+            else {
+                String jsmName = userDesignations.get(0).getDesg_name();
+                if (jsmName == null) {
+                    jsmName = "";
+                }
+                empDesignation.setText(jsmName);
 
-            String deptName = userDesignations.get(0).getDept_name();
-            if (deptName == null) {
-                deptName = "";
-            }
-            empDep.setText(deptName);
+                String deptName = userDesignations.get(0).getDept_name();
+                if (deptName == null) {
+                    deptName = "";
+                }
+                empDep.setText(deptName);
 
-            String divName = userDesignations.get(0).getDiv_name();
-            if (divName == null) {
-                divName = "";
+                String divName = userDesignations.get(0).getDiv_name();
+                if (divName == null) {
+                    divName = "";
+                }
+                empDiv.setText(divName);
             }
-            empDiv.setText(divName);
         }
 
         compName.setText(CompanyName);
@@ -238,12 +254,14 @@ public class EmplyeeInformation extends AppCompatActivity implements PictureChoo
             } catch (JSONException e) {
                 connected = false;
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 updateInterface();
             }
         }, error -> {
             conn = false;
             connected = false;
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             updateInterface();
         });
 
@@ -269,47 +287,44 @@ public class EmplyeeInformation extends AppCompatActivity implements PictureChoo
                 imageToLoad = false;
             }
             else {
-                AlertDialog dialog = new AlertDialog.Builder(EmplyeeInformation.this)
-                        .setMessage("There is a network issue in the server. Please Try later")
-                        .setPositiveButton("Retry", null)
-                        .setNegativeButton("Cancel", null)
-                        .show();
-
-                dialog.setCancelable(false);
-                dialog.setCanceledOnTouchOutside(false);
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(v -> {
-                    getUserImage();
-                    dialog.dismiss();
-                });
-
-                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setOnClickListener(v -> {
-                    dialog.dismiss();
-                    finish();
-                });
+                alertMessage();
             }
         }
         else {
-            AlertDialog dialog = new AlertDialog.Builder(EmplyeeInformation.this)
-                    .setMessage("Please Check Your Internet Connection")
-                    .setPositiveButton("Retry", null)
-                    .setNegativeButton("Cancel", null)
-                    .show();
+            alertMessage();
+        }
+    }
 
-            dialog.setCancelable(false);
-            dialog.setCanceledOnTouchOutside(false);
-            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(v -> {
-                getUserImage();
-                dialog.dismiss();
-            });
+    public void alertMessage() {
+        if (parsing_message != null) {
+            if (parsing_message.isEmpty() || parsing_message.equals("null")) {
+                parsing_message = "Server problem or Internet not connected";
+            }
+        }
+        else {
+            parsing_message = "Server problem or Internet not connected";
+        }
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(EmplyeeInformation.this);
+        alertDialogBuilder.setTitle("System Warning!")
+                .setIcon(R.drawable.hrm_new_round_icon_custom)
+                .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
+                .setPositiveButton("Retry", (dialog, which) -> {
+                    getUserImage();
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Cancel",(dialog, which) -> {
+                    dialog.dismiss();
+                    finish();
+                });
 
-            Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-            negative.setOnClickListener(v -> {
-                dialog.dismiss();
-                finish();
-            });
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.setCancelable(false);
+        alert.setCanceledOnTouchOutside(false);
+        try {
+            alert.show();
+        }
+        catch (Exception e) {
+            restart("App is paused for a long time. Please Start the app again.");
         }
     }
 
@@ -584,8 +599,9 @@ public class EmplyeeInformation extends AppCompatActivity implements PictureChoo
             parsing_message = "Server problem or Internet not connected";
         }
         MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(EmplyeeInformation.this);
-        alertDialogBuilder.setTitle("Error!")
-                .setMessage("Error Message: "+parsing_message+".\n"+"Please try again.")
+        alertDialogBuilder.setTitle("System Warning!")
+                .setIcon(R.drawable.hrm_new_round_icon_custom)
+                .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
                 .setPositiveButton("Retry", (dialog, which) -> {
                     updateUserImage();
                     dialog.dismiss();
@@ -595,7 +611,12 @@ public class EmplyeeInformation extends AppCompatActivity implements PictureChoo
         AlertDialog alert = alertDialogBuilder.create();
         alert.setCancelable(false);
         alert.setCanceledOnTouchOutside(false);
-        alert.show();
+        try {
+            alert.show();
+        }
+        catch (Exception e) {
+            restart("App is paused for a long time. Please Start the app again.");
+        }
     }
 
     @Override
@@ -635,5 +656,15 @@ public class EmplyeeInformation extends AppCompatActivity implements PictureChoo
                 //.withAspectRatio(1, 1)  // Optional: Set aspect ratio
                 .withMaxResultSize(1080, 1080) // Optional: Set max resolution
                 .start(this);
+    }
+
+    public void restart(String msg) {
+        try {
+            ProcessPhoenix.triggerRebirth(getApplicationContext());
+        }
+        catch (Exception e) {
+            Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
+            System.exit(0);
+        }
     }
 }

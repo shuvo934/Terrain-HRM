@@ -34,7 +34,6 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.os.StrictMode;
 import android.util.Log;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextClock;
 import android.widget.TextView;
@@ -64,6 +63,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.jakewharton.processphoenix.ProcessPhoenix;
 
 
 import java.io.BufferedReader;
@@ -144,6 +145,7 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
     ArrayList<MarkerData> markerData;
 
     Logger logger = Logger.getLogger(AttendanceGive.class.getName());
+    String parsing_message = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -186,7 +188,17 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
         areaLists = new ArrayList<>();
 //        software.setText(SoftwareName);
 
-        emp_id = userInfoLists.get(0).getEmp_id();
+        if (userInfoLists == null) {
+            restart("Could Not Get Employee Data. Please Restart the App.");
+        }
+        else {
+            if (userInfoLists.isEmpty()) {
+                restart("Could Not Get Employee Data. Please Restart the App.");
+            }
+            else {
+                emp_id = userInfoLists.get(0).getEmp_id();
+            }
+        }
 
         preferences = getSharedPreferences(emp_id,MODE_PRIVATE);
 
@@ -235,8 +247,9 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
                 new Intent().setComponent(new ComponentName("com.transsion.phonemanager", "com.itel.autobootmanager.activity.AutoBootMgrActivity"))
         };
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Check Auto Start Permission!")
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(this);
+        alertDialogBuilder.setTitle("Check Auto Start Permission!")
+                .setIcon(R.drawable.hrm_new_round_icon_custom)
                 .setMessage("Check the App Auto Start Option is On or Off. Auto Start On will provide better solution for the service in the background.")
                 .setPositiveButton("Check", (dialog, which) -> {
 
@@ -260,11 +273,14 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
                         Toast.makeText(getApplicationContext(),"Could not find Auto Start Permission Settings.",Toast.LENGTH_SHORT).show();
                     }
                 })
-                .setNegativeButton("Don't Check", (dialog, which) -> {
-
-                });
-        AlertDialog alert = builder.create();
-        alert.show();
+                .setNegativeButton("Don't Check", (dialog, which) -> dialog.dismiss());
+        AlertDialog alert = alertDialogBuilder.create();
+        try {
+            alert.show();
+        }
+        catch (Exception e) {
+            restart("App is paused for a long time. Please Start the app again.");
+        }
 
 
     }
@@ -378,35 +394,59 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
 
                         if (tr_option.equals("1")) {
                             if (isMyServiceRunning()) {
-                                AlertDialog.Builder builder = new AlertDialog.Builder(AttendanceGive.this);
-                                builder.setTitle("Attendance!")
+                                MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(AttendanceGive.this);
+                                alertDialogBuilder.setTitle("Attendance!")
+                                        .setIcon(R.drawable.hrm_new_round_icon_custom)
                                         .setMessage("Do you want to punch & stop your tracker?")
-                                        .setPositiveButton("YES", (dialog, which) -> checkAddress())
-                                        .setNegativeButton("NO", (dialog, which) -> {
-                                        });
-                                AlertDialog alert = builder.create();
-                                alert.show();
+                                        .setPositiveButton("YES", (dialog, which) -> {
+                                            dialog.dismiss();
+                                            checkAddress();
+                                        })
+                                        .setNegativeButton("NO", (dialog, which) -> dialog.dismiss());
+                                AlertDialog alert = alertDialogBuilder.create();
+                                try {
+                                    alert.show();
+                                }
+                                catch (Exception e) {
+                                    restart("App is paused for a long time. Please Start the app again.");
+                                }
                             }
                             else {
-                                AlertDialog.Builder builder = new AlertDialog.Builder(AttendanceGive.this);
-                                builder.setTitle("Attendance!")
+                                MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(AttendanceGive.this);
+                                alertDialogBuilder.setTitle("Attendance!")
+                                        .setIcon(R.drawable.hrm_new_round_icon_custom)
                                         .setMessage("Do you want to punch & start your tracker?")
-                                        .setPositiveButton("YES", (dialog, which) -> checkAddress())
-                                        .setNegativeButton("NO", (dialog, which) -> {
-                                        });
-                                AlertDialog alert = builder.create();
-                                alert.show();
+                                        .setPositiveButton("YES", (dialog, which) -> {
+                                            dialog.dismiss();
+                                            checkAddress();
+                                        })
+                                        .setNegativeButton("NO", (dialog, which) -> dialog.dismiss());
+                                AlertDialog alert = alertDialogBuilder.create();
+                                try {
+                                    alert.show();
+                                }
+                                catch (Exception e) {
+                                    restart("App is paused for a long time. Please Start the app again.");
+                                }
                             }
                         }
                         else {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(AttendanceGive.this);
-                            builder.setTitle("Attendance!")
+                            MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(AttendanceGive.this);
+                            alertDialogBuilder.setTitle("Attendance!")
+                                    .setIcon(R.drawable.hrm_new_round_icon_custom)
                                     .setMessage("Do you want to punch & mark location for your current position?")
-                                    .setPositiveButton("YES", (dialog, which) -> checkAddress())
-                                    .setNegativeButton("NO", (dialog, which) -> {
-                                    });
-                            AlertDialog alert = builder.create();
-                            alert.show();
+                                    .setPositiveButton("YES", (dialog, which) -> {
+                                        dialog.dismiss();
+                                        checkAddress();
+                                    })
+                                    .setNegativeButton("NO", (dialog, which) -> dialog.dismiss());
+                            AlertDialog alert = alertDialogBuilder.create();
+                            try {
+                                alert.show();
+                            }
+                            catch (Exception e) {
+                                restart("App is paused for a long time. Please Start the app again.");
+                            }
                         }
                     }
                     else {
@@ -463,28 +503,44 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
                         machineCode = prev_mach_code;
 
                         if (found) {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(AttendanceGive.this);
-                            builder.setTitle("Punch Attendance!")
+                            MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(AttendanceGive.this);
+                            alertDialogBuilder.setTitle("Punch Attendance!")
+                                    .setIcon(R.drawable.hrm_new_round_icon_custom)
                                     .setMessage("Do you want to punch now?")
-                                    .setPositiveButton("YES", (dialog, which) -> checkAddress())
-                                    .setNegativeButton("NO", (dialog, which) -> {
-                                    });
-                            AlertDialog alert = builder.create();
-                            alert.show();
+                                    .setPositiveButton("YES", (dialog, which) -> {
+                                        dialog.dismiss();
+                                        checkAddress();
+                                    })
+                                    .setNegativeButton("NO", (dialog, which) -> dialog.dismiss());
+                            AlertDialog alert = alertDialogBuilder.create();
+                            try {
+                                alert.show();
+                            }
+                            catch (Exception e) {
+                                restart("App is paused for a long time. Please Start the app again.");
+                            }
                         }
                         else {
                             if (areaLists.get(0).isCanGive()) {
                                 if (machineCode.isEmpty()) {
                                     machineCode = areaLists.get(0).getMachine_code();
                                 }
-                                AlertDialog.Builder builder = new AlertDialog.Builder(AttendanceGive.this);
-                                builder.setTitle("Punch Attendance!")
+                                MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(AttendanceGive.this);
+                                alertDialogBuilder.setTitle("Punch Attendance!")
+                                        .setIcon(R.drawable.hrm_new_round_icon_custom)
                                         .setMessage("Do you want to punch now?")
-                                        .setPositiveButton("YES", (dialog, which) -> checkAddress())
-                                        .setNegativeButton("NO", (dialog, which) -> {
-                                        });
-                                AlertDialog alert = builder.create();
-                                alert.show();
+                                        .setPositiveButton("YES", (dialog, which) -> {
+                                            dialog.dismiss();
+                                            checkAddress();
+                                        })
+                                        .setNegativeButton("NO", (dialog, which) -> dialog.dismiss());
+                                AlertDialog alert = alertDialogBuilder.create();
+                                try {
+                                    alert.show();
+                                }
+                                catch (Exception e) {
+                                    restart("App is paused for a long time. Please Start the app again.");
+                                }
                             }
                             else {
                                 if (prev_distance == 0) {
@@ -507,9 +563,7 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
             }
         });
 
-        mMap.setOnMapClickListener(latLng -> {
-            refreshMarker();
-        });
+        mMap.setOnMapClickListener(latLng -> refreshMarker());
 
         mMap.setOnMarkerClickListener(marker -> {
             refreshMarker();
@@ -669,22 +723,26 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
                 }
                 else {
                     waitProgress.dismiss();
-                    AlertDialog dialog = new AlertDialog.Builder(AttendanceGive.this)
+                    MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(AttendanceGive.this);
+                    alertDialogBuilder.setTitle("Failed to get address")
+                            .setIcon(R.drawable.hrm_new_round_icon_custom)
                             .setMessage("Could not get address of the location due to internet disruption. Please try again")
-                            .setPositiveButton("Retry", null)
-                            .setNegativeButton("Cancel",null)
-                            .show();
+                            .setPositiveButton("Retry", (dialog, which) -> {
+                                checkAddress();
+                                dialog.dismiss();
+                            })
+                            .setNegativeButton("Cancel",(dialog, which) ->  dialog.dismiss());
 
-                    dialog.setCancelable(false);
-                    dialog.setCanceledOnTouchOutside(false);
-                    Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                    positive.setOnClickListener(v -> {
 
-                        checkAddress();
-                        dialog.dismiss();
-                    });
-                    Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                    negative.setOnClickListener(v -> dialog.dismiss());
+                    AlertDialog alert = alertDialogBuilder.create();
+                    alert.setCancelable(false);
+                    alert.setCanceledOnTouchOutside(false);
+                    try {
+                        alert.show();
+                    }
+                    catch (Exception e) {
+                        restart("App is paused for a long time. Please Start the app again.");
+                    }
                 }
             });
         }).start();
@@ -708,17 +766,20 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
                 }
                 else {
                     System.out.println(string_out);
+                    parsing_message = string_out;
                     connected = false;
                 }
                 updateLayout();
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING,e.getMessage(),e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateLayout();
             }
         }, error -> {
             logger.log(Level.WARNING,error.getMessage(),error);
+            parsing_message = error.getLocalizedMessage();
             conn = false;
             connected = false;
             updateLayout();
@@ -788,53 +849,59 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
                     }
                 }
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(AttendanceGive.this);
-                builder
+                MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(AttendanceGive.this);
+                alertDialogBuilder.setTitle("Success!")
+                        .setIcon(R.drawable.hrm_new_round_icon_custom)
                         .setMessage("Your Attendance is Recorded!")
                         .setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
 
-                AlertDialog alert = builder.create();
-                alert.show();
+                AlertDialog alert = alertDialogBuilder.create();
+                try {
+                    alert.show();
+                }
+                catch (Exception e) {
+                    restart("App is paused for a long time. Please Start the app again.");
+                }
 
                 conn = false;
                 connected = false;
             }
             else {
-                AlertDialog dialog = new AlertDialog.Builder(AttendanceGive.this)
-                        .setMessage("There is a network issue in the server. Please Try later.")
-                        .setPositiveButton("Retry", null)
-                        .setNegativeButton("Cancel",null)
-                        .show();
-
-                dialog.setCancelable(false);
-                dialog.setCanceledOnTouchOutside(false);
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(v -> {
-
-                    checkAddress();
-                    dialog.dismiss();
-                });
-                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setOnClickListener(v -> dialog.dismiss());
+                alertMessageAtt();
             }
         }
         else {
-            AlertDialog dialog = new AlertDialog.Builder(AttendanceGive.this)
-                    .setMessage("Please Check Your Internet Connection")
-                    .setPositiveButton("Retry", null)
-                    .setNegativeButton("Cancel",null)
-                    .show();
+            alertMessageAtt();
+        }
+    }
 
-            dialog.setCancelable(false);
-            dialog.setCanceledOnTouchOutside(false);
-            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(v -> {
+    public void alertMessageAtt() {
+        if (parsing_message != null) {
+            if (parsing_message.isEmpty() || parsing_message.equals("null")) {
+                parsing_message = "Server problem or Internet not connected";
+            }
+        }
+        else {
+            parsing_message = "Server problem or Internet not connected";
+        }
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(AttendanceGive.this);
+        alertDialogBuilder.setTitle("System Warning!")
+                .setIcon(R.drawable.hrm_new_round_icon_custom)
+                .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
+                .setPositiveButton("Retry", (dialog, which) -> {
+                    checkAddress();
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Cancel",(dialog, which) -> dialog.dismiss());
 
-                checkAddress();
-                dialog.dismiss();
-            });
-            Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-            negative.setOnClickListener(v -> dialog.dismiss());
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.setCancelable(false);
+        alert.setCanceledOnTouchOutside(false);
+        try {
+            alert.show();
+        }
+        catch (Exception e) {
+            restart("App is paused for a long time. Please Start the app again.");
         }
     }
 
@@ -853,6 +920,7 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
         RequestQueue requestQueue = Volley.newRequestQueue(AttendanceGive.this);
 
         StringRequest trOptionReq = new StringRequest(Request.Method.GET, trOptionUrl, response -> {
+            conn = true;
             try {
                 JSONObject jsonObject = new JSONObject(response);
                 String items = jsonObject.getString("items");
@@ -878,11 +946,13 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
                 }
             } catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateInfo();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             conn = false;
             connected = false;
             updateInfo();
@@ -923,11 +993,13 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING,e.getMessage(),e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateInfo();
             }
         }, error -> {
             logger.log(Level.WARNING,error.getMessage(),error);
+            parsing_message = error.getLocalizedMessage();
             conn = false;
             connected = false;
             updateInfo();
@@ -973,47 +1045,44 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
                 connected = false;
             }
             else {
-                AlertDialog dialog = new AlertDialog.Builder(AttendanceGive.this)
-                        .setMessage("There is a network issue in the server. Please Try later.")
-                        .setPositiveButton("Retry", null)
-                        .setNegativeButton("Cancel",null)
-                        .show();
-
-                dialog.setCancelable(false);
-                dialog.setCanceledOnTouchOutside(false);
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(v -> {
-
-                    getOfficeLocation();
-                    dialog.dismiss();
-                });
-                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setOnClickListener(v -> {
-                    dialog.dismiss();
-                    finish();
-                });
+                alertMessageOff();
             }
         }
         else {
-            AlertDialog dialog = new AlertDialog.Builder(AttendanceGive.this)
-                    .setMessage("Please Check Your Internet Connection")
-                    .setPositiveButton("Retry", null)
-                    .setNegativeButton("Cancel",null)
-                    .show();
+            alertMessageOff();
+        }
+    }
 
-            dialog.setCancelable(false);
-            dialog.setCanceledOnTouchOutside(false);
-            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(v -> {
+    public void alertMessageOff() {
+        if (parsing_message != null) {
+            if (parsing_message.isEmpty() || parsing_message.equals("null")) {
+                parsing_message = "Server problem or Internet not connected";
+            }
+        }
+        else {
+            parsing_message = "Server problem or Internet not connected";
+        }
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(AttendanceGive.this);
+        alertDialogBuilder.setTitle("System Warning!")
+                .setIcon(R.drawable.hrm_new_round_icon_custom)
+                .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
+                .setPositiveButton("Retry", (dialog, which) -> {
+                    getOfficeLocation();
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Cancel",(dialog, which) -> {
+                    dialog.dismiss();
+                    finish();
+                });
 
-                getOfficeLocation();
-                dialog.dismiss();
-            });
-            Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-            negative.setOnClickListener(v -> {
-                dialog.dismiss();
-                finish();
-            });
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.setCancelable(false);
+        alert.setCanceledOnTouchOutside(false);
+        try {
+            alert.show();
+        }
+        catch (Exception e) {
+            restart("App is paused for a long time. Please Start the app again.");
         }
     }
 
@@ -1138,5 +1207,15 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
             }
         }
 
+    }
+
+    public void restart(String msg) {
+        try {
+            ProcessPhoenix.triggerRebirth(getApplicationContext());
+        }
+        catch (Exception e) {
+            Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
+            System.exit(0);
+        }
     }
 }

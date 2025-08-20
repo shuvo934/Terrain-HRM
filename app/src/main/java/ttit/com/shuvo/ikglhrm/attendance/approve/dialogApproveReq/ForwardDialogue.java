@@ -30,8 +30,10 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,7 +45,6 @@ import java.util.logging.Logger;
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
 import ttit.com.shuvo.ikglhrm.attendance.approve.AttendanceApprove;
-import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.SelectAllList;
 import ttit.com.shuvo.ikglhrm.leaveAll.leaveApprove.LeaveApprove;
 
 import static ttit.com.shuvo.ikglhrm.user_login.Login.userInfoLists;
@@ -94,17 +95,17 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
 
 //    private Connection connection;
 
-    public  ArrayList<ForwardEMPList> forwardEMPLists;
-    public  ArrayList<SelectAllList> allSelectedApprover;
-    public  ArrayList<SelectAllList> allApproverEmp;
-    public  ArrayList<SelectAllList> allApproverWithoutDiv;
-    public  ArrayList<SelectAllList> allApproverDivision;
+    ArrayList<ForwardEMPList> forwardEMPLists;
+//    public  ArrayList<SelectAllList> allSelectedApprover;
+//    public  ArrayList<SelectAllList> allApproverEmp;
+//    public  ArrayList<SelectAllList> allApproverWithoutDiv;
+//    public  ArrayList<SelectAllList> allApproverDivision;
 
     String emp_id = "";
-    String desig_priority = "";
-    String divm_id = "";
-    String approval_band = "";
-    int count_approv_emp = 0;
+//    String desig_priority = "";
+//    String divm_id = "";
+//    String approval_band = "";
+//    int count_approv_emp = 0;
 
 //    String dard_id = "";
 //    String lad_id = "";
@@ -118,6 +119,7 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
     AlertDialog forwarDialog;
 
     Logger logger = Logger.getLogger(ForwardDialogue.class.getName());
+    String parsing_message = "";
 
     public ForwardDialogue(Context context) {
         this.mContext = context;
@@ -146,12 +148,22 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
 
         noEmp = view.findViewById(R.id.no_employee_msg);
         forwardEMPLists = new ArrayList<>();
-        allApproverDivision = new ArrayList<>();
-        allApproverEmp = new ArrayList<>();
-        allApproverWithoutDiv = new ArrayList<>();
-        allSelectedApprover = new ArrayList<>();
+//        allApproverDivision = new ArrayList<>();
+//        allApproverEmp = new ArrayList<>();
+//        allApproverWithoutDiv = new ArrayList<>();
+//        allSelectedApprover = new ArrayList<>();
 
-        emp_id = userInfoLists.get(0).getEmp_id();
+        if (userInfoLists == null) {
+            restart("Could Not Get Employee Data. Please Restart the App.");
+        }
+        else {
+            if (userInfoLists.isEmpty()) {
+                restart("Could Not Get Employee Data. Please Restart the App.");
+            }
+            else {
+                emp_id = userInfoLists.get(0).getEmp_id();
+            }
+        }
         //emp_id="493";
 
 //        new CheckFORLISt().execute();
@@ -202,7 +214,11 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
 
         });
 
-        goBack.setOnClickListener(v -> forwarDialog.dismiss());
+        goBack.setOnClickListener(v -> {
+            forwardFromAtt = 0;
+            forwardFromLeave = 0;
+            forwarDialog.dismiss();
+        });
 
         cont.setOnClickListener(v -> {
 
@@ -217,37 +233,48 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
                     if (forward_to_id.isEmpty()) {
                         Toast.makeText(getContext(),"Please enter forward to employee",Toast.LENGTH_SHORT).show();
                     } else {
-                        AlertDialog.Builder builder1 = new AlertDialog.Builder(activity);
-                        builder1.setTitle("Forward Request!")
+                        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(mContext);
+                        alertDialogBuilder.setTitle("Forward Request!")
+                                .setIcon(R.drawable.hrm_new_round_icon_custom)
                                 .setMessage("Do you want forward this request?")
-                                .setPositiveButton("YES", (dialog, which) -> forwardAttReq())
-                                .setNegativeButton("NO", (dialog, which) -> {
-
-                                });
-                        AlertDialog alert = builder1.create();
-                        alert.show();
-
-
+                                .setPositiveButton("YES", (dialog, which) -> {
+                                    forwardAttReq();
+                                    dialog.dismiss();
+                                })
+                                .setNegativeButton("NO", (dialog, which) -> dialog.dismiss());
+                        AlertDialog alert = alertDialogBuilder.create();
+                        try {
+                            alert.show();
+                        }
+                        catch (Exception e) {
+                            restart("App is paused for a long time. Please Start the app again.");
+                        }
                     }
                 }
-            } else if (forwardFromLeave == 1) {
+            }
+            else if (forwardFromLeave == 1) {
                 if (forward_comm.isEmpty()) {
                     Toast.makeText(getContext(),"Please enter forward comment",Toast.LENGTH_SHORT).show();
                 } else {
                     if (forward_to_id.isEmpty()) {
                         Toast.makeText(getContext(),"Please enter forward to employee",Toast.LENGTH_SHORT).show();
                     } else {
-                        AlertDialog.Builder builder1 = new AlertDialog.Builder(activity);
-                        builder1.setTitle("Forward Leave Application!")
+                        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(mContext);
+                        alertDialogBuilder.setTitle("Forward Leave Application!")
+                                .setIcon(R.drawable.hrm_new_round_icon_custom)
                                 .setMessage("Do you want forward this leave application?")
-                                .setPositiveButton("YES", (dialog, which) -> forwardLeaveReq())
-                                .setNegativeButton("NO", (dialog, which) -> {
-
-                                });
-                        AlertDialog alert = builder1.create();
-                        alert.show();
-
-
+                                .setPositiveButton("YES", (dialog, which) -> {
+                                    forwardLeaveReq();
+                                    dialog.dismiss();
+                                })
+                                .setNegativeButton("NO", (dialog, which) -> dialog.dismiss());
+                        AlertDialog alert = alertDialogBuilder.create();
+                        try {
+                            alert.show();
+                        }
+                        catch (Exception e) {
+                            restart("App is paused for a long time. Please Start the app again.");
+                        }
                     }
                 }
             }
@@ -900,322 +927,341 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
         connected = false;
 
         forwardEMPLists = new ArrayList<>();
-        allApproverDivision = new ArrayList<>();
-        allApproverEmp = new ArrayList<>();
-        allApproverWithoutDiv = new ArrayList<>();
-        allSelectedApprover = new ArrayList<>();
+//        allApproverDivision = new ArrayList<>();
+//        allApproverEmp = new ArrayList<>();
+//        allApproverWithoutDiv = new ArrayList<>();
+//        allSelectedApprover = new ArrayList<>();
+//
+//        desig_priority = "";
+//        divm_id = "";
+//        approval_band = "";
+//        count_approv_emp = 0;
 
-        desig_priority = "";
-        divm_id = "";
-        approval_band = "";
-        count_approv_emp = 0;
-
-        String approverDivUrl = api_url_front + "forwardReq/attReqApproverWithDiv/"+emp_id;
-        String appWithoutDivUrl  = api_url_front + "forwardReq/attReqApproverWithoutDiv/"+emp_id;
-        String allapproverUrl = api_url_front + "forwardReq/attReqAllApprover/"+emp_id;
-        String desigPriorUrl = api_url_front + "forwardReq/getDesigPriority/"+emp_id;
-
-        RequestQueue requestQueue = Volley.newRequestQueue(mContext);
-
-        StringRequest desigPriorReq = new StringRequest(Request.Method.GET, desigPriorUrl, response -> {
-            conn = true;
-            try {
-                JSONObject jsonObject = new JSONObject(response);
-                String items = jsonObject.getString("items");
-                String count = jsonObject.getString("count");
-                if (!count.equals("0")) {
-                    JSONArray array = new JSONArray(items);
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject desigPrInfo = array.getJSONObject(i);
-                        desig_priority  = desigPrInfo.getString("desig_priority")
-                                .equals("null") ? "" : desigPrInfo.getString("desig_priority");
-                        divm_id = desigPrInfo.getString("jsm_divm_id")
-                                .equals("null") ? "" : desigPrInfo.getString("jsm_divm_id");
-
-                        System.out.println("designation1: " + desig_priority);
-                    }
-                }
-
-                if (!desig_priority.isEmpty()) {
-                    System.out.println("designation2: " + desig_priority);
-                    getForwarderList();
-                }
-                else {
-                    if (!allSelectedApprover.isEmpty()) {
-                        for (int i = 0; i<allSelectedApprover.size(); i++) {
-                            forwardEMPLists.add(new ForwardEMPList(allSelectedApprover.get(i).getId(),allSelectedApprover.get(i).getFirst(),allSelectedApprover.get(i).getSecond(),allSelectedApprover.get(i).getThird(),allSelectedApprover.get(i).getFourth()));
-                        }
-                    }
-                    connected = true;
-                    updateInfo();
-                }
-            }
-            catch (JSONException e) {
-                logger.log(Level.WARNING, e.getMessage(), e);
-                connected = false;
-                updateInfo();
-            }
-        }, error -> {
-            logger.log(Level.WARNING, error.getMessage(), error);
-            conn = false;
-            connected = false;
-            updateInfo();
-        });
-
-        StringRequest allAppReq = new StringRequest(Request.Method.GET, allapproverUrl, response -> {
-            conn = true;
-            try {
-                JSONObject jsonObject = new JSONObject(response);
-                String items = jsonObject.getString("items");
-                String count = jsonObject.getString("count");
-                if (!count.equals("0")) {
-                    JSONArray array = new JSONArray(items);
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject allAppInfo = array.getJSONObject(i);
-
-                        String emp_id_new = allAppInfo.getString("emp_id");
-
-                        String emp_name = allAppInfo.getString("emp_name")
-                                .equals("null") ? "" : allAppInfo.getString("emp_name");
-                        String job_calling_title = allAppInfo.getString("job_calling_title")
-                                .equals("null") ? "" : allAppInfo.getString("job_calling_title");
-                        String jsm_name = allAppInfo.getString("jsm_name")
-                                .equals("null") ? "" : allAppInfo.getString("jsm_name");
-                        String divm_name = allAppInfo.getString("divm_name")
-                                .equals("null") ? "" : allAppInfo.getString("divm_name");
-
-                        allApproverEmp.add(new SelectAllList(emp_id_new,emp_name,job_calling_title,jsm_name,divm_name));
-                    }
-                }
-
-                requestQueue.add(desigPriorReq);
-            }
-            catch (JSONException e) {
-                logger.log(Level.WARNING, e.getMessage(), e);
-                connected = false;
-                updateInfo();
-            }
-        }, error -> {
-            logger.log(Level.WARNING, error.getMessage(), error);
-            conn = false;
-            connected = false;
-            updateInfo();
-        });
-
-        StringRequest appWithoutDivReq = new StringRequest(Request.Method.GET, appWithoutDivUrl, response -> {
-            conn = true;
-            try {
-                JSONObject jsonObject = new JSONObject(response);
-                String items = jsonObject.getString("items");
-                String count = jsonObject.getString("count");
-                if (!count.equals("0")) {
-                    JSONArray array = new JSONArray(items);
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject appWithoutDivInfo = array.getJSONObject(i);
-
-                        String emp_id_new = appWithoutDivInfo.getString("emp_id");
-
-                        String emp_name = appWithoutDivInfo.getString("emp_name")
-                                .equals("null") ? "" : appWithoutDivInfo.getString("emp_name");
-                        String job_calling_title = appWithoutDivInfo.getString("job_calling_title")
-                                .equals("null") ? "" : appWithoutDivInfo.getString("job_calling_title");
-                        String jsm_name = appWithoutDivInfo.getString("jsm_name")
-                                .equals("null") ? "" : appWithoutDivInfo.getString("jsm_name");
-                        String divm_name = appWithoutDivInfo.getString("divm_name")
-                                .equals("null") ? "" : appWithoutDivInfo.getString("divm_name");
-
-                        allApproverWithoutDiv.add(new SelectAllList(emp_id_new,emp_name,job_calling_title,jsm_name,divm_name));
-
-                    }
-                }
-
-                requestQueue.add(allAppReq);
-            }
-            catch (JSONException e) {
-                logger.log(Level.WARNING, e.getMessage(), e);
-                connected = false;
-                updateInfo();
-            }
-        }, error -> {
-            logger.log(Level.WARNING, error.getMessage(), error);
-            conn = false;
-            connected = false;
-            updateInfo();
-        });
-
-        StringRequest appDivReq = new StringRequest(Request.Method.GET, approverDivUrl, response -> {
-            conn = true;
-            try {
-                JSONObject jsonObject = new JSONObject(response);
-                String items = jsonObject.getString("items");
-                String count = jsonObject.getString("count");
-                if (!count.equals("0")) {
-                    JSONArray array = new JSONArray(items);
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject appDivInfo = array.getJSONObject(i);
-                        String emp_id_new = appDivInfo.getString("emp_id");
-
-                        String emp_name = appDivInfo.getString("emp_name")
-                                .equals("null") ? "" : appDivInfo.getString("emp_name");
-                        String job_calling_title = appDivInfo.getString("job_calling_title")
-                                .equals("null") ? "" : appDivInfo.getString("job_calling_title");
-                        String jsm_name = appDivInfo.getString("jsm_name")
-                                .equals("null") ? "" : appDivInfo.getString("jsm_name");
-                        String divm_name = appDivInfo.getString("divm_name")
-                                .equals("null") ? "" : appDivInfo.getString("divm_name");
-
-                        allApproverDivision.add(new SelectAllList(emp_id_new,emp_name,job_calling_title,jsm_name,divm_name));
-                    }
-                }
-                requestQueue.add(appWithoutDivReq);
-            }
-            catch (JSONException e) {
-                logger.log(Level.WARNING, e.getMessage(), e);
-                connected = false;
-                updateInfo();
-            }
-        }, error -> {
-            logger.log(Level.WARNING, error.getMessage(), error);
-            conn = false;
-            connected = false;
-            updateInfo();
-        });
-
-        requestQueue.add(appDivReq);
-    }
-
-    public void getForwarderList() {
-
-        String approvalBandUrl = api_url_front + "forwardReq/getApprovalBand/"+desig_priority;
-        String countApp1Url = api_url_front + "forwardReq/getCountApprovEmp/"+divm_id+"/"+desig_priority;
-        String countApp2Url = api_url_front + "forwardReq/getCountApprovEmp_2/"+desig_priority;
+//        String approverDivUrl = api_url_front + "forwardReq/attReqApproverWithDiv/"+emp_id;
+//        String appWithoutDivUrl  = api_url_front + "forwardReq/attReqApproverWithoutDiv/"+emp_id;
+//        String allapproverUrl = api_url_front + "forwardReq/attReqAllApprover/"+emp_id;
+//        String desigPriorUrl = api_url_front + "forwardReq/getDesigPriority/"+emp_id;
+        String forwarderUrl = "";
+        if (forwardFromAtt == 1) {
+            forwarderUrl = api_url_front + "forwardReq/getAttAppForwardEmp?p_emp_id="+emp_id;
+        }
+        else if (forwardFromLeave == 1) {
+            forwarderUrl = api_url_front + "forwardReq/getLvAppForwardEmp?p_emp_id="+emp_id;
+        }
 
         RequestQueue requestQueue = Volley.newRequestQueue(mContext);
 
-        StringRequest countApp2Req = new StringRequest(Request.Method.GET, countApp2Url, response -> {
+//        StringRequest desigPriorReq = new StringRequest(Request.Method.GET, desigPriorUrl, response -> {
+//            conn = true;
+//            try {
+//                JSONObject jsonObject = new JSONObject(response);
+//                String items = jsonObject.getString("items");
+//                String count = jsonObject.getString("count");
+//                if (!count.equals("0")) {
+//                    JSONArray array = new JSONArray(items);
+//                    for (int i = 0; i < array.length(); i++) {
+//                        JSONObject desigPrInfo = array.getJSONObject(i);
+//                        desig_priority  = desigPrInfo.getString("desig_priority")
+//                                .equals("null") ? "" : desigPrInfo.getString("desig_priority");
+//                        divm_id = desigPrInfo.getString("jsm_divm_id")
+//                                .equals("null") ? "" : desigPrInfo.getString("jsm_divm_id");
+//
+//                        System.out.println("designation1: " + desig_priority);
+//                    }
+//                }
+//
+//                if (!desig_priority.isEmpty()) {
+//                    System.out.println("designation2: " + desig_priority);
+//                    getForwarderList();
+//                }
+//                else {
+//                    if (!allSelectedApprover.isEmpty()) {
+//                        for (int i = 0; i<allSelectedApprover.size(); i++) {
+//                            forwardEMPLists.add(new ForwardEMPList(allSelectedApprover.get(i).getId(),allSelectedApprover.get(i).getFirst(),allSelectedApprover.get(i).getSecond(),allSelectedApprover.get(i).getThird(),allSelectedApprover.get(i).getFourth()));
+//                        }
+//                    }
+//                    connected = true;
+//                    updateInfo();
+//                }
+//            }
+//            catch (JSONException e) {
+//                logger.log(Level.WARNING, e.getMessage(), e);
+//                parsing_message = e.getLocalizedMessage();
+//                connected = false;
+//                updateInfo();
+//            }
+//        }, error -> {
+//            logger.log(Level.WARNING, error.getMessage(), error);
+//            parsing_message = error.getLocalizedMessage();
+//            conn = false;
+//            connected = false;
+//            updateInfo();
+//        });
+
+        StringRequest forwardEmpReq = new StringRequest(Request.Method.GET, forwarderUrl, response -> {
             conn = true;
             try {
                 JSONObject jsonObject = new JSONObject(response);
-                String items = jsonObject.getString("items");
-                String count = jsonObject.getString("count");
-                if (!count.equals("0")) {
-                    JSONArray array = new JSONArray(items);
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject cApp2Info = array.getJSONObject(i);
-                        count_approv_emp = cApp2Info.getInt("cc2");
-                    }
+                String items = jsonObject.getString("p_data_list");
+                JSONArray array = new JSONArray(items);
+                for (int i = 0; i < array.length(); i++) {
+                    JSONObject allAppInfo = array.getJSONObject(i);
+
+                    String emp_id_new = allAppInfo.getString("emp_id")
+                            .equals("null") ? "" : allAppInfo.getString("emp_id");
+                    String emp_name = allAppInfo.getString("emp_name")
+                            .equals("null") ? "" : allAppInfo.getString("emp_name");
+                    String job_calling_title = allAppInfo.getString("job_calling_title")
+                            .equals("null") ? "" : allAppInfo.getString("job_calling_title");
+                    String jsm_name = allAppInfo.getString("jsm_name")
+                            .equals("null") ? "" : allAppInfo.getString("jsm_name");
+                    String divm_name = allAppInfo.getString("divm_name")
+                            .equals("null") ? "" : allAppInfo.getString("divm_name");
+
+                    forwardEMPLists.add(new ForwardEMPList(emp_id_new,emp_name,job_calling_title,jsm_name,divm_name));
                 }
 
-                if (count_approv_emp <= 0) {
-                    //selectedApproverList = approverWithoutDivision;
-                    allSelectedApprover = allApproverWithoutDiv;
-                } else {
-                    // selectedApproverList = approverEmployee;
-                    allSelectedApprover = allApproverEmp;
-                }
-
-                if (!allSelectedApprover.isEmpty()) {
-                    for (int i = 0; i<allSelectedApprover.size(); i++) {
-                        forwardEMPLists.add(new ForwardEMPList(allSelectedApprover.get(i).getId(),allSelectedApprover.get(i).getFirst(),allSelectedApprover.get(i).getSecond(),allSelectedApprover.get(i).getThird(),allSelectedApprover.get(i).getFourth()));
-                    }
-                }
                 connected = true;
                 updateInfo();
-
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateInfo();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             conn = false;
             connected = false;
             updateInfo();
         });
 
-        StringRequest countApp1Req = new StringRequest(Request.Method.GET, countApp1Url, response -> {
-            conn = true;
-            try {
-                JSONObject jsonObject = new JSONObject(response);
-                String items = jsonObject.getString("items");
-                String count = jsonObject.getString("count");
-                if (!count.equals("0")) {
-                    JSONArray array = new JSONArray(items);
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject cApp1Info = array.getJSONObject(i);
-                        count_approv_emp = cApp1Info.getInt("cc");
-                    }
-                }
-                if (count_approv_emp <= 0) {
-                    requestQueue.add(countApp2Req);
-                }
-                else {
-                    allSelectedApprover = allApproverDivision;
-                    if (!allSelectedApprover.isEmpty()) {
-                        for (int i = 0; i<allSelectedApprover.size(); i++) {
-                            forwardEMPLists.add(new ForwardEMPList(allSelectedApprover.get(i).getId(),allSelectedApprover.get(i).getFirst(),allSelectedApprover.get(i).getSecond(),allSelectedApprover.get(i).getThird(),allSelectedApprover.get(i).getFourth()));
-                        }
-                    }
-                    connected = true;
-                    updateInfo();
-                }
-            }
-            catch (JSONException e) {
-                logger.log(Level.WARNING, e.getMessage(), e);
-                connected = false;
-                updateInfo();
-            }
-        }, error -> {
-            logger.log(Level.WARNING, error.getMessage(), error);
-            conn = false;
-            connected = false;
-            updateInfo();
-        });
+//        StringRequest appWithoutDivReq = new StringRequest(Request.Method.GET, appWithoutDivUrl, response -> {
+//            conn = true;
+//            try {
+//                JSONObject jsonObject = new JSONObject(response);
+//                String items = jsonObject.getString("items");
+//                String count = jsonObject.getString("count");
+//                if (!count.equals("0")) {
+//                    JSONArray array = new JSONArray(items);
+//                    for (int i = 0; i < array.length(); i++) {
+//                        JSONObject appWithoutDivInfo = array.getJSONObject(i);
+//
+//                        String emp_id_new = appWithoutDivInfo.getString("emp_id");
+//
+//                        String emp_name = appWithoutDivInfo.getString("emp_name")
+//                                .equals("null") ? "" : appWithoutDivInfo.getString("emp_name");
+//                        String job_calling_title = appWithoutDivInfo.getString("job_calling_title")
+//                                .equals("null") ? "" : appWithoutDivInfo.getString("job_calling_title");
+//                        String jsm_name = appWithoutDivInfo.getString("jsm_name")
+//                                .equals("null") ? "" : appWithoutDivInfo.getString("jsm_name");
+//                        String divm_name = appWithoutDivInfo.getString("divm_name")
+//                                .equals("null") ? "" : appWithoutDivInfo.getString("divm_name");
+//
+//                        allApproverWithoutDiv.add(new SelectAllList(emp_id_new,emp_name,job_calling_title,jsm_name,divm_name));
+//
+//                    }
+//                }
+//
+//                requestQueue.add(allAppReq);
+//            }
+//            catch (JSONException e) {
+//                logger.log(Level.WARNING, e.getMessage(), e);
+//                parsing_message = e.getLocalizedMessage();
+//                connected = false;
+//                updateInfo();
+//            }
+//        }, error -> {
+//            logger.log(Level.WARNING, error.getMessage(), error);
+//            parsing_message = error.getLocalizedMessage();
+//            conn = false;
+//            connected = false;
+//            updateInfo();
+//        });
+//
+//        StringRequest appDivReq = new StringRequest(Request.Method.GET, approverDivUrl, response -> {
+//            conn = true;
+//            try {
+//                JSONObject jsonObject = new JSONObject(response);
+//                String items = jsonObject.getString("items");
+//                String count = jsonObject.getString("count");
+//                if (!count.equals("0")) {
+//                    JSONArray array = new JSONArray(items);
+//                    for (int i = 0; i < array.length(); i++) {
+//                        JSONObject appDivInfo = array.getJSONObject(i);
+//                        String emp_id_new = appDivInfo.getString("emp_id");
+//
+//                        String emp_name = appDivInfo.getString("emp_name")
+//                                .equals("null") ? "" : appDivInfo.getString("emp_name");
+//                        String job_calling_title = appDivInfo.getString("job_calling_title")
+//                                .equals("null") ? "" : appDivInfo.getString("job_calling_title");
+//                        String jsm_name = appDivInfo.getString("jsm_name")
+//                                .equals("null") ? "" : appDivInfo.getString("jsm_name");
+//                        String divm_name = appDivInfo.getString("divm_name")
+//                                .equals("null") ? "" : appDivInfo.getString("divm_name");
+//
+//                        allApproverDivision.add(new SelectAllList(emp_id_new,emp_name,job_calling_title,jsm_name,divm_name));
+//                    }
+//                }
+//                requestQueue.add(appWithoutDivReq);
+//            }
+//            catch (JSONException e) {
+//                logger.log(Level.WARNING, e.getMessage(), e);
+//                parsing_message = e.getLocalizedMessage();
+//                connected = false;
+//                updateInfo();
+//            }
+//        }, error -> {
+//            logger.log(Level.WARNING, error.getMessage(), error);
+//            parsing_message = error.getLocalizedMessage();
+//            conn = false;
+//            connected = false;
+//            updateInfo();
+//        });
 
-        StringRequest appBandReq = new StringRequest(Request.Method.GET, approvalBandUrl, response -> {
-            conn = true;
-            try {
-                JSONObject jsonObject = new JSONObject(response);
-                String items = jsonObject.getString("items");
-                String count = jsonObject.getString("count");
-                if (!count.equals("0")) {
-                    JSONArray array = new JSONArray(items);
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject appBandInfo = array.getJSONObject(i);
-                        approval_band = appBandInfo.getString("lah_approval_band")
-                                .equals("null") ? "" : appBandInfo.getString("lah_approval_band");
-
-                    }
-                }
-                if (!approval_band.isEmpty()) {
-                    requestQueue.add(countApp1Req);
-                }
-                else {
-                    if (!allSelectedApprover.isEmpty()) {
-                        for (int i = 0; i<allSelectedApprover.size(); i++) {
-                            forwardEMPLists.add(new ForwardEMPList(allSelectedApprover.get(i).getId(),allSelectedApprover.get(i).getFirst(),allSelectedApprover.get(i).getSecond(),allSelectedApprover.get(i).getThird(),allSelectedApprover.get(i).getFourth()));
-                        }
-                    }
-                    connected = true;
-                    updateInfo();
-                }
-            }
-            catch (JSONException e) {
-                logger.log(Level.WARNING, e.getMessage(), e);
-                connected = false;
-                updateInfo();
-            }
-        }, error -> {
-            logger.log(Level.WARNING, error.getMessage(), error);
-            conn = false;
-            connected = false;
-            updateInfo();
-        });
-
-        requestQueue.add(appBandReq);
+        requestQueue.add(forwardEmpReq);
     }
+
+//    public void getForwarderList() {
+//
+//        String approvalBandUrl = api_url_front + "forwardReq/getApprovalBand/"+desig_priority;
+//        String countApp1Url = api_url_front + "forwardReq/getCountApprovEmp/"+divm_id+"/"+desig_priority;
+//        String countApp2Url = api_url_front + "forwardReq/getCountApprovEmp_2/"+desig_priority;
+//
+//        RequestQueue requestQueue = Volley.newRequestQueue(mContext);
+//
+//        StringRequest countApp2Req = new StringRequest(Request.Method.GET, countApp2Url, response -> {
+//            conn = true;
+//            try {
+//                JSONObject jsonObject = new JSONObject(response);
+//                String items = jsonObject.getString("items");
+//                String count = jsonObject.getString("count");
+//                if (!count.equals("0")) {
+//                    JSONArray array = new JSONArray(items);
+//                    for (int i = 0; i < array.length(); i++) {
+//                        JSONObject cApp2Info = array.getJSONObject(i);
+//                        count_approv_emp = cApp2Info.getInt("cc2");
+//                    }
+//                }
+//
+//                if (count_approv_emp <= 0) {
+//                    //selectedApproverList = approverWithoutDivision;
+//                    allSelectedApprover = allApproverWithoutDiv;
+//                } else {
+//                    // selectedApproverList = approverEmployee;
+//                    allSelectedApprover = allApproverEmp;
+//                }
+//
+//                if (!allSelectedApprover.isEmpty()) {
+//                    for (int i = 0; i<allSelectedApprover.size(); i++) {
+//                        forwardEMPLists.add(new ForwardEMPList(allSelectedApprover.get(i).getId(),allSelectedApprover.get(i).getFirst(),allSelectedApprover.get(i).getSecond(),allSelectedApprover.get(i).getThird(),allSelectedApprover.get(i).getFourth()));
+//                    }
+//                }
+//                connected = true;
+//                updateInfo();
+//
+//            }
+//            catch (JSONException e) {
+//                logger.log(Level.WARNING, e.getMessage(), e);
+//                parsing_message = e.getLocalizedMessage();
+//                connected = false;
+//                updateInfo();
+//            }
+//        }, error -> {
+//            logger.log(Level.WARNING, error.getMessage(), error);
+//            parsing_message = error.getLocalizedMessage();
+//            conn = false;
+//            connected = false;
+//            updateInfo();
+//        });
+//
+//        StringRequest countApp1Req = new StringRequest(Request.Method.GET, countApp1Url, response -> {
+//            conn = true;
+//            try {
+//                JSONObject jsonObject = new JSONObject(response);
+//                String items = jsonObject.getString("items");
+//                String count = jsonObject.getString("count");
+//                if (!count.equals("0")) {
+//                    JSONArray array = new JSONArray(items);
+//                    for (int i = 0; i < array.length(); i++) {
+//                        JSONObject cApp1Info = array.getJSONObject(i);
+//                        count_approv_emp = cApp1Info.getInt("cc");
+//                    }
+//                }
+//                if (count_approv_emp <= 0) {
+//                    requestQueue.add(countApp2Req);
+//                }
+//                else {
+//                    allSelectedApprover = allApproverDivision;
+//                    if (!allSelectedApprover.isEmpty()) {
+//                        for (int i = 0; i<allSelectedApprover.size(); i++) {
+//                            forwardEMPLists.add(new ForwardEMPList(allSelectedApprover.get(i).getId(),allSelectedApprover.get(i).getFirst(),allSelectedApprover.get(i).getSecond(),allSelectedApprover.get(i).getThird(),allSelectedApprover.get(i).getFourth()));
+//                        }
+//                    }
+//                    connected = true;
+//                    updateInfo();
+//                }
+//            }
+//            catch (JSONException e) {
+//                logger.log(Level.WARNING, e.getMessage(), e);
+//                parsing_message = e.getLocalizedMessage();
+//                connected = false;
+//                updateInfo();
+//            }
+//        }, error -> {
+//            logger.log(Level.WARNING, error.getMessage(), error);
+//            parsing_message = error.getLocalizedMessage();
+//            conn = false;
+//            connected = false;
+//            updateInfo();
+//        });
+//
+//        StringRequest appBandReq = new StringRequest(Request.Method.GET, approvalBandUrl, response -> {
+//            conn = true;
+//            try {
+//                JSONObject jsonObject = new JSONObject(response);
+//                String items = jsonObject.getString("items");
+//                String count = jsonObject.getString("count");
+//                if (!count.equals("0")) {
+//                    JSONArray array = new JSONArray(items);
+//                    for (int i = 0; i < array.length(); i++) {
+//                        JSONObject appBandInfo = array.getJSONObject(i);
+//                        approval_band = appBandInfo.getString("lah_approval_band")
+//                                .equals("null") ? "" : appBandInfo.getString("lah_approval_band");
+//
+//                    }
+//                }
+//                if (!approval_band.isEmpty()) {
+//                    requestQueue.add(countApp1Req);
+//                }
+//                else {
+//                    if (!allSelectedApprover.isEmpty()) {
+//                        for (int i = 0; i<allSelectedApprover.size(); i++) {
+//                            forwardEMPLists.add(new ForwardEMPList(allSelectedApprover.get(i).getId(),allSelectedApprover.get(i).getFirst(),allSelectedApprover.get(i).getSecond(),allSelectedApprover.get(i).getThird(),allSelectedApprover.get(i).getFourth()));
+//                        }
+//                    }
+//                    connected = true;
+//                    updateInfo();
+//                }
+//            }
+//            catch (JSONException e) {
+//                logger.log(Level.WARNING, e.getMessage(), e);
+//                parsing_message = e.getLocalizedMessage();
+//                connected = false;
+//                updateInfo();
+//            }
+//        }, error -> {
+//            logger.log(Level.WARNING, error.getMessage(), error);
+//            parsing_message = error.getLocalizedMessage();
+//            conn = false;
+//            connected = false;
+//            updateInfo();
+//        });
+//
+//        requestQueue.add(appBandReq);
+//    }
 
     @SuppressLint("NotifyDataSetChanged")
     private void updateInfo() {
@@ -1234,49 +1280,44 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
                 connected = false;
             }
             else {
-                AlertDialog dialog = new AlertDialog.Builder(mContext)
-                        .setMessage("There is a network issue in the server. Please Try later.")
-                        .setPositiveButton("Retry", null)
-                        .setNegativeButton("Cancel",null)
-                        .show();
-
-                dialog.setCancelable(false);
-                dialog.setCanceledOnTouchOutside(false);
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(v -> {
-
-                    getForwardToEmp();
-                    dialog.dismiss();
-                });
-
-                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setOnClickListener(v -> {
-                    dialog.dismiss();
-                    forwarDialog.dismiss();
-                });
+                alertMessage();
             }
         }
         else {
-            AlertDialog dialog = new AlertDialog.Builder(mContext)
-                    .setMessage("Please Check Your Internet Connection")
-                    .setPositiveButton("Retry", null)
-                    .setNegativeButton("Cancel",null)
-                    .show();
+            alertMessage();
+        }
+    }
 
-            dialog.setCancelable(false);
-            dialog.setCanceledOnTouchOutside(false);
-            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(v -> {
+    public void alertMessage() {
+        if (parsing_message != null) {
+            if (parsing_message.isEmpty() || parsing_message.equals("null")) {
+                parsing_message = "Server problem or Internet not connected";
+            }
+        }
+        else {
+            parsing_message = "Server problem or Internet not connected";
+        }
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(mContext);
+        alertDialogBuilder.setTitle("System Warning!")
+                .setIcon(R.drawable.hrm_new_round_icon_custom)
+                .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
+                .setPositiveButton("Retry", (dialog, which) -> {
+                    getForwardToEmp();
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Cancel",(dialog, which) -> {
+                    dialog.dismiss();
+                    forwarDialog.dismiss();
+                });
 
-                getForwardToEmp();
-                dialog.dismiss();
-            });
-
-            Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-            negative.setOnClickListener(v -> {
-                dialog.dismiss();
-                forwarDialog.dismiss();
-            });
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.setCancelable(false);
+        alert.setCanceledOnTouchOutside(false);
+        try {
+            alert.show();
+        }
+        catch (Exception e) {
+            restart("App is paused for a long time. Please Start the app again.");
         }
     }
 
@@ -1363,17 +1404,20 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
                 }
                 else {
                     System.out.println(string_out);
+                    parsing_message = string_out;
                     isForwarded = false;
                 }
                 updateLayout();
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 isForwarded = false;
                 updateLayout();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             ffffoooorrrwww = false;
             isForwarded = false;
             updateLayout();
@@ -1406,21 +1450,24 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
                     forwardFromAtt = 0;
                     System.out.println("INSERTED");
                     forwarDialog.dismiss();
-                    AlertDialog dialog1 = new AlertDialog.Builder(activity)
+                    MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(mContext);
+                    alertDialogBuilder.setTitle("Success!")
+                            .setIcon(R.drawable.hrm_new_round_icon_custom)
                             .setMessage("Request Forwarded Successfully")
-                            .setPositiveButton("OK", null)
-                            .show();
+                            .setPositiveButton("OK", (dialog, which) -> {
+                                dialog.dismiss();
+                                ((Activity)mContext).finish();
+                            });
 
-                    dialog1.setCancelable(false);
-                    dialog1.setCanceledOnTouchOutside(false);
-                    Button positive = dialog1.getButton(AlertDialog.BUTTON_POSITIVE);
-                    positive.setOnClickListener(v -> {
-
-                        dialog1.dismiss();
-                        ((Activity)mContext).finish();
-
-                    });
-
+                    AlertDialog alert = alertDialogBuilder.create();
+                    alert.setCancelable(false);
+                    alert.setCanceledOnTouchOutside(false);
+                    try {
+                        alert.show();
+                    }
+                    catch (Exception e) {
+                        restart("App is paused for a long time. Please Start the app again.");
+                    }
                 }
                 else {
                     Toast.makeText(getContext(), "Already Updated by Another User", Toast.LENGTH_SHORT).show();
@@ -1430,33 +1477,39 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
                 isForwarded = false;
             }
             else {
-                AlertDialog dialog = new AlertDialog.Builder(activity)
-                        .setMessage("There is a network issue in the server. Please Try later.")
-                        .setPositiveButton("Retry", null)
-                        .setNegativeButton("Cancel",null)
-                        .show();
-
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(v -> {
-
-                    forwardAttReq();
-                    dialog.dismiss();
-                });
+                alertMessageFAR();
             }
         }
         else {
-            AlertDialog dialog = new AlertDialog.Builder(activity)
-                    .setMessage("Please Check Your Internet Connection")
-                    .setPositiveButton("Retry", null)
-                    .setNegativeButton("Cancel",null)
-                    .show();
+            alertMessageFAR();
+        }
+    }
 
-            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(v -> {
+    public void alertMessageFAR() {
+        if (parsing_message != null) {
+            if (parsing_message.isEmpty() || parsing_message.equals("null")) {
+                parsing_message = "Server problem or Internet not connected";
+            }
+        }
+        else {
+            parsing_message = "Server problem or Internet not connected";
+        }
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(mContext);
+        alertDialogBuilder.setTitle("System Warning!")
+                .setIcon(R.drawable.hrm_new_round_icon_custom)
+                .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
+                .setPositiveButton("Retry", (dialog, which) -> {
+                    forwardAttReq();
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Cancel",(dialog, which) -> dialog.dismiss());
 
-                forwardAttReq();
-                dialog.dismiss();
-            });
+        AlertDialog alert = alertDialogBuilder.create();
+        try {
+            alert.show();
+        }
+        catch (Exception e) {
+            restart("App is paused for a long time. Please Start the app again.");
         }
     }
 
@@ -1541,17 +1594,20 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
                 }
                 else {
                     System.out.println(string_out);
+                    parsing_message = string_out;
                     isForwardedLeave = false;
                 }
                 updateLayoutLeave();
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 isForwardedLeave = false;
                 updateLayoutLeave();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             ffffoooorrrwwwllll = false;
             isForwardedLeave = false;
             updateLayoutLeave();
@@ -1584,20 +1640,24 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
 
                     forwarDialog.dismiss();
 
-                    AlertDialog dialog1 = new AlertDialog.Builder(activity)
+                    MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(mContext);
+                    alertDialogBuilder.setTitle("Success!")
+                            .setIcon(R.drawable.hrm_new_round_icon_custom)
                             .setMessage("Leave Application Forwarded Successfully")
-                            .setPositiveButton("OK", null)
-                            .show();
+                            .setPositiveButton("OK", (dialog, which) -> {
+                                dialog.dismiss();
+                                ((Activity)mContext).finish();
+                            });
 
-                    dialog1.setCancelable(false);
-                    dialog1.setCanceledOnTouchOutside(false);
-                    Button positive = dialog1.getButton(AlertDialog.BUTTON_POSITIVE);
-                    positive.setOnClickListener(v -> {
-
-                        dialog1.dismiss();
-                        ((Activity)mContext).finish();
-
-                    });
+                    AlertDialog alert = alertDialogBuilder.create();
+                    alert.setCancelable(false);
+                    alert.setCanceledOnTouchOutside(false);
+                    try {
+                        alert.show();
+                    }
+                    catch (Exception e) {
+                        restart("App is paused for a long time. Please Start the app again.");
+                    }
 
                 }
                 else {
@@ -1608,34 +1668,49 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
                 isForwardedLeave = false;
             }
             else {
-                AlertDialog dialog = new AlertDialog.Builder(activity)
-                        .setMessage("There is a network issue in the server. Please Try later.")
-                        .setPositiveButton("Retry", null)
-                        .setNegativeButton("Cancel",null)
-                        .show();
-
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(v -> {
-
-                    forwardLeaveReq();
-                    dialog.dismiss();
-                });
+                alertMessageFLR();
             }
         }
         else {
-            AlertDialog dialog = new AlertDialog.Builder(activity)
-                    .setMessage("Please Check Your Internet Connection")
-                    .setPositiveButton("Retry", null)
-                    .setNegativeButton("Cancel",null)
-                    .show();
-
-            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(v -> {
-
-                forwardLeaveReq();
-                dialog.dismiss();
-            });
+            alertMessageFLR();
         }
     }
 
+    public void alertMessageFLR() {
+        if (parsing_message != null) {
+            if (parsing_message.isEmpty() || parsing_message.equals("null")) {
+                parsing_message = "Server problem or Internet not connected";
+            }
+        }
+        else {
+            parsing_message = "Server problem or Internet not connected";
+        }
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(mContext);
+        alertDialogBuilder.setTitle("System Warning!")
+                .setIcon(R.drawable.hrm_new_round_icon_custom)
+                .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
+                .setPositiveButton("Retry", (dialog, which) -> {
+                    forwardLeaveReq();
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Cancel",(dialog, which) -> dialog.dismiss());
+
+        AlertDialog alert = alertDialogBuilder.create();
+        try {
+            alert.show();
+        }
+        catch (Exception e) {
+            restart("App is paused for a long time. Please Start the app again.");
+        }
+    }
+
+    public void restart(String msg) {
+        try {
+            ProcessPhoenix.triggerRebirth(mContext);
+        }
+        catch (Exception e) {
+            Toast.makeText(mContext,msg,Toast.LENGTH_SHORT).show();
+            System.exit(0);
+        }
+    }
 }

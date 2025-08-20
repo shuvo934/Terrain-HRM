@@ -6,8 +6,8 @@ import androidx.cardview.widget.CardView;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -15,8 +15,10 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.github.dewinjm.monthyearpicker.MonthFormat;
 import com.github.dewinjm.monthyearpicker.MonthYearPickerDialogFragment;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -83,6 +85,7 @@ public class AdvanceDetails extends AppCompatActivity {
     String sc_adv_all_payable = "";
 
     Logger logger = Logger.getLogger(AdvanceDetails.class.getName());
+    String parsing_message = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,29 +112,44 @@ public class AdvanceDetails extends AppCompatActivity {
         scAdvAllPayable = findViewById(R.id.sc_adv_paya_tot);
 
 
-        emp_id = userInfoLists.get(0).getEmp_id();
-
-        if (!userInfoLists.isEmpty()) {
-            String firstname = userInfoLists.get(0).getUser_name();
-            if (firstname == null) {
-                firstname = "";
+        if (userInfoLists == null) {
+            restart("Could Not Get Employee Data. Please Restart the App.");
+        }
+        else {
+            if (userInfoLists.isEmpty()) {
+                restart("Could Not Get Employee Data. Please Restart the App.");
             }
-            emp_name = firstname;
-            user_id = userInfoLists.get(0).getEmp_code();
+            else {
+                emp_id = userInfoLists.get(0).getEmp_id();
+                String firstname = userInfoLists.get(0).getUser_name();
+                if (firstname == null) {
+                    firstname = "";
+                }
+                emp_name = firstname;
+                user_id = userInfoLists.get(0).getEmp_code();
+            }
         }
 
-        if (!userDesignations.isEmpty()) {
-            str_DES = userDesignations.get(0).getJsm_name();
-            if (str_DES == null) {
-                str_DES = "";
+        if (userDesignations == null) {
+            restart("Could Not Get Employee Data. Please Restart the App.");
+        }
+        else {
+            if (userDesignations.isEmpty()) {
+                restart("Could Not Get Employee Data. Please Restart the App.");
             }
-            ban = userDesignations.get(0).getDesg_priority();
-            if (ban == null) {
-                ban = "";
-            }
-            job_pos = userDesignations.get(0).getDesg_name();
-            if (job_pos == null) {
-                job_pos = "";
+            else {
+                str_DES = userDesignations.get(0).getJsm_name();
+                if (str_DES == null) {
+                    str_DES = "";
+                }
+                ban = userDesignations.get(0).getDesg_priority();
+                if (ban == null) {
+                    ban = "";
+                }
+                job_pos = userDesignations.get(0).getDesg_name();
+                if (job_pos == null) {
+                    job_pos = "";
+                }
             }
         }
         
@@ -556,11 +574,13 @@ public class AdvanceDetails extends AppCompatActivity {
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateLayout();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             conn = false;
             connected = false;
             updateLayout();
@@ -585,11 +605,13 @@ public class AdvanceDetails extends AppCompatActivity {
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateLayout();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             conn = false;
             connected = false;
             updateLayout();
@@ -619,11 +641,13 @@ public class AdvanceDetails extends AppCompatActivity {
            }
            catch (JSONException e) {
                logger.log(Level.WARNING, e.getMessage(), e);
+               parsing_message = e.getLocalizedMessage();
                connected = false;
                updateLayout();
            }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             conn = false;
             connected = false;
             updateLayout();
@@ -649,11 +673,13 @@ public class AdvanceDetails extends AppCompatActivity {
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 connected = false;
                 updateLayout();
             }
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             conn = false;
             connected = false;
             updateLayout();
@@ -696,49 +722,54 @@ public class AdvanceDetails extends AppCompatActivity {
                 connected = false;
             }
             else {
-                AlertDialog dialog = new AlertDialog.Builder(AdvanceDetails.this)
-                        .setMessage("There is a network issue in the server. Please Try later.")
-                        .setPositiveButton("Retry", null)
-                        .setNegativeButton("Cancel",null)
-                        .show();
-
-                dialog.setCancelable(false);
-                dialog.setCanceledOnTouchOutside(false);
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(v -> {
-
-                    getAdvanceData();
-                    dialog.dismiss();
-                });
-
-                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setOnClickListener(v -> {
-                    dialog.dismiss();
-                    finish();
-                });
+                alertMessage();
             }
         }
         else {
-            AlertDialog dialog = new AlertDialog.Builder(AdvanceDetails.this)
-                    .setMessage("Please Check Your Internet Connection")
-                    .setPositiveButton("Retry", null)
-                    .setNegativeButton("Cancel",null)
-                    .show();
+            alertMessage();
+        }
+    }
 
-            dialog.setCancelable(false);
-            dialog.setCanceledOnTouchOutside(false);
-            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(v -> {
+    public void alertMessage() {
+        if (parsing_message != null) {
+            if (parsing_message.isEmpty() || parsing_message.equals("null")) {
+                parsing_message = "Server problem or Internet not connected";
+            }
+        }
+        else {
+            parsing_message = "Server problem or Internet not connected";
+        }
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(AdvanceDetails.this);
+        alertDialogBuilder.setTitle("System Warning!")
+                .setIcon(R.drawable.hrm_new_round_icon_custom)
+                .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
+                .setPositiveButton("Retry", (dialog, which) -> {
+                    getAdvanceData();
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Cancel",(dialog, which) -> {
+                    dialog.dismiss();
+                    finish();
+                });
 
-                getAdvanceData();
-                dialog.dismiss();
-            });
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.setCancelable(false);
+        alert.setCanceledOnTouchOutside(false);
+        try {
+            alert.show();
+        }
+        catch (Exception e) {
+            restart("App is paused for a long time. Please Start the app again.");
+        }
+    }
 
-            Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-            negative.setOnClickListener(v -> {
-                dialog.dismiss();
-                finish();
-            });
+    public void restart(String msg) {
+        try {
+            ProcessPhoenix.triggerRebirth(getApplicationContext());
+        }
+        catch (Exception e) {
+            Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
+            System.exit(0);
         }
     }
 }

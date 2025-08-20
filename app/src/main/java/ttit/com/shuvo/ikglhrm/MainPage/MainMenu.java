@@ -40,6 +40,35 @@ import static ttit.com.shuvo.ikglhrm.user_login.Login.userInfoLists;
 import static ttit.com.shuvo.ikglhrm.dashboard.Dashboard.alarmManager;
 import static ttit.com.shuvo.ikglhrm.dashboard.Dashboard.selectedImage;
 import static ttit.com.shuvo.ikglhrm.dashboard.Dashboard.trackerAvailable;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.COMPANY;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.CONTACT;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.DEPT_NAME;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.DESG_NAME;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.DESG_PRIORITY;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.DIV_ID;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.DIV_NAME;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.EMAIL;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.EMP_ID_LOGIN;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.IS_ATT_APPROVED;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.IS_LEAVE_APPROVED;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.JOINING_DATE;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.JSD_ID_LOGIN;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.JSD_OBJECTIVE;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.JSM_CODE;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.JSM_NAME;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.LIVE_FLAG;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.LOGIN_ACTIVITY_FILE;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.LOGIN_TF;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.SCHEDULING_EMP_ID;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.SCHEDULING_FILE;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.SOFTWARE;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.TRIGGERING;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.USER_F_NAME;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.USER_L_NAME;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.USER_NAME;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.WIDGET_EMP_ID;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.WIDGET_FILE;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.WIDGET_TRACKER_FLAG;
 
 public class MainMenu extends AppCompatActivity {
 
@@ -64,41 +93,6 @@ public class MainMenu extends AppCompatActivity {
     SharedPreferences sharedSchedule;
     SharedPreferences attendanceWidgetPreferences;
 
-    public static final String SCHEDULING_FILE = "SCHEDULING FILE";
-    public static final String SCHEDULING_EMP_ID = "SCHEDULING EMP ID";
-    public static final String TRIGGERING = "TRIGGER TRUE FALSE";
-
-    public static final String LOGIN_ACTIVITY_FILE = "LOGIN_ACTIVITY_FILE";
-
-    public static final String USER_NAME = "USER_NAME";
-    public static final String USER_F_NAME = "USER_F_NAME";
-    public static final String USER_L_NAME = "USER_L_NAME";
-    public static final String EMAIL = "EMAIL";
-    public static final String CONTACT = "CONTACT";
-    public static final String EMP_ID_LOGIN = "EMP_ID";
-
-    public static final String JSM_CODE = "JSM_CODE";
-    public static final String JSM_NAME = "JSM_NAME";
-    public static final String JSD_ID_LOGIN = "JSD_ID";
-    public static final String JSD_OBJECTIVE = "JSD_OBJECTIVE";
-    public static final String DEPT_NAME = "DEPT_NAME";
-    public static final String DIV_NAME = "DIV_NAME";
-    public static final String DESG_NAME = "DESG_NAME";
-    public static final String DESG_PRIORITY = "DESG_PRIORITY";
-    public static final String JOINING_DATE = "JOINING_DATE";
-    public static final String DIV_ID = "DIV_ID";
-    public static final String LOGIN_TF = "TRUE_FALSE";
-
-    public static final String IS_ATT_APPROVED = "IS_ATT_APPROVED";
-    public static final String IS_LEAVE_APPROVED = "IS_LEAVE_APPROVED";
-    public static final String COMPANY = "COMPANY";
-    public static final String SOFTWARE = "SOFTWARE";
-    public static final String LIVE_FLAG = "LIVE_FLAG";
-
-    public static final String WIDGET_FILE = "WIDGET_FILE";
-    public static final String WIDGET_EMP_ID = "WIDGET_EMP_ID";
-    public static final String WIDGET_TRACKER_FLAG = "WIDGET_TRACKER_FLAG";
-//    public static final String DATABASE_NAME = "DATABASE_NAME";
     TextView welcomeText;
 
 //    @Override
@@ -124,22 +118,6 @@ public class MainMenu extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        //getWindow().setNavigationBarColor(Color.parseColor("#f0932b"));
-//        getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            Window w = getWindow();
-//            //w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-//        }
-//        if (Build.VERSION.SDK_INT < 16) {
-//            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-//                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//        }
-//        View decorView = getWindow().getDecorView();
-//// Hide the status bar.
-//        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
-//        decorView.setSystemUiVisibility(uiOptions);
-
 
         setContentView(R.layout.activity_main_menu);
 

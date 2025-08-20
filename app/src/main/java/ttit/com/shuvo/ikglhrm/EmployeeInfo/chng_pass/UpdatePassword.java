@@ -373,6 +373,7 @@ public class UpdatePassword extends AppCompatActivity {
 
                 MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(UpdatePassword.this);
                 alertDialogBuilder.setTitle("Success!")
+                        .setIcon(R.drawable.hrm_new_round_icon_custom)
                         .setMessage("Password Updated Successfully")
                         .setPositiveButton("OK", (dialog, which) -> {
                             dialog.dismiss();
@@ -410,13 +411,14 @@ public class UpdatePassword extends AppCompatActivity {
             parsing_message = "Server problem or Internet not connected";
         }
         MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(UpdatePassword.this);
-        alertDialogBuilder.setTitle("Error!")
-                .setMessage("Error Message: "+parsing_message+".\n"+"Please try again.")
+        alertDialogBuilder.setTitle("System Warning!")
+                .setIcon(R.drawable.hrm_new_round_icon_custom)
+                .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
                 .setPositiveButton("Retry", (dialog, which) -> {
                     updatePassword();
                     dialog.dismiss();
                 })
-                .setNegativeButton("Exit",(dialog, which) -> {
+                .setNegativeButton("Cancel",(dialog, which) -> {
                     dialog.dismiss();
                     finish();
                 });

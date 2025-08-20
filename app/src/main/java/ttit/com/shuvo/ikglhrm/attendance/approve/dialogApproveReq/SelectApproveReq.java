@@ -104,6 +104,7 @@ public class SelectApproveReq extends AppCompatDialogFragment implements SelectA
 
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
+        setCancelable(false);
 
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(getContext());

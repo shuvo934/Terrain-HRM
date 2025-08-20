@@ -13,10 +13,11 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,6 +31,8 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -117,6 +120,7 @@ public class FirstFragment extends Fragment {
     }
 
     Logger logger = Logger.getLogger(FirstFragment.class.getName());
+    String parsing_message = "";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -133,9 +137,19 @@ public class FirstFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_first, container, false);
 
-        emp_id = userInfoLists.get(0).getEmp_id();
+        if (userInfoLists == null) {
+            restart("Could Not Get Employee Data. Please Restart the App.");
+        }
+        else {
+            if (userInfoLists.isEmpty()) {
+                restart("Could Not Get Employee Data. Please Restart the App.");
+            }
+            else {
+                emp_id = userInfoLists.get(0).getEmp_id();
 
-        emp_code = userInfoLists.get(0).getEmp_code();
+                emp_code = userInfoLists.get(0).getEmp_code();
+            }
+        }
 
         revision = view.findViewById(R.id.revision_no_TR);
         revisionDate = view.findViewById(R.id.revision_dateee);
@@ -694,22 +708,21 @@ public class FirstFragment extends Fragment {
                         firstPageAnotherData.add(new FirstPageAnotherData(jsm_code,jsm_name,jsd_objective,
                                 divm_name,dept_name));
                     }
-                    connected = true;
                 }
-                else {
-                    connected = false;
-                }
+                connected = true;
                 updateLayout();
             }
             catch (JSONException e) {
                 connected = false;
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 updateLayout();
             }
         }, error -> {
             conn = false;
             connected = false;
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             updateLayout();
         });
 
@@ -841,22 +854,20 @@ public class FirstFragment extends Fragment {
                                 job_uniform,job_apartment_status,job_late_accept,job_attd_bonus_flag));
 
                     }
-                    requestQueue.add(firstAnotherDataReq);
                 }
-                else {
-                    connected = false;
-                    updateLayout();
-                }
+                requestQueue.add(firstAnotherDataReq);
             }
             catch (JSONException e) {
                 connected = false;
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 updateLayout();
             }
         }, error -> {
             conn = false;
             connected = false;
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             updateLayout();
         });
 
@@ -871,26 +882,14 @@ public class FirstFragment extends Fragment {
                     for (int i = 0 ; i < firstPageData.size(); i++) {
 
                         String dateC = firstPageData.get(i).getRevisionDate();
-                        if (dateC != null) {
-                            revisionDate.setText(dateC);
-                        } else {
-                            revisionDate.setText("");
-                        }
+                        revisionDate.setText(Objects.requireNonNullElse(dateC, ""));
 
                         String datt = firstPageData.get(i).getEffectedDate();
-                        if (datt != null) {
-                            effectedDate.setText(datt);
-                        } else {
-                            effectedDate.setText("");
-                        }
+                        effectedDate.setText(Objects.requireNonNullElse(datt, ""));
 
                         String aptdat = firstPageData.get(i).getAppointmentDate();
 
-                        if (aptdat != null) {
-                            appointDate.setText(aptdat);
-                        } else {
-                            appointDate.setText("");
-                        }
+                        appointDate.setText(Objects.requireNonNullElse(aptdat, ""));
 
                         if (firstPageData.get(i).getRevision() != null) {
                             revision.setText(firstPageData.get(i).getRevision());
@@ -997,47 +996,44 @@ public class FirstFragment extends Fragment {
                 connected = false;
             }
             else {
-                AlertDialog dialog = new AlertDialog.Builder(mContext)
-                        .setMessage("There is a network issue in the server. Please Try later")
-                        .setPositiveButton("Retry", null)
-                        .setNegativeButton("Cancel", null)
-                        .show();
-
-                dialog.setCancelable(false);
-                dialog.setCanceledOnTouchOutside(false);
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(v -> {
-
-                    getTranscriptOneData();
-                    dialog.dismiss();
-                });
-                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setOnClickListener(v -> {
-                    ((Activity)mContext).finish();
-                    dialog.dismiss();
-                });
+                alertMessage();
             }
         }
         else {
-            AlertDialog dialog = new AlertDialog.Builder(mContext)
-                    .setMessage("Please Check Your Internet Connection")
-                    .setPositiveButton("Retry", null)
-                    .setNegativeButton("Cancel", null)
-                    .show();
+            alertMessage();
+        }
+    }
 
-            dialog.setCancelable(false);
-            dialog.setCanceledOnTouchOutside(false);
-            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(v -> {
+    public void alertMessage() {
+        if (parsing_message != null) {
+            if (parsing_message.isEmpty() || parsing_message.equals("null")) {
+                parsing_message = "Server problem or Internet not connected";
+            }
+        }
+        else {
+            parsing_message = "Server problem or Internet not connected";
+        }
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(mContext);
+        alertDialogBuilder.setTitle("System Warning!")
+                .setIcon(R.drawable.hrm_new_round_icon_custom)
+                .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
+                .setPositiveButton("Retry", (dialog, which) -> {
+                    getTranscriptOneData();
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Cancel",(dialog, which) -> {
+                    dialog.dismiss();
+                    ((Activity)mContext).finish();
+                });
 
-                getTranscriptOneData();
-                dialog.dismiss();
-            });
-            Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-            negative.setOnClickListener(v -> {
-                ((Activity)mContext).finish();
-                dialog.dismiss();
-            });
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.setCancelable(false);
+        alert.setCanceledOnTouchOutside(false);
+        try {
+            alert.show();
+        }
+        catch (Exception e) {
+            restart("App is paused for a long time. Please Start the app again.");
         }
     }
 
@@ -1045,5 +1041,15 @@ public class FirstFragment extends Fragment {
     private String transformText(String text) {
         byte[] bytes = text.getBytes(ISO_8859_1);
         return new String(bytes, UTF_8);
+    }
+
+    public void restart(String msg) {
+        try {
+            ProcessPhoenix.triggerRebirth(mContext);
+        }
+        catch (Exception e) {
+            Toast.makeText(mContext,msg,Toast.LENGTH_SHORT).show();
+            System.exit(0);
+        }
     }
 }

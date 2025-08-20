@@ -8,8 +8,8 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -27,6 +27,7 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -123,6 +124,7 @@ public class Attendance extends AppCompatActivity {
     SharedPreferences sharedPreferencesDA;
 
     Logger logger = Logger.getLogger(Attendance.class.getName());
+    String parsing_message = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -196,7 +198,12 @@ public class Attendance extends AppCompatActivity {
                         .setMessage("We're sorry, mobile attendance is currently not enabled for your profile. Please contact your HR department if you have any questions or need further assistance.")
                         .setPositiveButton("OK", ((dialog, which) -> dialog.dismiss()));
                 AlertDialog alert = builder.create();
-                alert.show();
+                try {
+                    alert.show();
+                }
+                catch (Exception e) {
+                    restart("App is paused for a long time. Please Start the app again.");
+                }
             }
         });
 
@@ -215,8 +222,18 @@ public class Attendance extends AppCompatActivity {
 //        });
 
 
-        emp_id = userInfoLists.get(0).getEmp_id();
-        emp_code = userInfoLists.get(0).getEmp_code();
+        if (userInfoLists == null) {
+            restart("Could Not Get Employee Data. Please Restart the App.");
+        }
+        else {
+            if (userInfoLists.isEmpty()) {
+                restart("Could Not Get Employee Data. Please Restart the App.");
+            }
+            else {
+                emp_id = userInfoLists.get(0).getEmp_id();
+                emp_code = userInfoLists.get(0).getEmp_code();
+            }
+        }
 
         Date c = Calendar.getInstance().getTime();
 
@@ -1081,22 +1098,21 @@ public class Attendance extends AppCompatActivity {
                         late = attendanceInfo.getString("late_count");
                         early = attendanceInfo.getString("early_count");
                     }
-                    getEmpData();
                 }
-                else {
-                    connected = false;
-                    updateLayout();
-                }
+                connected = true;
+                getEmpData();
             }
             catch (JSONException e) {
                 connected = false;
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 updateLayout();
             }
         }, error -> {
             conn = false;
             connected = false;
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             updateLayout();
         });
 
@@ -1136,27 +1152,25 @@ public class Attendance extends AppCompatActivity {
                         Integer.parseInt(empDataInfo.getString("emp_live_loc_tracker_flag")
                                 .equals("null") ? "0" : empDataInfo.getString("emp_live_loc_tracker_flag"));
                     }
-                    if (tracking_flag == 1) {
-                        getTrackerUploadDate(job_id[0],coa_id[0],divm_id[0],dept_id[0]);
-                    }
-                    else {
-                        getEmpTodayAttData();
-                    }
+                }
+                if (tracking_flag == 1) {
+                    getTrackerUploadDate(job_id[0],coa_id[0],divm_id[0],dept_id[0]);
                 }
                 else {
-                    connected = false;
-                    updateLayout();
+                    getEmpTodayAttData();
                 }
             }
             catch (JSONException e) {
                 connected = false;
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 updateLayout();
             }
         }, error -> {
             conn = false;
             connected = false;
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             updateLayout();
         });
 
@@ -1194,12 +1208,14 @@ public class Attendance extends AppCompatActivity {
             catch (JSONException e) {
                 connected = false;
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 updateLayout();
             }
         },error -> {
             conn = false;
             connected = false;
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             updateLayout();
         });
 
@@ -1276,18 +1292,21 @@ public class Attendance extends AppCompatActivity {
                 }
                 else {
                     System.out.println("EKHANE ASHE 3");
+                    parsing_message = string_out;
                     connected = false;
                     updateLayout();
                 }
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 System.out.println("EKHANE ASHE 0");
                 connected = false;
                 updateLayout();
             }
         },error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             System.out.println("EKHANE ASHE -1");
             conn = false;
             connected = false;
@@ -1371,12 +1390,14 @@ public class Attendance extends AppCompatActivity {
             catch (JSONException e) {
                 connected = false;
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 updateLayout();
             }
         }, error -> {
             conn = false;
             connected = false;
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             updateLayout();
         });
 
@@ -1405,12 +1426,14 @@ public class Attendance extends AppCompatActivity {
             catch (JSONException e) {
                 connected = false;
                 logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
                 updateLayout();
             }
         }, error -> {
             conn = false;
             connected = false;
             logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
             updateLayout();
         });
 
@@ -1574,21 +1597,33 @@ public class Attendance extends AppCompatActivity {
                     }
 
                     if (dateCount == 1) {
-                        AlertDialog dialog = new AlertDialog.Builder(Attendance.this)
+                        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(Attendance.this);
+                        alertDialogBuilder
                                 .setTitle("Tracking Service!")
+                                .setIcon(R.drawable.hrm_new_round_icon_custom)
                                 .setMessage(dateCount + " File Uploaded")
-                                .setPositiveButton("OK",null)
-                                .show();
-                        Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                        positive.setOnClickListener(v -> dialog.dismiss());
+                                .setPositiveButton("OK",(dialog, which) -> dialog.dismiss());
+                        AlertDialog alert = alertDialogBuilder.create();
+                        try {
+                            alert.show();
+                        }
+                        catch (Exception e) {
+                            restart("App is paused for a long time. Please Start the app again.");
+                        }
                     } else {
-                        AlertDialog dialog = new AlertDialog.Builder(Attendance.this)
+                        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(Attendance.this);
+                        alertDialogBuilder
                                 .setTitle("Tracking Service!")
+                                .setIcon(R.drawable.hrm_new_round_icon_custom)
                                 .setMessage(dateCount + " Files Uploaded")
-                                .setPositiveButton("OK",null)
-                                .show();
-                        Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                        positive.setOnClickListener(v -> dialog.dismiss());
+                                .setPositiveButton("OK",(dialog, which) -> dialog.dismiss());
+                        AlertDialog alert = alertDialogBuilder.create();
+                        try {
+                            alert.show();
+                        }
+                        catch (Exception e) {
+                            restart("App is paused for a long time. Please Start the app again.");
+                        }
                     }
 
                 }
@@ -1650,49 +1685,44 @@ public class Attendance extends AppCompatActivity {
                 connected = false;
             }
             else {
-                AlertDialog dialog = new AlertDialog.Builder(Attendance.this)
-                        .setMessage("There is a network issue in the server. Please Try later")
-                        .setPositiveButton("Retry", null)
-                        .setNegativeButton("Cancel", null)
-                        .show();
-
-                dialog.setCancelable(false);
-                dialog.setCanceledOnTouchOutside(false);
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(v -> {
-
-                    getAttendanceGraph();
-                    dialog.dismiss();
-                });
-
-                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setOnClickListener(v -> {
-                    dialog.dismiss();
-                    finish();
-                });
+                alertMessage();
             }
         }
         else {
-            AlertDialog dialog = new AlertDialog.Builder(Attendance.this)
-                    .setMessage("Please Check Your Internet Connection")
-                    .setPositiveButton("Retry", null)
-                    .setNegativeButton("Cancel", null)
-                    .show();
+            alertMessage();
+        }
+    }
 
-            dialog.setCancelable(false);
-            dialog.setCanceledOnTouchOutside(false);
-            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(v -> {
+    public void alertMessage() {
+        if (parsing_message != null) {
+            if (parsing_message.isEmpty() || parsing_message.equals("null")) {
+                parsing_message = "Server problem or Internet not connected";
+            }
+        }
+        else {
+            parsing_message = "Server problem or Internet not connected";
+        }
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(Attendance.this);
+        alertDialogBuilder.setTitle("System Warning!")
+                .setIcon(R.drawable.hrm_new_round_icon_custom)
+                .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
+                .setPositiveButton("Retry", (dialog, which) -> {
+                    getAttendanceGraph();
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Cancel",(dialog, which) -> {
+                    dialog.dismiss();
+                    finish();
+                });
 
-                getAttendanceGraph();
-                dialog.dismiss();
-            });
-
-            Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-            negative.setOnClickListener(v -> {
-                dialog.dismiss();
-                finish();
-            });
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.setCancelable(false);
+        alert.setCanceledOnTouchOutside(false);
+        try {
+            alert.show();
+        }
+        catch (Exception e) {
+            restart("App is paused for a long time. Please Start the app again.");
         }
     }
 
@@ -1733,4 +1763,13 @@ public class Attendance extends AppCompatActivity {
         }
     }
 
+    public void restart(String msg) {
+        try {
+            ProcessPhoenix.triggerRebirth(getApplicationContext());
+        }
+        catch (Exception e) {
+            Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
+            System.exit(0);
+        }
+    }
 }
