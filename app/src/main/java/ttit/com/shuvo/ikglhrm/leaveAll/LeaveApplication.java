@@ -90,6 +90,7 @@ public class LeaveApplication extends AppCompatActivity {
     Spinner leaveApp;
     Spinner leaveDuration;
 
+    public ArrayList<LeaveTypeList> leaveAppTypeAllLists;
     public ArrayList<String> leaveAppList;
 
     public ArrayList<LeaveTypeList> leaveDurationAllLists;
@@ -190,6 +191,7 @@ public class LeaveApplication extends AppCompatActivity {
         errorReason = findViewById(R.id.error_input_reason_leave);
         errorBackup = findViewById(R.id.error_input_work_backup);
 
+        leaveAppTypeAllLists = new ArrayList<>();
         leaveAppList = new ArrayList<>();
 
         leaveDurationAllLists = new ArrayList<>();
@@ -199,20 +201,6 @@ public class LeaveApplication extends AppCompatActivity {
         allreasonLists = new ArrayList<>();
         selectingIndivdual = new ArrayList<>();
         workBackupList = new ArrayList<>();
-
-        leaveDurationAllLists.add(new LeaveTypeList("0","Full Day"));
-        leaveDurationAllLists.add(new LeaveTypeList("1","First Half"));
-        leaveDurationAllLists.add(new LeaveTypeList("2","Second Half"));
-
-        leaveDurList.add("Select");
-
-        for (int i = 0 ; i < leaveDurationAllLists.size(); i++) {
-            leaveDurList.add(leaveDurationAllLists.get(i).getTypeName());
-        }
-
-        leaveAppList.add("Select");
-        leaveAppList.add("PRE");
-        leaveAppList.add("POST");
 
         if (userInfoLists == null) {
             restart("Could Not Get Employee Data. Please Restart the App.");
@@ -255,44 +243,18 @@ public class LeaveApplication extends AppCompatActivity {
 
         todayDate.setText(formattedDate);
 
-//        new Check().execute();
-        getInfo();
-
-        // Spinner Application Type
-        leaveAppAdapter = new ArrayAdapter<>(
-                this,R.layout.item_country,leaveAppList){
-            @Override
-            public boolean isEnabled(int position){
-                // Disable the first item from Spinner
-                // First item will be use for hint
-                return position != 0;
-            }
-            @Override
-            public View getDropDownView(int position, View convertView,
-                                        @NonNull ViewGroup parent) {
-                View view = super.getDropDownView(position, convertView, parent);
-                TextView tv = view.findViewById(R.id.tvCountry);
-                if(position == 0){
-                    // Set the hint text color gray
-                    tv.setTextColor(Color.GRAY);
-                }
-                else {
-                    tv.setTextColor(Color.BLACK);
-                }
-                return view;
-            }
-        };
-        leaveApp.setGravity(Gravity.END);
-        leaveAppAdapter.setDropDownViewResource(R.layout.item_country);
-        leaveApp.setAdapter(leaveAppAdapter);
-
         // Selecting Application Type
         leaveApp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
                 if(position > 0){
-                    selected_application_type = (String) parent.getItemAtPosition(position);
+                    String type_name = (String) parent.getItemAtPosition(position);
+                    for (int i = 0; i < leaveAppTypeAllLists.size(); i++) {
+                        if (type_name.equals(leaveAppTypeAllLists.get(i).getTypeName())) {
+                            selected_application_type = leaveAppTypeAllLists.get(i).getId();
+                        }
+                    }
                     dateOn.setText("");
                     selected_date_on_from = "";
                     dateOnLay.setHint("Select Date");
@@ -309,8 +271,6 @@ public class LeaveApplication extends AppCompatActivity {
                     // Notify the selected item text
                     System.out.println(selected_application_type);
                     if (!selected_application_type.isEmpty()) {
-
-                        System.out.println(1);
                         afterselecting.setVisibility(View.VISIBLE);
                         apply.setVisibility(View.VISIBLE);
                     }
@@ -323,35 +283,6 @@ public class LeaveApplication extends AppCompatActivity {
 
             }
         });
-
-        // Spinner Leave Duration
-        leaveDurationAdapter = new ArrayAdapter<>(
-                this,R.layout.item_country,leaveDurList){
-            @Override
-            public boolean isEnabled(int position){
-                // Disable the first item from Spinner
-                // First item will be use for hint
-                return position != 0;
-            }
-            @Override
-            public View getDropDownView(int position, View convertView,
-                                        @NonNull ViewGroup parent) {
-                View view = super.getDropDownView(position, convertView, parent);
-                TextView tv = view.findViewById(R.id.tvCountry);
-                if(position == 0){
-                    // Set the hint text color gray
-                    tv.setTextColor(Color.GRAY);
-                }
-                else {
-                    tv.setTextColor(Color.BLACK);
-                }
-                return view;
-            }
-        };
-        leaveDuration.setGravity(Gravity.END);
-        leaveDurationAdapter.setDropDownViewResource(R.layout.item_country);
-        leaveDuration.setAdapter(leaveDurationAdapter);
-
 
         // Selecting Attendance Type
         leaveDuration.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -1050,6 +981,8 @@ public class LeaveApplication extends AppCompatActivity {
             }
         });
 
+        getInfo();
+
     }
 
 
@@ -1376,13 +1309,78 @@ public class LeaveApplication extends AppCompatActivity {
         allreasonLists = new ArrayList<>();
         selectingIndivdual = new ArrayList<>();
         workBackupList = new ArrayList<>();
+        leaveDurationAllLists = new ArrayList<>();
+        leaveDurList = new ArrayList<>();
+        leaveAppTypeAllLists = new ArrayList<>();
+        leaveAppList = new ArrayList<>();
 
         String leaveTypeUrl = api_url_front + "leave/getLeaveType/"+emp_id;
         String reasonsUrl = api_url_front + "leave/getReasons";
         String workBackupUrl = api_url_front + "leave/getWorkBackupEmp/"+div_id+"/"+emp_id;
         String empInfoUrl = api_url_front + "attendanceUpNewReq/getEmpInfo/"+emp_id;
+        String leaveDurUrl = api_url_front + "leave/getLeaveDuration";
+        String leaveAppTypeUrl = api_url_front + "leave/getLeaveApplicationType";
 
         RequestQueue requestQueue = Volley.newRequestQueue(LeaveApplication.this);
+
+        StringRequest leaveAppTypeReq = new StringRequest(Request.Method.GET, leaveAppTypeUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject empSomeInfo = array.getJSONObject(i);
+
+                        String ld_id = empSomeInfo.getString("ld_return").equals("null") ? "" :  empSomeInfo.getString("ld_return");
+                        String ld_name = empSomeInfo.getString("ld_display").equals("null") ? "" :  empSomeInfo.getString("ld_display");
+
+                        leaveAppTypeAllLists.add(new LeaveTypeList(ld_id,ld_name));
+                    }
+                }
+
+                connected = true;
+                updateInterface();
+            }
+            catch (JSONException e) {
+                connected = true;
+                updateInterface();
+            }
+        }, error -> {
+            conn = true;
+            connected = true;
+            updateInterface();
+        });
+
+        StringRequest leaveDurationReq = new StringRequest(Request.Method.GET, leaveDurUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject empSomeInfo = array.getJSONObject(i);
+
+                        String ld_id = empSomeInfo.getString("ld_return").equals("null") ? "" :  empSomeInfo.getString("ld_return");
+                        String ld_name = empSomeInfo.getString("ld_display").equals("null") ? "" :  empSomeInfo.getString("ld_display");
+
+                        leaveDurationAllLists.add(new LeaveTypeList(ld_id,ld_name));
+                    }
+                }
+
+                requestQueue.add(leaveAppTypeReq);
+            }
+            catch (JSONException e) {
+                requestQueue.add(leaveAppTypeReq);
+            }
+        }, error -> {
+            conn = true;
+            requestQueue.add(leaveAppTypeReq);
+        });
 
         StringRequest empInfoReq = new StringRequest(Request.Method.GET, empInfoUrl, response -> {
             conn = true;
@@ -1402,8 +1400,7 @@ public class LeaveApplication extends AppCompatActivity {
                     }
                 }
 
-                connected = true;
-                updateInterface();
+                requestQueue.add(leaveDurationReq);
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
@@ -1541,6 +1538,114 @@ public class LeaveApplication extends AppCompatActivity {
         if (conn) {
             if (connected) {
                 allreasonLists.add(new LeaveTypeList("9999", "Others"));
+
+                if (leaveAppTypeAllLists.isEmpty()) {
+                    leaveAppTypeAllLists.add(new LeaveTypeList("PRE", "PRE"));
+                    leaveAppTypeAllLists.add(new LeaveTypeList("POST", "POST"));
+                }
+
+                leaveAppList.add("Select");
+
+                for (int i = 0 ; i < leaveAppTypeAllLists.size(); i++) {
+                    leaveAppList.add(leaveAppTypeAllLists.get(i).getTypeName());
+                }
+
+                // Spinner Application Type
+                leaveAppAdapter = new ArrayAdapter<>(
+                        this,R.layout.item_country,leaveAppList){
+                    @Override
+                    public boolean isEnabled(int position){
+                        // Disable the first item from Spinner
+                        // First item will be use for hint
+                        return position != 0;
+                    }
+                    @Override
+                    public View getDropDownView(int position, View convertView,
+                                                @NonNull ViewGroup parent) {
+                        View view = super.getDropDownView(position, convertView, parent);
+                        TextView tv = view.findViewById(R.id.tvCountry);
+                        if(position == 0){
+                            // Set the hint text color gray
+                            tv.setTextColor(Color.GRAY);
+                        }
+                        else {
+                            tv.setTextColor(Color.BLACK);
+                        }
+                        return view;
+                    }
+                };
+                leaveApp.setGravity(Gravity.END);
+                leaveAppAdapter.setDropDownViewResource(R.layout.item_country);
+                leaveApp.setAdapter(leaveAppAdapter);
+
+                if (leaveDurationAllLists.isEmpty()) {
+                    leaveDurationAllLists.add(new LeaveTypeList("0", "Full Day"));
+                    leaveDurationAllLists.add(new LeaveTypeList("1", "First Half"));
+                    leaveDurationAllLists.add(new LeaveTypeList("2", "Second Half"));
+                }
+
+                if (leaveDurationAllLists.size() > 1) {
+                    leaveDurList.add("Select");
+                }
+
+                for (int i = 0 ; i < leaveDurationAllLists.size(); i++) {
+                    leaveDurList.add(leaveDurationAllLists.get(i).getTypeName());
+                }
+
+                // Spinner Leave Duration
+                leaveDurationAdapter = new ArrayAdapter<>(
+                        this,R.layout.item_country,leaveDurList){
+                    @Override
+                    public boolean isEnabled(int position){
+                        // Disable the first item from Spinner
+                        // First item will be use for hint
+                        return position != 0;
+                    }
+                    @Override
+                    public View getDropDownView(int position, View convertView,
+                                                @NonNull ViewGroup parent) {
+                        View view = super.getDropDownView(position, convertView, parent);
+                        TextView tv = view.findViewById(R.id.tvCountry);
+                        if(position == 0){
+                            // Set the hint text color gray
+                            tv.setTextColor(Color.GRAY);
+                        }
+                        else {
+                            tv.setTextColor(Color.BLACK);
+                        }
+                        return view;
+                    }
+                };
+                leaveDuration.setGravity(Gravity.END);
+                leaveDurationAdapter.setDropDownViewResource(R.layout.item_country);
+                leaveDuration.setAdapter(leaveDurationAdapter);
+
+                if (leaveDurationAllLists.size() == 1) {
+                    leaveDuration.setEnabled(false);
+                    int position = 0;
+
+                    selected_leave_duration = leaveDurationAllLists.get(position).getTypeName();
+                    errorLeaveDuration.setVisibility(View.GONE);
+                    selected_leave_duration_id = leaveDurationAllLists.get(position).getId();
+
+                    String value = Objects.requireNonNull(totalDays.getText()).toString();
+                    if (!value.equals("0")) {
+                        if (!selected_leave_duration_id.equals("0")) {
+                            if (!value.contains(".")) {
+                                double dd = Double.parseDouble(value);
+                                dd = dd - 0.5;
+                                totalDays.setText(String.valueOf(dd));
+                            }
+                        } else {
+                            if (value.contains(".")) {
+                                double dd = Double.parseDouble(value);
+                                dd = dd + 0.5;
+                                int dddd = (int) dd;
+                                totalDays.setText(String.valueOf(dddd));
+                            }
+                        }
+                    }
+                }
             }
             else {
                 alertMessage();

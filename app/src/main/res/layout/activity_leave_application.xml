@@ -485,7 +485,7 @@
                                     android:focusable="false"
                                     android:fontFamily="@font/poppins_semibold"
                                     android:textSize="@dimen/_11sdp"
-                                    android:inputType="textMultiLine"
+                                    android:inputType="text|textNoSuggestions"
                                     android:text=""
                                     android:textColor="@color/black"
                                     android:textStyle="bold" />
@@ -562,7 +562,7 @@
                                     android:focusable="false"
                                     android:fontFamily="@font/poppins_semibold"
                                     android:textSize="@dimen/_11sdp"
-                                    android:inputType="textMultiLine"
+                                    android:inputType="text|textNoSuggestions"
                                     android:text=""
                                     android:textColor="@color/black"
                                     android:textStyle="bold" />

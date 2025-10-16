@@ -131,6 +131,7 @@ public class AttendanceUpdate extends AppCompatActivity {
     public ArrayList<LocUpdateList> locUpdateLists;
     public ArrayList<String> onlyLocationLists;
 
+    public ArrayList<AttendanceReqType> attendanceAllReqList;
     public ArrayList<String> reqList;
 
     public ArrayList<AttendanceReqType> attendanceReqTypes;
@@ -285,7 +286,7 @@ public class AttendanceUpdate extends AppCompatActivity {
 //        selectedApproverList = new ArrayList<>();
 
         locUpdateLists = new ArrayList<>();
-
+        attendanceAllReqList = new ArrayList<>();
         attendanceReqTypes = new ArrayList<>();
 
         //shiftUpdateLists = new ArrayList<>();
@@ -304,23 +305,6 @@ public class AttendanceUpdate extends AppCompatActivity {
         reasonName.add("Select");
 
         onlyLocationLists.add("Select");
-
-        reqList.add("Select");
-        reqList.add("PRE");
-        reqList.add("POST");
-
-        attendanceReqTypes.add(new AttendanceReqType("Early","Early Departure Information"));
-        attendanceReqTypes.add(new AttendanceReqType("Late","Late Arrival Information"));
-        attendanceReqTypes.add(new AttendanceReqType("General","Work Time Update"));
-
-        attenTypeList.add("Select");
-
-        //onlyShiftName.add("Select");
-
-
-        for (int i = 0 ; i < attendanceReqTypes.size(); i++) {
-            attenTypeList.add(attendanceReqTypes.get(i).getAttendance_req_details());
-        }
 
         if (userInfoLists == null) {
             restart("Could Not Get Employee Data. Please Restart the App.");
@@ -351,105 +335,18 @@ public class AttendanceUpdate extends AppCompatActivity {
 
         todayDate.setText(formattedDate);
 
-//        new Check().execute();
-        getDataInfo();
-
-
-        // Location Update Spinner
-        locUpdateAdapter = new ArrayAdapter<>(
-                this,R.layout.item_country,onlyLocationLists){
-            @Override
-            public boolean isEnabled(int position){
-                // Disable the first item from Spinner
-                // First item will be use for hint
-                return position != 0;
-            }
-            @Override
-            public View getDropDownView(int position, View convertView,
-                                        @NonNull ViewGroup parent) {
-                View view = super.getDropDownView(position, convertView, parent);
-                TextView tv = view.findViewById(R.id.tvCountry);
-                if(position == 0){
-                    // Set the hint text color gray
-                    tv.setTextColor(Color.GRAY);
-                }
-                else {
-                    tv.setTextColor(Color.BLACK);
-                }
-                return view;
-            }
-        };
-        locUpdate.setGravity(Gravity.END);
-        locUpdateAdapter.setDropDownViewResource(R.layout.item_country);
-        locUpdate.setAdapter(locUpdateAdapter);
-
-
-        // Selecting Location From Spinner
-        locUpdate.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                if(position > 0){
-                    updatedLocationName = (String) parent.getItemAtPosition(position);
-                    errorLocation.setVisibility(View.GONE);
-
-                    // Notify the selected item text
-                    for (int i = 0; i < locUpdateLists.size(); i++) {
-                        if (updatedLocationName.equals(locUpdateLists.get(i).getLocation())) {
-                            selected_loc_id = locUpdateLists.get(i).getLocID();
-
-                            System.out.println(selected_loc_id);
-                        }
-                    }
-
-//                    new MachineInfo().execute();
-                    getMachineData();
-
-                }
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
-        // Request Type Spinner
-        reqTypeAdapter = new ArrayAdapter<>(
-                this,R.layout.item_country,reqList){
-            @Override
-            public boolean isEnabled(int position){
-                // Disable the first item from Spinner
-                // First item will be use for hint
-                return position != 0;
-            }
-            @Override
-            public View getDropDownView(int position, View convertView,
-                                        @NonNull ViewGroup parent) {
-                View view = super.getDropDownView(position, convertView, parent);
-                TextView tv = view.findViewById(R.id.tvCountry);
-                if(position == 0){
-                    // Set the hint text color gray
-                    tv.setTextColor(Color.GRAY);
-                }
-                else {
-                    tv.setTextColor(Color.BLACK);
-                }
-                return view;
-            }
-        };
-        reqType.setGravity(Gravity.END);
-        reqTypeAdapter.setDropDownViewResource(R.layout.item_country);
-        reqType.setAdapter(reqTypeAdapter);
-
         // Selecting Request Type
         reqType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
                 if(position > 0){
-                    selected_request = (String) parent.getItemAtPosition(position);
+                    String type_name = (String) parent.getItemAtPosition(position);
+                    for (int i = 0; i < attendanceAllReqList.size(); i++) {
+                        if (type_name.equals(attendanceAllReqList.get(i).getAttendance_req_details())) {
+                            selected_request = attendanceAllReqList.get(i).getAttendance_req();
+                        }
+                    }
                     dateUpdated.setText("");
                     selected_update_date = "";
                     dateUpdateLay.setHint("Select Update Date");
@@ -457,14 +354,10 @@ public class AttendanceUpdate extends AppCompatActivity {
                     existingAtt.setVisibility(View.GONE);
 
                     // Notify the selected item text
-                    System.out.println(selected_request);
                     if (!selected_request.isEmpty() && !selected_attendance_type.isEmpty()) {
-
-                        System.out.println(1);
                         after.setVisibility(View.VISIBLE);
                         updateButtonEnable.setVisibility(View.VISIBLE);
                     }
-
                 }
             }
 
@@ -473,35 +366,6 @@ public class AttendanceUpdate extends AppCompatActivity {
 
             }
         });
-
-        // Attendance Type Spinner
-        attenTypeAdapter = new ArrayAdapter<>(
-                this,R.layout.item_country,attenTypeList){
-            @Override
-            public boolean isEnabled(int position){
-                // Disable the first item from Spinner
-                // First item will be use for hint
-                return position != 0;
-            }
-            @Override
-            public View getDropDownView(int position, View convertView,
-                                        @NonNull ViewGroup parent) {
-                View view = super.getDropDownView(position, convertView, parent);
-                TextView tv = view.findViewById(R.id.tvCountry);
-                if(position == 0){
-                    // Set the hint text color gray
-                    tv.setTextColor(Color.GRAY);
-                }
-                else {
-                    tv.setTextColor(Color.BLACK);
-                }
-                return view;
-            }
-        };
-        attenType.setGravity(Gravity.END);
-        attenTypeAdapter.setDropDownViewResource(R.layout.item_country);
-        attenType.setAdapter(attenTypeAdapter);
-
 
         // Selecting Attendance Type
         attenType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -538,72 +402,64 @@ public class AttendanceUpdate extends AppCompatActivity {
             }
         });
 
+        // Location Update Spinner
+        locUpdateAdapter = new ArrayAdapter<>(
+                this,R.layout.item_country,onlyLocationLists){
+            @Override
+            public boolean isEnabled(int position){
+                // Disable the first item from Spinner
+                // First item will be use for hint
+                return position != 0;
+            }
+            @Override
+            public View getDropDownView(int position, View convertView,
+                                        @NonNull ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView tv = view.findViewById(R.id.tvCountry);
+                if(position == 0){
+                    // Set the hint text color gray
+                    tv.setTextColor(Color.GRAY);
+                }
+                else {
+                    tv.setTextColor(Color.BLACK);
+                }
+                return view;
+            }
+        };
+        locUpdate.setGravity(Gravity.END);
+        locUpdateAdapter.setDropDownViewResource(R.layout.item_country);
+        locUpdate.setAdapter(locUpdateAdapter);
 
-        // Shift Updated Spinner
-//        shiftUpdateAdapter = new ArrayAdapter<String>(
-//                this,R.layout.item_country,onlyShiftName){
-//            @Override
-//            public boolean isEnabled(int position){
-//                if(position == 0)
-//                {
-//                    // Disable the first item from Spinner
-//                    // First item will be use for hint
-//                    return false;
-//                }
-//                else
-//                {
-//                    return true;
-//                }
-//            }
-//            @Override
-//            public View getDropDownView(int position, View convertView,
-//                                        ViewGroup parent) {
-//                View view = super.getDropDownView(position, convertView, parent);
-//                TextView tv = (TextView) view.findViewById(R.id.tvCountry);
-//                if(position == 0){
-//                    // Set the hint text color gray
-//                    tv.setTextColor(Color.GRAY);
-//                }
-//                else {
-//                    tv.setTextColor(Color.BLACK);
-//                }
-//                return view;
-//            }
-//        };
-//        shiftUpdated.setGravity(Gravity.END);
-//        shiftUpdateAdapter.setDropDownViewResource(R.layout.item_country);
-//        shiftUpdated.setAdapter(shiftUpdateAdapter);
+        // Selecting Location From Spinner
+        locUpdate.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
+                if(position > 0){
+                    updatedLocationName = (String) parent.getItemAtPosition(position);
+                    errorLocation.setVisibility(View.GONE);
 
-        // Selecting Shift Updated
-//        shiftUpdated.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//
-//                if(position > 0){
-//                    selected_shift_name = (String) parent.getItemAtPosition(position);
-//                    errorShift.setVisibility(View.GONE);
-//
-//                    for (int i = 0; i < shiftUpdateLists.size(); i++) {
-//                        if (selected_shift_name.equals(shiftUpdateLists.get(i).getShift_name())) {
-//                            selected_shift_id = shiftUpdateLists.get(i).getShift_id();
-//
-//                            System.out.println(selected_shift_id);
-//                        }
-//                    }
-//
-//                    // Notify the selected item text
-//
-//
-//                }
-//
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> parent) {
-//
-//            }
-//        });
+                    // Notify the selected item text
+                    for (int i = 0; i < locUpdateLists.size(); i++) {
+                        if (updatedLocationName.equals(locUpdateLists.get(i).getLocation())) {
+                            selected_loc_id = locUpdateLists.get(i).getLocID();
+
+                            System.out.println(selected_loc_id);
+                        }
+                    }
+
+//                    new MachineInfo().execute();
+                    getMachineData();
+
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         // Reason Type Spinner
         reasonAdapter = new ArrayAdapter<>(
@@ -1174,6 +1030,8 @@ public class AttendanceUpdate extends AppCompatActivity {
                 finish();
             }
         });
+
+        getDataInfo();
 
     }
 
@@ -1900,6 +1758,12 @@ public class AttendanceUpdate extends AppCompatActivity {
         conn = false;
         connected = false;
 
+        attendanceAllReqList = new ArrayList<>();
+        reqList = new ArrayList<>();
+
+        attendanceReqTypes = new ArrayList<>();
+        attenTypeList = new ArrayList<>();
+
         locUpdateLists = new ArrayList<>();
         allShiftDetails = new ArrayList<>();
 
@@ -1916,6 +1780,8 @@ public class AttendanceUpdate extends AppCompatActivity {
 //        String forwardWithoutDivUrl = api_url_front + "attendanceUpNewReq/getFor_AppListWIthoutDiv/"+emp_id;
 //        String forwardAllUrl = api_url_front + "attendanceUpNewReq/getAllFor_AppList/"+emp_id;
 //        String desigPriorUrl = api_url_front + "forwardReq/getDesigPriority/"+emp_id;
+        String attReqTypeUrl = api_url_front + "attendanceUpNewReq/getAttendanceReqType";
+        String attTypeUrl = api_url_front + "attendanceUpNewReq/getAttendanceType";
 
         RequestQueue requestQueue = Volley.newRequestQueue(AttendanceUpdate.this);
 
@@ -2047,6 +1913,65 @@ public class AttendanceUpdate extends AppCompatActivity {
 //            updateLay();
 //        });
 
+        StringRequest attAppTypeReq = new StringRequest(Request.Method.GET, attTypeUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject empSomeInfo = array.getJSONObject(i);
+
+                        String ld_id = empSomeInfo.getString("ld_return").equals("null") ? "" :  empSomeInfo.getString("ld_return");
+                        String ld_name = empSomeInfo.getString("ld_display").equals("null") ? "" :  empSomeInfo.getString("ld_display");
+
+                        attendanceReqTypes.add(new AttendanceReqType(ld_id,ld_name));
+                    }
+                }
+
+                connected = true;
+                updateLay();
+            }
+            catch (JSONException e) {
+                connected = true;
+                updateLay();
+            }
+        }, error -> {
+            conn = true;
+            connected = true;
+            updateLay();
+        });
+
+        StringRequest attReqReq = new StringRequest(Request.Method.GET, attReqTypeUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject empSomeInfo = array.getJSONObject(i);
+
+                        String ld_id = empSomeInfo.getString("ld_return").equals("null") ? "" :  empSomeInfo.getString("ld_return");
+                        String ld_name = empSomeInfo.getString("ld_display").equals("null") ? "" :  empSomeInfo.getString("ld_display");
+
+                        attendanceAllReqList.add(new AttendanceReqType(ld_id,ld_name));
+                    }
+                }
+
+                requestQueue.add(attAppTypeReq);
+            }
+            catch (JSONException e) {
+                requestQueue.add(attAppTypeReq);
+            }
+        }, error -> {
+            conn = true;
+            requestQueue.add(attAppTypeReq);
+        });
+
         StringRequest forwardApproverReq = new StringRequest(Request.Method.GET, forward_approver_url, response -> {
             conn = true;
             try {
@@ -2072,8 +1997,7 @@ public class AttendanceUpdate extends AppCompatActivity {
                             jsm_name_new,divm_name_new));
                 }
 
-                connected = true;
-                updateLay();
+                requestQueue.add(attReqReq);
             }
             catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
@@ -2327,6 +2251,86 @@ public class AttendanceUpdate extends AppCompatActivity {
         waitProgress.dismiss();
         if (conn) {
             if (connected) {
+
+                if (attendanceAllReqList.isEmpty()) {
+                    attendanceAllReqList.add(new AttendanceReqType("PRE", "PRE"));
+                    attendanceAllReqList.add(new AttendanceReqType("POST", "POST"));
+                }
+
+                reqList.add("Select");
+
+                for (int i = 0 ; i < attendanceAllReqList.size(); i++) {
+                    reqList.add(attendanceAllReqList.get(i).getAttendance_req_details());
+                }
+
+                // Request Type Spinner
+                reqTypeAdapter = new ArrayAdapter<>(
+                        this,R.layout.item_country,reqList){
+                    @Override
+                    public boolean isEnabled(int position){
+                        // Disable the first item from Spinner
+                        // First item will be use for hint
+                        return position != 0;
+                    }
+                    @Override
+                    public View getDropDownView(int position, View convertView,
+                                                @NonNull ViewGroup parent) {
+                        View view = super.getDropDownView(position, convertView, parent);
+                        TextView tv = view.findViewById(R.id.tvCountry);
+                        if(position == 0){
+                            // Set the hint text color gray
+                            tv.setTextColor(Color.GRAY);
+                        }
+                        else {
+                            tv.setTextColor(Color.BLACK);
+                        }
+                        return view;
+                    }
+                };
+                reqType.setGravity(Gravity.END);
+                reqTypeAdapter.setDropDownViewResource(R.layout.item_country);
+                reqType.setAdapter(reqTypeAdapter);
+
+                if (attendanceReqTypes.isEmpty()) {
+                    attendanceReqTypes.add(new AttendanceReqType("Early", "Early Departure Information"));
+                    attendanceReqTypes.add(new AttendanceReqType("Late", "Late Arrival Information"));
+                    attendanceReqTypes.add(new AttendanceReqType("General", "Work Time Update"));
+                }
+
+                attenTypeList.add("Select");
+
+                for (int i = 0 ; i < attendanceReqTypes.size(); i++) {
+                    attenTypeList.add(attendanceReqTypes.get(i).getAttendance_req_details());
+                }
+
+                // Attendance Type Spinner
+                attenTypeAdapter = new ArrayAdapter<>(
+                        this,R.layout.item_country,attenTypeList){
+                    @Override
+                    public boolean isEnabled(int position){
+                        // Disable the first item from Spinner
+                        // First item will be use for hint
+                        return position != 0;
+                    }
+                    @Override
+                    public View getDropDownView(int position, View convertView,
+                                                @NonNull ViewGroup parent) {
+                        View view = super.getDropDownView(position, convertView, parent);
+                        TextView tv = view.findViewById(R.id.tvCountry);
+                        if(position == 0){
+                            // Set the hint text color gray
+                            tv.setTextColor(Color.GRAY);
+                        }
+                        else {
+                            tv.setTextColor(Color.BLACK);
+                        }
+                        return view;
+                    }
+                };
+                attenType.setGravity(Gravity.END);
+                attenTypeAdapter.setDropDownViewResource(R.layout.item_country);
+                attenType.setAdapter(attenTypeAdapter);
+
                 if (!locUpdateLists.isEmpty()) {
                     for (int i = 0; i < locUpdateLists.size(); i++) {
                         onlyLocationLists.add(locUpdateLists.get(i).getLocation());

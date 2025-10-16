@@ -9,8 +9,8 @@ android {
         applicationId "ttit.com.shuvo.ikglhrm"
         minSdkVersion 23
         targetSdkVersion 35
-        versionCode 11
-        versionName "1.2.4"
+        versionCode 12
+        versionName "1.2.5"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -35,7 +35,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation files('libs/ojdbc14.jar')
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'com.google.android.gms:play-services-maps:17.0.1'
+    implementation 'com.google.android.gms:play-services-maps:18.2.0'
     implementation 'com.google.android.gms:play-services-location:21.0.1'
     implementation 'androidx.activity:activity:1.10.1'
     testImplementation 'junit:junit:4.+'
@@ -53,7 +53,7 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:3.1.0'
     implementation 'com.github.bumptech.glide:glide:4.13.2'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.13.2'
-    implementation 'com.intuit.sdp:sdp-android:1.1.0'
+    implementation 'com.intuit.sdp:sdp-android:1.1.1'
     implementation 'com.google.android.play:app-update:2.1.0'
     implementation 'com.google.code.gson:gson:2.10.1'
 
@@ -61,10 +61,10 @@ dependencies {
     implementation 'io.fotoapparat:fotoapparat:2.6.1'
 
     // crop image
-    implementation 'com.github.yalantis:ucrop:2.2.10'
+    implementation 'com.github.yalantis:ucrop:2.2.11-native'
 
     //restart
-    implementation 'com.jakewharton:process-phoenix:2.1.2'
+    implementation 'com.jakewharton:process-phoenix:3.0.0'
 
     //calendar view
     implementation 'com.applandeo:material-calendar-view:1.9.2'
