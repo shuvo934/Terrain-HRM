@@ -5,7 +5,6 @@ import androidx.fragment.app.Fragment;
 
 import android.os.Bundle;
 import android.view.Menu;
-import android.widget.Button;
 import android.widget.ScrollView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -15,7 +14,6 @@ import ttit.com.shuvo.ikglhrm.R;
 public class EMPTranscript extends AppCompatActivity {
 
     BottomNavigationView bottomNavigationView;
-    Button transFinish;
     ScrollView scrollView;
 
     @Override
@@ -23,14 +21,10 @@ public class EMPTranscript extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_e_m_p_transcript);
 
-        transFinish = findViewById(R.id.transcript_finish);
-
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         scrollView = findViewById(R.id.emp_trans_scroll_view);
 
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FirstFragment(EMPTranscript.this)).commit();
-
-        transFinish.setOnClickListener(v -> finish());
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
             Fragment selectedFrag = null;

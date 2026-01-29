@@ -988,6 +988,9 @@ public class Login extends AppCompatActivity implements CallBackListener {
     }
 
     private void updateLayout() {
+        for (int i = 0; i < urls.size(); i++) {
+            urls.get(i).setChecked(false);
+        }
         if (!centerLists.isEmpty()) {
             if (centerLists.size() == 1) {
                 api_url_front = centerLists.get(0).getCenter_api();
@@ -1004,9 +1007,6 @@ public class Login extends AppCompatActivity implements CallBackListener {
         }
         else {
             waitProgress.dismiss();
-            for (int i = 0; i < urls.size(); i++) {
-                urls.get(i).setChecked(false);
-            }
             if (conn) {
                 if (connected) {
                     login_failed.setVisibility(View.VISIBLE);

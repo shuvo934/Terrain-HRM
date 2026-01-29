@@ -8,17 +8,22 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
-import ttit.com.shuvo.ikglhrm.attendance.status.statusDetail.AttendanceStatusDetails;
 
 import static ttit.com.shuvo.ikglhrm.user_login.Login.userInfoLists;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
@@ -27,8 +32,10 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.jakewharton.processphoenix.ProcessPhoenix;
+import com.whiteelephant.monthpicker.MonthPickerDialog;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,12 +50,16 @@ public class AttendanceStatus extends AppCompatActivity {
     RecyclerView.LayoutManager layoutManager;
 
     ArrayList<StatusList> statusLists;
+    ArrayList<StatusList> filterLists;
 
     WaitProgress waitProgress = new WaitProgress();
     private Boolean conn = false;
     private Boolean connected = false;
 
     String emp_id = "";
+
+    TextView allStatusCount;
+    String all_status_count = "0";
 
     TextView pendingStatusCount;
     String pending_status_count = "0";
@@ -58,6 +69,20 @@ public class AttendanceStatus extends AppCompatActivity {
 
     TextView rejectedStatusCount;
     String rej_status_count = "0";
+
+    MaterialCardView allAppCard;
+    RelativeLayout allAppBack;
+    MaterialCardView pendingAppCard;
+    RelativeLayout pendingAppBack;
+    MaterialCardView approvedAppCard;
+    RelativeLayout approvedAppBack;
+    MaterialCardView rejectedAppCard;
+    RelativeLayout rejectedAppBack;
+
+    LinearLayout yearSelection;
+    TextView yearText;
+    String selected_year = "";
+    AlertDialog yearDialogAppoint;
 
     Logger logger = Logger.getLogger(AttendanceStatus.class.getName());
     String parsing_message = "";
@@ -81,13 +106,32 @@ public class AttendanceStatus extends AppCompatActivity {
 
         statusView = findViewById(R.id.status_list_view);
         statusNot = findViewById(R.id.status_not_found_msg);
+        allStatusCount = findViewById(R.id.all_application_request_as);
         pendingStatusCount = findViewById(R.id.pending_request_as);
         approveStatusCount = findViewById(R.id.approved_request_as);
         rejectedStatusCount = findViewById(R.id.rejected_request_as);
 
-        statusLists = new ArrayList<>();
+        allAppCard = findViewById(R.id.total_applications_card);
+        allAppBack = findViewById(R.id.all_application_card_background);
+        pendingAppCard = findViewById(R.id.pending_applications_card);
+        pendingAppBack = findViewById(R.id.pending_application_card_background);
+        approvedAppCard = findViewById(R.id.approved_applications_card);
+        approvedAppBack = findViewById(R.id.approved_application_card_background);
+        rejectedAppCard = findViewById(R.id.rejected_applications_card);
+        rejectedAppBack = findViewById(R.id.reject_application_card_background);
 
-        getAttendStatus();
+        yearSelection = findViewById(R.id.year_selected_layout_for_att_status);
+        yearText = findViewById(R.id.year_text_for_attendance_status);
+
+        statusLists = new ArrayList<>();
+        filterLists = new ArrayList<>();
+
+        Date nowDate = Calendar.getInstance().getTime();
+        SimpleDateFormat ydf = new SimpleDateFormat("yyyy", Locale.ENGLISH);
+        selected_year = ydf.format(nowDate);
+
+        String yt = "Application Year : " + selected_year;
+        yearText.setText(yt);
 
         statusView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
@@ -95,6 +139,135 @@ public class AttendanceStatus extends AppCompatActivity {
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(statusView.getContext(),DividerItemDecoration.VERTICAL);
         statusView.addItemDecoration(dividerItemDecoration);
 
+        allAppCard.setOnClickListener(v -> {
+            allAppCard.setCardElevation(2);
+            allAppBack.setBackgroundColor(getColor(R.color.black_alpha));
+            pendingAppCard.setCardElevation(10);
+            pendingAppBack.setBackgroundColor(getColor(R.color.white));
+            approvedAppCard.setCardElevation(10);
+            approvedAppBack.setBackgroundColor(getColor(R.color.white));
+            rejectedAppCard.setCardElevation(10);
+            rejectedAppBack.setBackgroundColor(getColor(R.color.white));
+
+            statusAdapter = new StatusAdapter(statusLists, AttendanceStatus.this);
+            statusView.setAdapter(statusAdapter);
+
+            if (statusLists.isEmpty()) {
+                statusView.setVisibility(View.GONE);
+                statusNot.setVisibility(View.VISIBLE);
+            } else {
+                statusView.setVisibility(View.VISIBLE);
+                statusNot.setVisibility(View.GONE);
+            }
+        });
+
+        pendingAppCard.setOnClickListener(v -> {
+            allAppCard.setCardElevation(10);
+            allAppBack.setBackgroundColor(getColor(R.color.white));
+            pendingAppCard.setCardElevation(2);
+            pendingAppBack.setBackgroundColor(getColor(R.color.black_alpha));
+            approvedAppCard.setCardElevation(10);
+            approvedAppBack.setBackgroundColor(getColor(R.color.white));
+            rejectedAppCard.setCardElevation(10);
+            rejectedAppBack.setBackgroundColor(getColor(R.color.white));
+            getFilteredList("0");
+        });
+
+        approvedAppCard.setOnClickListener(v -> {
+            allAppCard.setCardElevation(10);
+            allAppBack.setBackgroundColor(getColor(R.color.white));
+            pendingAppCard.setCardElevation(10);
+            pendingAppBack.setBackgroundColor(getColor(R.color.white));
+            approvedAppCard.setCardElevation(2);
+            approvedAppBack.setBackgroundColor(getColor(R.color.black_alpha));
+            rejectedAppCard.setCardElevation(10);
+            rejectedAppBack.setBackgroundColor(getColor(R.color.white));
+            getFilteredList("1");
+        });
+
+        rejectedAppCard.setOnClickListener(v -> {
+            allAppCard.setCardElevation(10);
+            allAppBack.setBackgroundColor(getColor(R.color.white));
+            pendingAppCard.setCardElevation(10);
+            pendingAppBack.setBackgroundColor(getColor(R.color.white));
+            approvedAppCard.setCardElevation(10);
+            approvedAppBack.setBackgroundColor(getColor(R.color.white));
+            rejectedAppCard.setCardElevation(2);
+            rejectedAppBack.setBackgroundColor(getColor(R.color.black_alpha));
+            getFilteredList("2");
+        });
+
+        yearSelection.setOnClickListener(v -> {
+            Calendar today = Calendar.getInstance();
+            Date c = Calendar.getInstance().getTime();
+            Date d = Calendar.getInstance().getTime();
+            SimpleDateFormat df = new SimpleDateFormat("yyyy", Locale.ENGLISH);
+
+            if (!selected_year.isEmpty()) {
+                Date date = null;
+                try {
+                    date = df.parse(selected_year);
+                }
+                catch (ParseException e) {
+                    logger.log(Level.WARNING,e.getMessage(),e);
+                }
+                if (date != null) {
+                    d = date;
+                }
+            }
+
+            MonthPickerDialog.Builder appBuilder = new MonthPickerDialog.Builder(AttendanceStatus.this, (selectedMonth, selectedYear) -> {
+                String ms = "Application Year : " + selectedYear;
+                yearText.setText(ms);
+                selected_year = String.valueOf(selectedYear);
+                getAttendStatus();
+
+            },today.get(Calendar.YEAR),today.get(Calendar.MONTH));
+
+            appBuilder.setActivatedYear(Integer.parseInt(df.format(d)))
+                    .setMinYear(Integer.parseInt(df.format(c))-1)
+                    .setMaxYear(Integer.parseInt(df.format(c)))
+                    .showYearOnly()
+                    .setTitle("Selected Year")
+                    .setOnYearChangedListener(year1 -> {
+                    });
+
+            yearDialogAppoint = appBuilder.build();
+            yearDialogAppoint.show();
+        });
+
+        getAttendStatus();
+
+    }
+
+    private void getFilteredList(String daRmApproved) {
+        filterLists = new ArrayList<>();
+        for (int i = 0; i < statusLists.size(); i++) {
+            if (statusLists.get(i).getApproved().equals(daRmApproved)) {
+                String darm_app_code = statusLists.get(i).getApp_code();
+                String darm_approved = statusLists.get(i).getApproved();
+                String darm_date = statusLists.get(i).getReq_date();
+                String darm_req_type = statusLists.get(i).getReq_type();
+                String darm_update_date = statusLists.get(i).getUp_date();
+                String arrival_time = statusLists.get(i).getArr_time();
+                String departure_time = statusLists.get(i).getDep_time();
+                String emp_name = statusLists.get(i).getApprover();
+                filterLists.add(new StatusList(darm_app_code,darm_approved,darm_date,
+                        darm_req_type,darm_update_date,arrival_time,
+                        departure_time,emp_name,null));
+            }
+        }
+
+        statusAdapter = new StatusAdapter(filterLists, AttendanceStatus.this);
+        statusView.setAdapter(statusAdapter);
+
+        if (filterLists.isEmpty()) {
+            statusView.setVisibility(View.GONE);
+            statusNot.setVisibility(View.VISIBLE);
+        } else {
+            statusView.setVisibility(View.VISIBLE);
+            statusNot.setVisibility(View.GONE);
+        }
     }
 
 //    public boolean isConnected() {
@@ -266,13 +439,15 @@ public class AttendanceStatus extends AppCompatActivity {
         connected = false;
 
         statusLists = new ArrayList<>();
+        filterLists = new ArrayList<>();
 
         pending_status_count = "0";
         approved_status_count = "0";
         rej_status_count = "0";
+        all_status_count = "0";
 
-        String url = api_url_front + "attendanceStatus/attStatus/"+emp_id;
-        String stat_url = api_url_front + "attendanceStatus/getAttStatusCount?emp_id="+emp_id;
+        String url = api_url_front + "attendanceStatus/attStatusNew?p_emp_id="+emp_id+"&p_year="+selected_year;
+        String stat_url = api_url_front + "attendanceStatus/getAttStatusCountNew?p_emp_id="+emp_id+"&p_year="+selected_year;
 
         RequestQueue requestQueue = Volley.newRequestQueue(AttendanceStatus.this);
 
@@ -379,6 +554,17 @@ public class AttendanceStatus extends AppCompatActivity {
                     statusNot.setVisibility(View.GONE);
                 }
 
+                allAppCard.setCardElevation(2);
+                allAppBack.setBackgroundColor(getColor(R.color.black_alpha));
+                pendingAppCard.setCardElevation(8);
+                pendingAppBack.setBackgroundColor(getColor(R.color.white));
+                approvedAppCard.setCardElevation(8);
+                approvedAppBack.setBackgroundColor(getColor(R.color.white));
+                rejectedAppCard.setCardElevation(8);
+                rejectedAppBack.setBackgroundColor(getColor(R.color.white));
+
+                all_status_count = String.valueOf(statusLists.size());
+                allStatusCount.setText(all_status_count);
                 pendingStatusCount.setText(pending_status_count);
                 approveStatusCount.setText(approved_status_count);
                 rejectedStatusCount.setText(rej_status_count);

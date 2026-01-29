@@ -161,7 +161,7 @@ public class LeaveStatus extends AppCompatActivity {
             yearSelected = calendar.get(Calendar.YEAR);
             monthSelected = calendar.get(Calendar.MONTH);
             calendar.clear();
-            calendar.set(2000, 0, 1); // Set minimum date to show in dialog
+            calendar.set(Calendar.getInstance().get(Calendar.YEAR) -1, 0, 1); // Set minimum date to show in dialog
             long minDate = calendar.getTimeInMillis(); // Get milliseconds of the modified date
 
             calendar.clear();

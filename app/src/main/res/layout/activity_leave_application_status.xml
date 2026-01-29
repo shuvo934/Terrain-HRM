@@ -94,28 +94,128 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
+            android:id="@+id/year_selected_layout_for_leave_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginBottom="@dimen/_4sdp"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:layout_alignParentEnd="true"
+            android:orientation="horizontal"
+            android:layout_below="@+id/upLayNew_leave_application_status"
+            android:gravity="end"
+            tools:ignore="UseCompoundDrawables">
+
+            <TextView
+                android:id="@+id/year_text_for_leave_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:fontFamily="@font/be_vietnam_pro"
+                android:textSize="@dimen/_10sdp"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:layout_marginStart="@dimen/_4sdp"
+                android:textColor="@color/secondaryColor"
+                android:layout_gravity="center" />
+
+            <ImageView
+                android:id="@+id/arrow_of_year_leave_status"
+                android:layout_width="@dimen/_17sdp"
+                android:layout_height="@dimen/_17sdp"
+                android:src="@drawable/arrow_drop_down_24"
+                app:tint="@color/secondaryColor"
+                android:layout_gravity="center"
+                tools:ignore="ContentDescription" />
+
+        </LinearLayout>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/total_leave_app_card"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_80sdp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/year_selected_layout_for_leave_status"
+            app:cardBackgroundColor="@color/white"
+            app:cardElevation="6dp"
+            app:cardCornerRadius="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginBottom="@dimen/_4sdp"
+            android:layout_marginEnd="@dimen/_8sdp">
+
+            <RelativeLayout
+                android:id="@+id/all_leave_app_card_background"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/all_leave_app_text_ls"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_alignParentTop="true"
+                    android:fontFamily="@font/poppins_bold"
+                    android:text="TOTAL APPLICATIONS"
+                    android:textColor="@color/black"
+                    android:gravity="center"
+                    android:textSize="@dimen/_9sdp"
+                    android:layout_marginTop="@dimen/_15sdp"
+                    android:layout_marginStart="@dimen/_4sdp"
+                    android:layout_marginEnd="@dimen/_4sdp"
+                    android:layout_marginBottom="@dimen/_4sdp"
+                    android:textStyle="bold"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:id="@+id/all_leave_app_request_ls"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@+id/all_leave_app_text_ls"
+                    android:layout_alignParentBottom="true"
+                    android:fontFamily="@font/poppins_bold"
+                    android:text="0"
+                    android:textColor="@color/primaryColor"
+                    android:gravity="center"
+                    android:textSize="@dimen/_13sdp"
+                    android:layout_marginStart="@dimen/_4sdp"
+                    android:layout_marginEnd="@dimen/_4sdp"
+                    android:layout_marginBottom="@dimen/_10sdp"
+                    android:textStyle="bold"
+                    tools:ignore="HardcodedText" />
+
+            </RelativeLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <LinearLayout
             android:id="@+id/leave_status_count_lay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_alignParentStart="true"
-            android:layout_below="@+id/upLayNew_leave_application_status"
+            android:layout_below="@+id/total_leave_app_card"
             android:layout_alignParentEnd="true"
             android:weightSum="3">
 
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/pending_leave_app_card"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/_80sdp"
                 android:layout_weight="1"
                 app:cardBackgroundColor="@color/white"
-                app:cardElevation="@dimen/_2sdp"
+                app:cardElevation="6dp"
                 app:cardCornerRadius="@dimen/_10sdp"
                 android:layout_marginTop="@dimen/_4sdp"
                 android:layout_marginStart="@dimen/_8sdp"
-                android:layout_marginBottom="@dimen/_4sdp"
+                android:layout_marginBottom="@dimen/_6sdp"
                 android:layout_marginEnd="@dimen/_4sdp">
 
                 <RelativeLayout
+                    android:id="@+id/pending_leave_app_card_background"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
@@ -160,18 +260,20 @@
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/approved_leave_app_card"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/_80sdp"
                 android:layout_weight="1"
                 app:cardBackgroundColor="@color/white"
-                app:cardElevation="@dimen/_2sdp"
+                app:cardElevation="6dp"
                 app:cardCornerRadius="@dimen/_10sdp"
                 android:layout_marginTop="@dimen/_4sdp"
                 android:layout_marginStart="@dimen/_4sdp"
-                android:layout_marginBottom="@dimen/_4sdp"
+                android:layout_marginBottom="@dimen/_6sdp"
                 android:layout_marginEnd="@dimen/_4sdp">
 
                 <RelativeLayout
+                    android:id="@+id/approved_leave_app_card_background"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
@@ -216,18 +318,20 @@
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/rejected_leave_app_card"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/_80sdp"
                 android:layout_weight="1"
                 app:cardBackgroundColor="@color/white"
-                app:cardElevation="@dimen/_2sdp"
+                app:cardElevation="6dp"
                 app:cardCornerRadius="@dimen/_10sdp"
                 android:layout_marginTop="@dimen/_4sdp"
                 android:layout_marginStart="@dimen/_4sdp"
-                android:layout_marginBottom="@dimen/_4sdp"
+                android:layout_marginBottom="@dimen/_6sdp"
                 android:layout_marginEnd="@dimen/_8sdp">
 
                 <RelativeLayout
+                    android:id="@+id/rejected_leave_app_card_background"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 

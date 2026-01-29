@@ -7,9 +7,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -29,8 +32,10 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.jakewharton.processphoenix.ProcessPhoenix;
+import com.whiteelephant.monthpicker.MonthPickerDialog;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,12 +48,16 @@ public class LeaveApplicationStatus extends AppCompatActivity {
     LeaveAppStatusAdapter statusAdapter;
     RecyclerView.LayoutManager layoutManager;
     ArrayList<StatusList> leaveAppStatus;
+    ArrayList<StatusList> filterLists;
 
     WaitProgress waitProgress = new WaitProgress();
     private Boolean conn = false;
     private Boolean connected = false;
     
     String emp_id = "";
+
+    TextView allLeaveCount;
+    String all_leave_count = "0";
 
     TextView pendingLeaveCount;
     String pending_leave_count = "0";
@@ -58,6 +67,20 @@ public class LeaveApplicationStatus extends AppCompatActivity {
 
     TextView rejectedLeaveCount;
     String rej_leave_count = "0";
+
+    MaterialCardView allLvCard;
+    RelativeLayout allLvBack;
+    MaterialCardView pendingLvCard;
+    RelativeLayout pendingLvBack;
+    MaterialCardView approvedLvCard;
+    RelativeLayout approvedLvBack;
+    MaterialCardView rejectedLvCard;
+    RelativeLayout rejectedLvBack;
+
+    LinearLayout yearSelection;
+    TextView yearText;
+    String selected_year = "";
+    AlertDialog yearDialogAppoint;
 
     Logger logger = Logger.getLogger(LeaveApplicationStatus.class.getName());
     String parsing_message = "";
@@ -80,20 +103,202 @@ public class LeaveApplicationStatus extends AppCompatActivity {
         }
         statusView = findViewById(R.id.leave_application_status_list_view);
         nostatus = findViewById(R.id.no_status_found_msg_leave);
+        allLeaveCount = findViewById(R.id.all_leave_app_request_ls);
         pendingLeaveCount = findViewById(R.id.pending_leave_ls);
         approveLeaveCount = findViewById(R.id.approved_leave_ls);
         rejectedLeaveCount = findViewById(R.id.rejected_leave_ls);
 
-        leaveAppStatus = new ArrayList<>();
+        allLvCard = findViewById(R.id.total_leave_app_card);
+        allLvBack = findViewById(R.id.all_leave_app_card_background);
+        pendingLvCard = findViewById(R.id.pending_leave_app_card);
+        pendingLvBack = findViewById(R.id.pending_leave_app_card_background);
+        approvedLvCard = findViewById(R.id.approved_leave_app_card);
+        approvedLvBack = findViewById(R.id.approved_leave_app_card_background);
+        rejectedLvCard = findViewById(R.id.rejected_leave_app_card);
+        rejectedLvBack = findViewById(R.id.rejected_leave_app_card_background);
 
-        getLeaveStatus();
+        yearSelection = findViewById(R.id.year_selected_layout_for_leave_status);
+        yearText = findViewById(R.id.year_text_for_leave_status);
+
+        leaveAppStatus = new ArrayList<>();
+        filterLists = new ArrayList<>();
+
+        Date nowDate = Calendar.getInstance().getTime();
+        SimpleDateFormat ydf = new SimpleDateFormat("yyyy", Locale.ENGLISH);
+        selected_year = ydf.format(nowDate);
+
+        String yt = "Application Year : " + selected_year;
+        yearText.setText(yt);
 
         statusView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         statusView.setLayoutManager(layoutManager);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(statusView.getContext(),DividerItemDecoration.VERTICAL);
         statusView.addItemDecoration(dividerItemDecoration);
-        
+
+        allLvCard.setOnClickListener(v -> {
+            allLvCard.setCardElevation(2);
+            allLvBack.setBackgroundColor(getColor(R.color.black_alpha));
+            pendingLvCard.setCardElevation(10);
+            pendingLvBack.setBackgroundColor(getColor(R.color.white));
+            approvedLvCard.setCardElevation(10);
+            approvedLvBack.setBackgroundColor(getColor(R.color.white));
+            rejectedLvCard.setCardElevation(10);
+            rejectedLvBack.setBackgroundColor(getColor(R.color.white));
+
+            statusAdapter = new LeaveAppStatusAdapter(leaveAppStatus, LeaveApplicationStatus.this);
+            statusView.setAdapter(statusAdapter);
+
+            if (leaveAppStatus.isEmpty()) {
+                statusView.setVisibility(View.GONE);
+                nostatus.setVisibility(View.VISIBLE);
+            } else {
+                statusView.setVisibility(View.VISIBLE);
+                nostatus.setVisibility(View.GONE);
+            }
+        });
+
+        pendingLvCard.setOnClickListener(v -> {
+            allLvCard.setCardElevation(10);
+            allLvBack.setBackgroundColor(getColor(R.color.white));
+            pendingLvCard.setCardElevation(2);
+            pendingLvBack.setBackgroundColor(getColor(R.color.black_alpha));
+            approvedLvCard.setCardElevation(10);
+            approvedLvBack.setBackgroundColor(getColor(R.color.white));
+            rejectedLvCard.setCardElevation(10);
+            rejectedLvBack.setBackgroundColor(getColor(R.color.white));
+            getFilteredList("0");
+        });
+
+        approvedLvCard.setOnClickListener(v -> {
+            allLvCard.setCardElevation(10);
+            allLvBack.setBackgroundColor(getColor(R.color.white));
+            pendingLvCard.setCardElevation(10);
+            pendingLvBack.setBackgroundColor(getColor(R.color.white));
+            approvedLvCard.setCardElevation(2);
+            approvedLvBack.setBackgroundColor(getColor(R.color.black_alpha));
+            rejectedLvCard.setCardElevation(10);
+            rejectedLvBack.setBackgroundColor(getColor(R.color.white));
+            getFilteredList("1");
+        });
+
+        rejectedLvCard.setOnClickListener(v -> {
+            allLvCard.setCardElevation(10);
+            allLvBack.setBackgroundColor(getColor(R.color.white));
+            pendingLvCard.setCardElevation(10);
+            pendingLvBack.setBackgroundColor(getColor(R.color.white));
+            approvedLvCard.setCardElevation(10);
+            approvedLvBack.setBackgroundColor(getColor(R.color.white));
+            rejectedLvCard.setCardElevation(2);
+            rejectedLvBack.setBackgroundColor(getColor(R.color.black_alpha));
+            getRejectFilteredList();
+        });
+
+        yearSelection.setOnClickListener(v -> {
+            Calendar today = Calendar.getInstance();
+            Date c = Calendar.getInstance().getTime();
+            Date d = Calendar.getInstance().getTime();
+            SimpleDateFormat df = new SimpleDateFormat("yyyy", Locale.ENGLISH);
+
+            if (!selected_year.isEmpty()) {
+                Date date = null;
+                try {
+                    date = df.parse(selected_year);
+                }
+                catch (ParseException e) {
+                    logger.log(Level.WARNING,e.getMessage(),e);
+                }
+                if (date != null) {
+                    d = date;
+                }
+            }
+
+            MonthPickerDialog.Builder appBuilder = new MonthPickerDialog.Builder(LeaveApplicationStatus.this, (selectedMonth, selectedYear) -> {
+                String ms = "Application Year : " + selectedYear;
+                yearText.setText(ms);
+                selected_year = String.valueOf(selectedYear);
+                getLeaveStatus();
+
+            },today.get(Calendar.YEAR),today.get(Calendar.MONTH));
+
+            appBuilder.setActivatedYear(Integer.parseInt(df.format(d)))
+                    .setMinYear(Integer.parseInt(df.format(c))-1)
+                    .setMaxYear(Integer.parseInt(df.format(c)))
+                    .showYearOnly()
+                    .setTitle("Selected Year")
+                    .setOnYearChangedListener(year1 -> {
+                    });
+
+            yearDialogAppoint = appBuilder.build();
+            yearDialogAppoint.show();
+        });
+
+        getLeaveStatus();
+    }
+
+    private void getFilteredList(String laApproved) {
+        filterLists = new ArrayList<>();
+        for (int i = 0; i < leaveAppStatus.size(); i++) {
+            if (leaveAppStatus.get(i).getApproved().equals(laApproved)) {
+                String la_app_code_new = leaveAppStatus.get(i).getApp_code();
+                String la_approved_new = leaveAppStatus.get(i).getApproved();
+                String la_date_new = leaveAppStatus.get(i).getReq_date();
+                String leave_type_new = leaveAppStatus.get(i).getReq_type();
+                String la_from_date_new = leaveAppStatus.get(i).getUp_date();
+                String la_to_date_new = leaveAppStatus.get(i).getArr_time();
+                String la_leave_days_new = leaveAppStatus.get(i).getDep_time();
+                String emp_name_new = leaveAppStatus.get(i).getApprover();
+                String canceller = leaveAppStatus.get(i).getCanceler();
+
+                filterLists.add(new StatusList(la_app_code_new,la_approved_new,la_date_new,
+                        leave_type_new,la_from_date_new,la_to_date_new,la_leave_days_new,
+                        emp_name_new,canceller));
+            }
+        }
+
+        statusAdapter = new LeaveAppStatusAdapter(filterLists, LeaveApplicationStatus.this);
+        statusView.setAdapter(statusAdapter);
+
+        if (filterLists.isEmpty()) {
+            statusView.setVisibility(View.GONE);
+            nostatus.setVisibility(View.VISIBLE);
+        } else {
+            statusView.setVisibility(View.VISIBLE);
+            nostatus.setVisibility(View.GONE);
+        }
+    }
+
+    private void getRejectFilteredList() {
+        filterLists = new ArrayList<>();
+        for (int i = 0; i < leaveAppStatus.size(); i++) {
+            if (leaveAppStatus.get(i).getApproved().equals("2") || leaveAppStatus.get(i).getApproved().equals("3")) {
+                String la_app_code_new = leaveAppStatus.get(i).getApp_code();
+                String la_approved_new = leaveAppStatus.get(i).getApproved();
+                String la_date_new = leaveAppStatus.get(i).getReq_date();
+                String leave_type_new = leaveAppStatus.get(i).getReq_type();
+                String la_from_date_new = leaveAppStatus.get(i).getUp_date();
+                String la_to_date_new = leaveAppStatus.get(i).getArr_time();
+                String la_leave_days_new = leaveAppStatus.get(i).getDep_time();
+                String emp_name_new = leaveAppStatus.get(i).getApprover();
+                String canceller = leaveAppStatus.get(i).getCanceler();
+
+                filterLists.add(new StatusList(la_app_code_new,la_approved_new,la_date_new,
+                        leave_type_new,la_from_date_new,la_to_date_new,la_leave_days_new,
+                        emp_name_new,canceller));
+
+            }
+        }
+
+        statusAdapter = new LeaveAppStatusAdapter(filterLists, LeaveApplicationStatus.this);
+        statusView.setAdapter(statusAdapter);
+
+        if (filterLists.isEmpty()) {
+            statusView.setVisibility(View.GONE);
+            nostatus.setVisibility(View.VISIBLE);
+        } else {
+            statusView.setVisibility(View.VISIBLE);
+            nostatus.setVisibility(View.GONE);
+        }
     }
 
 //    public boolean isConnected() {
@@ -265,17 +470,15 @@ public class LeaveApplicationStatus extends AppCompatActivity {
         connected = false;
 
         leaveAppStatus = new ArrayList<>();
-
-        Date c = Calendar.getInstance().getTime();
-        SimpleDateFormat yearFrm = new SimpleDateFormat("yyyy", Locale.ENGLISH);
-        String year = yearFrm.format(c);
+        filterLists = new ArrayList<>();
 
         pending_leave_count = "0";
         approved_leave_count = "0";
         rej_leave_count = "0";
+        all_leave_count = "0";
 
-        String url = api_url_front + "leaveRequest/leaveReqStat/"+emp_id;
-        String leaveCountUrl = api_url_front + "dashboard/getLeaveAppStatusCount?emp_id=" + emp_id + "&start_date=01-JAN-" + year + "&end_date=31-DEC-" + year;
+        String url = api_url_front + "leaveRequest/leaveReqStatNew?p_emp_id="+emp_id+"&p_year="+selected_year;
+        String leaveCountUrl = api_url_front + "dashboard/getLeaveAppStatusCount?emp_id=" + emp_id + "&start_date=01-JAN-" + selected_year + "&end_date=31-DEC-" + selected_year;
 
         RequestQueue requestQueue = Volley.newRequestQueue(LeaveApplicationStatus.this);
 
@@ -388,6 +591,17 @@ public class LeaveApplicationStatus extends AppCompatActivity {
                     nostatus.setVisibility(View.GONE);
                 }
 
+                allLvCard.setCardElevation(2);
+                allLvBack.setBackgroundColor(getColor(R.color.black_alpha));
+                pendingLvCard.setCardElevation(8);
+                pendingLvBack.setBackgroundColor(getColor(R.color.white));
+                approvedLvCard.setCardElevation(8);
+                approvedLvBack.setBackgroundColor(getColor(R.color.white));
+                rejectedLvCard.setCardElevation(8);
+                rejectedLvBack.setBackgroundColor(getColor(R.color.white));
+
+                all_leave_count = String.valueOf(leaveAppStatus.size());
+                allLeaveCount.setText(all_leave_count);
                 pendingLeaveCount.setText(pending_leave_count);
                 approveLeaveCount.setText(approved_leave_count);
                 rejectedLeaveCount.setText(rej_leave_count);

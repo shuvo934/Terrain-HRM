@@ -212,6 +212,7 @@ public class AttendanceUpdate extends AppCompatActivity {
     String selected_dept_id = "";
     String selected_divm_id = "";
     String calling_title = "";
+    String calendar_last_date = "";
 
     Logger logger = Logger.getLogger(AttendanceUpdate.class.getName());
     String parsing_message = "";
@@ -751,6 +752,30 @@ public class AttendanceUpdate extends AppCompatActivity {
                         }
 
                     }, mYear, mMonth, mDay);
+                    Calendar firstDateCalendar = Calendar.getInstance();
+                    firstDateCalendar.set(Calendar.YEAR, firstDateCalendar.get(Calendar.YEAR) - 1);
+                    firstDateCalendar.set(Calendar.DAY_OF_MONTH, 1);
+                    firstDateCalendar.set(Calendar.MONTH, 0);
+                    firstDateCalendar.set(Calendar.HOUR_OF_DAY, 0);
+                    firstDateCalendar.set(Calendar.MINUTE, 0);
+                    firstDateCalendar.set(Calendar.SECOND, 0);
+                    firstDateCalendar.set(Calendar.MILLISECOND, 0);
+
+                    if (!calendar_last_date.isEmpty()) {
+                        SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
+                        try {
+                            Date lda = sdf.parse(calendar_last_date);
+                            Calendar lastDateCalendar = Calendar.getInstance();
+                            if (lda != null) {
+                                lastDateCalendar.setTime(lda);
+                                datePickerDialog.getDatePicker().setMaxDate(lastDateCalendar.getTimeInMillis());
+                            }
+                        } catch (ParseException e) {
+                            logger.log(Level.WARNING, e.getMessage(), e);
+                        }
+                    }
+
+                    datePickerDialog.getDatePicker().setMinDate(firstDateCalendar.getTimeInMillis());
                     datePickerDialog.show();
                 }
             }
@@ -1758,6 +1783,7 @@ public class AttendanceUpdate extends AppCompatActivity {
         conn = false;
         connected = false;
 
+        calendar_last_date = "";
         attendanceAllReqList = new ArrayList<>();
         reqList = new ArrayList<>();
 
@@ -1782,6 +1808,7 @@ public class AttendanceUpdate extends AppCompatActivity {
 //        String desigPriorUrl = api_url_front + "forwardReq/getDesigPriority/"+emp_id;
         String attReqTypeUrl = api_url_front + "attendanceUpNewReq/getAttendanceReqType";
         String attTypeUrl = api_url_front + "attendanceUpNewReq/getAttendanceType";
+        String lastDateUrl = api_url_front + "attendanceUpNewReq/getLastCalendarDate";
 
         RequestQueue requestQueue = Volley.newRequestQueue(AttendanceUpdate.this);
 
@@ -2118,7 +2145,36 @@ public class AttendanceUpdate extends AppCompatActivity {
             updateLay();
         });
 
-        requestQueue.add(comOffReq);
+        StringRequest lDReq = new StringRequest(Request.Method.GET, lastDateUrl, response -> {
+            conn = true;
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject info = array.getJSONObject(i);
+                        calendar_last_date = info.getString("l_date").equals("null") ? "" :  info.getString("l_date");
+                    }
+                }
+                requestQueue.add(comOffReq);
+            }
+            catch (JSONException e) {
+                logger.log(Level.WARNING, e.getMessage(), e);
+                parsing_message = e.getLocalizedMessage();
+                connected = false;
+                updateLay();
+            }
+        }, error -> {
+            logger.log(Level.WARNING, error.getMessage(), error);
+            parsing_message = error.getLocalizedMessage();
+            conn = false;
+            connected = false;
+            updateLay();
+        });
+
+        requestQueue.add(lDReq);
     }
 
 //    public void getForwarderApproverList() {

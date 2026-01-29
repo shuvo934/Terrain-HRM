@@ -566,6 +566,24 @@ public class LeaveApplication extends AppCompatActivity {
                     }
 
                 }, mYear, mMonth, mDay);
+                Calendar firstDateCalendar = Calendar.getInstance();
+                firstDateCalendar.set(Calendar.DAY_OF_MONTH, 1);
+                firstDateCalendar.set(Calendar.MONTH, 0);
+                firstDateCalendar.set(Calendar.HOUR_OF_DAY, 0);
+                firstDateCalendar.set(Calendar.MINUTE, 0);
+                firstDateCalendar.set(Calendar.SECOND, 0);
+                firstDateCalendar.set(Calendar.MILLISECOND, 0);
+
+                Calendar lastDateCalendar = Calendar.getInstance();
+                lastDateCalendar.set(Calendar.DAY_OF_MONTH, 31);
+                lastDateCalendar.set(Calendar.MONTH, 11);
+                lastDateCalendar.set(Calendar.HOUR_OF_DAY, 0);
+                lastDateCalendar.set(Calendar.MINUTE, 0);
+                lastDateCalendar.set(Calendar.SECOND, 0);
+                lastDateCalendar.set(Calendar.MILLISECOND, 0);
+
+                datePickerDialog.getDatePicker().setMinDate(firstDateCalendar.getTimeInMillis());
+                datePickerDialog.getDatePicker().setMaxDate(lastDateCalendar.getTimeInMillis());
                 datePickerDialog.show();
             }
         });
@@ -805,6 +823,24 @@ public class LeaveApplication extends AppCompatActivity {
                     }
 
                 }, mYear, mMonth, mDay);
+                Calendar firstDateCalendar = Calendar.getInstance();
+                firstDateCalendar.set(Calendar.DAY_OF_MONTH, 1);
+                firstDateCalendar.set(Calendar.MONTH, 0);
+                firstDateCalendar.set(Calendar.HOUR_OF_DAY, 0);
+                firstDateCalendar.set(Calendar.MINUTE, 0);
+                firstDateCalendar.set(Calendar.SECOND, 0);
+                firstDateCalendar.set(Calendar.MILLISECOND, 0);
+
+                Calendar lastDateCalendar = Calendar.getInstance();
+                lastDateCalendar.set(Calendar.DAY_OF_MONTH, 31);
+                lastDateCalendar.set(Calendar.MONTH, 11);
+                lastDateCalendar.set(Calendar.HOUR_OF_DAY, 0);
+                lastDateCalendar.set(Calendar.MINUTE, 0);
+                lastDateCalendar.set(Calendar.SECOND, 0);
+                lastDateCalendar.set(Calendar.MILLISECOND, 0);
+
+                datePickerDialog.getDatePicker().setMinDate(firstDateCalendar.getTimeInMillis());
+                datePickerDialog.getDatePicker().setMaxDate(lastDateCalendar.getTimeInMillis());
                 datePickerDialog.show();
             }
         });

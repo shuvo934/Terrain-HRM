@@ -432,6 +432,17 @@ public class PaySlip extends AppCompatActivity {
 
         });
 
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.MONTH ,-1);
+        c.set(Calendar.DAY_OF_MONTH, 1);
+        SimpleDateFormat sss = new SimpleDateFormat("dd-MMM-yy", Locale.ENGLISH);
+        SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM-yyyy", Locale.ENGLISH);
+        select_month_id = sss.format(c.getTime()).toUpperCase();
+        selectMonth.setText(monthFormat.format(c.getTime()).toUpperCase());
+        selectMonthLay.setHint("Month");
+
+        getPaySlipData();
+
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {

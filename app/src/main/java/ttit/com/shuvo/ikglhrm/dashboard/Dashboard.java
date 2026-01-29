@@ -4693,15 +4693,33 @@ public class Dashboard extends AppCompatActivity {
 
     @SuppressLint("MissingPermission")
     public void getNotification(String title, String msg) {
-        waitProgress.dismiss();
-        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(Dashboard.this);
-        alertDialogBuilder.setTitle(title)
-                .setIcon(R.drawable.hrm_new_round_icon_custom)
-                .setMessage(msg)
-                .setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
+        if (isFinishing() || isDestroyed()) return;
 
-        AlertDialog alert = alertDialogBuilder.create();
-        alert.show();
+        // ✅ Safe dismiss of your progress dialog (DialogFragment style)
+        try {
+            if (waitProgress != null) {
+                // If waitProgress is a DialogFragment
+                if (waitProgress.isAdded()) {
+                    if (!getSupportFragmentManager().isStateSaved()) {
+                        waitProgress.dismiss();
+                    } else {
+                        waitProgress.dismissAllowingStateLoss();
+                    }
+                }
+            }
+        } catch (Exception ignored) { }
+
+
+        runOnUiThread(() -> {
+            MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(Dashboard.this);
+            alertDialogBuilder.setTitle(title)
+                    .setIcon(R.drawable.hrm_new_round_icon_custom)
+                    .setMessage(msg)
+                    .setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
+
+            AlertDialog alert = alertDialogBuilder.create();
+            alert.show();
+        });
 //        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, getString(R.string.att_channel_id))
 //                .setSmallIcon(R.drawable.hrm_new_icon_wb)
 //                .setContentTitle(title)
