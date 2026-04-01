@@ -223,6 +223,7 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
         cont.setOnClickListener(v -> {
 
             forward_comm = Objects.requireNonNull(comm.getText()).toString();
+            forward_comm = forward_comm.trim().replace("\n", " ").replace("\r", " ");
             System.out.println(forwardFromAtt);
             System.out.println(forwardFromLeave);
 
@@ -300,7 +301,7 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
     public void onCategoryClicked(int CategoryPosition) {
         lisLay.setVisibility(View.GONE);
         String name = forwardEMPLists.get(CategoryPosition).getEmpName();
-        forward_to_id = forwardEMPLists.get(0).getEmpID();
+        forward_to_id = forwardEMPLists.get(CategoryPosition).getEmpID();
         employeeName.setText(name);
         employeeName.setTextColor(Color.BLACK);
         employeeNameLayout.setHint("Employee Name");

@@ -897,6 +897,8 @@ public class LeaveApplication extends AppCompatActivity {
             selected_leave_address = Objects.requireNonNull(leaveAddress.getText()).toString();
             selected_total_leave_days = Objects.requireNonNull(totalDays.getText()).toString();
 
+            selected_leave_address = selected_leave_address.trim().replace("\n", " ").replace("\r", " ");
+
             selected_reason = Objects.requireNonNull(reason.getText()).toString();
             if (selected_reason.equals("Select")) {
                 selected_reason = "";
@@ -914,6 +916,7 @@ public class LeaveApplication extends AppCompatActivity {
                                 errorReason.setVisibility(View.GONE);
                                 if (selected_reason.equals("Others")) {
                                     selected_reason = Objects.requireNonNull(otherReason.getText()).toString();
+                                    selected_reason = selected_reason.trim().replace("\n", " ").replace("\r", " ");
                                     if (!selected_reason.isEmpty()) {
                                         errorReason.setVisibility(View.GONE);
                                         if (!selected_worker.isEmpty() && !selected_worker_id.isEmpty()) {

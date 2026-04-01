@@ -962,6 +962,8 @@ public class AttendanceUpdate extends AppCompatActivity {
 //                if (selected_address_station.isEmpty()) {
 //                    selected_address_station = null;
 //                }
+            selected_reason_desc = selected_reason_desc.trim().replace("\n", " ").replace("\r", " ");
+            selected_address_station = selected_address_station.trim().replace("\n", " ").replace("\r", " ");
 
             if (!selected_update_date.isEmpty()) {
 

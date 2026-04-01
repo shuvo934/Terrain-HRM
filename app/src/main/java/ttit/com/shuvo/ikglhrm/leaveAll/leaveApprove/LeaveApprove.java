@@ -236,12 +236,14 @@ public class LeaveApprove extends AppCompatActivity {
                                         dialog1.dismiss();
                                         sl_check = "1";
                                         textLA = Objects.requireNonNull(comments.getText()).toString();
+                                        textLA = textLA.trim().replace("\n", " ").replace("\r", " ");
                                         leaveApproveProcess();
                                     })
                                     .setNegativeButton("NO", (dialog12, which12) -> {
                                         dialog12.dismiss();
                                         sl_check = "0";
                                         textLA = Objects.requireNonNull(comments.getText()).toString();
+                                        textLA = textLA.trim().replace("\n", " ").replace("\r", " ");
                                         leaveApproveProcess();
                                     });
                             AlertDialog alert = builder1.create();
@@ -256,6 +258,7 @@ public class LeaveApprove extends AppCompatActivity {
                         else {
                             dialog.dismiss();
                             textLA = Objects.requireNonNull(comments.getText()).toString();
+                            textLA = textLA.trim().replace("\n", " ").replace("\r", " ");
                             leaveApproveProcess();
                         }
 
@@ -281,9 +284,10 @@ public class LeaveApprove extends AppCompatActivity {
 //                new ApproveCheck().execute();
 
             textLA = Objects.requireNonNull(comments.getText()).toString();
+            textLA = textLA.trim().replace("\n", " ").replace("\r", " ");
 
             if (textLA.isEmpty()) {
-                Toast.makeText(getApplicationContext(), "Please mention reason", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Please mention reason in comments", Toast.LENGTH_SHORT).show();
             } else {
 
                 MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(LeaveApprove.this);

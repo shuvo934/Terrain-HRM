@@ -247,6 +247,7 @@ public class AttendanceApprove extends AppCompatActivity {
 
 
                         text = Objects.requireNonNull(comments.getText()).toString();
+                        text = text.trim().replace("\n", " ").replace("\r", " ");
 //                                new ApproveCheck().execute();
                         approveAttReq();
                     })
@@ -272,6 +273,7 @@ public class AttendanceApprove extends AppCompatActivity {
 
 
                         text = Objects.requireNonNull(comments.getText()).toString();
+                        text = text.trim().replace("\n", " ").replace("\r", " ");
 //                                new RejectCheck().execute();
                         rejectAttReq();
                     })

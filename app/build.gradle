@@ -9,8 +9,8 @@ android {
         applicationId "ttit.com.shuvo.ikglhrm"
         minSdkVersion 23
         targetSdkVersion 35
-        versionCode 13
-        versionName "1.2.6"
+        versionCode 14
+        versionName "1.2.6.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
