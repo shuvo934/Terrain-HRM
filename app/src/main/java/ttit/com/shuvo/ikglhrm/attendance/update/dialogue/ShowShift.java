@@ -1,7 +1,6 @@
 package ttit.com.shuvo.ikglhrm.attendance.update.dialogue;
 
 import android.app.Dialog;
-import android.content.Context;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -22,9 +21,6 @@ import java.util.logging.Logger;
 
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
-
-import static ttit.com.shuvo.ikglhrm.attendance.update.AttendanceUpdate.shift_osm_id;
-import static ttit.com.shuvo.ikglhrm.attendance.update.AttendanceUpdate.showShiftNumber;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import com.android.volley.Request;
@@ -52,19 +48,23 @@ public class ShowShift extends AppCompatDialogFragment {
 //    private Connection connection;
     AppCompatActivity activity;
 
-    public static ArrayList<ShowShiftList> showShiftLists;
+    ArrayList<ShowShiftList> showShiftLists;
 
     String osm_id = "";
 //    int reliever = 0;
     AlertDialog showShiftdialog;
 
-    Context mContext;
-
     Logger logger = Logger.getLogger(ShowShift.class.getName());
     String parsing_message = "";
 
-    public ShowShift(Context mContext) {
-        this.mContext = mContext;
+    public ShowShift() {}
+
+    public static ShowShift newInstance(String shiftId) {
+        ShowShift dialog = new ShowShift();
+        Bundle bundle = new Bundle();
+        bundle.putString("SHIFT", shiftId);
+        dialog.setArguments(bundle);
+        return dialog;
     }
 
     @NonNull
@@ -80,22 +80,13 @@ public class ShowShift extends AppCompatDialogFragment {
 
         showShiftLists = new ArrayList<>();
 
-        if (showShiftNumber == 1) {
-            osm_id = shift_osm_id;
+        if (getArguments() != null) {
+            osm_id = getArguments().getString("SHIFT", "");
         }
-//        else if (AttendanceReqUpdate.showShiftNumberUpdate == 2) {
-//            osm_id = AttendanceReqUpdate.shift_osm_id_update;
-//        }
 
-//        new Check().execute();
-        getShiftDetails();
         apptRecyclerView = view.findViewById(R.id.all_shift_time_view);
-        apptRecyclerView.setHasFixedSize(true);
         apptLayout = new LinearLayoutManager(getContext());
         apptRecyclerView.setLayoutManager(apptLayout);
-
-
-
 
         builder.setView(view);
 
@@ -104,12 +95,9 @@ public class ShowShift extends AppCompatDialogFragment {
         showShiftdialog.setCancelable(false);
         showShiftdialog.setCanceledOnTouchOutside(false);
 
-        showShiftdialog.setButton(Dialog.BUTTON_NEGATIVE, "OK", (dialog, which) -> {
+        showShiftdialog.setButton(Dialog.BUTTON_NEGATIVE, "OK", (dialog, which) -> dialog.dismiss());
 
-            showShiftNumber = 0;
-//                AttendanceReqUpdate.showShiftNumberUpdate = 0;
-            dialog.dismiss();
-        });
+        getShiftDetails();
 
         return showShiftdialog;
     }
@@ -289,7 +277,7 @@ public class ShowShift extends AppCompatDialogFragment {
 
         String url = api_url_front + "attendanceUpdateReq/getShiftDetails/"+osm_id;
 
-        RequestQueue requestQueue = Volley.newRequestQueue(mContext);
+        RequestQueue requestQueue = Volley.newRequestQueue(requireContext());
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url , response -> {
             conn = true;
@@ -356,7 +344,7 @@ public class ShowShift extends AppCompatDialogFragment {
         else {
             parsing_message = "Server problem or Internet not connected";
         }
-        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(mContext);
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(requireContext());
         alertDialogBuilder.setTitle("System Warning!")
                 .setIcon(R.drawable.hrm_new_round_icon_custom)
                 .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
@@ -382,10 +370,10 @@ public class ShowShift extends AppCompatDialogFragment {
 
     public void restart(String msg) {
         try {
-            ProcessPhoenix.triggerRebirth(mContext);
+            ProcessPhoenix.triggerRebirth(requireContext());
         }
         catch (Exception e) {
-            Toast.makeText(mContext,msg,Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(),msg,Toast.LENGTH_SHORT).show();
             System.exit(0);
         }
     }

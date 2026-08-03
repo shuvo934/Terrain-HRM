@@ -42,8 +42,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.IKGLHRM"
-        android:usesCleartextTraffic="true"
-        tools:targetApi="n">
+        android:usesCleartextTraffic="true">
+        <property
+            android:name="android.window.PROPERTY_COMPAT_ALLOW_RESTRICTED_RESIZABILITY"
+            android:value="true" />
         <activity
             android:name=".EmployeeInfo.chng_pass.UpdatePassword"
             android:exported="false"
@@ -207,6 +209,7 @@
         <activity
             android:name=".user_login.Login"
             android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"
             tools:ignore="DiscouragedApi,LockedOrientationActivity" />
         <activity
             android:name=".MainActivity"

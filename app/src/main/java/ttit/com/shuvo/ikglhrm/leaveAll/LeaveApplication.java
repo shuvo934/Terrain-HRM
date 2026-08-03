@@ -4,6 +4,7 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 
 import android.app.DatePickerDialog;
 import android.content.res.ColorStateList;
@@ -44,48 +45,53 @@ import java.util.logging.Logger;
 
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
-import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.DialogueText;
 import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.SelectAll;
 import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.SelectAllList;
 import ttit.com.shuvo.ikglhrm.leaveAll.leaveApplication.LeaveTypeList;
-import ttit.com.shuvo.ikglhrm.leaveAll.leaveApplication.SelectLeaveType;
+import ttit.com.shuvo.ikglhrm.leaveAll.leaveApplication.SelectLeaveInfo;
 import ttit.com.shuvo.ikglhrm.leaveAll.leaveApplication.ShowLeaveBalance;
+import ttit.com.shuvo.ikglhrm.utilities.DialogueText;
+import ttit.com.shuvo.ikglhrm.utilities.LeaveInfoListener;
+import ttit.com.shuvo.ikglhrm.utilities.SelectAllListener;
+import ttit.com.shuvo.ikglhrm.utilities.TextSubmitListener;
 
 import static ttit.com.shuvo.ikglhrm.user_login.Login.userDesignations;
 import static ttit.com.shuvo.ikglhrm.user_login.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.LVE_BACKUP_SELECT_TYPE;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.LVE_REASON_SELECT_INFO;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.LVE_TYPE_SELECT_INFO;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.REQ_LEAVE_ADDRESS;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.REQ_OTHER_REASON;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class LeaveApplication extends AppCompatActivity {
+public class LeaveApplication extends AppCompatActivity implements TextSubmitListener, SelectAllListener, LeaveInfoListener {
 
-    public static int showD = 0;
-    public static Boolean isOtherReason = false;
-    public static int leaveNumber = 0;
-    public static int dialogText_leave = 0;
+    boolean isOtherReason = false;
 
-    public static String hint = "";
-    public static String text = "";
+    String hint = "";
+    String text = "";
 
-    public static TextInputLayout leaveTypeLay;
+    TextInputLayout leaveTypeLay;
     TextInputLayout dateOnLay;
     TextInputLayout dateToLay;
-    public static TextInputLayout otherReasonInputLay;
-    public static TextInputLayout leaveAddressLay;
+    TextInputLayout otherReasonInputLay;
+    TextInputLayout leaveAddressLay;
 
     TextInputEditText name;
     TextInputEditText idEmployee;
     TextInputEditText todayDate;
-    public static TextInputEditText leaveType;
+    TextInputEditText leaveType;
     TextInputEditText dateOn;
     TextInputEditText dateTo;
     TextInputEditText totalDays;
-    public static TextInputEditText reason;
-    public static TextInputEditText otherReason;
-    public static TextInputEditText leaveAddress;
-    public static TextInputEditText workBackup;
+    TextInputEditText reason;
+    TextInputEditText otherReason;
+    TextInputEditText leaveAddress;
+    TextInputEditText workBackup;
 
     Spinner leaveApp;
     Spinner leaveDuration;
@@ -99,15 +105,15 @@ public class LeaveApplication extends AppCompatActivity {
     public ArrayAdapter<String> leaveAppAdapter;
     public ArrayAdapter<String> leaveDurationAdapter;
 
-    LinearLayout afterselecting;
-    public static LinearLayout otherReasonLay;
+    LinearLayout afterSelecting;
+    LinearLayout otherReasonLay;
 
     MaterialButton leaveBalance;
     Button apply;
 
     TextView errorLeaveDuration;
-    public static TextView errorReason;
-    public static TextView errorBackup;
+    TextView errorReason;
+    TextView errorBackup;
 
     WaitProgress waitProgress = new WaitProgress();
     private Boolean conn = false;
@@ -124,15 +130,15 @@ public class LeaveApplication extends AppCompatActivity {
     String div_id = "";
     String formattedDate = "";
 
-    public static String selected_leave_type_name = "";
-    public static String selected_leave_type_id = "";
+    String selected_leave_type_name = "";
+    String selected_leave_type_id = "";
     String selected_application_type = "";
     String selected_leave_duration = "";
     String selected_leave_duration_id = "";
-    public static String selected_reason = "";
+    String selected_reason = "";
     String selected_leave_address = "";
-    public static String selected_worker = "";
-    public static String selected_worker_id = "";
+    String selected_worker = "";
+    String selected_worker_id = "";
 //    String la_id = "";
     String date_of_today = "";
 //    String app_code = "";
@@ -146,11 +152,9 @@ public class LeaveApplication extends AppCompatActivity {
     String selected_total_leave_days = "";
     String leaveAppCheck = "";
 
-    public static ArrayList<LeaveTypeList> leaveTypeLists;
-    public static ArrayList<LeaveTypeList> allreasonLists;
-    public static ArrayList<LeaveTypeList> selectingIndivdual;
-    public static ArrayList<SelectAllList> allWorkBackup;
-    public static ArrayList<SelectAllList> workBackupList;
+    ArrayList<LeaveTypeList> leaveTypeLists;
+    ArrayList<LeaveTypeList> allreasonLists;
+    ArrayList<SelectAllList> workBackupList;
 
     Logger logger = Logger.getLogger(LeaveApplication.class.getName());
     String parsing_message = "";
@@ -181,7 +185,7 @@ public class LeaveApplication extends AppCompatActivity {
         leaveApp = findViewById(R.id.spinner_leave_application_type);
         leaveDuration = findViewById(R.id.spinner_leave_duration);
 
-        afterselecting = findViewById(R.id.afterselecting_leave_app);
+        afterSelecting = findViewById(R.id.afterselecting_leave_app);
         otherReasonLay = findViewById(R.id.other_reason_description_Layout_layout);
 
         leaveBalance = findViewById(R.id.show_leave_balance);
@@ -199,7 +203,6 @@ public class LeaveApplication extends AppCompatActivity {
 
         leaveTypeLists = new ArrayList<>();
         allreasonLists = new ArrayList<>();
-        selectingIndivdual = new ArrayList<>();
         workBackupList = new ArrayList<>();
 
         if (userInfoLists == null) {
@@ -271,7 +274,7 @@ public class LeaveApplication extends AppCompatActivity {
                     // Notify the selected item text
                     System.out.println(selected_application_type);
                     if (!selected_application_type.isEmpty()) {
-                        afterselecting.setVisibility(View.VISIBLE);
+                        afterSelecting.setVisibility(View.VISIBLE);
                         apply.setVisibility(View.VISIBLE);
                     }
 
@@ -852,41 +855,58 @@ public class LeaveApplication extends AppCompatActivity {
         });
 
         leaveType.setOnClickListener(v -> {
-            showD = 1;
-            selectingIndivdual = leaveTypeLists;
-            SelectLeaveType selectLeaveType = new SelectLeaveType();
-            selectLeaveType.show(getSupportFragmentManager(),"LeaveType");
+            SelectLeaveInfo selectLeaveInfo = SelectLeaveInfo.newInstance(LVE_TYPE_SELECT_INFO, leaveTypeLists);
+            try {
+                showDialogSafely(selectLeaveInfo,"LeaveType");
+            }
+            catch (Exception e) {
+                restart("App is paused for a long time. Please Start the app again.");
+            }
         });
 
         reason.setOnClickListener(v -> {
-            showD = 2;
-            selectingIndivdual = allreasonLists;
-            SelectLeaveType selectLeaveType = new SelectLeaveType();
-            selectLeaveType.show(getSupportFragmentManager(),"LeaveReason");
+            SelectLeaveInfo selectLeaveInfo = SelectLeaveInfo.newInstance(LVE_REASON_SELECT_INFO, allreasonLists);
+            try {
+                showDialogSafely(selectLeaveInfo,"LeaveReason");
+            }
+            catch (Exception e) {
+                restart("App is paused for a long time. Please Start the app again.");
+            }
         });
 
         otherReason.setOnClickListener(v -> {
-            leaveNumber = 1;
             hint = Objects.requireNonNull(otherReasonInputLay.getHint()).toString();
             text = Objects.requireNonNull(otherReason.getText()).toString();
-            DialogueText dialogueText = new DialogueText();
-            dialogueText.show(getSupportFragmentManager(),"TEXTEDIT");
+            DialogueText dialogueText = DialogueText.newInstance(REQ_OTHER_REASON, hint,text);
+            try {
+                showDialogSafely(dialogueText,"TEXTEDIT_O_RSN");
+            }
+            catch (Exception e) {
+                restart("App is paused for a long time. Please Start the app again.");
+            }
 
         });
 
         leaveAddress.setOnClickListener(v -> {
-            leaveNumber = 2;
             hint = Objects.requireNonNull(leaveAddressLay.getHint()).toString();
             text = Objects.requireNonNull(leaveAddress.getText()).toString();
-            DialogueText dialogueText = new DialogueText();
-            dialogueText.show(getSupportFragmentManager(),"TEXTEDIT");
+            DialogueText dialogueText = DialogueText.newInstance(REQ_LEAVE_ADDRESS, hint,text);
+            try {
+                showDialogSafely(dialogueText,"TEXTEDIT_L_ADDS");
+            }
+            catch (Exception e) {
+                restart("App is paused for a long time. Please Start the app again.");
+            }
         });
 
         workBackup.setOnClickListener(v -> {
-            dialogText_leave = 1;
-            allWorkBackup = workBackupList;
-            SelectAll selectAll = new SelectAll();
-            selectAll.show(getSupportFragmentManager(),"TEXTEDIT");
+            SelectAll selectAll = SelectAll.newInstance(LVE_BACKUP_SELECT_TYPE, workBackupList);
+            try {
+                showDialogSafely(selectAll,"TEXTEDIT_L_BCK");
+            }
+            catch (Exception e) {
+                restart("App is paused for a long time. Please Start the app again.");
+            }
         });
 
 
@@ -1001,10 +1021,7 @@ public class LeaveApplication extends AppCompatActivity {
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                showD = 0;
                 isOtherReason = false;
-                leaveNumber = 0;
-                dialogText_leave = 0;
 
                 hint = "";
                 text = "";
@@ -1346,7 +1363,6 @@ public class LeaveApplication extends AppCompatActivity {
 
         leaveTypeLists = new ArrayList<>();
         allreasonLists = new ArrayList<>();
-        selectingIndivdual = new ArrayList<>();
         workBackupList = new ArrayList<>();
         leaveDurationAllLists = new ArrayList<>();
         leaveDurList = new ArrayList<>();
@@ -1990,10 +2006,7 @@ public class LeaveApplication extends AppCompatActivity {
         if (insertConnn) {
             if (insertCon) {
                 if (insertedCon) {
-                    showD = 0;
                     isOtherReason = false;
-                    leaveNumber = 0;
-                    dialogText_leave = 0;
 
                     hint = "";
                     text = "";
@@ -2092,6 +2105,81 @@ public class LeaveApplication extends AppCompatActivity {
         catch (Exception e) {
             Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
             System.exit(0);
+        }
+    }
+
+    @Override
+    public void onTextSubmitted(int reqCode, String text) {
+        if (reqCode == REQ_OTHER_REASON) {
+            otherReason.setText(text);
+            if (text.isEmpty()) {
+                otherReasonInputLay.setHint("Write Your Other Reason:");
+            } else {
+                otherReasonInputLay.setHint("Other Reason:");
+            }
+            errorReason.setVisibility(View.GONE);
+        }
+        else if (reqCode == REQ_LEAVE_ADDRESS) {
+            if (text.isEmpty()) {
+                leaveAddressLay.setHint("Write Address During Leave:");
+            } else {
+                leaveAddressLay.setHint("Address During Leave:");
+            }
+            leaveAddress.setText(text);
+        }
+    }
+
+    @Override
+    public void onItemSelected(String type, String itemName, String itemId) {
+        if (type.equals(LVE_BACKUP_SELECT_TYPE)) {
+            workBackup.setText(itemName);
+            workBackup.setTextColor(Color.BLACK);
+            errorBackup.setVisibility(View.GONE);
+            selected_worker = itemName;
+            selected_worker_id = itemId;
+        }
+    }
+
+    @Override
+    public void onLeaveInfoSelected(String type, String infoName, String infoId) {
+        if (type.equals(LVE_TYPE_SELECT_INFO)) {
+            leaveType.setText(infoName);
+            leaveType.setTextColor(Color.BLACK);
+
+            selected_leave_type_id = infoId;
+            selected_leave_type_name = infoName;
+            leaveTypeLay.setHelperText("");
+        }
+        else if (type.equals(LVE_REASON_SELECT_INFO)) {
+            reason.setText(infoName);
+            reason.setTextColor(Color.BLACK);
+
+            selected_reason = infoName;
+            if (selected_reason.equals("Others")) {
+                isOtherReason = true;
+                otherReasonLay.setVisibility(View.VISIBLE);
+            } else {
+                isOtherReason = false;
+                otherReasonLay.setVisibility(View.GONE);
+            }
+            errorReason.setVisibility(View.GONE);
+        }
+    }
+
+    // safe dialog open
+    private boolean canShowDialog(String tag) {
+        if (isFinishing()) return false;
+        if (isDestroyed()) return false;
+
+        FragmentManager fm = getSupportFragmentManager();
+        if (fm.isStateSaved()) return false;
+
+        return fm.findFragmentByTag(tag) == null;
+    }
+
+    private void showDialogSafely(androidx.fragment.app.DialogFragment dialog, String tag) {
+        if (canShowDialog(tag)) {
+            dialog.show(getSupportFragmentManager(), tag);
         }
     }
 }

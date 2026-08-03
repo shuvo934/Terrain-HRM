@@ -1,12 +1,16 @@
 package ttit.com.shuvo.ikglhrm.leaveAll.leaveApplication;
 
 import android.app.Dialog;
-import android.graphics.Color;
+import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -22,19 +26,11 @@ import com.google.android.material.textfield.TextInputEditText;
 import java.util.ArrayList;
 
 import ttit.com.shuvo.ikglhrm.R;
-import static ttit.com.shuvo.ikglhrm.leaveAll.LeaveApplication.errorReason;
-import static ttit.com.shuvo.ikglhrm.leaveAll.LeaveApplication.isOtherReason;
-import static ttit.com.shuvo.ikglhrm.leaveAll.LeaveApplication.leaveType;
-import static ttit.com.shuvo.ikglhrm.leaveAll.LeaveApplication.leaveTypeLay;
-import static ttit.com.shuvo.ikglhrm.leaveAll.LeaveApplication.otherReasonLay;
-import static ttit.com.shuvo.ikglhrm.leaveAll.LeaveApplication.reason;
-import static ttit.com.shuvo.ikglhrm.leaveAll.LeaveApplication.selected_leave_type_id;
-import static ttit.com.shuvo.ikglhrm.leaveAll.LeaveApplication.selected_leave_type_name;
-import static ttit.com.shuvo.ikglhrm.leaveAll.LeaveApplication.selected_reason;
-import static ttit.com.shuvo.ikglhrm.leaveAll.LeaveApplication.selectingIndivdual;
-import static ttit.com.shuvo.ikglhrm.leaveAll.LeaveApplication.showD;
+import ttit.com.shuvo.ikglhrm.utilities.LeaveInfoListener;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.LVE_REASON_SELECT_INFO;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.LVE_TYPE_SELECT_INFO;
 
-public class SelectLeaveType extends AppCompatDialogFragment implements LeaveTypeAdapter.ClickedItem {
+public class SelectLeaveInfo extends AppCompatDialogFragment implements LeaveTypeAdapter.ClickedItem {
 
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
@@ -47,12 +43,30 @@ public class SelectLeaveType extends AppCompatDialogFragment implements LeaveTyp
     Boolean isfiltered = false;
     ArrayList<LeaveTypeList> filteredList = new ArrayList<>();
     private ArrayList<LeaveTypeList> lists = new ArrayList<>();
+    String leaveInfoType = "";
 
+    public SelectLeaveInfo() {}
+
+    public static SelectLeaveInfo newInstance(String type, ArrayList<LeaveTypeList> leaveTypeLists) {
+        SelectLeaveInfo dial = new SelectLeaveInfo();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("leaveTypeLists", leaveTypeLists);
+        bundle.putString("type", type);
+        dial.setArguments(bundle);
+        return dial;
+    }
+
+    private LeaveInfoListener listener;
+
+    @SuppressWarnings("unchecked")
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
+
+        if (getActivity() instanceof LeaveInfoListener)
+            listener = (LeaveInfoListener) getActivity();
 
         View view = inflater.inflate(R.layout.leave_type_list, null);
 
@@ -62,6 +76,15 @@ public class SelectLeaveType extends AppCompatDialogFragment implements LeaveTyp
 
         search = view.findViewById(R.id.leave_type_search);
 
+        lists = new ArrayList<>();
+
+        if (getArguments() != null) {
+            lists = (ArrayList<LeaveTypeList>) getArguments().getSerializable("leaveTypeLists");
+            leaveInfoType = getArguments().getString("type", "");
+        }
+
+        if (lists == null) lists = new ArrayList<>();
+
         builder.setView(view);
 
         dialog = builder.create();
@@ -70,18 +93,14 @@ public class SelectLeaveType extends AppCompatDialogFragment implements LeaveTyp
         dialog.setCanceledOnTouchOutside(false);
         setCancelable(false);
 
-        lists = new ArrayList<>();
-
-        if (showD == 1) {
+        if (leaveInfoType.equals(LVE_TYPE_SELECT_INFO)) {
             String ft = "Leave Type";
             ftext.setText(ft);
-        } else if (showD == 2) {
+        } else if (leaveInfoType.equals(LVE_REASON_SELECT_INFO)) {
             String ft = "Leave Reason";
             ftext.setText(ft);
         }
-        lists = selectingIndivdual;
 
-        recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),DividerItemDecoration.VERTICAL);
@@ -89,11 +108,7 @@ public class SelectLeaveType extends AppCompatDialogFragment implements LeaveTyp
         selectAllAdapter = new LeaveTypeAdapter(lists, getContext(),this);
         recyclerView.setAdapter(selectAllAdapter);
 
-        dialog.setButton(Dialog.BUTTON_NEGATIVE, "CANCEL", (dialog, which) -> {
-
-            showD = 0;
-            dialog.dismiss();
-        });
+        dialog.setButton(Dialog.BUTTON_NEGATIVE, "CANCEL", (dialog, which) -> dialog.dismiss());
 
         search.addTextChangedListener(new TextWatcher() {
             @Override
@@ -108,14 +123,28 @@ public class SelectLeaveType extends AppCompatDialogFragment implements LeaveTyp
 
             @Override
             public void afterTextChanged(Editable s) {
-
                 filter(s.toString());
             }
         });
 
+        search.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH ||
+                    actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT || event != null && event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER &&
+                    event.getKeyCode() == KeyEvent.KEYCODE_NAVIGATE_NEXT) {
+                if (event == null || !event.isShiftPressed()) {
+                    // the user is done typing.
+                    Log.i("Let see", "Come here");
+                    search.clearFocus();
+                    InputMethodManager mgr = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    mgr.hideSoftInputFromWindow(v.getWindowToken(), 0);
+
+                    return false; // consume.
+                }
+            }
+            return false;
+        });
+
         return dialog;
-
-
     }
 
     private void filter(String text) {
@@ -145,29 +174,9 @@ public class SelectLeaveType extends AppCompatDialogFragment implements LeaveTyp
         System.out.println(name);
         System.out.println(id);
 
-        if (showD == 1) {
-            leaveType.setText(name);
-            leaveType.setTextColor(Color.BLACK);
+        if (listener != null)
+            listener.onLeaveInfoSelected(leaveInfoType, name, id);
 
-            selected_leave_type_id = id;
-            selected_leave_type_name = name;
-            leaveTypeLay.setHelperText("");
-
-        } else if (showD == 2) {
-            reason.setText(name);
-            reason.setTextColor(Color.BLACK);
-
-            selected_reason = name;
-            if (selected_reason.equals("Others")) {
-                isOtherReason = true;
-                otherReasonLay.setVisibility(View.VISIBLE);
-            } else {
-                isOtherReason = false;
-                otherReasonLay.setVisibility(View.GONE);
-            }
-            errorReason.setVisibility(View.GONE);
-        }
-        showD = 0;
         dialog.dismiss();
     }
 }

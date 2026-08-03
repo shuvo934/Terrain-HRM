@@ -7,7 +7,10 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -38,32 +41,33 @@ import ttit.com.shuvo.ikglhrm.WaitProgress;
 import ttit.com.shuvo.ikglhrm.attendance.approve.dialogApproveReq.ForwardDialogue;
 import ttit.com.shuvo.ikglhrm.attendance.approve.dialogApproveReq.SelectApproveReq;
 import ttit.com.shuvo.ikglhrm.attendance.approve.dialogApproveReq.SelectApproveReqList;
-import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.DialogueText;
 import ttit.com.shuvo.ikglhrm.leaveAll.leaveApprove.leaveAppDialogues.ForwardHistoryDial;
 import ttit.com.shuvo.ikglhrm.leaveAll.leaveApprove.leaveAppDialogues.ForwardHistoryList;
+import ttit.com.shuvo.ikglhrm.utilities.DialogueText;
+import ttit.com.shuvo.ikglhrm.utilities.ForwardListener;
+import ttit.com.shuvo.ikglhrm.utilities.ReqSelectionListener;
+import ttit.com.shuvo.ikglhrm.utilities.TextSubmitListener;
 
 import static ttit.com.shuvo.ikglhrm.user_login.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.LVE_FORWARD_TYPE;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.LVE_REQ_SELECT_TYPE;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.REQ_LEAVE_COMMENT;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class LeaveApprove extends AppCompatActivity {
+public class LeaveApprove extends AppCompatActivity implements TextSubmitListener, ForwardListener, ReqSelectionListener {
 
-    public static int number = 0;
-    public static String hintLA = "";
-    public static String textLA = "";
-
-    public static int forwardFromLeave = 0;
-
-    public static int fromLApp = 0;
+    String hintLA = "";
+    String textLA = "";
 
     CardView afterSelecting;
     LinearLayout afterSelectingButton;
     LinearLayout forLay;
 
-    public static TextInputLayout commentsLay;
+    TextInputLayout commentsLay;
 
     TextInputEditText name;
     TextInputEditText empCode;
@@ -75,7 +79,7 @@ public class LeaveApprove extends AppCompatActivity {
     TextInputEditText toDate;
     TextInputEditText totalDays;
     TextInputEditText reason;
-    public static TextInputEditText comments;
+    TextInputEditText comments;
 
     Button approve;
     Button forward;
@@ -117,16 +121,16 @@ public class LeaveApprove extends AppCompatActivity {
     
     String emp_code = "";
     String user_id = "";
-    public static String req_code_leave = "";
-    public static String la_id = "";
-    public static String la_emp_id = "";
+    String req_code_leave = "";
+    String la_id = "";
+    String la_emp_id = "";
     String f_count = "0";
 
-    public static TextInputEditText requestCodeLeave;
+    TextInputEditText requestCodeLeave;
 
-    public static ArrayList<SelectApproveReqList> leaveReqList;
+    ArrayList<SelectApproveReqList> leaveReqList;
 
-    public static ArrayList<ForwardHistoryList> forwardHistoryLists;
+    ArrayList<ForwardHistoryList> forwardHistoryLists;
 
     Logger logger = Logger.getLogger(LeaveApprove.class.getName());
     String parsing_message = "";
@@ -180,9 +184,13 @@ public class LeaveApprove extends AppCompatActivity {
         getReqLists();
 
         requestCodeLeave.setOnClickListener(v -> {
-            fromLApp = 1;
-            SelectApproveReq selectRequest = new SelectApproveReq();
-            selectRequest.show(getSupportFragmentManager(),"Request");
+            SelectApproveReq selectRequest = SelectApproveReq.newInstance(LVE_REQ_SELECT_TYPE, leaveReqList);
+            try {
+                showDialogSafely(selectRequest, "Request_LVE");
+            }
+            catch (Exception e) {
+                restart("App is paused for a long time. Please Start the app again.");
+            }
         });
 
         requestCodeLeave.addTextChangedListener(new TextWatcher() {
@@ -203,16 +211,25 @@ public class LeaveApprove extends AppCompatActivity {
         });
 
         fh.setOnClickListener(v -> {
-            ForwardHistoryDial forwardHistoryDial = new ForwardHistoryDial();
-            forwardHistoryDial.show(getSupportFragmentManager(),"Forward");
+            ForwardHistoryDial forwardHistoryDial = ForwardHistoryDial.newInstance(forwardHistoryLists);
+            try {
+                showDialogSafely(forwardHistoryDial, "Forward");
+            }
+            catch (Exception e) {
+                restart("App is paused for a long time. Please Start the app again.");
+            }
         });
 
         comments.setOnClickListener(v -> {
-            number = 1;
             hintLA = Objects.requireNonNull(commentsLay.getHint()).toString();
             textLA = Objects.requireNonNull(comments.getText()).toString();
-            DialogueText dialogueText = new DialogueText();
-            dialogueText.show(getSupportFragmentManager(),"TEXTEDIT");
+            DialogueText dialogueText = DialogueText.newInstance(REQ_LEAVE_COMMENT, hintLA,textLA);
+            try {
+                showDialogSafely(dialogueText, "TEXTEDIT_L_COMM");
+            }
+            catch (Exception e) {
+                restart("App is paused for a long time. Please Start the app again.");
+            }
         });
 
         approve.setOnClickListener(v -> {
@@ -274,9 +291,13 @@ public class LeaveApprove extends AppCompatActivity {
         });
 
         forward.setOnClickListener(v -> {
-            forwardFromLeave = 1;
-            ForwardDialogue forwardDialogue = new ForwardDialogue(LeaveApprove.this);
-            forwardDialogue.show(getSupportFragmentManager(),"FORWARD");
+            ForwardDialogue forwardDialogue = ForwardDialogue.newInstance(LVE_FORWARD_TYPE, la_id, "");
+            try {
+                showDialogSafely(forwardDialogue, "FORWARD_LVE");
+            }
+            catch (Exception e) {
+                restart("App is paused for a long time. Please Start the app again.");
+            }
         });
 
         reject.setOnClickListener(v -> {
@@ -953,9 +974,13 @@ public class LeaveApprove extends AppCompatActivity {
                 connected = false;
 
                 if (!leaveReqList.isEmpty()) {
-                    fromLApp = 1;
-                    SelectApproveReq selectRequest = new SelectApproveReq();
-                    selectRequest.show(getSupportFragmentManager(), "Request");
+                    SelectApproveReq selectRequest = SelectApproveReq.newInstance(LVE_REQ_SELECT_TYPE, leaveReqList);
+                    try {
+                        showDialogSafely(selectRequest, "Request_LVE");
+                    }
+                    catch (Exception e) {
+                        restart("App is paused for a long time. Please Start the app again.");
+                    }
                 }
 
                 if (f_count.equals("0") || f_count.isEmpty()) {
@@ -1634,6 +1659,75 @@ public class LeaveApprove extends AppCompatActivity {
         catch (Exception e) {
             Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
             System.exit(0);
+        }
+    }
+
+    @Override
+    public void onReqSelection(String type, String reqCode, String appId, String reqEmpId) {
+        if (type.equals(LVE_REQ_SELECT_TYPE)) {
+            req_code_leave = reqCode;
+            la_id = appId;
+            la_emp_id = reqEmpId;
+            requestCodeLeave.setText(reqCode);
+            requestCodeLeave.setTextColor(Color.BLACK);
+        }
+    }
+
+
+    @Override
+    public void onTextSubmitted(int reqCode, String text) {
+        if (reqCode == REQ_LEAVE_COMMENT) {
+            comments.setText(text);
+            if (text.isEmpty()) {
+                commentsLay.setHint("Write Approve/Reject Comments:");
+            } else {
+                commentsLay.setHint("Comments:");
+            }
+        }
+    }
+
+    @Override
+    public void afterForwarded() {
+        req_code_leave = "";
+        la_id = "";
+        la_emp_id = "";
+        leaveReqList = new ArrayList<>();
+        System.out.println("INSERTED");
+
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(this);
+        alertDialogBuilder.setTitle("Success!")
+                .setIcon(R.drawable.hrm_new_round_icon_custom)
+                .setMessage("Leave Application Forwarded Successfully")
+                .setPositiveButton("OK", (dialog, which) -> {
+                    dialog.dismiss();
+                    finish();
+                });
+
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.setCancelable(false);
+        alert.setCanceledOnTouchOutside(false);
+        try {
+            alert.show();
+        }
+        catch (Exception e) {
+            restart("App is paused for a long time. Please Start the app again.");
+        }
+    }
+
+    // safe dialog open
+    private boolean canShowDialog(String tag) {
+        if (isFinishing()) return false;
+        if (isDestroyed()) return false;
+
+        FragmentManager fm = getSupportFragmentManager();
+        if (fm.isStateSaved()) return false;
+
+        return fm.findFragmentByTag(tag) == null;
+    }
+
+    private void showDialogSafely(DialogFragment dialog, String tag) {
+        if (canShowDialog(tag)) {
+            dialog.show(getSupportFragmentManager(), tag);
         }
     }
 }

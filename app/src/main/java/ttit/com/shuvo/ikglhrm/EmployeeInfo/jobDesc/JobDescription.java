@@ -76,7 +76,6 @@ public class JobDescription extends AppCompatActivity {
 
         getJobDescription();
 
-        job_list.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         job_list.setLayoutManager(layoutManager);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(job_list.getContext(),DividerItemDecoration.VERTICAL);

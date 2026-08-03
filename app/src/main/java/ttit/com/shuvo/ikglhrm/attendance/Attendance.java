@@ -116,8 +116,8 @@ public class Attendance extends AppCompatActivity {
     ArrayList<String> updatedFiles;
     ArrayList<String> updatedXml;
 
-    public static int tracking_flag = 0;
-    public static int live_tracking_flag = 0;
+    int tracking_flag = 0;
+    int live_tracking_flag = 0;
 
     ArrayList<PieEntry> NoOfEmp;
 
@@ -189,6 +189,8 @@ public class Attendance extends AppCompatActivity {
                 Intent intent = new Intent(Attendance.this, AttendanceGive.class);
                 intent.putExtra("LAST_TIME",lastLtimAttBot);
                 intent.putExtra("TODAY_DATE",lastDateForAttBot);
+                intent.putExtra("TRACKER_FLAG",tracking_flag);
+                intent.putExtra("LIVE_FLAG",live_tracking_flag);
                 startActivity(intent);
             }
             else {

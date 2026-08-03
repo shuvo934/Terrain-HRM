@@ -106,6 +106,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -311,6 +312,7 @@ public class Dashboard extends AppCompatActivity {
     String emp_id = "";
     String emp_code = "";
     public static int trackerAvailable = 0;
+    int live_loc_available = 0;
     String mob_attn_allow = "0";
     String tr_option = "1";
 
@@ -1154,17 +1156,16 @@ public class Dashboard extends AppCompatActivity {
                 for (InetAddress addr : addrs) {
                     if (!addr.isLoopbackAddress()) {
                         String sAddr = addr.getHostAddress();
-                        //boolean isIPv4 = InetAddressUtils.isIPv4Address(sAddr);
+                        if (sAddr == null) continue;
                         boolean isIPv4 = sAddr.indexOf(':') < 0;
 
-                        if (useIPv4) {
-                            if (isIPv4)
-                                return sAddr;
-                        } else {
-                            if (!isIPv4) {
-                                int delim = sAddr.indexOf('%'); // drop ip6 zone suffix
-                                return delim < 0 ? sAddr.toUpperCase() : sAddr.substring(0, delim).toUpperCase();
-                            }
+                        if (useIPv4 && isIPv4) {
+                            return sAddr;
+                        }
+
+                        if (!useIPv4 && !isIPv4) {
+                            int delim = sAddr.indexOf('%');
+                            return delim < 0 ? sAddr.toUpperCase() : sAddr.substring(0, delim).toUpperCase();
                         }
                     }
                 }
@@ -1177,9 +1178,15 @@ public class Dashboard extends AppCompatActivity {
 
     public static String getHostName(String defValue) {
         try {
-            @SuppressLint("DiscouragedPrivateApi") Method getString = Build.class.getDeclaredMethod("getString", String.class);
+            String tt = "getString";
+            @SuppressLint("DiscouragedPrivateApi") Method getString = Build.class.getDeclaredMethod(tt, String.class);
             getString.setAccessible(true);
-            return getString.invoke(null, "net.hostname").toString();
+            if (getString.invoke(null, "net.hostname") == null) {
+                return defValue;
+            }
+            else {
+                return Objects.requireNonNull(getString.invoke(null, "net.hostname")).toString();
+            }
         } catch (Exception ex) {
             return defValue;
         }
@@ -2611,6 +2618,7 @@ public class Dashboard extends AppCompatActivity {
         conn = false;
 
         trackerAvailable = 0;
+        live_loc_available = 0;
         mob_attn_allow = "0";
         tr_option = "1";
         salaryMonthLists = new ArrayList<>();
@@ -2685,6 +2693,9 @@ public class Dashboard extends AppCompatActivity {
                                         .equals("null") ? "0" : trackerInfo.getString("emp_timeline_tracker_flag"));
                         mob_attn_allow = trackerInfo.getString("att_allow")
                                 .equals("null") ? "1" : trackerInfo.getString("att_allow");
+                        live_loc_available =
+                                Integer.parseInt(trackerInfo.getString("emp_live_loc_tracker_flag")
+                                        .equals("null") ? "0" : trackerInfo.getString("emp_live_loc_tracker_flag"));
                     }
                 }
                 if (trackerAvailable == 1) {
@@ -3432,9 +3443,7 @@ public class Dashboard extends AppCompatActivity {
             } catch (JSONException e) {
                 logger.log(Level.WARNING, e.getMessage(), e);
             }
-        }, error -> {
-            logger.log(Level.WARNING, error.getMessage(), error);
-        });
+        }, error -> logger.log(Level.WARNING, error.getMessage(), error));
 
         requestQueue.add(todayAttReq);
 
@@ -4424,6 +4433,8 @@ public class Dashboard extends AppCompatActivity {
                                                     Intent intent = new Intent(Dashboard.this, AttendanceGive.class);
                                                     intent.putExtra("LAST_TIME",lastLtimAttBot);
                                                     intent.putExtra("TODAY_DATE",lastDateForAttBot);
+                                                    intent.putExtra("TRACKER_FLAG",trackerAvailable);
+                                                    intent.putExtra("LIVE_FLAG",live_loc_available);
                                                     startActivity(intent);
                                                 })
                                                 .setNegativeButton("No",((dialog, which) -> dialog.dismiss()));
@@ -4651,6 +4662,8 @@ public class Dashboard extends AppCompatActivity {
                                     Intent intent = new Intent(Dashboard.this, AttendanceGive.class);
                                     intent.putExtra("LAST_TIME",lastLtimAttBot);
                                     intent.putExtra("TODAY_DATE",lastDateForAttBot);
+                                    intent.putExtra("TRACKER_FLAG",trackerAvailable);
+                                    intent.putExtra("LIVE_FLAG",live_loc_available);
                                     startActivity(intent);
                                 })
                                 .setNegativeButton("No",((dialog, which) -> dialog.dismiss()));

@@ -1,5 +1,6 @@
 package ttit.com.shuvo.ikglhrm.attendance.reqUpdate.dialogueFromReq;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -47,7 +48,7 @@ public class SelectReqAdapter extends RecyclerView.Adapter<SelectReqAdapter.ReqV
 
             this.mClickedItem = ci;
 
-            itemView.setOnClickListener(this::onClick);
+            itemView.setOnClickListener(this);
 
         }
 
@@ -66,8 +67,7 @@ public class SelectReqAdapter extends RecyclerView.Adapter<SelectReqAdapter.ReqV
     @Override
     public ReqViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(myContext).inflate(R.layout.request_itrem_list_view, parent, false);
-        ReqViewHolder categoryViewHolder = new ReqViewHolder(view, myClickedItem);
-        return categoryViewHolder;
+        return new ReqViewHolder(view, myClickedItem);
     }
 
     @Override
@@ -88,6 +88,7 @@ public class SelectReqAdapter extends RecyclerView.Adapter<SelectReqAdapter.ReqV
         return mCategoryItem.size();
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void filterList(ArrayList<SelectReqList> filteredList) {
         mCategoryItem = filteredList;
         notifyDataSetChanged();

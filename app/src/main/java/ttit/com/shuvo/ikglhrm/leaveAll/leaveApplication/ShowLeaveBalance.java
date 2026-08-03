@@ -99,7 +99,6 @@ public class ShowLeaveBalance extends AppCompatDialogFragment {
         formattedDate = df.format(c);
 
         apptRecyclerView = view.findViewById(R.id.all_leave_balance_list);
-        apptRecyclerView.setHasFixedSize(true);
         apptLayout = new LinearLayoutManager(getContext());
         apptRecyclerView.setLayoutManager(apptLayout);
 

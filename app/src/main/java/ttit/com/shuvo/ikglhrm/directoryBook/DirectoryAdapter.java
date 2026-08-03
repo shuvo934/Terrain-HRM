@@ -102,7 +102,6 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.Dire
             System.out.println("KISU PAISE");
             holder.numberNot.setVisibility(View.GONE);
             holder.phoneView.setVisibility(View.VISIBLE);
-            holder.phoneView.setHasFixedSize(true);
             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(myContext);
             holder.phoneView.setLayoutManager(layoutManager);
 //            DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(holder.phoneView.getContext(),DividerItemDecoration.VERTICAL);

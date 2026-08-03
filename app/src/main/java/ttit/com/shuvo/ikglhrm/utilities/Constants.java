@@ -50,4 +50,25 @@ public class Constants {
     public static String DISTANCE = "DISTANCE";
     public static String TOTAL_TIME = "TOTAL_TIME";
     public static String STOPPED_TIME = "STOPPED_TIME";
+
+    public static final int REQ_REASON = 1;
+    public static final int REQ_ADDRESS = 2;
+    public static final int REQ_OTHER_REASON = 3;
+    public static final int REQ_LEAVE_ADDRESS = 4;
+    public static final int REQ_ATTENDANCE_COMMENT = 5;
+    public static final int REQ_LEAVE_COMMENT = 6;
+
+    public static final String ATT_FORWARD_TYPE = "ATT_FORWARD_TYPE";
+    public static final String LVE_FORWARD_TYPE = "LVE_FORWARD_TYPE";
+
+    public static final String ATT_REQ_SELECT_TYPE = "ATT_REQ_SELECT_TYPE";
+    public static final String LVE_REQ_SELECT_TYPE = "LVE_REQ_SELECT_TYPE";
+
+    public static final String ATT_SHIFT_SELECT_TYPE = "ATT_SHIFT_SELECT_TYPE";
+    public static final String ATT_APPROVER_SELECT_TYPE = "ATT_APPROVER_SELECT_TYPE";
+
+    public static final String LVE_BACKUP_SELECT_TYPE = "LVE_BACKUP_SELECT_TYPE";
+
+    public static final String LVE_TYPE_SELECT_INFO = "LVE_TYPE_SELECT_INFO";
+    public static final String LVE_REASON_SELECT_INFO = "LVE_REASON_SELECT_INFO";
 }

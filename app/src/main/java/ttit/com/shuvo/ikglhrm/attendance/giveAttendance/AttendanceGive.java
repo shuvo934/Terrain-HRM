@@ -93,8 +93,6 @@ import ttit.com.shuvo.ikglhrm.attendance.trackService.Service;
 import ttit.com.shuvo.ikglhrm.attendance.trackService.WaypointList;
 
 import static ttit.com.shuvo.ikglhrm.user_login.Login.userInfoLists;
-import static ttit.com.shuvo.ikglhrm.attendance.Attendance.live_tracking_flag;
-import static ttit.com.shuvo.ikglhrm.attendance.Attendance.tracking_flag;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import org.json.JSONArray;
@@ -144,6 +142,9 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
     ArrayList<WaypointList> wptList;
     ArrayList<MarkerData> markerData;
 
+    int tracking_flag = 0;
+    int live_tracking_flag = 0;
+
     Logger logger = Logger.getLogger(AttendanceGive.class.getName());
     String parsing_message = "";
 
@@ -178,6 +179,8 @@ public class AttendanceGive extends AppCompatActivity implements OnMapReadyCallb
         Intent intent = getIntent();
         last_time = intent.getStringExtra("LAST_TIME");
         today_date = intent.getStringExtra("TODAY_DATE");
+        tracking_flag = intent.getIntExtra("TRACKER_FLAG",0);
+        live_tracking_flag = intent.getIntExtra("LIVE_FLAG",0);
 
         Typeface typeface = ResourcesCompat.getFont(getApplicationContext(),R.font.poppins_bold);
         digitalClock.setTypeface(typeface);

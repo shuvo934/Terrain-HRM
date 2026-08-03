@@ -59,7 +59,6 @@ public class SelectCenterDialogue extends AppCompatDialogFragment implements Cen
         dialog.setCanceledOnTouchOutside(false);
         setCancelable(false);
 
-        centerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(getContext());
         centerView.setLayoutManager(layoutManager);
 

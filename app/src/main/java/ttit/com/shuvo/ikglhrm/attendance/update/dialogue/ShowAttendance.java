@@ -1,7 +1,6 @@
 package ttit.com.shuvo.ikglhrm.attendance.update.dialogue;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,8 +24,6 @@ import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
 
 import static ttit.com.shuvo.ikglhrm.user_login.Login.userInfoLists;
-import static ttit.com.shuvo.ikglhrm.attendance.update.AttendanceUpdate.dateToShow;
-import static ttit.com.shuvo.ikglhrm.attendance.update.AttendanceUpdate.showAttendanceNumber;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import org.json.JSONArray;
@@ -66,13 +63,17 @@ public class ShowAttendance extends AppCompatDialogFragment {
 
     AlertDialog showAttdialog;
 
-    Context mContext;
-
     Logger logger = Logger.getLogger(ShowAttendance.class.getName());
     String parsing_message = "";
 
-    public ShowAttendance(Context context) {
-        this.mContext = context;
+    public ShowAttendance() {}
+
+    public static ShowAttendance newInstance(String date) {
+        ShowAttendance dialog = new ShowAttendance();
+        Bundle bundle = new Bundle();
+        bundle.putString("DATE_SHOW", date);
+        dialog.setArguments(bundle);
+        return dialog;
     }
 
     @NonNull
@@ -103,15 +104,10 @@ public class ShowAttendance extends AppCompatDialogFragment {
         exShNa = view.findViewById(R.id.existing_shift_name);
         exLocNa = view.findViewById(R.id.existing_loc_name);
 
-
-        if (showAttendanceNumber == 1) {
-            date = dateToShow;
+        if (getArguments() != null) {
+            date = getArguments().getString("DATE_SHOW", "");
         }
-//        else if (AttendanceReqUpdate.showAttendanceNumberUpdate == 2) {
-//            date = dateToShowUpdate;
-//        }
 
-//        new Check().execute();
         getAttendanceShow();
 
         builder.setView(view);
@@ -122,12 +118,7 @@ public class ShowAttendance extends AppCompatDialogFragment {
         showAttdialog.setCanceledOnTouchOutside(false);
         setCancelable(false);
 
-        showAttdialog.setButton(Dialog.BUTTON_NEGATIVE, "OK", (dialog, which) -> {
-
-            showAttendanceNumber = 0;
-//                AttendanceReqUpdate.showAttendanceNumberUpdate = 0;
-            dialog.dismiss();
-        });
+        showAttdialog.setButton(Dialog.BUTTON_NEGATIVE, "OK", (dialog, which) -> dialog.dismiss());
 
         return showAttdialog;
 
@@ -377,7 +368,7 @@ public class ShowAttendance extends AppCompatDialogFragment {
 
         String url = api_url_front + "attendanceUpdateReq/showAttendance?emp_id="+emp_id+"&att_date="+date;
 
-        RequestQueue requestQueue = Volley.newRequestQueue(mContext);
+        RequestQueue requestQueue = Volley.newRequestQueue(requireContext());
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, response -> {
             conn = true;
@@ -523,7 +514,7 @@ public class ShowAttendance extends AppCompatDialogFragment {
         else {
             parsing_message = "Server problem or Internet not connected";
         }
-        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(mContext);
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(requireContext());
         alertDialogBuilder.setTitle("System Warning!")
                 .setIcon(R.drawable.hrm_new_round_icon_custom)
                 .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
@@ -549,10 +540,10 @@ public class ShowAttendance extends AppCompatDialogFragment {
 
     public void restart(String msg) {
         try {
-            ProcessPhoenix.triggerRebirth(mContext);
+            ProcessPhoenix.triggerRebirth(requireContext());
         }
         catch (Exception e) {
-            Toast.makeText(mContext,msg,Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(),msg,Toast.LENGTH_SHORT).show();
             System.exit(0);
         }
     }

@@ -33,7 +33,7 @@ public class Uploader extends BroadcastReceiver {
     SharedPreferences sharedPreferences;
     public static final String SCHEDULING_FILE = "SCHEDULING FILE";
     public static final String SCHEDULING_EMP_ID = "SCHEDULING EMP ID";
-    public static final String TRIGGERING = "TRIGGER TRUE FALSE";
+//    public static final String TRIGGERING = "TRIGGER TRUE FALSE";
 
     @Override
     public void onReceive(Context context, Intent intent) {

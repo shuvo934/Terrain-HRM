@@ -11,16 +11,12 @@ import androidx.appcompat.app.AppCompatActivity;
 //import android.net.ConnectivityManager;
 //import android.net.NetworkInfo;
 //import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 //import android.text.Editable;
 //import android.text.TextWatcher;
 //import android.util.Log;
 //import android.view.Gravity;
-import android.view.View;
 //import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 //import android.widget.AdapterView;
 //import android.widget.ArrayAdapter;
 //import android.widget.Button;
@@ -55,7 +51,7 @@ import ttit.com.shuvo.ikglhrm.R;
 //import ttit.com.shuvo.ikglhrm.attendance.update.AttendanceUpdate;
 //import ttit.com.shuvo.ikglhrm.attendance.update.LocUpdateList;
 //import ttit.com.shuvo.ikglhrm.attendance.update.ReasonList;
-//import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.DialogueText;
+//import ttit.com.shuvo.ikglhrm.utilities.DialogueText;
 //import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.SelectAll;
 //import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.SelectAllList;
 //import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.ShowAttendance;
@@ -252,15 +248,6 @@ public class AttendanceReqUpdate extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        Window w = getWindow();
-        // w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-        View decorView = getWindow().getDecorView();
-// Hide the status bar.
-        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
-        decorView.setSystemUiVisibility(uiOptions);
-
         setContentView(R.layout.activity_attendance_req_update);
 
 

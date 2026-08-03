@@ -1,7 +1,6 @@
 package ttit.com.shuvo.ikglhrm.attendance.approve.dialogApproveReq;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
@@ -44,16 +43,11 @@ import java.util.logging.Logger;
 
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
-import ttit.com.shuvo.ikglhrm.attendance.approve.AttendanceApprove;
-import ttit.com.shuvo.ikglhrm.leaveAll.leaveApprove.LeaveApprove;
+import ttit.com.shuvo.ikglhrm.utilities.ForwardListener;
 
 import static ttit.com.shuvo.ikglhrm.user_login.Login.userInfoLists;
-import static ttit.com.shuvo.ikglhrm.attendance.approve.AttendanceApprove.darm_id;
-import static ttit.com.shuvo.ikglhrm.attendance.approve.AttendanceApprove.forwardFromAtt;
-import static ttit.com.shuvo.ikglhrm.attendance.approve.AttendanceApprove.req_code;
-import static ttit.com.shuvo.ikglhrm.leaveAll.leaveApprove.LeaveApprove.forwardFromLeave;
-import static ttit.com.shuvo.ikglhrm.leaveAll.leaveApprove.LeaveApprove.la_id;
-import static ttit.com.shuvo.ikglhrm.leaveAll.leaveApprove.LeaveApprove.req_code_leave;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.ATT_FORWARD_TYPE;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.LVE_FORWARD_TYPE;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import org.json.JSONArray;
@@ -86,14 +80,12 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
     private Boolean connected = false;
 
     private Boolean isForwarded = false;
-    private Boolean ffffoooorrrwww = false;
+    private Boolean forwardConn = false;
     private Boolean isForwardExe = false;
 
     private Boolean isForwardedLeave = false;
-    private Boolean ffffoooorrrwwwllll = false;
+    private Boolean leaveForwardConn = false;
     private Boolean isForwardExeLeave = false;
-
-//    private Connection connection;
 
     ArrayList<ForwardEMPList> forwardEMPLists;
 //    public  ArrayList<SelectAllList> allSelectedApprover;
@@ -113,17 +105,28 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
     String forward_comm = "";
 //    int req_status_count = 0;
 //    int req_status_count_leave = 0;
-    Context mContext;
 
-    View view;
-    AlertDialog forwarDialog;
+    AlertDialog forwardDialog;
+    String forward_type = "";
+    String app_id = "";
+    String reqCode = "";
 
     Logger logger = Logger.getLogger(ForwardDialogue.class.getName());
     String parsing_message = "";
 
-    public ForwardDialogue(Context context) {
-        this.mContext = context;
+    public ForwardDialogue() {}
+
+    public static ForwardDialogue newInstance(String type, String app_id, String reqCode) {
+        ForwardDialogue dialog = new ForwardDialogue();
+        Bundle bundle = new Bundle();
+        bundle.putString("FORWARD_TYPE", type);
+        bundle.putString("APPLICATION_ID", app_id);
+        bundle.putString("APPLICATION_CODE", reqCode);
+        dialog.setArguments(bundle);
+        return dialog;
     }
+
+    private ForwardListener listener;
 
     @NonNull
     @Override
@@ -131,7 +134,10 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
         AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
 
-        view = inflater.inflate(R.layout.forward_req_view, null);
+        if (getActivity() instanceof ForwardListener)
+            listener = (ForwardListener) getActivity();
+
+        View view = inflater.inflate(R.layout.forward_req_view, null);
         activity = (AppCompatActivity) view.getContext();
 
         employeeName = view.findViewById(R.id.emp_name_drop_down);
@@ -148,6 +154,12 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
 
         noEmp = view.findViewById(R.id.no_employee_msg);
         forwardEMPLists = new ArrayList<>();
+
+        if (getArguments() != null) {
+            forward_type = getArguments().getString("FORWARD_TYPE", "");
+            app_id = getArguments().getString("APPLICATION_ID", "");
+            reqCode = getArguments().getString("APPLICATION_CODE","");
+        }
 //        allApproverDivision = new ArrayList<>();
 //        allApproverEmp = new ArrayList<>();
 //        allApproverWithoutDiv = new ArrayList<>();
@@ -169,7 +181,6 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
 //        new CheckFORLISt().execute();
         getForwardToEmp();
 
-        empListView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(getContext());
         empListView.setLayoutManager(layoutManager);
 
@@ -177,14 +188,11 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
                 new DividerItemDecoration(empListView.getContext(),DividerItemDecoration.VERTICAL);
         empListView.addItemDecoration(dividerItemDecoration);
 
-
-
-
         builder.setView(view);
 
-        forwarDialog = builder.create();
-        forwarDialog.setCancelable(false);
-        forwarDialog.setCanceledOnTouchOutside(false);
+        forwardDialog = builder.create();
+        forwardDialog.setCancelable(false);
+        forwardDialog.setCanceledOnTouchOutside(false);
         setCancelable(false);
 
         comm.setOnEditorActionListener((v, actionId, event) -> {
@@ -195,7 +203,8 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
                     // the user is done typing.
                     Log.i("Let see", "Come here");
                     comm.clearFocus();
-                    closeKeyBoard();
+                    InputMethodManager mgr = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    mgr.hideSoftInputFromWindow(v.getWindowToken(), 0);
 
                     return false; // consume.
                 }
@@ -214,27 +223,20 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
 
         });
 
-        goBack.setOnClickListener(v -> {
-            forwardFromAtt = 0;
-            forwardFromLeave = 0;
-            forwarDialog.dismiss();
-        });
+        goBack.setOnClickListener(v -> forwardDialog.dismiss());
 
         cont.setOnClickListener(v -> {
-
             forward_comm = Objects.requireNonNull(comm.getText()).toString();
             forward_comm = forward_comm.trim().replace("\n", " ").replace("\r", " ");
-            System.out.println(forwardFromAtt);
-            System.out.println(forwardFromLeave);
 
-            if (forwardFromAtt == 1) {
+            if (forward_type.equals(ATT_FORWARD_TYPE)) {
                 if (forward_comm.isEmpty()) {
                     Toast.makeText(getContext(),"Please enter forward comment",Toast.LENGTH_SHORT).show();
                 } else {
                     if (forward_to_id.isEmpty()) {
                         Toast.makeText(getContext(),"Please enter forward to employee",Toast.LENGTH_SHORT).show();
                     } else {
-                        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(mContext);
+                        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(requireContext());
                         alertDialogBuilder.setTitle("Forward Request!")
                                 .setIcon(R.drawable.hrm_new_round_icon_custom)
                                 .setMessage("Do you want forward this request?")
@@ -253,14 +255,14 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
                     }
                 }
             }
-            else if (forwardFromLeave == 1) {
+            else if (forward_type.equals(LVE_FORWARD_TYPE)) {
                 if (forward_comm.isEmpty()) {
                     Toast.makeText(getContext(),"Please enter forward comment",Toast.LENGTH_SHORT).show();
                 } else {
                     if (forward_to_id.isEmpty()) {
                         Toast.makeText(getContext(),"Please enter forward to employee",Toast.LENGTH_SHORT).show();
                     } else {
-                        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(mContext);
+                        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(requireContext());
                         alertDialogBuilder.setTitle("Forward Leave Application!")
                                 .setIcon(R.drawable.hrm_new_round_icon_custom)
                                 .setMessage("Do you want forward this leave application?")
@@ -284,17 +286,8 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
 
         });
 
-        return forwarDialog;
+        return forwardDialog;
 
-    }
-
-    private void closeKeyBoard() {
-
-        if (view != null) {
-            view.clearFocus();
-            InputMethodManager mgr = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-            mgr.hideSoftInputFromWindow(view.getWindowToken(), 0);
-        }
     }
 
     @Override
@@ -943,14 +936,14 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
 //        String allapproverUrl = api_url_front + "forwardReq/attReqAllApprover/"+emp_id;
 //        String desigPriorUrl = api_url_front + "forwardReq/getDesigPriority/"+emp_id;
         String forwarderUrl = "";
-        if (forwardFromAtt == 1) {
+        if (forward_type.equals(ATT_FORWARD_TYPE)) {
             forwarderUrl = api_url_front + "forwardReq/getAttAppForwardEmp?p_emp_id="+emp_id;
         }
-        else if (forwardFromLeave == 1) {
+        else if (forward_type.equals(LVE_FORWARD_TYPE)) {
             forwarderUrl = api_url_front + "forwardReq/getLvAppForwardEmp?p_emp_id="+emp_id;
         }
 
-        RequestQueue requestQueue = Volley.newRequestQueue(mContext);
+        RequestQueue requestQueue = Volley.newRequestQueue(requireContext());
 
 //        StringRequest desigPriorReq = new StringRequest(Request.Method.GET, desigPriorUrl, response -> {
 //            conn = true;
@@ -1298,7 +1291,7 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
         else {
             parsing_message = "Server problem or Internet not connected";
         }
-        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(mContext);
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(requireContext());
         alertDialogBuilder.setTitle("System Warning!")
                 .setIcon(R.drawable.hrm_new_round_icon_custom)
                 .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
@@ -1308,7 +1301,7 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
                 })
                 .setNegativeButton("Cancel",(dialog, which) -> {
                     dialog.dismiss();
-                    forwarDialog.dismiss();
+                    forwardDialog.dismiss();
                 });
 
         AlertDialog alert = alertDialogBuilder.create();
@@ -1385,16 +1378,16 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
     public void forwardAttReq() {
         waitProgress.show(activity.getSupportFragmentManager(),"WaitBar");
         waitProgress.setCancelable(false);
-        ffffoooorrrwww = false;
+        forwardConn = false;
         isForwardExe = false;
         isForwarded = false;
 
         String forwardAttReqUrl = api_url_front + "forwardReq/forwardAttReq";
 
-        RequestQueue requestQueue = Volley.newRequestQueue(mContext);
+        RequestQueue requestQueue = Volley.newRequestQueue(requireContext());
 
         StringRequest forwardAtt = new StringRequest(Request.Method.POST, forwardAttReqUrl, response -> {
-            ffffoooorrrwww = true;
+            forwardConn = true;
             try {
                 JSONObject jsonObject = new JSONObject(response);
                 String string_out = jsonObject.getString("string_out");
@@ -1419,18 +1412,18 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
             parsing_message = error.getLocalizedMessage();
-            ffffoooorrrwww = false;
+            forwardConn = false;
             isForwarded = false;
             updateLayout();
         }) {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("P_DARM_ID",darm_id);
+                headers.put("P_DARM_ID",app_id);
                 headers.put("P_EMP_ID",emp_id);
                 headers.put("P_FORWARD_COMM",forward_comm);
                 headers.put("P_FORWARD_TO_ID",forward_to_id);
-                headers.put("P_REQ_CODE",req_code);
+                headers.put("P_REQ_CODE",reqCode);
                 return headers;
             }
         };
@@ -1441,39 +1434,18 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
 
     private void updateLayout() {
         waitProgress.dismiss();
-        if (ffffoooorrrwww) {
+        if (forwardConn) {
             if (isForwarded) {
                 if (isForwardExe) {
-                    req_code = "";
-                    darm_id = "";
-                    AttendanceApprove.darm_emp_id = "";
-                    AttendanceApprove.selectApproveReqLists = new ArrayList<>();
-                    forwardFromAtt = 0;
-                    System.out.println("INSERTED");
-                    forwarDialog.dismiss();
-                    MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(mContext);
-                    alertDialogBuilder.setTitle("Success!")
-                            .setIcon(R.drawable.hrm_new_round_icon_custom)
-                            .setMessage("Request Forwarded Successfully")
-                            .setPositiveButton("OK", (dialog, which) -> {
-                                dialog.dismiss();
-                                ((Activity)mContext).finish();
-                            });
-
-                    AlertDialog alert = alertDialogBuilder.create();
-                    alert.setCancelable(false);
-                    alert.setCanceledOnTouchOutside(false);
-                    try {
-                        alert.show();
+                    if (listener != null) {
+                        listener.afterForwarded();
                     }
-                    catch (Exception e) {
-                        restart("App is paused for a long time. Please Start the app again.");
-                    }
+                    forwardDialog.dismiss();
                 }
                 else {
                     Toast.makeText(getContext(), "Already Updated by Another User", Toast.LENGTH_SHORT).show();
                 }
-                ffffoooorrrwww = false;
+                forwardConn = false;
                 isForwardExe = false;
                 isForwarded = false;
             }
@@ -1495,7 +1467,7 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
         else {
             parsing_message = "Server problem or Internet not connected";
         }
-        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(mContext);
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(requireContext());
         alertDialogBuilder.setTitle("System Warning!")
                 .setIcon(R.drawable.hrm_new_round_icon_custom)
                 .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
@@ -1575,16 +1547,16 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
     public void forwardLeaveReq() {
         waitProgress.show(activity.getSupportFragmentManager(),"WaitBar");
         waitProgress.setCancelable(false);
-        ffffoooorrrwwwllll = false;
+        leaveForwardConn = false;
         isForwardExeLeave = false;
         isForwardedLeave = false;
 
         String forwardAttReqUrl = api_url_front + "forwardReq/forwardLeaveReq";
 
-        RequestQueue requestQueue = Volley.newRequestQueue(mContext);
+        RequestQueue requestQueue = Volley.newRequestQueue(requireContext());
 
         StringRequest forLeaveReq = new StringRequest(Request.Method.POST, forwardAttReqUrl, response -> {
-            ffffoooorrrwwwllll = true;
+            leaveForwardConn = true;
             try {
                 JSONObject jsonObject = new JSONObject(response);
                 String string_out = jsonObject.getString("string_out");
@@ -1609,14 +1581,14 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
         }, error -> {
             logger.log(Level.WARNING, error.getMessage(), error);
             parsing_message = error.getLocalizedMessage();
-            ffffoooorrrwwwllll = false;
+            leaveForwardConn = false;
             isForwardedLeave = false;
             updateLayoutLeave();
         }) {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("P_LA_ID",la_id);
+                headers.put("P_LA_ID",app_id);
                 headers.put("P_EMP_ID",emp_id);
                 headers.put("P_FORWARD_COMM",forward_comm);
                 headers.put("P_FORWARD_TO_ID",forward_to_id);
@@ -1629,42 +1601,18 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
 
     private void updateLayoutLeave() {
         waitProgress.dismiss();
-        if (ffffoooorrrwwwllll) {
+        if (leaveForwardConn) {
             if (isForwardedLeave) {
                 if (isForwardExeLeave) {
-                    req_code_leave = "";
-                    la_id = "";
-                    LeaveApprove.la_emp_id = "";
-                    LeaveApprove.leaveReqList = new ArrayList<>();
-                    forwardFromLeave = 0;
-                    System.out.println("INSERTED");
-
-                    forwarDialog.dismiss();
-
-                    MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(mContext);
-                    alertDialogBuilder.setTitle("Success!")
-                            .setIcon(R.drawable.hrm_new_round_icon_custom)
-                            .setMessage("Leave Application Forwarded Successfully")
-                            .setPositiveButton("OK", (dialog, which) -> {
-                                dialog.dismiss();
-                                ((Activity)mContext).finish();
-                            });
-
-                    AlertDialog alert = alertDialogBuilder.create();
-                    alert.setCancelable(false);
-                    alert.setCanceledOnTouchOutside(false);
-                    try {
-                        alert.show();
+                    if (listener != null) {
+                        listener.afterForwarded();
                     }
-                    catch (Exception e) {
-                        restart("App is paused for a long time. Please Start the app again.");
-                    }
-
+                    forwardDialog.dismiss();
                 }
                 else {
                     Toast.makeText(getContext(), "Already Updated by Another User", Toast.LENGTH_SHORT).show();
                 }
-                ffffoooorrrwwwllll = false;
+                leaveForwardConn = false;
                 isForwardExeLeave = false;
                 isForwardedLeave = false;
             }
@@ -1686,7 +1634,7 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
         else {
             parsing_message = "Server problem or Internet not connected";
         }
-        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(mContext);
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(requireContext());
         alertDialogBuilder.setTitle("System Warning!")
                 .setIcon(R.drawable.hrm_new_round_icon_custom)
                 .setMessage("Message: "+parsing_message+".\n"+"Please try again.")
@@ -1707,10 +1655,10 @@ public class ForwardDialogue extends AppCompatDialogFragment implements ForwardA
 
     public void restart(String msg) {
         try {
-            ProcessPhoenix.triggerRebirth(mContext);
+            ProcessPhoenix.triggerRebirth(requireContext());
         }
         catch (Exception e) {
-            Toast.makeText(mContext,msg,Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(),msg,Toast.LENGTH_SHORT).show();
             System.exit(0);
         }
     }

@@ -96,8 +96,8 @@ public class AttendanceReport extends AppCompatActivity {
     TextView workHolidays;
 
 
-    public static ArrayList<ReportInformation> reportInformations;
-    public static ArrayList<AttenReportList> attenReportLists;
+    ArrayList<ReportInformation> reportInformations;
+    ArrayList<AttenReportList> attenReportLists;
 
     WaitProgress waitProgress = new WaitProgress();
     private Boolean conn = false;

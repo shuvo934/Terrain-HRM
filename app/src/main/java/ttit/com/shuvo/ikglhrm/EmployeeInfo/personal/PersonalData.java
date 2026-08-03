@@ -7,7 +7,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,7 +14,6 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import ttit.com.shuvo.ikglhrm.EmployeeInfo.performance.PerformanceApp;
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
 

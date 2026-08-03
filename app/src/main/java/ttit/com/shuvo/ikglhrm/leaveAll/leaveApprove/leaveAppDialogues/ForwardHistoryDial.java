@@ -14,7 +14,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import ttit.com.shuvo.ikglhrm.R;
-import static ttit.com.shuvo.ikglhrm.leaveAll.leaveApprove.LeaveApprove.forwardHistoryLists;
+
+import java.util.ArrayList;
 
 
 public class ForwardHistoryDial extends AppCompatDialogFragment {
@@ -23,6 +24,19 @@ public class ForwardHistoryDial extends AppCompatDialogFragment {
     ForwardHistoryAdapter forwardHistoryAdapter;
     RecyclerView.LayoutManager apptLayout;
 
+    ArrayList<ForwardHistoryList> forwardHistoryLists;
+
+    public ForwardHistoryDial() {}
+
+    public static ForwardHistoryDial newInstance(ArrayList<ForwardHistoryList> forwardHistoryLists) {
+        ForwardHistoryDial dial = new ForwardHistoryDial();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("forwardHistoryLists", forwardHistoryLists);
+        dial.setArguments(bundle);
+        return dial;
+    }
+
+    @SuppressWarnings("unchecked")
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -32,7 +46,15 @@ public class ForwardHistoryDial extends AppCompatDialogFragment {
         View view = inflater.inflate(R.layout.forward_history_list_view, null);
 
         apptRecyclerView = view.findViewById(R.id.forward_list_for_leave);
-        apptRecyclerView.setHasFixedSize(true);
+
+        forwardHistoryLists = new ArrayList<>();
+
+        if (getArguments() != null) {
+            forwardHistoryLists = (ArrayList<ForwardHistoryList>) getArguments().getSerializable("forwardHistoryLists");
+        }
+
+        if (forwardHistoryLists == null) forwardHistoryLists = new ArrayList<>();
+
         apptLayout = new LinearLayoutManager(getContext());
         apptRecyclerView.setLayoutManager(apptLayout);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(apptRecyclerView.getContext(),DividerItemDecoration.VERTICAL);

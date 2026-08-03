@@ -1,6 +1,8 @@
 package ttit.com.shuvo.ikglhrm.attendance.approve.dialogApproveReq;
 
-public class SelectApproveReqList {
+import java.io.Serializable;
+
+public class SelectApproveReqList implements Serializable {
 
     private String reqCode;
     private String name;

@@ -33,7 +33,6 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnFailureListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -127,28 +126,17 @@ public class GeoFenceWorker extends Worker {
                                         Date c = Calendar.getInstance().getTime();
                                         Date date = new Date();
                                         ts = new Timestamp(date.getTime());
-                                        System.out.println(ts.toString());
                                         inTime = df.format(c);
                                         timeToShow = dftoShow.format(c);
                                         System.out.println("IN TIME : " + inTime);
                                         getOfficeLocation();
                                     } else {
-                                        task.addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                e.printStackTrace();
-                                            }
-                                        });
+//                                        task.addOnFailureListener(e -> e.printStackTrace());
                                         Log.w("TAG", "Failed to get location.");
                                         getNotification("Attendance System", "Failed to get location.");
                                     }
                                 })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                });
+                                .addOnFailureListener(e -> getNotification("Attendance System", "Failed to get location."));
                     }
                     catch (SecurityException unlikely) {
                         Log.e("TAG", "Lost location permission." + unlikely);
@@ -197,12 +185,10 @@ public class GeoFenceWorker extends Worker {
                 updateInfo();
             }
             catch (JSONException e) {
-                e.printStackTrace();
                 connected = false;
                 updateInfo();
             }
         }, error -> {
-            error.printStackTrace();
             conn = false;
             connected = false;
             updateInfo();

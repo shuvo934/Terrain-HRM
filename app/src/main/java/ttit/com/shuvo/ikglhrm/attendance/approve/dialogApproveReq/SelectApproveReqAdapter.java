@@ -1,5 +1,6 @@
 package ttit.com.shuvo.ikglhrm.attendance.approve.dialogApproveReq;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -88,6 +89,7 @@ public class SelectApproveReqAdapter extends RecyclerView.Adapter<SelectApproveR
         return mCategoryItem.size();
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void filterList(ArrayList<SelectApproveReqList> filteredList) {
         mCategoryItem = filteredList;
         notifyDataSetChanged();

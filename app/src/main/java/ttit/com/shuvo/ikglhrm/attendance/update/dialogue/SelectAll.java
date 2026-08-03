@@ -1,12 +1,16 @@
 package ttit.com.shuvo.ikglhrm.attendance.update.dialogue;
 
 import android.app.Dialog;
-import android.graphics.Color;
+import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -22,24 +26,11 @@ import com.google.android.material.textfield.TextInputEditText;
 import java.util.ArrayList;
 
 import ttit.com.shuvo.ikglhrm.R;
-import ttit.com.shuvo.ikglhrm.leaveAll.LeaveApplication;
+import ttit.com.shuvo.ikglhrm.utilities.SelectAllListener;
 
-import static ttit.com.shuvo.ikglhrm.attendance.update.AttendanceUpdate.approverTestEdit;
-import static ttit.com.shuvo.ikglhrm.attendance.update.AttendanceUpdate.dialogText;
-import static ttit.com.shuvo.ikglhrm.attendance.update.AttendanceUpdate.errorApprover;
-import static ttit.com.shuvo.ikglhrm.attendance.update.AttendanceUpdate.errorShift;
-import static ttit.com.shuvo.ikglhrm.attendance.update.AttendanceUpdate.selectAllLists;
-import static ttit.com.shuvo.ikglhrm.attendance.update.AttendanceUpdate.selected_approver_id;
-import static ttit.com.shuvo.ikglhrm.attendance.update.AttendanceUpdate.selected_approver_name;
-import static ttit.com.shuvo.ikglhrm.attendance.update.AttendanceUpdate.selected_shift_id;
-import static ttit.com.shuvo.ikglhrm.attendance.update.AttendanceUpdate.selected_shift_name;
-import static ttit.com.shuvo.ikglhrm.attendance.update.AttendanceUpdate.shiftTestEdit;
-import static ttit.com.shuvo.ikglhrm.attendance.update.AttendanceUpdate.showShoftTime;
-import static ttit.com.shuvo.ikglhrm.leaveAll.LeaveApplication.allWorkBackup;
-import static ttit.com.shuvo.ikglhrm.leaveAll.LeaveApplication.errorBackup;
-import static ttit.com.shuvo.ikglhrm.leaveAll.LeaveApplication.selected_worker;
-import static ttit.com.shuvo.ikglhrm.leaveAll.LeaveApplication.selected_worker_id;
-import static ttit.com.shuvo.ikglhrm.leaveAll.LeaveApplication.workBackup;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.ATT_APPROVER_SELECT_TYPE;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.ATT_SHIFT_SELECT_TYPE;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.LVE_BACKUP_SELECT_TYPE;
 
 public class SelectAll extends AppCompatDialogFragment implements SelectAllAdapter.ClickedItem{
 
@@ -59,12 +50,30 @@ public class SelectAll extends AppCompatDialogFragment implements SelectAllAdapt
     ArrayList<SelectAllList> filteredList = new ArrayList<>();
     private ArrayList<SelectAllList> lists = new ArrayList<>();
 
+    String dialogueType = "";
 
+    public SelectAll() {}
+
+    public static SelectAll newInstance(String type, ArrayList<SelectAllList> selectAllLists) {
+        SelectAll fragment = new SelectAll();
+        Bundle args = new Bundle();
+        args.putSerializable("selectAllLists", selectAllLists);
+        args.putString("type", type);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    private SelectAllListener allListener;
+
+    @SuppressWarnings("unchecked")
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
+
+        if (getActivity() instanceof SelectAllListener)
+            allListener = (SelectAllListener) getActivity();
 
         View view = inflater.inflate(R.layout.all_list_of, null);
 
@@ -76,6 +85,15 @@ public class SelectAll extends AppCompatDialogFragment implements SelectAllAdapt
 
         search = view.findViewById(R.id.search_text);
 
+        lists = new ArrayList<>();
+
+        if (getArguments() != null) {
+            lists = (ArrayList<SelectAllList>) getArguments().getSerializable("selectAllLists");
+            dialogueType = getArguments().getString("type", "");
+        }
+
+        if (lists == null) lists = new ArrayList<>();
+
         builder.setView(view);
 
         dialog = builder.create();
@@ -83,59 +101,43 @@ public class SelectAll extends AppCompatDialogFragment implements SelectAllAdapt
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
 
-        lists = new ArrayList<>();
-
         String ft;
         String st;
         String tt;
         String fot;
-        if (dialogText == 1) {
-            ft = "Shift";
-            st = "Start Time";
-            tt = "Late After";
-            fot = "End Time";
-            first.setText(ft);
-            second.setText(st);
-            third.setText(tt);
-            fourth.setText(fot);
-            lists = selectAllLists;
-        } else if (dialogText == 2) {
-            ft = "Employee";
-            st = "Functional Designation";
-            tt = "Structure Designation";
-            fot = "Division";
-            first.setText(ft);
-            second.setText(st);
-            third.setText(tt);
-            fourth.setText(fot);
-            lists = selectAllLists;
+        switch (dialogueType) {
+            case ATT_SHIFT_SELECT_TYPE:
+                ft = "Shift";
+                st = "Start Time";
+                tt = "Late After";
+                fot = "End Time";
+                first.setText(ft);
+                second.setText(st);
+                third.setText(tt);
+                fourth.setText(fot);
+                break;
+            case ATT_APPROVER_SELECT_TYPE:
+                ft = "Employee";
+                st = "Functional Designation";
+                tt = "Structure Designation";
+                fot = "Division";
+                first.setText(ft);
+                second.setText(st);
+                third.setText(tt);
+                fourth.setText(fot);
+                break;
+            case LVE_BACKUP_SELECT_TYPE:
+                ft = "Name";
+                st = "Calling Title";
+                tt = "Job Title";
+                fot = "Division";
+                first.setText(ft);
+                second.setText(st);
+                third.setText(tt);
+                fourth.setText(fot);
+                break;
         }
-//        else if (AttendanceReqUpdate.dialogText_update == 1) {
-//            first.setText("Shift");
-//            second.setText("Start Time");
-//            third.setText("Late After");
-//            fourth.setText("End Time");
-//            lists = selectAllListsUpdate;
-//        }
-//        else if (AttendanceReqUpdate.dialogText_update == 2) {
-//            first.setText("Employee");
-//            second.setText("Functional Designation");
-//            third.setText("Structure Designation");
-//            fourth.setText("Division");
-//            lists = selectAllListsUpdate;
-//        }
-        else if (LeaveApplication.dialogText_leave == 1) {
-            ft = "Name";
-            st = "Calling Title";
-            tt = "Job Title";
-            fot = "Division";
-            first.setText(ft);
-            second.setText(st);
-            third.setText(tt);
-            fourth.setText(fot);
-            lists = allWorkBackup;
-        }
-        recyclerView.setHasFixedSize(true);
+
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),DividerItemDecoration.VERTICAL);
@@ -143,15 +145,7 @@ public class SelectAll extends AppCompatDialogFragment implements SelectAllAdapt
         selectAllAdapter = new SelectAllAdapter(lists, getContext(),this);
         recyclerView.setAdapter(selectAllAdapter);
 
-
-
-        dialog.setButton(Dialog.BUTTON_NEGATIVE, "CANCEL", (dialog, which) -> {
-
-            dialogText = 0;
-//                AttendanceReqUpdate.dialogText_update = 0;
-            LeaveApplication.dialogText_leave = 0;
-            dialog.dismiss();
-        });
+        dialog.setButton(Dialog.BUTTON_NEGATIVE, "CANCEL", (dialog, which) -> dialog.dismiss());
 
         search.addTextChangedListener(new TextWatcher() {
             @Override
@@ -169,6 +163,23 @@ public class SelectAll extends AppCompatDialogFragment implements SelectAllAdapt
 
                 filter(s.toString());
             }
+        });
+
+        search.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH ||
+                    actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT || event != null && event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER &&
+                    event.getKeyCode() == KeyEvent.KEYCODE_NAVIGATE_NEXT) {
+                if (event == null || !event.isShiftPressed()) {
+                    // the user is done typing.
+                    Log.i("Let see", "Come here");
+                    search.clearFocus();
+                    InputMethodManager mgr = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    mgr.hideSoftInputFromWindow(v.getWindowToken(), 0);
+
+                    return false; // consume.
+                }
+            }
+            return false;
         });
 
         return dialog;
@@ -189,8 +200,6 @@ public class SelectAll extends AppCompatDialogFragment implements SelectAllAdapt
 
     @Override
     public void onCategoryClicked(int CategoryPosition) {
-
-
         String name;
         String id;
         if (isfiltered) {
@@ -204,47 +213,9 @@ public class SelectAll extends AppCompatDialogFragment implements SelectAllAdapt
 
         System.out.println(name);
         System.out.println(id);
-        if (dialogText == 1) {
-            shiftTestEdit.setText(name);
-            shiftTestEdit.setTextColor(Color.BLACK);
-            errorShift.setVisibility(View.GONE);
-            selected_shift_id = id;
-            selected_shift_name = name;
-            showShoftTime.setVisibility(View.VISIBLE);
-        } else if (dialogText == 2) {
-            approverTestEdit.setText(name);
-            approverTestEdit.setTextColor(Color.BLACK);
-            errorApprover.setVisibility(View.GONE);
-            selected_approver_id = id;
-            selected_approver_name = name;
-        }
-//        else if (AttendanceReqUpdate.dialogText_update == 1) {
-//            shiftTestEditUpdate.setText(name);
-//            shiftTestEditUpdate.setTextColor(Color.BLACK);
-//            errorShiftUpdate.setVisibility(View.GONE);
-//            selected_shift_id_update = id;
-//            selected_shift_name_update = name;
-//            showShoftTimeUpdate.setVisibility(View.VISIBLE);
-//        }
-//        else if (AttendanceReqUpdate.dialogText_update == 2) {
-//            approverTestEditUpdate.setText(name);
-//            approverTestEditUpdate.setTextColor(Color.BLACK);
-//            errorApproverUpdate.setVisibility(View.GONE);
-//            selected_approver_id_update = id;
-//            selected_approver_name_update = name;
-//        }
-        else if (LeaveApplication.dialogText_leave == 1) {
-            workBackup.setText(name);
-            workBackup.setTextColor(Color.BLACK);
-            errorBackup.setVisibility(View.GONE);
-            selected_worker = name;
-            selected_worker_id = id;
-        }
+        if (allListener != null)
+            allListener.onItemSelected(dialogueType,name,id);
 
-
-        dialogText = 0;
-//        AttendanceReqUpdate.dialogText_update = 0;
-        LeaveApplication.dialogText_leave = 0;
         dialog.dismiss();
 
     }

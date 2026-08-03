@@ -4,6 +4,7 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -45,45 +46,47 @@ import java.util.logging.Logger;
 
 import ttit.com.shuvo.ikglhrm.R;
 import ttit.com.shuvo.ikglhrm.WaitProgress;
-import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.DialogueText;
 import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.SelectAll;
 import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.SelectAllList;
 import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.ShowAttendance;
 import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.ShowShift;
+import ttit.com.shuvo.ikglhrm.utilities.DialogueText;
+import ttit.com.shuvo.ikglhrm.utilities.SelectAllListener;
+import ttit.com.shuvo.ikglhrm.utilities.TextSubmitListener;
 
 import static ttit.com.shuvo.ikglhrm.user_login.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.ATT_APPROVER_SELECT_TYPE;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.ATT_SHIFT_SELECT_TYPE;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.REQ_ADDRESS;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.REQ_REASON;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class AttendanceUpdate extends AppCompatActivity {
-
-    public static int dialogText = 0;
-    public static int showAttendanceNumber = 0;
-    public static int showShiftNumber = 0;
+public class AttendanceUpdate extends AppCompatActivity implements TextSubmitListener, SelectAllListener {
 
     TextView errorTime;
     TextView errorLocation;
-    public static TextView errorShift;
+    TextView errorShift;
     TextView errorReason;
-    public static TextView errorApprover;
-    public static TextView errorReasonDesc;
+    TextView errorApprover;
+    TextView errorReasonDesc;
 
     LinearLayout after;
     TextInputLayout dateUpdateLay;
-    public static TextInputLayout reasonLay;
-    public static TextInputLayout addStaLay;
+    TextInputLayout reasonLay;
+    TextInputLayout addStaLay;
 
     TextInputLayout inTimeLay;
     TextInputLayout outTimeLay;
 
-    public static TextInputLayout shiftTestLay;
-    public static TextInputEditText shiftTestEdit;
+    TextInputLayout shiftTestLay;
+    TextInputEditText shiftTestEdit;
 
-    public static TextInputLayout approverTestLay;
-    public static TextInputEditText approverTestEdit;
+    TextInputLayout approverTestLay;
+    TextInputEditText approverTestEdit;
 
     TextInputEditText machCode;
     TextInputEditText machType;
@@ -93,8 +96,8 @@ public class AttendanceUpdate extends AppCompatActivity {
     TextInputEditText dateUpdated;
     TextInputEditText arrivalTimeUpdated;
     TextInputEditText departTimeUpdated;
-    public static TextInputEditText reasonDesc;
-    public static TextInputEditText addressStation;
+    TextInputEditText reasonDesc;
+    TextInputEditText addressStation;
 
     Spinner locUpdate;
     Spinner reqType;
@@ -104,7 +107,7 @@ public class AttendanceUpdate extends AppCompatActivity {
     //Spinner approverName;
 
     MaterialButton existingAtt;
-    public static MaterialButton showShoftTime;
+    MaterialButton showShiftTime;
 
     Button close;
     Button update;
@@ -113,8 +116,7 @@ public class AttendanceUpdate extends AppCompatActivity {
     MaterialButton arriClear;
     MaterialButton deptClear;
 
-    public static ArrayList<SelectAllList> selectAllLists;
-    public static ArrayList<SelectAllList> allShiftDetails;
+    ArrayList<SelectAllList> allShiftDetails;
 
 //    ArrayList<SelectAllList> allApproverDivision;
 //    ArrayList<SelectAllList> allApproverWithoutDiv;
@@ -176,19 +178,17 @@ public class AttendanceUpdate extends AppCompatActivity {
     String machineCode = "";
     String machineType = "";
 
-    public static String dateToShow = "";
+    String dateToShow = "";
 
     String selected_request = "";
     String selected_attendance_type= "";
-    public static String selected_shift_name = "";
-    public static String selected_shift_id = "";
-    public static String shift_osm_id = "";
+    String selected_shift_name = "";
+    String selected_shift_id = "";
     String selected_reason_name = "";
-    public static String selected_approver_name = "";
+    String selected_approver_name = "";
 
-    public static String hint = "";
-    public static int number = 0;
-    public static String text = "";
+    String hint = "";
+    String text = "";
 
 //    String desig_priority = "";
 //    String divm_id = "";
@@ -204,7 +204,7 @@ public class AttendanceUpdate extends AppCompatActivity {
     String selected_reason_id = "";
 //    String app_code = "";
 //    String app_code_id = "";
-    public static String selected_approver_id = "";
+    String selected_approver_id = "";
     String arrival_time = "";
     String depart_time = "";
 
@@ -242,7 +242,7 @@ public class AttendanceUpdate extends AppCompatActivity {
         errorReasonDesc = findViewById(R.id.error_input_reason_desc);
 
         existingAtt = findViewById(R.id.existing_att_time);
-        showShoftTime = findViewById(R.id.show_shift_item_button);
+        showShiftTime = findViewById(R.id.show_shift_item_button);
         close = findViewById(R.id.update_finish);
         update = findViewById(R.id.update_req_button);
         updateButtonEnable = findViewById(R.id.linearLayout_new_request_att_send);
@@ -272,7 +272,6 @@ public class AttendanceUpdate extends AppCompatActivity {
         reasonType = findViewById(R.id.spinner_reason_type_updated);
         //approverName = findViewById(R.id.spinner_approver_updated);
 
-        selectAllLists = new ArrayList<>();
 
         allShiftDetails = new ArrayList<>();
 //        allApproverDivision = new ArrayList<>();
@@ -901,53 +900,74 @@ public class AttendanceUpdate extends AppCompatActivity {
 
         // Reason Description
         reasonDesc.setOnClickListener(v -> {
-
-            number = 1;
             hint = Objects.requireNonNull(reasonLay.getHint()).toString();
             text = Objects.requireNonNull(reasonDesc.getText()).toString();
-            DialogueText dialogueText = new DialogueText();
-            dialogueText.show(getSupportFragmentManager(),"TEXTEDIT");
+
+            DialogueText dialogueText = DialogueText.newInstance(REQ_REASON, hint,text);
+            try {
+                showDialogSafely(dialogueText,"TEXTEDIT_RSN");
+            }
+            catch (Exception e) {
+                restart("App is paused for a long time. Please Start the app again.");
+            }
         });
 
         // Address out of Station
         addressStation.setOnClickListener(v -> {
-            number = 2;
             hint = Objects.requireNonNull(addStaLay.getHint()).toString();
             text = Objects.requireNonNull(addressStation.getText()).toString();
-            DialogueText dialogueText = new DialogueText();
-            dialogueText.show(getSupportFragmentManager(),"TEXTEDIT");
+
+            DialogueText dialogueText = DialogueText.newInstance(REQ_ADDRESS, hint,text);
+            try {
+                showDialogSafely(dialogueText,"TEXTEDIT_ADDS");
+            }
+            catch (Exception e) {
+                restart("App is paused for a long time. Please Start the app again.");
+            }
         });
 
         shiftTestEdit.setOnClickListener(v -> {
-            dialogText = 1;
-            selectAllLists = allShiftDetails;
-            SelectAll selectAll = new SelectAll();
-            selectAll.show(getSupportFragmentManager(),"TEXTEDIT");
+            SelectAll selectAll = SelectAll.newInstance(ATT_SHIFT_SELECT_TYPE, allShiftDetails);
+            try {
+                showDialogSafely(selectAll,"TEXTEDIT_SHIFT");
+            }
+            catch (Exception e) {
+                restart("App is paused for a long time. Please Start the app again.");
+            }
         });
 
         approverTestEdit.setOnClickListener(v -> {
-            dialogText = 2;
-            selectAllLists = allSelectedApprover;
-            SelectAll selectAll = new SelectAll();
-            selectAll.show(getSupportFragmentManager(),"TEXTEDIT");
+            SelectAll selectAll = SelectAll.newInstance(ATT_APPROVER_SELECT_TYPE, allSelectedApprover);
+            try {
+                showDialogSafely(selectAll,"TEXTEDIT_APPROVER");
+            }
+            catch (Exception e) {
+                restart("App is paused for a long time. Please Start the app again.");
+            }
         });
 
         existingAtt.setOnClickListener(v -> {
-            showAttendanceNumber = 1;
             dateToShow = Objects.requireNonNull(dateUpdated.getText()).toString();
             if (!dateToShow.isEmpty()) {
-                ShowAttendance showAttendance = new ShowAttendance(AttendanceUpdate.this);
-                showAttendance.show(getSupportFragmentManager(),"Attendance");
+                ShowAttendance showAttendance = ShowAttendance.newInstance(dateToShow);
+                try {
+                    showDialogSafely(showAttendance,"Attendance");
+                }
+                catch (Exception e) {
+                    restart("App is paused for a long time. Please Start the app again.");
+                }
             }
 
         });
 
-        showShoftTime.setOnClickListener(v -> {
-
-            showShiftNumber = 1;
-            shift_osm_id = selected_shift_id;
-            ShowShift showShift = new ShowShift(AttendanceUpdate.this);
-            showShift.show(getSupportFragmentManager(),"Shift");
+        showShiftTime.setOnClickListener(v -> {
+            ShowShift showShift = ShowShift.newInstance(selected_shift_id);
+            try {
+                showDialogSafely(showShift,"Shift");
+            }
+            catch (Exception e) {
+                restart("App is paused for a long time. Please Start the app again.");
+            }
         });
 
         update.setOnClickListener(v -> {
@@ -3046,4 +3066,60 @@ public class AttendanceUpdate extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onTextSubmitted(int reqCode, String text) {
+        if (reqCode == REQ_REASON) {
+            reasonDesc.setText(text);
+            if (text.isEmpty()) {
+                reasonLay.setHint("Write Reason Description:");
+            } else {
+                reasonLay.setHint("Reason Description:");
+            }
+            errorReasonDesc.setVisibility(View.GONE);
+        }
+        else if (reqCode == REQ_ADDRESS) {
+            if (text.isEmpty()) {
+                addStaLay.setHint("Write Address During Outside of Station:");
+            } else {
+                addStaLay.setHint("Address During Outside of Station:");
+            }
+            addressStation.setText(text);
+        }
+    }
+
+    @Override
+    public void onItemSelected(String type, String itemName, String itemId) {
+        if (type.equals(ATT_SHIFT_SELECT_TYPE)) {
+            shiftTestEdit.setText(itemName);
+            shiftTestEdit.setTextColor(Color.BLACK);
+            errorShift.setVisibility(View.GONE);
+            selected_shift_id = itemId;
+            selected_shift_name = itemName;
+            showShiftTime.setVisibility(View.VISIBLE);
+        }
+        else if (type.equals(ATT_APPROVER_SELECT_TYPE)) {
+            approverTestEdit.setText(itemName);
+            approverTestEdit.setTextColor(Color.BLACK);
+            errorApprover.setVisibility(View.GONE);
+            selected_approver_id = itemId;
+            selected_approver_name = itemName;
+        }
+    }
+
+    // safe dialog open
+    private boolean canShowDialog(String tag) {
+        if (isFinishing()) return false;
+        if (isDestroyed()) return false;
+
+        FragmentManager fm = getSupportFragmentManager();
+        if (fm.isStateSaved()) return false;
+
+        return fm.findFragmentByTag(tag) == null;
+    }
+
+    private void showDialogSafely(androidx.fragment.app.DialogFragment dialog, String tag) {
+        if (canShowDialog(tag)) {
+            dialog.show(getSupportFragmentManager(), tag);
+        }
+    }
 }

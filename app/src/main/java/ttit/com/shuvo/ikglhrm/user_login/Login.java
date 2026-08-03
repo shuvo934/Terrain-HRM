@@ -37,9 +37,6 @@ import static ttit.com.shuvo.ikglhrm.utilities.Constants.user_password;
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import android.content.Context;
 import android.content.Intent;
@@ -51,7 +48,6 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -86,6 +82,7 @@ import ttit.com.shuvo.ikglhrm.dashboard.Dashboard;
 import ttit.com.shuvo.ikglhrm.user_login.dialoges.SelectCenterDialogue;
 import ttit.com.shuvo.ikglhrm.user_login.interfaces.CallBackListener;
 import ttit.com.shuvo.ikglhrm.user_login.model.CenterList;
+import ttit.com.shuvo.ikglhrm.utilities.EdgeToEdgeHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -103,8 +100,6 @@ public class Login extends AppCompatActivity implements CallBackListener {
 
     CheckBox checkBox;
 
-//    BLOB pic;
-
     String userName = "";
     String password = "";
     public static String CompanyName = "";
@@ -113,15 +108,9 @@ public class Login extends AppCompatActivity implements CallBackListener {
     public static int isLeaveApproved = 0;
 
     WaitProgress waitProgress = new WaitProgress();
-//    private String message = null;
     private Boolean conn = false;
     private Boolean infoConnected = false;
     private Boolean connected = false;
-
-//    private Connection connection;
-//    AmazingSpinner database;
-
-//    public static final String DATABASE_NAME = "DATABASE_NAME";
 
     SharedPreferences sharedpreferences;
 
@@ -151,32 +140,14 @@ public class Login extends AppCompatActivity implements CallBackListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EdgeToEdgeHelper.enable(this);
         setContentView(R.layout.activity_login);
-//        Window window = getWindow();
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-//            WindowInsetsController insetsController = window.getInsetsController();
-//            if (insetsController != null) {
-//                insetsController.setSystemBarsAppearance(
-//                        0,
-//                        WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
-//                );
-//            }
-//        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            View decorView = window.getDecorView();
-//            int flags = decorView.getSystemUiVisibility();
-//            flags &= ~View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
-//            decorView.setSystemUiVisibility(flags);
-//        }
-
-        View navScrim = findViewById(R.id.nav_bar_login);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.login_root), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
-            ViewGroup.LayoutParams lp = navScrim.getLayoutParams();
-            lp.height = systemBars.bottom;
-            navScrim.setLayoutParams(lp);
-            return insets;
-        });
+        EdgeToEdgeHelper.applyInsets(this,
+                findViewById(R.id.login_root),
+                findViewById(R.id.login_scroll_view),
+                findViewById(R.id.login_scroll_content),
+                false,
+                false);
 
         userInfoLists = new ArrayList<>();
         userDesignations = new ArrayList<>();
@@ -189,7 +160,6 @@ public class Login extends AppCompatActivity implements CallBackListener {
         login_failed = findViewById(R.id.email_pass_miss);
 
         login = findViewById(R.id.login_button);
-//        database = findViewById(R.id.database_spinner);
 
         sharedLogin = getSharedPreferences(LOGIN_ACTIVITY_FILE,MODE_PRIVATE);
         attendanceWidgetPreferences = getSharedPreferences(WIDGET_FILE,MODE_PRIVATE);
@@ -206,23 +176,6 @@ public class Login extends AppCompatActivity implements CallBackListener {
             pass.setText(getPassword);
         }
         checkBox.setChecked(getChecked);
-
-//        database.setText(DEFAULT_USERNAME);
-//        ArrayList<String> type = new ArrayList<>();
-//        type.add("IKGL");
-//        type.add("TTRAMS");
-//        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getApplicationContext(),R.layout.dropdown_menu_popup_item,R.id.drop_down_item,type);
-
-//        database.setAdapter(arrayAdapter);
-
-//        database.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                DEFAULT_USERNAME = parent.getItemAtPosition(position).toString();
-////                new Check().execute();
-//                getData();
-//            }
-//        });
 
         pass.addTextChangedListener(new TextWatcher() {
             @Override
@@ -382,485 +335,6 @@ public class Login extends AppCompatActivity implements CallBackListener {
         closeKeyBoard();
         return super.onTouchEvent(event);
     }
-
-//    public boolean isConnected () {
-//        boolean connected = false;
-//        boolean isMobile = false;
-//        try {
-//            ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-//            @SuppressLint("MissingPermission") NetworkInfo nInfo = cm.getActiveNetworkInfo();
-//            connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
-//            return connected;
-//        } catch (Exception e) {
-//            Log.e("Connectivity Exception", e.getMessage());
-//        }
-//        return connected;
-//    }
-//
-//    public boolean isOnline () {
-//
-//        Runtime runtime = Runtime.getRuntime();
-//        try {
-//            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
-//            int exitValue = ipProcess.waitFor();
-//            return (exitValue == 0);
-//        } catch (IOException | InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//
-//        return false;
-//    }
-
-//    public class CheckLogin extends AsyncTask<Void, Void, Void> {
-//
-//        @Override
-//        protected void onPreExecute() {
-//            super.onPreExecute();
-//
-//            waitProgress.show(getSupportFragmentManager(), "WaitBar");
-//            waitProgress.setCancelable(false);
-//        }
-//
-//        @Override
-//        protected Void doInBackground(Void... voids) {
-//            if (isConnected() && isOnline()) {
-//
-//                LoginQuery();
-//                if (connected) {
-//                    conn = true;
-//                    message = "Internet Connected";
-//                }
-//
-//            } else {
-//                conn = false;
-//                message = "Not Connected";
-//            }
-//
-//            return null;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(Void aVoid) {
-//            super.onPostExecute(aVoid);
-//
-//            waitProgress.dismiss();
-//            if (conn) {
-//
-//                if (!userId.equals("-1")) {
-//                    if (adminConnected) {
-//                        Toast.makeText(getApplicationContext(),"Admin can not access this app.",Toast.LENGTH_SHORT).show();
-//                    }
-//                    else {
-//                        if (infoConnected) {
-//
-//                            if (checkBox.isChecked()) {
-//                                System.out.println("Remembered");
-//                                SharedPreferences.Editor editor = sharedpreferences.edit();
-//                                editor.remove(user_emp_code);
-//                                editor.remove(user_password);
-//                                editor.remove(checked);
-//                                editor.putString(user_emp_code,userName);
-//                                editor.putString(user_password,password);
-//                                editor.putBoolean(checked,true);
-//                                editor.apply();
-//                                editor.commit();
-//                            } else {
-//                                System.out.println("Not Remembered");
-//                            }
-//
-////                        user.setText("");
-////                        pass.setText("");
-////                        checkBox.setChecked(false);
-//
-//
-//
-//                            SharedPreferences.Editor editor1 = sharedLogin.edit();
-//                            editor1.remove(USER_NAME);
-//                            editor1.remove(USER_F_NAME);
-//                            editor1.remove(USER_L_NAME);
-//                            editor1.remove(EMAIL);
-//                            editor1.remove(CONTACT);
-//                            editor1.remove(EMP_ID_LOGIN);
-//
-//                            editor1.remove(JSM_CODE);
-//                            editor1.remove(JSM_NAME);
-//                            editor1.remove(JSD_ID_LOGIN);
-//                            editor1.remove(JSD_OBJECTIVE);
-//                            editor1.remove(DEPT_NAME);
-//                            editor1.remove(DIV_NAME);
-//                            editor1.remove(DESG_NAME);
-//                            editor1.remove(DESG_PRIORITY);
-//                            editor1.remove(JOINING_DATE);
-//                            editor1.remove(DIV_ID);
-//                            editor1.remove(LOGIN_TF);
-//
-//                            editor1.remove(IS_ATT_APPROVED);
-//                            editor1.remove(IS_LEAVE_APPROVED);
-//                            editor1.remove(COMPANY);
-//                            editor1.remove(SOFTWARE);
-//                            editor1.remove(LIVE_FLAG);
-//                            editor1.remove(DATABASE_NAME);
-//
-//                            editor1.putString(USER_NAME, userInfoLists.get(0).getUserName());
-//                            editor1.putString(USER_F_NAME, userInfoLists.get(0).getUser_fname());
-//                            editor1.putString(USER_L_NAME, userInfoLists.get(0).getUser_lname());
-//                            editor1.putString(EMAIL, userInfoLists.get(0).getEmail());
-//                            editor1.putString(CONTACT, userInfoLists.get(0).getContact());
-//                            editor1.putString(EMP_ID_LOGIN, userInfoLists.get(0).getEmp_id());
-//
-//                            if (userDesignations.size() != 0) {
-//                                editor1.putString(JSM_CODE, userDesignations.get(0).getJsm_code());
-//                                editor1.putString(JSM_NAME, userDesignations.get(0).getJsm_name());
-//                                editor1.putString(JSD_ID_LOGIN, userDesignations.get(0).getJsd_id());
-//                                editor1.putString(JSD_OBJECTIVE, userDesignations.get(0).getJsd_objective());
-//                                editor1.putString(DEPT_NAME, userDesignations.get(0).getDept_name());
-//                                editor1.putString(DIV_NAME, userDesignations.get(0).getDiv_name());
-//                                editor1.putString(DESG_NAME, userDesignations.get(0).getDesg_name());
-//                                editor1.putString(DESG_PRIORITY, userDesignations.get(0).getDesg_priority());
-//                                editor1.putString(JOINING_DATE, userDesignations.get(0).getJoining_date());
-//                                editor1.putString(DIV_ID, userDesignations.get(0).getDiv_id());
-//                            } else {
-//                                editor1.putString(JSM_CODE, null);
-//                                editor1.putString(JSM_NAME, null);
-//                                editor1.putString(JSD_ID_LOGIN, null);
-//                                editor1.putString(JSD_OBJECTIVE, null);
-//                                editor1.putString(DEPT_NAME, null);
-//                                editor1.putString(DIV_NAME, null);
-//                                editor1.putString(DESG_NAME, null);
-//                                editor1.putString(DESG_PRIORITY, null);
-//                                editor1.putString(JOINING_DATE, null);
-//                                editor1.putString(DIV_ID, null);
-//                            }
-//
-////                        editor1.putString(JSM_CODE, userDesignations.get(0).getJsm_code());
-////                        editor1.putString(JSM_NAME, userDesignations.get(0).getJsm_name());
-////                        editor1.putString(JSD_ID_LOGIN, userDesignations.get(0).getJsd_id());
-////                        editor1.putString(JSD_OBJECTIVE, userDesignations.get(0).getJsd_objective());
-////                        editor1.putString(DEPT_NAME, userDesignations.get(0).getDept_name());
-////                        editor1.putString(DIV_NAME, userDesignations.get(0).getDiv_name());
-////                        editor1.putString(DESG_NAME, userDesignations.get(0).getDesg_name());
-////                        editor1.putString(DESG_PRIORITY, userDesignations.get(0).getDesg_priority());
-////                        editor1.putString(JOINING_DATE, userDesignations.get(0).getJoining_date());
-////                        editor1.putString(DIV_ID, userDesignations.get(0).getDiv_id());
-//                            editor1.putBoolean(LOGIN_TF,true);
-//
-//                            editor1.putInt(IS_ATT_APPROVED, isApproved);
-//                            editor1.putInt(IS_LEAVE_APPROVED, isLeaveApproved);
-//                            editor1.putString(COMPANY, CompanyName);
-//                            editor1.putString(SOFTWARE,SoftwareName);
-//                            editor1.putInt(LIVE_FLAG,live_loc_flag);
-//                            editor1.putString(DATABASE_NAME,DEFAULT_USERNAME);
-//                            editor1.apply();
-//                            editor1.commit();
-//
-//
-//                            Toast.makeText(getApplicationContext(), "Login Successful", Toast.LENGTH_SHORT).show();
-//                            Intent intent = new Intent(getApplicationContext(), Dashboard.class);
-//                            startActivity(intent);
-//                            finish();
-//
-//                        } else {
-//                            new CheckLogin().execute();
-//                        }
-//                    }
-//
-//                } else {
-//
-//                    login_failed.setVisibility(View.VISIBLE);
-//                }
-//                conn = false;
-//                connected = false;
-//                adminConnected = false;
-//                infoConnected = false;
-//
-//
-//            }
-//            else {
-//                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
-//                AlertDialog dialog = new AlertDialog.Builder(Login.this)
-//                        .setMessage("Please Check Your Internet Connection")
-//                        .setPositiveButton("Retry", null)
-//                        .show();
-//
-////                dialog.setCancelable(false);
-////                dialog.setCanceledOnTouchOutside(false);
-//                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-//                positive.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//
-//                        new CheckLogin().execute();
-//                        dialog.dismiss();
-//                    }
-//                });
-//            }
-//        }
-//    }
-
-//    public class Check extends AsyncTask<Void, Void, Void> {
-//
-//        @Override
-//        protected void onPreExecute() {
-//            super.onPreExecute();
-//
-//            waitProgress.show(getSupportFragmentManager(), "WaitBar");
-//            waitProgress.setCancelable(false);
-//        }
-//
-//        @Override
-//        protected Void doInBackground(Void... voids) {
-//            if (isConnected() && isOnline()) {
-//
-//                GettingData();
-//                if (getConnected) {
-//                    getConn = true;
-//                    message = "Internet Connected";
-//                }
-//
-//
-//            } else {
-//                getConn = false;
-//                message = "Not Connected";
-//            }
-//
-//            return null;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(Void aVoid) {
-//            super.onPostExecute(aVoid);
-//
-//            waitProgress.dismiss();
-//            if (getConn) {
-//
-//                if (CompanyName == null) {
-//                    CompanyName = "No Name Found";
-//                }
-//
-//                if (SoftwareName == null) {
-//                    SoftwareName = "Name of App";
-//                }
-//                softName.setText(CompanyName);
-//
-//                getConnected = false;
-//                getConn = false;
-//
-//
-//            }
-//            else {
-//                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
-//                AlertDialog dialog = new AlertDialog.Builder(Login.this)
-//                        .setMessage("Please Check Your Internet Connection")
-//                        .setPositiveButton("Retry", null)
-//                        .show();
-//
-//                dialog.setCancelable(false);
-//                dialog.setCanceledOnTouchOutside(false);
-//                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-//                positive.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//
-//                        new Check().execute();
-//                        dialog.dismiss();
-//                    }
-//                });
-//            }
-//        }
-//    }
-
-//    public void LoginQuery () {
-//
-//
-//        try {
-//            this.connection = createConnection();
-//            //    Toast.makeText(MainActivity.this, "Connected",Toast.LENGTH_SHORT).show();
-//
-//            userInfoLists = new ArrayList<>();
-//            userDesignations = new ArrayList<>();
-//            isApproved = 0;
-//            isLeaveApproved = 0;
-//
-//            Statement stmt = connection.createStatement();
-//            StringBuffer stringBuffer = new StringBuffer();
-////            StringBuffer stringBuffer1 = new StringBuffer();
-////            StringBuffer stringBuffer2 = new StringBuffer();
-////            StringBuffer stringBuffer3 = new StringBuffer();
-////            StringBuffer stringBuffer4 = new StringBuffer();
-////            StringBuffer stringBuffer5 = new StringBuffer();
-////            StringBuffer stringBuffer6 = new StringBuffer();
-////            StringBuffer stringBuffer7 = new StringBuffer();
-//
-//
-//            ResultSet rs = stmt.executeQuery("select VALIDATE_USER_DB('" + userName + "',HAMID_ENCRYPT_DESCRIPTION_PACK.HEDP_ENCRYPT('" + password + "')) val from dual\n");
-//
-//
-//            while (rs.next()) {
-//                stringBuffer.append("USER ID: " + rs.getString(1) + "\n");
-//                userId = rs.getString(1);
-//
-//            }
-//
-//            if (!userId.equals("-1")) {
-//
-//                String empCode = "";
-//                ResultSet resEmpCode = stmt.executeQuery("select COM_PACK.GET_EMP_CODE_BY_EMP_ID((SELECT USR_EMP_ID FROM ISP_USER WHERE USR_ID = "+userId+")) valu from dual");
-//                while (resEmpCode.next()) {
-//                    empCode = resEmpCode.getString(1);
-//                }
-//                resEmpCode.close();
-//
-//                if (empCode.equals("0000")) {
-//                    adminConnected = true;
-//                }
-//                else if (!empCode.equals("NO USER FOUND")){
-//                    adminConnected = false;
-//                    ResultSet resultSet = stmt.executeQuery("Select USR_NAME, USR_FNAME, USR_LNAME, USR_EMAIL, USR_CONTACT, USR_EMP_ID FROM ISP_USER\n" +
-//                            "where USR_ID = " + userId + "\n");
-//
-//                    while (resultSet.next()) {
-//                        emp_id = resultSet.getString(6);
-//                        userInfoLists.add(new UserInfoList(empCode, resultSet.getString(2), resultSet.getString(3), resultSet.getString(4), resultSet.getString(5), resultSet.getString(6)));
-//                    }
-//
-//                    ResultSet resultSet1 = stmt.executeQuery("SELECT DISTINCT JOB_SETUP_MST.JSM_CODE, JOB_SETUP_MST.JSM_NAME TEMP_TITLE, \n" +
-//                            "JOB_SETUP_DTL.JSD_ID, JOB_SETUP_DTL.JSD_OBJECTIVE, DEPT_MST.DEPT_NAME, \n" +
-//                            "DIVISION_MST.DIVM_NAME, DESIG_MST.DESIG_NAME, DESIG_MST.DESIG_PRIORITY, (Select TO_CHAR(MAX(EMP_JOB_HISTORY.JOB_ACTUAL_DATE),'DD-MON-YYYY') from EMP_JOB_HISTORY) as JOININGDATE, DIVISION_MST.DIVM_ID \n" +
-//                            "FROM JOB_SETUP_MST, JOB_SETUP_DTL, DEPT_MST, DIVISION_MST, DESIG_MST, EMP_JOB_HISTORY\n" +
-//                            "WHERE ((JOB_SETUP_DTL.JSD_JSM_ID = JOB_SETUP_MST.JSM_ID)\n" +
-//                            " AND (JOB_SETUP_MST.JSM_DIVM_ID = DIVISION_MST.DIVM_ID)\n" +
-//                            " AND (DEPT_MST.DEPT_ID = JOB_SETUP_MST.JSM_DEPT_ID)\n" +
-//                            " AND (JOB_SETUP_MST.JSM_DESIG_ID = DESIG_MST.DESIG_ID))\n" +
-//                            " AND JOB_SETUP_DTL.JSD_ID = (SELECT JOB_JSD_ID\n" +
-//                            "                            FROM EMP_JOB_HISTORY\n" +
-//                            "                            WHERE JOB_ID = (SELECT MAX(JOB_ID) FROM EMP_JOB_HISTORY WHERE JOB_EMP_ID = " + emp_id + "))" +
-//                            "AND EMP_JOB_HISTORY.JOB_JSD_ID = JOB_SETUP_DTL.JSD_ID");
-//
-//                    while (resultSet1.next()) {
-//
-//                        userDesignations.add(new UserDesignation(resultSet1.getString(1), resultSet1.getString(2), resultSet1.getString(3), resultSet1.getString(4), resultSet1.getString(5), resultSet1.getString(6), resultSet1.getString(7), resultSet1.getString(8), resultSet1.getString(9), resultSet1.getString(10)));
-//                    }
-//
-//                    ResultSet resultSet2 = stmt.executeQuery("SELECT COUNT (1) VAL\n" +
-//                            "  FROM DAILY_ATTEN_REQ_MST\n" +
-//                            " WHERE DARM_APP_CODE IN\n" +
-//                            "          (SELECT DAAHL_APP_CODE\n" +
-//                            "             FROM DAILY_ATTEN_APP_HIERARCHY_LOG, DAILY_ATTEN_REQ_MST\n" +
-//                            "            WHERE     DAILY_ATTEN_APP_HIERARCHY_LOG.DAAHL_APP_CODE =\n" +
-//                            "                         DAILY_ATTEN_REQ_MST.DARM_APP_CODE\n" +
-//                            "                  AND NVL (DAILY_ATTEN_REQ_MST.DARM_APPROVED, 0) = 0\n" +
-//                            "                  AND (DAILY_ATTEN_APP_HIERARCHY_LOG.DAAHL_APPROVER_BAND_ID =\n" +
-//                            "                          (SELECT EMP_ID\n" +
-//                            "                             FROM EMP_MST\n" +
-//                            "                            WHERE EMP_CODE = '" + empCode + "')))");
-//
-//                    while (resultSet2.next()) {
-//                        isApproved = resultSet2.getInt(1);
-//                        System.out.println(isApproved);
-//                    }
-//                    System.out.println("isApproved: "+isApproved);
-//
-//                    ResultSet resultSet3 = stmt.executeQuery("SELECT count(DISTINCT LA_APP_CODE)\n" +
-//                            "  FROM (SELECT LA.LA_APP_CODE\n" +
-//                            "          FROM LEAVE_APPLICATION LA\n" +
-//                            "         WHERE     LA.LA_EMP_ID IN\n" +
-//                            "                      (SELECT C.JOB_EMP_ID\n" +
-//                            "                         FROM JOB_SETUP_MST A,\n" +
-//                            "                              JOB_SETUP_DTL B,\n" +
-//                            "                              (SELECT JOB_EMP_ID, JOB_JSD_ID\n" +
-//                            "                                 FROM EMP_JOB_HISTORY EJH\n" +
-//                            "                                WHERE JOB_ID =\n" +
-//                            "                                         (SELECT MAX (JOB_ID)\n" +
-//                            "                                            FROM EMP_JOB_HISTORY EH\n" +
-//                            "                                           WHERE EJH.JOB_EMP_ID =\n" +
-//                            "                                                    EH.JOB_EMP_ID)) C,\n" +
-//                            "                              DESIG_MST     D   --, leave_approval_hierarchy e\n" +
-//                            "                        WHERE     A.JSM_ID = B.JSD_JSM_ID\n" +
-//                            "                              AND C.JOB_JSD_ID = B.JSD_ID\n" +
-//                            "                              AND D.DESIG_ID = A.JSM_DESIG_ID\n" +
-//                            "                              AND D.DESIG_PRIORITY IN\n" +
-//                            "                                     (SELECT L.LAH_BAND_NO\n" +
-//                            "                                        FROM LEAVE_APPROVAL_HIERARCHY L\n" +
-//                            "                                       WHERE INSTR (\n" +
-//                            "                                                   ','\n" +
-//                            "                                                || L.LAH_APPROVAL_BAND\n" +
-//                            "                                                || ',',\n" +
-//                            "                                                   ','\n" +
-//                            "                                                || EMP_PACKAGE.GET_BAND_BY_EMP_CODE (\n" +
-//                            "                                                      '" + empCode + "')\n" +
-//                            "                                                || ',') > 0))\n" +
-//                            "               AND NVL (LA.LA_APPROVED, 0) = 0\n" +
-//                            "        UNION ALL\n" +
-//                            "        SELECT LA.LA_APP_CODE\n" +
-//                            "          FROM LEAVE_APPLICATION LA\n" +
-//                            "         WHERE     LA.LA_EMP_ID IN\n" +
-//                            "                      (SELECT C.JOB_EMP_ID\n" +
-//                            "                         FROM JOB_SETUP_MST A,\n" +
-//                            "                              JOB_SETUP_DTL B,\n" +
-//                            "                              (SELECT JOB_EMP_ID, JOB_JSD_ID\n" +
-//                            "                                 FROM EMP_JOB_HISTORY EJH\n" +
-//                            "                                WHERE JOB_ID =\n" +
-//                            "                                         (SELECT MAX (JOB_ID)\n" +
-//                            "                                            FROM EMP_JOB_HISTORY EH\n" +
-//                            "                                           WHERE EJH.JOB_EMP_ID =\n" +
-//                            "                                                    EH.JOB_EMP_ID)) C,\n" +
-//                            "                              DESIG_MST     D   --, leave_approval_hierarchy e\n" +
-//                            "                        WHERE     A.JSM_ID = B.JSD_JSM_ID\n" +
-//                            "                              AND C.JOB_JSD_ID = B.JSD_ID\n" +
-//                            "                              AND D.DESIG_ID = A.JSM_DESIG_ID\n" +
-//                            "                              AND D.DESIG_PRIORITY IN\n" +
-//                            "                                     ( (SELECT LAH.LAH_BAND_NO\n" +
-//                            "                                          FROM LEAVE_APPROVAL_HIERARCHY LAH\n" +
-//                            "                                         WHERE INSTR (\n" +
-//                            "                                                     ','\n" +
-//                            "                                                  || LAH.LAH_SP_APPROVAL_CODE\n" +
-//                            "                                                  || ',',\n" +
-//                            "                                                  ',' || '" + empCode + "' || ',') > 0)))\n" +
-//                            "               AND NVL (LA.LA_APPROVED, 0) = 0)\n" +
-//                            " WHERE LA_APP_CODE NOT IN\n" +
-//                            "       (SELECT CASE\n" +
-//                            "          WHEN COM_PACK.GET_EMPLOYEE_ID_BY_USER ('" + empCode + "') =\n" +
-//                            "                  LAD_FORWARD_TO_ID\n" +
-//                            "          THEN\n" +
-//                            "             'No code'\n" +
-//                            "          ELSE\n" +
-//                            "             GET_LEAVE_APP_CODE (LAD_LA_ID)\n" +
-//                            "       END\n" +
-//                            "  FROM LEAVE_APPLICATION_DTL\n" +
-//                            " WHERE LAD_ID IN (  SELECT MAX (LAD_ID)\n" +
-//                            "                      FROM LEAVE_APPLICATION_DTL D, LEAVE_APPLICATION M\n" +
-//                            "                     WHERE M.LA_ID = D.LAD_LA_ID\n" +
-//                            "                  GROUP BY LAD_LA_ID))");
-//
-//                    while (resultSet3.next()) {
-//                        isLeaveApproved = resultSet3.getInt(1);
-//                        System.out.println("LEAVE PRRR: " + isLeaveApproved);
-//                    }
-//
-//                    ResultSet resultSet4 = stmt.executeQuery("select EMP_LIVE_LOC_TRACKER_FLAG from EMP_MST WHERE EMP_CODE = '"+empCode+"'");
-//
-//                    while (resultSet4.next()) {
-//                        live_loc_flag = resultSet4.getInt(1);
-//                        System.out.println("LIVE LOCATION FLAG: "+ live_loc_flag);
-//                    }
-//                    infoConnected = true;
-//                }
-//            }
-//            System.out.println(stringBuffer);
-//
-//
-//            connected = true;
-//
-//            connection.close();
-//
-//        } catch (Exception e) {
-//
-//            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
-//            Log.i("ERRRRR", e.getLocalizedMessage());
-//            e.printStackTrace();
-//        }
-//
-//    }
 
     public void dynamicLoginCheck() {
         waitProgress.show(getSupportFragmentManager(), "WaitBar");
@@ -1640,102 +1114,5 @@ public class Login extends AppCompatActivity implements CallBackListener {
         waitProgress.setCancelable(false);
         getUserDetails();
     }
-
-//    public void GettingData () {
-//        try {
-//            this.connection = createConnection();
-//            //    Toast.makeText(MainActivity.this, "Connected",Toast.LENGTH_SHORT).show();
-//
-//
-//            Statement stmt = connection.createStatement();
-//
-//            ResultSet rs = stmt.executeQuery("SELECT CIM_NAME--,CIM_LOGO_APPS \n" +
-//                    "FROM COMPANY_INFO_MST\n");
-//
-//            while (rs.next()) {
-//                CompanyName = rs.getString(1);
-//                System.out.println(CompanyName);
-//
-////                pic = (BLOB) rs.getBlob(2);
-////                System.out.println(String.valueOf(pic));
-////
-////                byte[] barr = pic.getBytes(1,(int)pic.length());
-////                System.out.println(Arrays.toString(barr));
-////                String encodedImageString = Base64.encodeToString(barr, Base64.DEFAULT);
-////                byte[] bytes = Base64.decode(encodedImageString,Base64.DEFAULT);
-////                System.out.println(Arrays.toString(bytes));
-//
-////                String bytes = rs.getString(2);
-//
-////                System.out.println(bytes);
-////                byte[] b = bytes.getBytes();
-////                System.out.println(Arrays.toString(b));
-//
-//                // Blob image = rs.getBlob(2);
-////                Bitmap bmp= BitmapFactory.decodeByteArray(bytes, 0 , bytes.length);
-////                System.out.println(bmp);
-////                imageView.setImageBitmap(bmp);
-//
-////                File myExternalFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),"Logo.jpeg");
-////                FileOutputStream fos = new FileOutputStream(myExternalFile);//Get OutputStream for NewFile Location
-////                fos.write(barr);
-////                fos.close();
-////
-////                BitmapFactory.Options options = new BitmapFactory.Options();
-////                options.inMutable = true;
-////                options.inJustDecodeBounds = true;
-////                Bitmap bitmap = BitmapFactory.decodeByteArray(barr,0,barr.length);
-////                System.out.println(bitmap);
-////                imageView.setImageBitmap(bitmap);
-////
-////                InputStream inputStream = pic.getBinaryStream();
-////                System.out.println(inputStream);
-////
-////                bitmap = BitmapFactory.decodeStream(inputStream);
-////                System.out.println(bitmap);
-//
-//
-//            }
-//
-//
-//            ResultSet resultSet = stmt.executeQuery(" select LIC_SOFTWARE_NAME from isp_runauto where rownum=1\n");
-//
-//            while (resultSet.next()) {
-//                SoftwareName = resultSet.getString(1);
-//                System.out.println(SoftwareName);
-//            }
-//
-//
-////            CallableStatement callableStatement = connection.prepareCall("begin ? := GET_LEAVE_BALANCE(?,?,?); end;");
-////            callableStatement.setInt(2,2008);
-////            callableStatement.setString(3, "16-AUG-21");
-////            callableStatement.setString(4,"EL");
-////            callableStatement.registerOutParameter(1,Types.INTEGER);
-////            callableStatement.execute();
-////            int ddd = callableStatement.getInt(1);
-////            System.out.println(ddd);
-////            callableStatement.close();
-////
-////            CallableStatement callableStatement1 = connection.prepareCall("begin ? := GET_CONSUMED_LEAVE_BY_MONTH(?,?,?); end;");
-////            callableStatement1.setInt(2,2008);
-////            callableStatement1.setString(3, "01-AUG-21");
-////            callableStatement1.setString(4,"EL");
-////            callableStatement1.registerOutParameter(1,Types.INTEGER);
-////            callableStatement1.execute();
-////            int dddd = callableStatement1.getInt(1);
-////            System.out.println(dddd);
-////            callableStatement1.close();
-//
-//
-//            getConnected = true;
-//            connection.close();
-//
-//        } catch (Exception e) {
-//
-//            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
-//            Log.i("ERRRRR", e.getLocalizedMessage());
-//            e.printStackTrace();
-//        }
-//    }
 
 }

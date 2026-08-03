@@ -130,7 +130,6 @@ public class LeaveApplicationStatus extends AppCompatActivity {
         String yt = "Application Year : " + selected_year;
         yearText.setText(yt);
 
-        statusView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         statusView.setLayoutManager(layoutManager);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(statusView.getContext(),DividerItemDecoration.VERTICAL);

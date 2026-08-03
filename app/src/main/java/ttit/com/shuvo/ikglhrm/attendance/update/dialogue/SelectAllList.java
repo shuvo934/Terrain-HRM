@@ -1,6 +1,8 @@
 package ttit.com.shuvo.ikglhrm.attendance.update.dialogue;
 
-public class SelectAllList {
+import java.io.Serializable;
+
+public class SelectAllList implements Serializable {
 
     private String id;
     private String first;

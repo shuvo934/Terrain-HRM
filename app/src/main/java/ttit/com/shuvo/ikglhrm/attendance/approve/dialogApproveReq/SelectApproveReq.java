@@ -2,7 +2,6 @@ package ttit.com.shuvo.ikglhrm.attendance.approve.dialogApproveReq;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -17,7 +16,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDialogFragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -28,20 +26,10 @@ import com.google.android.material.textfield.TextInputEditText;
 import java.util.ArrayList;
 
 import ttit.com.shuvo.ikglhrm.R;
+import ttit.com.shuvo.ikglhrm.utilities.ReqSelectionListener;
 
-
-import static ttit.com.shuvo.ikglhrm.attendance.approve.AttendanceApprove.darm_emp_id;
-import static ttit.com.shuvo.ikglhrm.attendance.approve.AttendanceApprove.darm_id;
-import static ttit.com.shuvo.ikglhrm.attendance.approve.AttendanceApprove.fromAttApp;
-import static ttit.com.shuvo.ikglhrm.attendance.approve.AttendanceApprove.req_code;
-import static ttit.com.shuvo.ikglhrm.attendance.approve.AttendanceApprove.requestCode;
-import static ttit.com.shuvo.ikglhrm.attendance.approve.AttendanceApprove.selectApproveReqLists;
-import static ttit.com.shuvo.ikglhrm.leaveAll.leaveApprove.LeaveApprove.fromLApp;
-import static ttit.com.shuvo.ikglhrm.leaveAll.leaveApprove.LeaveApprove.la_emp_id;
-import static ttit.com.shuvo.ikglhrm.leaveAll.leaveApprove.LeaveApprove.la_id;
-import static ttit.com.shuvo.ikglhrm.leaveAll.leaveApprove.LeaveApprove.leaveReqList;
-import static ttit.com.shuvo.ikglhrm.leaveAll.leaveApprove.LeaveApprove.requestCodeLeave;
-import static ttit.com.shuvo.ikglhrm.leaveAll.leaveApprove.LeaveApprove.req_code_leave;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.ATT_REQ_SELECT_TYPE;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.LVE_REQ_SELECT_TYPE;
 
 public class SelectApproveReq extends AppCompatDialogFragment implements SelectApproveReqAdapter.ClickedItem{
 
@@ -59,20 +47,32 @@ public class SelectApproveReq extends AppCompatDialogFragment implements SelectA
     ArrayList<SelectApproveReqList> filteredList = new ArrayList<>();
 
     ArrayList<SelectApproveReqList> selectedReqList;
+    String approveReqType = "";
 
-    AppCompatActivity activity;
-    View view;
+    public SelectApproveReq() {}
 
+    public static SelectApproveReq newInstance(String type, ArrayList<SelectApproveReqList> selectedReqList) {
+        SelectApproveReq fragment = new SelectApproveReq();
+        Bundle args = new Bundle();
+        args.putSerializable("selectedReqList", selectedReqList);
+        args.putString("type", type);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
+    private ReqSelectionListener reqSelectionListener;
+
+    @SuppressWarnings("unchecked")
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
 
-        view = inflater.inflate(R.layout.approval_request_list, null);
+        if (getActivity() instanceof ReqSelectionListener)
+            reqSelectionListener = (ReqSelectionListener) getActivity();
 
-        activity = (AppCompatActivity) view.getContext();
+        View view = inflater.inflate(R.layout.approval_request_list, null);
 
         recyclerView = view.findViewById(R.id.request_list_for_approve);
 //        first = view.findViewById(R.id.first_text);
@@ -87,13 +87,18 @@ public class SelectApproveReq extends AppCompatDialogFragment implements SelectA
 
         search.setImeOptions(EditorInfo.IME_ACTION_DONE);
 
+        if (getArguments() != null) {
+            selectedReqList = (ArrayList<SelectApproveReqList>) getArguments().getSerializable("selectedReqList");
+            approveReqType = getArguments().getString("type", "");
+        }
 
-        if (fromAttApp == 1) {
-            selectedReqList = selectApproveReqLists;
+        if (selectedReqList == null) selectedReqList = new ArrayList<>();
+
+
+        if (approveReqType.equals(ATT_REQ_SELECT_TYPE)) {
             String tt = "Update Date";
             dateOrDays.setText(tt);
-        } else if(fromLApp == 1) {
-            selectedReqList = leaveReqList;
+        } else if(approveReqType.equals(LVE_REQ_SELECT_TYPE)) {
             String tt = "Leave Days";
             dateOrDays.setText(tt);
         }
@@ -106,7 +111,6 @@ public class SelectApproveReq extends AppCompatDialogFragment implements SelectA
         dialog.setCanceledOnTouchOutside(false);
         setCancelable(false);
 
-        recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),DividerItemDecoration.VERTICAL);
@@ -114,14 +118,7 @@ public class SelectApproveReq extends AppCompatDialogFragment implements SelectA
         selectReqAdapter = new SelectApproveReqAdapter(selectedReqList, getContext(),this);
         recyclerView.setAdapter(selectReqAdapter);
 
-
-
-        dialog.setButton(Dialog.BUTTON_NEGATIVE, "CANCEL", (dialog, which) -> {
-
-            fromAttApp = 0;
-            fromLApp = 0;
-            dialog.dismiss();
-        });
+        dialog.setButton(Dialog.BUTTON_NEGATIVE, "CANCEL", (dialog, which) -> dialog.dismiss());
 
         search.addTextChangedListener(new TextWatcher() {
             @Override
@@ -136,7 +133,6 @@ public class SelectApproveReq extends AppCompatDialogFragment implements SelectA
 
             @Override
             public void afterTextChanged(Editable s) {
-
                 filter(s.toString());
             }
         });
@@ -149,7 +145,8 @@ public class SelectApproveReq extends AppCompatDialogFragment implements SelectA
                     // the user is done typing.
                     Log.i("Let see", "Come here");
                     search.clearFocus();
-                    closeKeyBoard();
+                    InputMethodManager mgr = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    mgr.hideSoftInputFromWindow(v.getWindowToken(), 0);
 
                     return false; // consume.
                 }
@@ -161,17 +158,7 @@ public class SelectApproveReq extends AppCompatDialogFragment implements SelectA
 
     }
 
-    private void closeKeyBoard() {
-
-        if (view != null) {
-            view.clearFocus();
-            InputMethodManager mgr = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-            mgr.hideSoftInputFromWindow(view.getWindowToken(), 0);
-        }
-    }
-
     private void filter(String text) {
-
         filteredList = new ArrayList<>();
         for (SelectApproveReqList item : selectedReqList) {
             if (item.getName().toLowerCase().contains(text.toLowerCase())) {
@@ -184,8 +171,6 @@ public class SelectApproveReq extends AppCompatDialogFragment implements SelectA
 
     @Override
     public void onCategoryClicked(int CategoryPosition) {
-
-
         String name;
         String id;
         String darmID;
@@ -202,31 +187,13 @@ public class SelectApproveReq extends AppCompatDialogFragment implements SelectA
             darmEmp = selectedReqList.get(CategoryPosition).getDarmEmpId();
         }
 
-        if (fromAttApp == 1) {
-            System.out.println(name);
-            System.out.println(id);
-            System.out.println(darmID);
-            System.out.println(darmEmp);
-            req_code = id;
-            darm_id = darmID;
-            darm_emp_id = darmEmp;
-            requestCode.setText(id);
-            requestCode.setTextColor(Color.BLACK);
-            fromAttApp = 0;
-        } else if (fromLApp == 1) {
-            System.out.println(name);
-            System.out.println(id);
-            System.out.println(darmID);
-            System.out.println(darmEmp);
-            req_code_leave = id;
-            la_id = darmID;
-            la_emp_id = darmEmp;
-            requestCodeLeave.setText(id);
-            requestCodeLeave.setTextColor(Color.BLACK);
-            fromLApp = 0;
-        }
+        System.out.println(name);
+        System.out.println(id);
+        System.out.println(darmID);
+        System.out.println(darmEmp);
 
-
+        if (reqSelectionListener != null)
+            reqSelectionListener.onReqSelection(approveReqType, id, darmID, darmEmp);
 
         dialog.dismiss();
 

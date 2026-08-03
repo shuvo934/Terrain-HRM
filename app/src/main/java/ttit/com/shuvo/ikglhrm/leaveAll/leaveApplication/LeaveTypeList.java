@@ -1,6 +1,8 @@
 package ttit.com.shuvo.ikglhrm.leaveAll.leaveApplication;
 
-public class LeaveTypeList {
+import java.io.Serializable;
+
+public class LeaveTypeList implements Serializable {
 
     private String id;
     private String typeName;

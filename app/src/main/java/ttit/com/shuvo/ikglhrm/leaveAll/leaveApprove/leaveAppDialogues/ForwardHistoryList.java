@@ -1,6 +1,8 @@
 package ttit.com.shuvo.ikglhrm.leaveAll.leaveApprove.leaveAppDialogues;
 
-public class ForwardHistoryList {
+import java.io.Serializable;
+
+public class ForwardHistoryList implements Serializable {
 
     private String forby;
     private String forComm;

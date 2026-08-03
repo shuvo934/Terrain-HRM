@@ -7,11 +7,13 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -37,24 +39,25 @@ import ttit.com.shuvo.ikglhrm.WaitProgress;
 import ttit.com.shuvo.ikglhrm.attendance.approve.dialogApproveReq.ForwardDialogue;
 import ttit.com.shuvo.ikglhrm.attendance.approve.dialogApproveReq.SelectApproveReq;
 import ttit.com.shuvo.ikglhrm.attendance.approve.dialogApproveReq.SelectApproveReqList;
-import ttit.com.shuvo.ikglhrm.attendance.update.dialogue.DialogueText;
+import ttit.com.shuvo.ikglhrm.utilities.DialogueText;
+import ttit.com.shuvo.ikglhrm.utilities.ForwardListener;
+import ttit.com.shuvo.ikglhrm.utilities.ReqSelectionListener;
+import ttit.com.shuvo.ikglhrm.utilities.TextSubmitListener;
 
 import static ttit.com.shuvo.ikglhrm.user_login.Login.userInfoLists;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.ATT_FORWARD_TYPE;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.ATT_REQ_SELECT_TYPE;
+import static ttit.com.shuvo.ikglhrm.utilities.Constants.REQ_ATTENDANCE_COMMENT;
 import static ttit.com.shuvo.ikglhrm.utilities.Constants.api_url_front;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class AttendanceApprove extends AppCompatActivity {
+public class AttendanceApprove extends AppCompatActivity implements TextSubmitListener, ForwardListener, ReqSelectionListener {
 
-    public static int number = 0;
-    public static String hint = "";
-    public static String text = "";
-
-    public static int forwardFromAtt = 0;
-
-    public static int fromAttApp = 0;
+    String hint = "";
+    String text = "";
 
     CardView afterSelecting;
     LinearLayout afterSelectingButton;
@@ -62,9 +65,9 @@ public class AttendanceApprove extends AppCompatActivity {
     LinearLayout outLay;
     LinearLayout forLay;
 
-    public static TextInputLayout commentsLay;
+    TextInputLayout commentsLay;
 
-    public static TextInputEditText requestCode;
+    TextInputEditText requestCode;
     TextInputEditText name;
     TextInputEditText empCode;
     TextInputEditText appDate;
@@ -79,7 +82,7 @@ public class AttendanceApprove extends AppCompatActivity {
     TextInputEditText shift;
     TextInputEditText reason;
     TextInputEditText reasonDesc;
-    public static TextInputEditText comments;
+    TextInputEditText comments;
     TextInputEditText forwardedBy;
     TextInputEditText forwardComm;
 
@@ -87,7 +90,7 @@ public class AttendanceApprove extends AppCompatActivity {
     Button forward;
     Button reject;
 
-    public static ArrayList<SelectApproveReqList> selectApproveReqLists;
+    ArrayList<SelectApproveReqList> selectApproveReqLists;
 
     WaitProgress waitProgress = new WaitProgress();
 
@@ -100,18 +103,17 @@ public class AttendanceApprove extends AppCompatActivity {
     private Boolean isApprovedd = false;
     private Boolean isApprovedChecked = false;
     private Boolean appppppprrrrr = false;
+    String approveSuccessMsg = "";
 
     private Boolean isRejected = false;
     private Boolean isRejectedChecked = false;
     private Boolean rrreeejjjeecctt = false;
 
-//    private Connection connection;
-
     String emp_code = "";
     String user_id = "";
-    public static String req_code = "";
-    public static String darm_id = "";
-    public static String darm_emp_id = "";
+    String req_code = "";
+    String darm_id = "";
+    String darm_emp_id = "";
 
     String emp_name = "";
     String emp_id = "";
@@ -201,9 +203,13 @@ public class AttendanceApprove extends AppCompatActivity {
         getRequestList();
 
         requestCode.setOnClickListener(v -> {
-            fromAttApp = 1;
-            SelectApproveReq selectRequest = new SelectApproveReq();
-            selectRequest.show(getSupportFragmentManager(),"Request");
+            SelectApproveReq selectRequest = SelectApproveReq.newInstance(ATT_REQ_SELECT_TYPE, selectApproveReqLists);
+            try {
+                showDialogSafely(selectRequest, "Request_ATT");
+            }
+            catch (Exception e) {
+                restart("App is paused for a long time. Please Start the app again.");
+            }
         });
 
 
@@ -228,11 +234,15 @@ public class AttendanceApprove extends AppCompatActivity {
         });
 
         comments.setOnClickListener(v -> {
-            number = 1;
             hint = Objects.requireNonNull(commentsLay.getHint()).toString();
             text = Objects.requireNonNull(comments.getText()).toString();
-            DialogueText dialogueText = new DialogueText();
-            dialogueText.show(getSupportFragmentManager(),"TEXTEDIT");
+            DialogueText dialogueText = DialogueText.newInstance(REQ_ATTENDANCE_COMMENT, hint,text);
+            try {
+                showDialogSafely(dialogueText, "TEXTEDIT_CMT");
+            }
+            catch (Exception e) {
+                restart("App is paused for a long time. Please Start the app again.");
+            }
         });
 
         approve.setOnClickListener(v -> {
@@ -288,9 +298,13 @@ public class AttendanceApprove extends AppCompatActivity {
         });
 
         forward.setOnClickListener(v -> {
-            forwardFromAtt = 1;
-            ForwardDialogue forwardDialogue = new ForwardDialogue(AttendanceApprove.this);
-            forwardDialogue.show(getSupportFragmentManager(),"FORWARD");
+            ForwardDialogue forwardDialogue = ForwardDialogue.newInstance(ATT_FORWARD_TYPE,darm_id, req_code);
+            try {
+                showDialogSafely(forwardDialogue, "FORWARD_ATT");
+            }
+            catch (Exception e) {
+                restart("App is paused for a long time. Please Start the app again.");
+            }
         });
 
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
@@ -902,15 +916,19 @@ public class AttendanceApprove extends AppCompatActivity {
                 conn = false;
                 connected = false;
                 if (!selectApproveReqLists.isEmpty()) {
-                    fromAttApp = 1;
-                    SelectApproveReq selectRequest = new SelectApproveReq();
-                    selectRequest.show(getSupportFragmentManager(),"Request");
-
                     if (f_count.equals("0") || f_count.isEmpty()) {
                         forward.setVisibility(GONE);
                     }
                     else {
                         forward.setVisibility(VISIBLE);
+                    }
+
+                    SelectApproveReq selectRequest = SelectApproveReq.newInstance(ATT_REQ_SELECT_TYPE, selectApproveReqLists);
+                    try {
+                        showDialogSafely(selectRequest, "Request_ATT");
+                    }
+                    catch (Exception e) {
+                        restart("App is paused for a long time. Please Start the app again.");
                     }
                 }
             }
@@ -1404,6 +1422,7 @@ public class AttendanceApprove extends AppCompatActivity {
                 String updated_req = jsonObject.getString("updated_req");
                 if (string_out.equals("Successfully Created")) {
                     isApprovedChecked = true;
+                    approveSuccessMsg = updated_req;
                     isApprovedd = updated_req.equals("true");
                 }
                 else {
@@ -1497,7 +1516,7 @@ public class AttendanceApprove extends AppCompatActivity {
                     MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(AttendanceApprove.this);
                     alertDialogBuilder.setTitle("Success!")
                             .setIcon(R.drawable.hrm_new_round_icon_custom)
-                            .setMessage("Request Approved Successfully")
+                            .setMessage("Attendance Update Request Approved Successfully")
                             .setPositiveButton("OK", (dialog, which) -> {
                                 dialog.dismiss();
                                 finish();
@@ -1515,7 +1534,21 @@ public class AttendanceApprove extends AppCompatActivity {
 
                 }
                 else {
-                    Toast.makeText(getApplicationContext(), "Already Updated by Another User", Toast.LENGTH_SHORT).show();
+                    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(AttendanceApprove.this);
+                    builder.setTitle("Warning!")
+                            .setIcon(R.drawable.hrm_new_round_icon_custom)
+                            .setMessage(approveSuccessMsg)
+                            .setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
+
+                    AlertDialog alert = builder.create();
+                    alert.setCancelable(false);
+                    alert.setCanceledOnTouchOutside(false);
+                    try {
+                        alert.show();
+                    }
+                    catch (Exception e) {
+                        restart("App is paused for a long time. Please Start the app again.");
+                    }
                 }
 
                 appppppprrrrr = false;
@@ -1844,6 +1877,74 @@ public class AttendanceApprove extends AppCompatActivity {
         catch (Exception e) {
             Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
             System.exit(0);
+        }
+    }
+
+    @Override
+    public void onReqSelection(String type, String reqCode, String appId, String reqEmpId) {
+        if (type.equals(ATT_REQ_SELECT_TYPE)) {
+            req_code = reqCode;
+            darm_id = appId;
+            darm_emp_id = reqEmpId;
+            requestCode.setText(reqCode);
+            requestCode.setTextColor(Color.BLACK);
+        }
+    }
+
+
+    @Override
+    public void onTextSubmitted(int reqCode, String text) {
+        if (reqCode == REQ_ATTENDANCE_COMMENT) {
+            comments.setText(text);
+            if (text.isEmpty()) {
+                commentsLay.setHint("Write Approve/Reject Comments:");
+            } else {
+                commentsLay.setHint("Comments:");
+            }
+        }
+    }
+
+    @Override
+    public void afterForwarded() {
+        req_code = "";
+        darm_id = "";
+        darm_emp_id = "";
+        selectApproveReqLists = new ArrayList<>();
+        System.out.println("INSERTED");
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(this);
+        alertDialogBuilder.setTitle("Success!")
+                .setIcon(R.drawable.hrm_new_round_icon_custom)
+                .setMessage("Attendance Update Request Forwarded Successfully")
+                .setPositiveButton("OK", (dialog, which) -> {
+                    dialog.dismiss();
+                    finish();
+                });
+
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.setCancelable(false);
+        alert.setCanceledOnTouchOutside(false);
+        try {
+            alert.show();
+        }
+        catch (Exception e) {
+            restart("App is paused for a long time. Please Start the app again.");
+        }
+    }
+
+    // safe dialog open
+    private boolean canShowDialog(String tag) {
+        if (isFinishing()) return false;
+        if (isDestroyed()) return false;
+
+        FragmentManager fm = getSupportFragmentManager();
+        if (fm.isStateSaved()) return false;
+
+        return fm.findFragmentByTag(tag) == null;
+    }
+
+    private void showDialogSafely(DialogFragment dialog, String tag) {
+        if (canShowDialog(tag)) {
+            dialog.show(getSupportFragmentManager(), tag);
         }
     }
 }
